@@ -21,5 +21,13 @@ let deDictionary: [TextConstants: String] = [
     .TCReturn:           "Zurück",
     .TCOK:               "OK",
     .TCLevelComplete:    "Level beendet",
+    .TCNoMessage:        "keine Meldung",
+    .TCNextLevel:        "Nächste Stufe",
+    .TCGameAgain:        "Restart",
+    .TCTimeout:          "Timeout",
+    .TCGameOver:         "Spiel vorbei"
 
 ]
+
+
+

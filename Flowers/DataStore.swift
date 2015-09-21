@@ -210,7 +210,6 @@ class DataStore {
         
         do {
             try self.managedObjectContext.save()
-            print("SAVE")
         } catch {
             let nserror = error as NSError
             NSLog("Unresolved error \(nserror), \(nserror.userInfo)")

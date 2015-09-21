@@ -29,8 +29,8 @@ class ViewController: UIViewController {
         /* Set the scale mode to scale to fit the window */
         //scene.scaleMode = .AspectFill
         print("in viewDidLoad:\(view.frame.size)")
-        
-        //GV.spriteGameData = GV.dataStore.getSpriteData()
+    
+        GV.spriteGameData = GV.dataStore.getSpriteData()
         
         let scene:GameScene = GameScene(size: CGSizeMake(view.frame.width, view.frame.height))
         

@@ -715,66 +715,68 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             let testNode = self.nodeAtPoint(touchLocation)
             
             let aktNodeType = analyzeNode(testNode)
-            var aktNode: SKNode? = movedFromNode
+            var aktNode: SKNode? = nil
+            let startNode = movedFromNode
             switch aktNodeType {
                 case MyNodeTypes.LabelNode: aktNode = self.nodeAtPoint(touchLocation).parent as! MySKNode
                 case MyNodeTypes.SpriteNode: aktNode = self.nodeAtPoint(touchLocation) as! MySKNode
                 case MyNodeTypes.ButtonNode:
                     (testNode as! MySKNode).texture = SKTexture(imageNamed: "\(testNode.name!)")
+                    aktNode = self.nodeAtPoint(touchLocation) as! MySKNode
                 default: aktNode = nil
             }
 
-            if aktNode != nil && (aktNode as! MySKNode).type == .ButtonType {
+            if showFingerNode {
+                
+                if let fingerNode = self.childNodeWithName("finger")! as? SKSpriteNode {
+                    fingerNode.removeFromParent()
+                }
+                
+            }
+
+            if aktNode != nil && (aktNode as! MySKNode).type == .ButtonType && startNode.type == .ButtonType  {
                 switch (aktNode as! MySKNode).name! {
                     case "restart": restartButtonPressed()
                     case "undo": undoButtonPressed()
                     default: undoButtonPressed()
                 }
-            } else {
-                
-                if showFingerNode {
-                    
-                    if let fingerNode = self.childNodeWithName("finger")! as? SKSpriteNode {
-                        fingerNode.removeFromParent()
-                    }
-                    
-                }
-
-                if aktNode == nil || (aktNode as! MySKNode) != movedFromNode {
-                    let sprite = movedFromNode// as! SKSpriteNode
-                    sprite!.physicsBody = SKPhysicsBody(circleOfRadius: sprite!.size.width/2)
-                    print("nodeSize:\(sprite!.size.width)")
-                    sprite.physicsBody?.dynamic = true
-                    sprite.physicsBody?.categoryBitMask = PhysicsCategory.MovingSprite
-                    sprite.physicsBody?.contactTestBitMask = PhysicsCategory.Sprite | PhysicsCategory.Container //| PhysicsCategory.WallAround
-                    sprite.physicsBody?.collisionBitMask = PhysicsCategory.None
-                    //sprite.physicsBody?.velocity=CGVectorMake(200, 200)
-                    
-                    sprite.physicsBody?.usesPreciseCollisionDetection = true
-                    let offset = touchLocation - movedFromNode.position
-
-                    let direction = offset.normalized()
-                    
-                    // 7 - Make it shoot far enough to be guaranteed off screen
-                    let shootAmount = direction * 1000
-                    
-                    // 8 - Add the shoot amount to the current position
-                    let realDest = shootAmount + movedFromNode.position
-                    
-                    push(sprite, status: .MovingStarted)
-                    // 9 - Create the actions
-                    let actionMove = SKAction.moveTo(realDest, duration: 4.0)
-                    //let actionMoveDone = SKAction.removeFromParent()
-                    collisionActive = true
-                    lastMirrored = ""
-                    
-                    self.userInteractionEnabled = false  // userInteraction forbidden!
-                    countMovingSprites = 1
-                    self.waitForSKActionEnded = NSTimer.scheduledTimerWithTimeInterval(0.1, target: self, selector: Selector("checkCountMovingSprites"), userInfo: nil, repeats: false) // start timer for check
-
-                    movedFromNode.runAction(SKAction.sequence([actionMove]))//, actionMoveDone]))
-                }
             }
+                
+
+            if startNode.type == .SpriteType && (aktNode == nil || (aktNode as! MySKNode) != movedFromNode) {
+                let sprite = movedFromNode// as! SKSpriteNode
+                sprite!.physicsBody = SKPhysicsBody(circleOfRadius: sprite!.size.width/2)
+                sprite.physicsBody?.dynamic = true
+                sprite.physicsBody?.categoryBitMask = PhysicsCategory.MovingSprite
+                sprite.physicsBody?.contactTestBitMask = PhysicsCategory.Sprite | PhysicsCategory.Container //| PhysicsCategory.WallAround
+                sprite.physicsBody?.collisionBitMask = PhysicsCategory.None
+                //sprite.physicsBody?.velocity=CGVectorMake(200, 200)
+                
+                sprite.physicsBody?.usesPreciseCollisionDetection = true
+                let offset = touchLocation - movedFromNode.position
+
+                let direction = offset.normalized()
+                
+                // 7 - Make it shoot far enough to be guaranteed off screen
+                let shootAmount = direction * 1000
+                
+                // 8 - Add the shoot amount to the current position
+                let realDest = shootAmount + movedFromNode.position
+                
+                push(sprite, status: .MovingStarted)
+                // 9 - Create the actions
+                let actionMove = SKAction.moveTo(realDest, duration: 1.0)
+                //let actionMoveDone = SKAction.removeFromParent()
+                collisionActive = true
+                lastMirrored = ""
+                
+                self.userInteractionEnabled = false  // userInteraction forbidden!
+                countMovingSprites = 1
+                self.waitForSKActionEnded = NSTimer.scheduledTimerWithTimeInterval(0.1, target: self, selector: Selector("checkCountMovingSprites"), userInfo: nil, repeats: false) // start timer for check
+
+                movedFromNode.runAction(SKAction.sequence([actionMove]))//, actionMoveDone]))
+            }
+
         }
     }
     
@@ -828,7 +830,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             soundPlayer?.delegate = self
             soundPlayer?.prepareToPlay()
             soundPlayer?.volume = 0.03
-            soundPlayer?.numberOfLoops = -1
+            soundPlayer?.numberOfLoops = 1
             soundPlayer?.play()
         } catch {
             print("soundPlayer error")
@@ -843,7 +845,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         
         let containerColorIndex = container.colorIndex
         let spriteColorIndex = movingSprite.colorIndex
-        var OK = containerColorIndex == spriteColorIndex
+        let OK = containerColorIndex == spriteColorIndex
         
         push(container, status: .HitcounterChanged)
         push(movingSprite, status: .Removed)
@@ -882,10 +884,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         let sprite = node2
         let movingSpriteColorIndex = movingSprite.colorIndex
         let spriteColorIndex = sprite.colorIndex
-        let aktColor = GV.colorSets[GV.colorSetIndex][sprite.colorIndex + 1].CGColor
+        //let aktColor = GV.colorSets[GV.colorSetIndex][sprite.colorIndex + 1].CGColor
         collisionActive = false
         
-        var OK = movingSpriteColorIndex == spriteColorIndex
+        let OK = movingSpriteColorIndex == spriteColorIndex
         if OK {
             
             push(sprite, status: .SizeChanged)
@@ -923,7 +925,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             movingSprite.runAction(SKAction.sequence([movingSpriteAction, actionMoveDone]), completion: {countMovingSprites--})
             
             
-            var spriteDest = CGPointMake(sprite.position.x * 1.5, 0)
+            let spriteDest = CGPointMake(sprite.position.x * 1.5, 0)
             sprite.startPosition = sprite.position
             sprite.position = spriteDest
             push(sprite, status: .Removed)
@@ -938,7 +940,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             showScore()
         }
         spriteCount--
-        let spriteCountText: String = GV.language.getText("spriteCount")
+        let spriteCountText: String = GV.language.getText(.TCSpriteCount)
         spriteCountLabel.text = "\(spriteCountText) \(spriteCount)"
         checkGameFinished()
     }
@@ -961,7 +963,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             spriteGameLastPosition = movingSprite.position
             
             let originalPosition = movingSprite.startPosition
-            let offsetOrig = movingSprite.position - originalPosition
+            _ = movingSprite.position - originalPosition
             
             let dX = movingSprite.startPosition.x - movingSprite.position.x
             let dY = movingSprite.startPosition.y - movingSprite.position.y
@@ -984,13 +986,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             let shootAmount = direction * 1200
             let realDest = shootAmount + movingSprite.position
             
-            print("offsetNew: \(offsetNew), direction: \(direction), shootAmount: \(shootAmount), realDest: \(realDest)")
+            //print("offsetNew: \(offsetNew), direction: \(direction), shootAmount: \(shootAmount), realDest: \(realDest)")
             
             movingSprite.startPosition = movingSprite.position
             movingSprite.hitCounter = Int(CGFloat(movingSprite.hitCounter) * 1.5)
             push(movingSprite, status: .Mirrored)
             
-            let actionMove = SKAction.moveTo(realDest, duration: 3.0)
+            let actionMove = SKAction.moveTo(realDest, duration: 1.0)
             collisionActive = true
             movingSprite.runAction(SKAction.sequence([actionMove]))//, actionMoveDone]))
             playSound("Mirror", volume: 0.03)
@@ -1033,8 +1035,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             movingSprite = contact.bodyA
             partner = contact.bodyB
             wallAroundDidCollideWithMovingSprite(movingSprite.node as! MySKNode, node2: partner.node!)
-        default: let a = 0
-            
+        default: _ = 0
        }
     }
 
@@ -1063,7 +1064,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             if levelScore < targetScore {
                 countLostGames++
                 let lost3Times = countLostGames > 2 && levelIndex > 1
-                var alert = UIAlertController(title: GV.language.getText(lost3Times ? .TCGameLost3: .TCGameLost),
+                let alert = UIAlertController(title: GV.language.getText(lost3Times ? .TCGameLost3: .TCGameLost),
                     message: GV.language.getText(.TCTargetNotReached),
                     preferredStyle: .Alert)
                 if lost3Times {
@@ -1081,10 +1082,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             } else {
                 
                 let alert = UIAlertController(title: GV.language.getText(.TCLevelComplete),
-                    message: GV.language.getText("no Message"),
+                    message: GV.language.getText(TextConstants.TCNoMessage),
                     preferredStyle: .Alert)
-                let cancelAction = UIAlertAction(title: GV.language.getText("return"), style: .Cancel, handler: nil)
-                let againAction = UIAlertAction(title: GV.language.getText("next level"), style: .Default,
+                let cancelAction = UIAlertAction(title: GV.language.getText(.TCReturn), style: .Cancel, handler: nil)
+                let againAction = UIAlertAction(title: GV.language.getText(TextConstants.TCNextLevel), style: .Default,
                     handler: {(paramAction:UIAlertAction!) in
                         self.newGame(true)
                 })
@@ -1109,11 +1110,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             playSound("Timeout", volume: 0.03)
             countDown!.invalidate()
             countDown = nil
-            let alert = UIAlertController(title: GV.language.getText("timeout"),
-                message: GV.language.getText("gameOver"),
+            let alert = UIAlertController(title: GV.language.getText(TextConstants.TCTimeout),
+                message: GV.language.getText(.TCGameOver),
                 preferredStyle: .Alert)
-            let cancelAction = UIAlertAction(title: GV.language.getText("return"), style: .Cancel, handler: nil)
-            let againAction = UIAlertAction(title: GV.language.getText("gameAgain"), style: .Default,
+            let cancelAction = UIAlertAction(title: GV.language.getText(.TCReturn), style: .Cancel, handler: nil)
+            let againAction = UIAlertAction(title: GV.language.getText(TextConstants.TCGameAgain), style: .Default,
                 handler: {(paramAction:UIAlertAction!) in
                     self.newGame(false)
                 })
@@ -1193,7 +1194,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
                     addPhysicsBody(sprite)
                     self.addChild(sprite)
                     spriteCount++
-                    let spriteCountText: String = GV.language.getText(TCSpriteCount)
+                    let spriteCountText: String = GV.language.getText(.TCSpriteCount)
                     spriteCountLabel.text = "\(spriteCountText) \(spriteCount)"
                     
                 case .SizeChanged:
@@ -1250,30 +1251,21 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             
 
             
-//        }
     }
-/*
-//    func audioPlayerDidFinishPlaying(player: AVAudioPlayer!, successfully flag: Bool) {
-//        print("finished playing \(flag)")
-//    }
-//    
-//    
-//    func audioPlayerDecodeErrorDidOccur(player: AVAudioPlayer!, error: NSError!) {
-//        print("\(error.localizedDescription)")
-//    }
+
 
     func audioPlayerDidFinishPlaying(player: AVAudioPlayer!, successfullyflag: Bool) {
     }
     
-    func audioPlayerDecodeErrorDidOccur(player: AVAudioPlayer!, error: NSError!) {
+    func audioPlayerDecodeErrorDidOccur(player: AVAudioPlayer, error: NSError?) {
     }
     
-    func audioPlayerBeginInterruption(player: AVAudioPlayer!) {
+    func audioPlayerBeginInterruption(player: AVAudioPlayer) {
     }
     
-    func audioPlayerEndInterruption(player: AVAudioPlayer!) {
+    func audioPlayerEndInterruption(player: AVAudioPlayer) {
     }
-    */
+  
 
 
 }

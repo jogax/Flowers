@@ -9,6 +9,27 @@
 //import Foundation
 import UIKit
 
+enum TextConstants: Int {
+    case
+    TCLevel = 0,
+    TCLevelScore,
+    TCGameScore,
+    TCTargetScore,
+    TCTimeLeft,
+    TCGameLost,
+    TCGameLost3,
+    TCTargetNotReached,
+    TCSpriteCount,
+    TCReturn,
+    TCOK,
+    TCLevelComplete,
+    TCNoMessage,
+    TCNextLevel,
+    TCGameAgain,
+    TCTimeout,
+    TCGameOver
+}
+
 
 
 class Language {

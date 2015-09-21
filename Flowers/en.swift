@@ -20,4 +20,10 @@ let enDictionary: [TextConstants: String] = [
     .TCSpriteCount:      "count of Flowers:",
     .TCReturn:           "Return",
     .TCOK:               "OK",
+    .TCLevelComplete:    "Level complete",
+    .TCNoMessage:        "no Message",
+    .TCNextLevel:        "next level",
+    .TCGameAgain:        "restart",
+    .TCTimeout:          "timeout",
+    .TCGameOver:         "Game Over"
 ]

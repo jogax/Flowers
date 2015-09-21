@@ -31,7 +31,6 @@
 		2001412C1BAEB285003E0950 /* LevelsForPlayWithSprites.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2001412B1BAEB285003E0950 /* LevelsForPlayWithSprites.swift */; settings = {ASSET_TAGS = (); }; };
 		2001412E1BAEB2DE003E0950 /* MyStructs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2001412D1BAEB2DE003E0950 /* MyStructs.swift */; settings = {ASSET_TAGS = (); }; };
 		200141301BAEB4F6003E0950 /* Language.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2001412F1BAEB4F6003E0950 /* Language.swift */; settings = {ASSET_TAGS = (); }; };
-		2001413B1BAEB5AD003E0950 /* TextConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2001413A1BAEB5AD003E0950 /* TextConstants.swift */; settings = {ASSET_TAGS = (); }; };
 		2001413D1BAEB714003E0950 /* de.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2001413C1BAEB714003E0950 /* de.swift */; settings = {ASSET_TAGS = (); }; };
 		2001413F1BAEB95B003E0950 /* en.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2001413E1BAEB95B003E0950 /* en.swift */; settings = {ASSET_TAGS = (); }; };
 		200141411BAEB9F7003E0950 /* hu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 200141401BAEB9F7003E0950 /* hu.swift */; settings = {ASSET_TAGS = (); }; };
@@ -108,7 +107,6 @@
 		2001412B1BAEB285003E0950 /* LevelsForPlayWithSprites.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LevelsForPlayWithSprites.swift; sourceTree = "<group>"; };
 		2001412D1BAEB2DE003E0950 /* MyStructs.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MyStructs.swift; sourceTree = "<group>"; };
 		2001412F1BAEB4F6003E0950 /* Language.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Language.swift; sourceTree = "<group>"; };
-		2001413A1BAEB5AD003E0950 /* TextConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TextConstants.swift; sourceTree = "<group>"; };
 		2001413C1BAEB714003E0950 /* de.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = de.swift; sourceTree = "<group>"; };
 		2001413E1BAEB95B003E0950 /* en.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = en.swift; sourceTree = "<group>"; };
 		200141401BAEB9F7003E0950 /* hu.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = hu.swift; sourceTree = "<group>"; };
@@ -255,7 +253,6 @@
 				2001413E1BAEB95B003E0950 /* en.swift */,
 				200141401BAEB9F7003E0950 /* hu.swift */,
 				200141421BAEBAA2003E0950 /* ru.swift */,
-				2001413A1BAEB5AD003E0950 /* TextConstants.swift */,
 			);
 			name = Languages;
 			sourceTree = "<group>";
@@ -440,7 +437,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2001413B1BAEB5AD003E0950 /* TextConstants.swift in Sources */,
 				200141451BAED8BF003E0950 /* Stack.swift in Sources */,
 				200141781BAEFBCA003E0950 /* DataStore.swift in Sources */,
 				200141411BAEB9F7003E0950 /* hu.swift in Sources */,
@@ -685,6 +681,7 @@
 				200141071BAEA96A003E0950 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		200141081BAEA96A003E0950 /* Build configuration list for PBXNativeTarget "FlowersTests" */ = {
 			isa = XCConfigurationList;
@@ -693,6 +690,7 @@
 				2001410A1BAEA96A003E0950 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		2001410B1BAEA96A003E0950 /* Build configuration list for PBXNativeTarget "FlowersUITests" */ = {
 			isa = XCConfigurationList;
@@ -701,6 +699,7 @@
 				2001410D1BAEA96A003E0950 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 

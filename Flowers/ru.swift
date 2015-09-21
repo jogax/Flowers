@@ -20,4 +20,10 @@ let ruDictionary: [TextConstants: String] = [
     .TCSpriteCount:      "количество цветов:",
     .TCReturn:           "назад",
     .TCOK:               "OK",
+    .TCLevelComplete:    "Уровень завершен",
+    .TCNoMessage:        "сообщение не найдёно",
+    .TCNextLevel:        "следующий уровень",
+    .TCGameAgain:        "заново",
+    .TCTimeout:          "Время закончилось",
+    .TCGameOver:         "Игра проиграна"
 ]

@@ -167,12 +167,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
     var colorTab = [ColorTabLine]()
     let containersPosCorr = CGPointMake(GV.onIpad ? 0.98 : 0.98, GV.onIpad ? 0.85 : 0.80)
     let levelPosKorr = CGPointMake(GV.onIpad ? 0.5 : 0.5, GV.onIpad ? 0.97 : 0.97)
-    let gameScorePosKorr = CGPointMake(GV.onIpad ? 0.1 : 0.05, GV.onIpad ? 0.95 : 0.94)
-    let levelScorePosKorr = CGPointMake(GV.onIpad ? 0.1 : 0.05, GV.onIpad ? 0.93 : 0.92)
-    let spriteCountPosKorr = CGPointMake(GV.onIpad ? 0.1 : 0.05, GV.onIpad ? 0.91 : 0.90)
+    let gameScorePosKorr = CGPointMake(GV.onIpad ? 0.05 : 0.05, GV.onIpad ? 0.95 : 0.94)
+    let levelScorePosKorr = CGPointMake(GV.onIpad ? 0.05 : 0.05, GV.onIpad ? 0.93 : 0.92)
+    let spriteCountPosKorr = CGPointMake(GV.onIpad ? 0.05 : 0.05, GV.onIpad ? 0.91 : 0.90)
     let countdownPosKorr = CGPointMake(GV.onIpad ? 0.98 : 0.98, GV.onIpad ? 0.95 : 0.94)
     let targetPosKorr = CGPointMake(GV.onIpad ? 0.98 : 0.98, GV.onIpad ? 0.93 : 0.92)
     var countColorsProContainer = [Int]()
+    var labelBackground = SKSpriteNode()
     var levelLabel = SKLabelNode(fontNamed: "AvenirNext-Bold")
     var spriteCountLabel = SKLabelNode(fontNamed: "AvenirNext-Bold")
     var gameScoreLabel = SKLabelNode(fontNamed: "AvenirNext-Bold")
@@ -327,12 +328,19 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             countColorsProContainer.append(countSpritesProContainer!)
             addChild(containers[index].mySKNode)
         }
+        
+        labelBackground.color = UIColor(red: 1, green: 1, blue: 1, alpha: 0.5)
+        labelBackground.size = CGSizeMake(self.size.width, self.size.height / 5)
+        labelBackground.position = CGPointMake(self.size.width / 2, self.position.y + self.size.height)
+        
+        self.addChild(labelBackground)
         levelLabel.text = GV.language.getText(TextConstants.TCLevel) + ": \(levelIndex + 1)"
         levelLabel.position = CGPointMake(self.position.x + self.size.width * levelPosKorr.x, self.position.y + self.size.height * levelPosKorr.y)
         levelLabel.fontColor = SKColor.blackColor()
         levelLabel.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.Center
         levelLabel.verticalAlignmentMode = SKLabelVerticalAlignmentMode.Center
         levelLabel.fontSize = 15;
+        levelLabel.color = UIColor(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)
         //levelLabel.fontName = "ArielBold"
         self.addChild(levelLabel)
         
@@ -639,13 +647,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
                 if movedFromNode.type == .ButtonType {
                     movedFromNode.texture = SKTexture(imageNamed: "\(movedFromNode.name!)")
                 } else {
-//                    let offset = touchLocation - movedFromNode.position
-//                    let direction = offset.normalized()
-//                    let toPoint = direction * 1200
                     let line = JGXLine(fromPoint: movedFromNode.position, toPoint: touchLocation, inFrame: self.frame, lineSize: movedFromNode.size.width)
-//                    let line = JGXLine(fromPoint: CGPointMake(200,700), toPoint: CGPointMake(900, 600), inFrame: self.frame, lineSize: movedFromNode.size.width)
-                    
-                    
+
                     let intersectNode = MySKNode(texture: movedFromNode.texture!, type: .SpriteType)
                     intersectNode.name = "nodeOnTheWall"
                     intersectNode.position = line.line.toPoint
@@ -654,7 +657,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
                     
                     
                     let pointOnTheWall = line.line.toPoint
-                    //let pointOnTheWall = findPointOnTheWall(movedFromNode.position, pointTo: touchLocation, nodeSize: movedFromNode.size)
                     let nodeOnTheWall = MySKNode(texture: movedFromNode.texture!, type: .SpriteType)
                     nodeOnTheWall.name = "nodeOnTheWall"
                     nodeOnTheWall.position = pointOnTheWall
@@ -753,6 +755,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
                 //sprite.physicsBody?.velocity=CGVectorMake(200, 200)
                 
                 sprite.physicsBody?.usesPreciseCollisionDetection = true
+/*
                 let offset = touchLocation - movedFromNode.position
 
                 let direction = offset.normalized()
@@ -762,10 +765,24 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
                 
                 // 8 - Add the shoot amount to the current position
                 let realDest = shootAmount + movedFromNode.position
-                
+*/
                 push(sprite, status: .MovingStarted)
+                
                 // 9 - Create the actions
-                let actionMove = SKAction.moveTo(realDest, duration: 1.0)
+                let line = JGXLine(fromPoint: movedFromNode.position, toPoint: touchLocation, inFrame: self.frame, lineSize: movedFromNode.size.width)
+                let pointOnTheWall = line.line.toPoint
+                
+                let mirroredLine1 = line.createMirroredLine()
+                let pointOnTheWall1 = mirroredLine1.line.toPoint
+                
+                let mirroredLine2 = mirroredLine1.createMirroredLine()
+                let pointOnTheWall2 = mirroredLine2.line.toPoint
+
+                let actionMove = SKAction.moveTo(pointOnTheWall, duration: 1.0)
+                let actionMove1 = SKAction.moveTo(pointOnTheWall1, duration: 1.0)
+                let actionMove2 = SKAction.moveTo(pointOnTheWall2, duration: 1.0)
+                
+                
                 //let actionMoveDone = SKAction.removeFromParent()
                 collisionActive = true
                 lastMirrored = ""
@@ -774,7 +791,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
                 countMovingSprites = 1
                 self.waitForSKActionEnded = NSTimer.scheduledTimerWithTimeInterval(0.1, target: self, selector: Selector("checkCountMovingSprites"), userInfo: nil, repeats: false) // start timer for check
 
-                movedFromNode.runAction(SKAction.sequence([actionMove]))//, actionMoveDone]))
+                movedFromNode.runAction(SKAction.sequence([actionMove, actionMove1, actionMove2]))//, actionMoveDone]))
             }
 
         }
@@ -1025,7 +1042,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             movingSprite = contact.bodyA
             partner = contact.bodyB
             spriteDidCollideWithContainer(movingSprite.node as! MySKNode, node2: partner.node as! MySKNode)
-
+/*
         case (PhysicsCategory.WallAround, PhysicsCategory.MovingSprite):
             movingSprite = contact.bodyB
             partner = contact.bodyA
@@ -1035,6 +1052,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             movingSprite = contact.bodyA
             partner = contact.bodyB
             wallAroundDidCollideWithMovingSprite(movingSprite.node as! MySKNode, node2: partner.node!)
+*/
         default: _ = 0
        }
     }
@@ -1125,11 +1143,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
     }
 
     func showTimeLeft() {
-        //let countdownText = GV.language.getText(TCTimeLeft)
-        //let minutes = Int(timeLimit / 60)
-        //var seconds = "\(Int(timeLimit % 60))"
-        //seconds = count(seconds) == 1 ? "0\(seconds)" : seconds
-        //countdownLabel.text = "\(countdownText) \(minutes):\(seconds)"
+        let countdownText = GV.language.getText(.TCTimeLeft)
+        let minutes = Int(timeLimit / 60)
+        var seconds = "\(Int(timeLimit % 60))"
+        seconds = Int(seconds) < 10 ? "0\(seconds)" : "\(seconds)"
+        countdownLabel.text = "\(countdownText) \(minutes):\(seconds)"
     }
 /*
     func printGameArray() {

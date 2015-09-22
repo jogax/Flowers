@@ -20,6 +20,7 @@ class JGXLine {
     }
 
     struct Line {
+        
         var fromPoint: CGPoint
         var toPoint: CGPoint
         var lineType: LineType
@@ -43,11 +44,12 @@ class JGXLine {
                 b = (offset.y) / (offset.x)
                 a = fromPoint.y - b * fromPoint.x
             }
-                
         }
     }
     
+    let speed = 0.001
     var line: Line
+    var duration: Double = 0
     
     var frameLines = [Line]()
     var mirrorAxis: LineType = .Horizontal
@@ -88,7 +90,9 @@ class JGXLine {
                 }
             } 
         }
-        
+        let offset = line.toPoint - line.fromPoint
+        duration = Double(offset.length()) * speed
+
     }
     
     func findIntersectionWithFrame(index: Int)->(Bool,CGPoint) {
@@ -144,6 +148,7 @@ class JGXLine {
                 if distanceFromPoint > distanceToPoint && intersectionPoint.x >= self.frame.origin.x && intersectionPoint.x <= self.frame.origin.x + self.frame.width {
                     hasIntersection = true
                 }
+            
                 
             default: hasIntersection = false
         }
@@ -161,6 +166,7 @@ class JGXLine {
         default:
             mirroredPoint.y = self.line.toPoint.y + offset.y
         }
+        
         let mirroredLine = JGXLine(fromPoint: self.line.toPoint, toPoint: mirroredPoint, inFrame: self.frame, lineSize: self.lineSize)
         return mirroredLine
     }

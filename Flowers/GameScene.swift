@@ -690,6 +690,17 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
                     nodeOnTheWall2.size = movedFromNode.size
                     //self.addChild(nodeOnTheWall2)
  
+                    let mirroredLine3 = mirroredLine2.createMirroredLine()
+                    makeHelpLine(mirroredLine3.line.fromPoint, toPoint: mirroredLine3.line.toPoint, lineWidth: movedFromNode.size.width)
+
+                    var bummTexture = SKTexture()
+                    bummTexture = SKTexture(imageNamed: "bumm")
+                    let pointOnTheWall3 = mirroredLine3.line.toPoint
+                    let nodeOnTheWall3 = MySKNode(texture: bummTexture, type: .SpriteType)
+                    nodeOnTheWall3.name = "nodeOnTheWall"
+                    nodeOnTheWall3.position = pointOnTheWall3
+                    nodeOnTheWall3.size = movedFromNode.size
+                    self.addChild(nodeOnTheWall3)
                 }
             }
             
@@ -778,9 +789,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
                 let mirroredLine2 = mirroredLine1.createMirroredLine()
                 let pointOnTheWall2 = mirroredLine2.line.toPoint
 
-                let actionMove = SKAction.moveTo(pointOnTheWall, duration: 1.0)
-                let actionMove1 = SKAction.moveTo(pointOnTheWall1, duration: 1.0)
-                let actionMove2 = SKAction.moveTo(pointOnTheWall2, duration: 1.0)
+                let mirroredLine3 = mirroredLine2.createMirroredLine()
+                let pointOnTheWall3 = mirroredLine3.line.toPoint
+
+                let pushAction = SKAction.runBlock({self.push(sprite, status: .Mirrored)})
+                let actionMove = SKAction.moveTo(pointOnTheWall, duration: line.duration)
+                let actionMove1 = SKAction.moveTo(pointOnTheWall1, duration: mirroredLine1.duration)
+                let actionMove2 = SKAction.moveTo(pointOnTheWall2, duration: mirroredLine2.duration)
+                let actionMove3 = SKAction.moveTo(pointOnTheWall3, duration: mirroredLine2.duration)
                 
                 
                 //let actionMoveDone = SKAction.removeFromParent()
@@ -791,7 +807,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
                 countMovingSprites = 1
                 self.waitForSKActionEnded = NSTimer.scheduledTimerWithTimeInterval(0.1, target: self, selector: Selector("checkCountMovingSprites"), userInfo: nil, repeats: false) // start timer for check
 
-                movedFromNode.runAction(SKAction.sequence([actionMove, actionMove1, actionMove2]))//, actionMoveDone]))
+                movedFromNode.runAction(SKAction.sequence([actionMove, pushAction, actionMove1, pushAction, actionMove2, pushAction, actionMove3]))//, actionMoveDone]))
             }
 
         }
@@ -1177,7 +1193,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
     }
     
     func pull() {
-        let duration = 0.5
+        let duration = 0.2
         var actionMoveArray = [SKAction]()
         if let savedSprite = stack.pull() {
             var savedSpriteInCycle = savedSprite

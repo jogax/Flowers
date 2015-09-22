@@ -57,6 +57,7 @@
 		200141741BAEF900003E0950 /* SpriteGame.swift in Sources */ = {isa = PBXBuildFile; fileRef = 200141721BAEF900003E0950 /* SpriteGame.swift */; settings = {ASSET_TAGS = (); }; };
 		200141761BAEFB4F003E0950 /* JGXLine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 200141751BAEFB4F003E0950 /* JGXLine.swift */; settings = {ASSET_TAGS = (); }; };
 		200141781BAEFBCA003E0950 /* DataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 200141771BAEFBCA003E0950 /* DataStore.swift */; settings = {ASSET_TAGS = (); }; };
+		200895C81BB1AB9E001444B4 /* bumm.png in Resources */ = {isa = PBXBuildFile; fileRef = 200895C71BB1AB9E001444B4 /* bumm.png */; settings = {ASSET_TAGS = (); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -133,6 +134,7 @@
 		200141721BAEF900003E0950 /* SpriteGame.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpriteGame.swift; sourceTree = "<group>"; };
 		200141751BAEFB4F003E0950 /* JGXLine.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JGXLine.swift; sourceTree = "<group>"; };
 		200141771BAEFBCA003E0950 /* DataStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataStore.swift; sourceTree = "<group>"; };
+		200895C71BB1AB9E001444B4 /* bumm.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bumm.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -187,12 +189,12 @@
 		200140DC1BAEA96A003E0950 /* Flowers */ = {
 			isa = PBXGroup;
 			children = (
+				2001410E1BAEAA82003E0950 /* GameScene.swift */,
 				200141751BAEFB4F003E0950 /* JGXLine.swift */,
 				200141721BAEF900003E0950 /* SpriteGame.swift */,
 				2001412D1BAEB2DE003E0950 /* MyStructs.swift */,
 				200141771BAEFBCA003E0950 /* DataStore.swift */,
 				2001412B1BAEB285003E0950 /* LevelsForPlayWithSprites.swift */,
-				2001410E1BAEAA82003E0950 /* GameScene.swift */,
 				200141461BAEDAE5003E0950 /* MySKNode.swift */,
 				200141441BAED8BF003E0950 /* Stack.swift */,
 				200140DD1BAEA96A003E0950 /* AppDelegate.swift */,
@@ -260,6 +262,7 @@
 		200141481BAEE358003E0950 /* Pictures */ = {
 			isa = PBXGroup;
 			children = (
+				200895C71BB1AB9E001444B4 /* bumm.png */,
 				200141491BAEE3DC003E0950 /* aquarium.png */,
 				2001414A1BAEE3DC003E0950 /* finger.png */,
 				2001414B1BAEE3DC003E0950 /* Holz.png */,
@@ -395,6 +398,7 @@
 				200141261BAEB1F6003E0950 /* Mirror.m4a in Resources */,
 				200141651BAEE3DC003E0950 /* sprite7.png in Resources */,
 				2001412A1BAEB1F6003E0950 /* Winner.m4a in Resources */,
+				200895C81BB1AB9E001444B4 /* bumm.png in Resources */,
 				200141221BAEB1F6003E0950 /* Do_2.m4a in Resources */,
 				2001415D1BAEE3DC003E0950 /* restartPressed.png in Resources */,
 				200141241BAEB1F6003E0950 /* Funk_Bot.m4a in Resources */,

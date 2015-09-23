@@ -392,7 +392,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         targetScoreLabel.text = "\(targetScoreText) \(targetScore)"
         self.addChild(targetScoreLabel)
         
-        let bgImage = SKSpriteNode(imageNamed: "aquarium.png")
+        let bgImage = SKSpriteNode(imageNamed: "background.png")
         print("\(self.size)")
         bgImage.position = CGPointMake(size.width/2, size.height/2)
         bgImage.size = CGSizeMake(self.size.width, self.size.height)
@@ -792,11 +792,24 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
                 let mirroredLine3 = mirroredLine2.createMirroredLine()
                 let pointOnTheWall3 = mirroredLine3.line.toPoint
 
-                let pushAction = SKAction.runBlock({self.push(sprite, status: .Mirrored)})
+                let countAndPushAction = SKAction.runBlock({
+                    self.push(sprite, status: .Mirrored)
+                    sprite.hitCounter = Int(CGFloat(sprite.hitCounter) * 1.5)
+                })
+
                 let actionMove = SKAction.moveTo(pointOnTheWall, duration: line.duration)
                 let actionMove1 = SKAction.moveTo(pointOnTheWall1, duration: mirroredLine1.duration)
                 let actionMove2 = SKAction.moveTo(pointOnTheWall2, duration: mirroredLine2.duration)
                 let actionMove3 = SKAction.moveTo(pointOnTheWall3, duration: mirroredLine2.duration)
+                let actionMoveDone = SKAction.removeFromParent()
+               
+                let actionMoveStopped =  SKAction.runBlock({
+                    self.push(sprite, status: .Removed)
+                    sprite.size = CGSizeMake(sprite.size.width / 3, sprite.size.height / 3)
+                    self.playSound("Drop", volume: 0.03)
+                })
+                
+                
                 
                 
                 //let actionMoveDone = SKAction.removeFromParent()
@@ -807,7 +820,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
                 countMovingSprites = 1
                 self.waitForSKActionEnded = NSTimer.scheduledTimerWithTimeInterval(0.1, target: self, selector: Selector("checkCountMovingSprites"), userInfo: nil, repeats: false) // start timer for check
 
-                movedFromNode.runAction(SKAction.sequence([actionMove, pushAction, actionMove1, pushAction, actionMove2, pushAction, actionMove3]))//, actionMoveDone]))
+                movedFromNode.runAction(SKAction.sequence([actionMove, countAndPushAction, actionMove1, countAndPushAction, actionMove2, countAndPushAction, actionMove3, actionMoveStopped, actionMoveDone]))
             }
 
         }
@@ -863,7 +876,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             soundPlayer?.delegate = self
             soundPlayer?.prepareToPlay()
             soundPlayer?.volume = 0.03
-            soundPlayer?.numberOfLoops = 1
+            soundPlayer?.numberOfLoops = 0
             soundPlayer?.play()
         } catch {
             print("soundPlayer error")

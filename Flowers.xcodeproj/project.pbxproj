@@ -58,6 +58,7 @@
 		200141761BAEFB4F003E0950 /* JGXLine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 200141751BAEFB4F003E0950 /* JGXLine.swift */; settings = {ASSET_TAGS = (); }; };
 		200141781BAEFBCA003E0950 /* DataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 200141771BAEFBCA003E0950 /* DataStore.swift */; settings = {ASSET_TAGS = (); }; };
 		200895C81BB1AB9E001444B4 /* bumm.png in Resources */ = {isa = PBXBuildFile; fileRef = 200895C71BB1AB9E001444B4 /* bumm.png */; settings = {ASSET_TAGS = (); }; };
+		20F938F71BB2ECE700378744 /* background.png in Resources */ = {isa = PBXBuildFile; fileRef = 20F938F61BB2ECE700378744 /* background.png */; settings = {ASSET_TAGS = (); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -135,6 +136,7 @@
 		200141751BAEFB4F003E0950 /* JGXLine.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JGXLine.swift; sourceTree = "<group>"; };
 		200141771BAEFBCA003E0950 /* DataStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataStore.swift; sourceTree = "<group>"; };
 		200895C71BB1AB9E001444B4 /* bumm.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bumm.png; sourceTree = "<group>"; };
+		20F938F61BB2ECE700378744 /* background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = background.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -262,6 +264,7 @@
 		200141481BAEE358003E0950 /* Pictures */ = {
 			isa = PBXGroup;
 			children = (
+				20F938F61BB2ECE700378744 /* background.png */,
 				200895C71BB1AB9E001444B4 /* bumm.png */,
 				200141491BAEE3DC003E0950 /* aquarium.png */,
 				2001414A1BAEE3DC003E0950 /* finger.png */,
@@ -387,6 +390,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				200141231BAEB1F6003E0950 /* Drop.m4a in Resources */,
+				20F938F71BB2ECE700378744 /* background.png in Resources */,
 				200141621BAEE3DC003E0950 /* sprite4.png in Resources */,
 				200141201BAEB1F6003E0950 /* Container.m4a in Resources */,
 				200140EB1BAEA96A003E0950 /* LaunchScreen.storyboard in Resources */,

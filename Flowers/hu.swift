@@ -25,6 +25,6 @@ let huDictionary: [TextConstants: String] = [
     .TCNextLevel:        "következő szint",
     .TCGameAgain:        "újra játszom",
     .TCTimeout:          "Lejárt az időd",
-    .TCGameOver:         "Vesztettél"
-
+    .TCGameOver:         "Vesztettél",
+    .TCCongratulations:    "Gratulálok!",
 ]

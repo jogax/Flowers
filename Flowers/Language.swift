@@ -27,7 +27,8 @@ enum TextConstants: Int {
     TCNextLevel,
     TCGameAgain,
     TCTimeout,
-    TCGameOver
+    TCGameOver,
+    TCCongratulations
 }
 
 

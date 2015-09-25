@@ -25,5 +25,6 @@ let ruDictionary: [TextConstants: String] = [
     .TCNextLevel:        "следующий уровень",
     .TCGameAgain:        "заново",
     .TCTimeout:          "Время закончилось",
-    .TCGameOver:         "Игра проиграна"
+    .TCGameOver:         "Игра проиграна",
+    .TCCongratulations:  "Поздравления!",
 ]

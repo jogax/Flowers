@@ -25,7 +25,8 @@ let deDictionary: [TextConstants: String] = [
     .TCNextLevel:        "Nächste Stufe",
     .TCGameAgain:        "Restart",
     .TCTimeout:          "Timeout",
-    .TCGameOver:         "Spiel vorbei"
+    .TCGameOver:         "Spiel vorbei",
+    .TCCongratulations:  "Herzliches Glückwunsch!"
 
 ]
 

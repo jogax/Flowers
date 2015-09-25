@@ -25,5 +25,6 @@ let enDictionary: [TextConstants: String] = [
     .TCNextLevel:        "next level",
     .TCGameAgain:        "restart",
     .TCTimeout:          "timeout",
-    .TCGameOver:         "Game Over"
+    .TCGameOver:         "Game Over",
+    .TCCongratulations:  "Congratulations!"
 ]

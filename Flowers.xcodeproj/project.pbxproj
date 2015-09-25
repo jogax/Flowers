@@ -58,6 +58,8 @@
 		200141761BAEFB4F003E0950 /* JGXLine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 200141751BAEFB4F003E0950 /* JGXLine.swift */; settings = {ASSET_TAGS = (); }; };
 		200141781BAEFBCA003E0950 /* DataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 200141771BAEFBCA003E0950 /* DataStore.swift */; settings = {ASSET_TAGS = (); }; };
 		200895C81BB1AB9E001444B4 /* bumm.png in Resources */ = {isa = PBXBuildFile; fileRef = 200895C71BB1AB9E001444B4 /* bumm.png */; settings = {ASSET_TAGS = (); }; };
+		20F6D01F1BB43E9100BF7384 /* MyParticle.sks in Resources */ = {isa = PBXBuildFile; fileRef = 20F6D01D1BB43E9100BF7384 /* MyParticle.sks */; settings = {ASSET_TAGS = (); }; };
+		20F6D0201BB43E9100BF7384 /* spark.png in Resources */ = {isa = PBXBuildFile; fileRef = 20F6D01E1BB43E9100BF7384 /* spark.png */; settings = {ASSET_TAGS = (); }; };
 		20F938F71BB2ECE700378744 /* background.png in Resources */ = {isa = PBXBuildFile; fileRef = 20F938F61BB2ECE700378744 /* background.png */; settings = {ASSET_TAGS = (); }; };
 /* End PBXBuildFile section */
 
@@ -136,6 +138,8 @@
 		200141751BAEFB4F003E0950 /* JGXLine.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JGXLine.swift; sourceTree = "<group>"; };
 		200141771BAEFBCA003E0950 /* DataStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataStore.swift; sourceTree = "<group>"; };
 		200895C71BB1AB9E001444B4 /* bumm.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bumm.png; sourceTree = "<group>"; };
+		20F6D01D1BB43E9100BF7384 /* MyParticle.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; name = MyParticle.sks; path = ../MyParticle.sks; sourceTree = "<group>"; };
+		20F6D01E1BB43E9100BF7384 /* spark.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = spark.png; path = ../spark.png; sourceTree = "<group>"; };
 		20F938F61BB2ECE700378744 /* background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = background.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -191,6 +195,7 @@
 		200140DC1BAEA96A003E0950 /* Flowers */ = {
 			isa = PBXGroup;
 			children = (
+				20F6D01D1BB43E9100BF7384 /* MyParticle.sks */,
 				2001410E1BAEAA82003E0950 /* GameScene.swift */,
 				200141751BAEFB4F003E0950 /* JGXLine.swift */,
 				200141721BAEF900003E0950 /* SpriteGame.swift */,
@@ -266,6 +271,7 @@
 			children = (
 				20F938F61BB2ECE700378744 /* background.png */,
 				200895C71BB1AB9E001444B4 /* bumm.png */,
+				20F6D01E1BB43E9100BF7384 /* spark.png */,
 				200141491BAEE3DC003E0950 /* aquarium.png */,
 				2001414A1BAEE3DC003E0950 /* finger.png */,
 				2001414B1BAEE3DC003E0950 /* Holz.png */,
@@ -417,10 +423,12 @@
 				200141271BAEB1F6003E0950 /* MyMusic.m4a in Resources */,
 				2001415C1BAEE3DC003E0950 /* restart.png in Resources */,
 				200141291BAEB1F6003E0950 /* Timeout.m4a in Resources */,
+				20F6D01F1BB43E9100BF7384 /* MyParticle.sks in Resources */,
 				200141211BAEB1F6003E0950 /* Do_1.m4a in Resources */,
 				200141661BAEE3DC003E0950 /* sprite8.png in Resources */,
 				200141251BAEB1F6003E0950 /* Lost.m4a in Resources */,
 				200141591BAEE3DC003E0950 /* aquarium.png in Resources */,
+				20F6D0201BB43E9100BF7384 /* spark.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

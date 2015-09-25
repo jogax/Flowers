@@ -47,7 +47,7 @@ class JGXLine {
         }
     }
     
-    let speed = 0.001
+    let speed = 0.002
     var line: Line
     var duration: Double = 0
     
@@ -135,19 +135,26 @@ class JGXLine {
                 intersectionPoint.y = self.line.a + self.line.b * intersectionPoint.x
                 let distanceFromPoint =  (intersectionPoint - self.line.fromPoint).length()
                 let distanceToPoint =  (intersectionPoint - self.line.toPoint).length()
-                if distanceFromPoint > distanceToPoint  && intersectionPoint.y >= self.frame.origin.y && intersectionPoint.y <= self.frame.origin.y + self.frame.height{
+                //let intersectionPointBetween = checkIfBetween(self.line.fromPoint, checkPoint:intersectionPoint, toPoint: self.line.toPoint)
+                if distanceFromPoint > distanceToPoint  && intersectionPoint.y >= self.frame.origin.y && intersectionPoint.y <= self.frame.origin.y + self.frame.height {
                     hasIntersection = true
-                }
+                } /*else if intersectionPointBetween {
+                    hasIntersection = true
+                }*/
+            
             case (.Normal, .Horizontal):
                 // for Horizontall line y is fix
                 // x = (y - a) / b
                 intersectionPoint.y = checkLine.fromPoint.y
                 intersectionPoint.x = (intersectionPoint.y - self.line.a) / self.line.b
+                //let intersectionPointBetween = checkIfBetween(self.line.fromPoint, checkPoint: intersectionPoint, toPoint: self.line.toPoint)
                 let distanceFromPoint =  (intersectionPoint - self.line.fromPoint).length()
                 let distanceToPoint =  (intersectionPoint - self.line.toPoint).length()
                 if distanceFromPoint > distanceToPoint && intersectionPoint.x >= self.frame.origin.x && intersectionPoint.x <= self.frame.origin.x + self.frame.width {
                     hasIntersection = true
-                }
+                }/*else if intersectionPointBetween {
+                    hasIntersection = true
+                }*/
             
                 
             default: hasIntersection = false
@@ -170,5 +177,16 @@ class JGXLine {
         let mirroredLine = JGXLine(fromPoint: self.line.toPoint, toPoint: mirroredPoint, inFrame: self.frame, lineSize: self.lineSize)
         return mirroredLine
     }
-
+/*
+    func checkIfBetween(fromPoint: CGPoint, checkPoint:CGPoint, toPoint: CGPoint) -> Bool {
+        let offset1 = checkPoint - fromPoint
+        let offset2 = toPoint - checkPoint
+        let offset = toPoint - fromPoint
+        
+        let xCount = offset1.x + offset2.x
+        let yCount = offset1.y + offset2.y
+        
+        return xCount == offset.x && yCount == offset.y
+    }
+*/
 }

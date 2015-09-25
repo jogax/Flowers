@@ -165,7 +165,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
     var gameArray = [[Bool]]() // true if Cell used
     var containers = [Container]()
     var colorTab = [ColorTabLine]()
-    let containersPosCorr = CGPointMake(GV.onIpad ? 0.98 : 0.98, GV.onIpad ? 0.85 : 0.80)
+    let containersPosCorr = CGPointMake(GV.onIpad ? 0.98 : 0.98, GV.onIpad ? 0.85 : 0.85)
     let levelPosKorr = CGPointMake(GV.onIpad ? 0.5 : 0.5, GV.onIpad ? 0.97 : 0.97)
     let gameScorePosKorr = CGPointMake(GV.onIpad ? 0.05 : 0.05, GV.onIpad ? 0.95 : 0.94)
     let levelScorePosKorr = CGPointMake(GV.onIpad ? 0.05 : 0.05, GV.onIpad ? 0.93 : 0.92)
@@ -516,8 +516,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             sprite.size.height = spriteSize
 //            let yKorr1: CGFloat = GV.onIpad ? 0.9 : 0.8
 //            let yKorr2: CGFloat = GV.onIpad ? 1.8 : 2.0
-            let yKorr1: CGFloat = GV.onIpad ? 0.5 : 0.5
-            let yKorr2: CGFloat = GV.onIpad ? 0.8 : 0.9
+            let yKorr1: CGFloat = GV.onIpad ? 0.8 : 1.0
+            let yKorr2: CGFloat = GV.onIpad ? 0.8 : 1.0
 
             let index = GV.random(0, max: positionsTab.count - 1)
             let (aktColumn, aktRow) = positionsTab[index]
@@ -794,19 +794,41 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
 
                 let countAndPushAction = SKAction.runBlock({
                     self.push(sprite, status: .Mirrored)
-                    sprite.hitCounter = Int(CGFloat(sprite.hitCounter) * 1.5)
+                    sprite.hitCounter *= 2
                 })
 
                 let actionMove = SKAction.moveTo(pointOnTheWall, duration: line.duration)
                 let actionMove1 = SKAction.moveTo(pointOnTheWall1, duration: mirroredLine1.duration)
                 let actionMove2 = SKAction.moveTo(pointOnTheWall2, duration: mirroredLine2.duration)
+
                 let actionMove3 = SKAction.moveTo(pointOnTheWall3, duration: mirroredLine2.duration)
-                let actionMoveDone = SKAction.removeFromParent()
                
+                let waitSparkAction = SKAction.runBlock({
+                    sprite.hidden = true
+                    sleep(0)
+                    sprite.removeFromParent()
+                })
                 let actionMoveStopped =  SKAction.runBlock({
                     self.push(sprite, status: .Removed)
-                    sprite.size = CGSizeMake(sprite.size.width / 3, sprite.size.height / 3)
+                    sprite.hidden = true
+                    self.gameArray[sprite.column][sprite.row] = false
+                    //sprite.size = CGSizeMake(sprite.size.width / 3, sprite.size.height / 3)
+                    sprite.colorBlendFactor = 4
                     self.playSound("Drop", volume: 0.03)
+                    let sparkEmitter = SKEmitterNode(fileNamed: "MyParticle.sks")
+                    sparkEmitter?.position = sprite.position
+                    sparkEmitter?.zPosition = 1
+                    sparkEmitter?.particleLifetime = 1
+                    let emitterDuration = CGFloat(sparkEmitter!.numParticlesToEmit) * sparkEmitter!.particleLifetime
+                    
+                    let wait = SKAction.waitForDuration(NSTimeInterval(emitterDuration))
+                    
+                    let remove = SKAction.runBlock({sparkEmitter!.removeFromParent(); print("Emitter removed")})
+                    sparkEmitter!.runAction(SKAction.sequence([wait, remove]))
+                    self.addChild(sparkEmitter!)
+                    self.userInteractionEnabled = true
+
+                    
                 })
                 
                 
@@ -820,7 +842,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
                 countMovingSprites = 1
                 self.waitForSKActionEnded = NSTimer.scheduledTimerWithTimeInterval(0.1, target: self, selector: Selector("checkCountMovingSprites"), userInfo: nil, repeats: false) // start timer for check
 
-                movedFromNode.runAction(SKAction.sequence([actionMove, countAndPushAction, actionMove1, countAndPushAction, actionMove2, countAndPushAction, actionMove3, actionMoveStopped, actionMoveDone]))
+                movedFromNode.runAction(SKAction.sequence([actionMove, countAndPushAction, actionMove1, countAndPushAction, actionMove2, countAndPushAction, actionMove3, actionMoveStopped,
+                    waitSparkAction]))
+                    //actionMoveDone]))
             }
 
         }
@@ -1104,9 +1128,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         let usedCellCount = checkGameArray()
 
         if usedCellCount == 0 || levelScore > targetScore { // Level completed, start a new game
-            countDown!.invalidate()
-            countDown = nil
-            playSound("Lost", volume: 0.03)
+            if countDown != nil {
+                countDown!.invalidate()
+                countDown = nil
+                playSound("Lost", volume: 0.03)
+            }
             
             if levelScore < targetScore {
                 countLostGames++
@@ -1129,7 +1155,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             } else {
                 
                 let alert = UIAlertController(title: GV.language.getText(.TCLevelComplete),
-                    message: GV.language.getText(TextConstants.TCNoMessage),
+                    message: GV.language.getText(TextConstants.TCCongratulations),
                     preferredStyle: .Alert)
                 let cancelAction = UIAlertAction(title: GV.language.getText(.TCReturn), style: .Cancel, handler: nil)
                 let againAction = UIAlertAction(title: GV.language.getText(TextConstants.TCNextLevel), style: .Default,

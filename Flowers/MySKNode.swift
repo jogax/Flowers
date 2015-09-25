@@ -12,11 +12,7 @@ enum MySKNodeType: Int {
 import SpriteKit
 
 class MySKNode: SKSpriteNode {
-    var hitCounter: Int {
-        didSet {
-            //hitLabel.text = "\(hitCounter)"
-        }
-    }
+    var hitCounter = 0
     var column = 0
     var row = 0
     var colorIndex = 0

@@ -61,6 +61,7 @@
 		20F6D01F1BB43E9100BF7384 /* MyParticle.sks in Resources */ = {isa = PBXBuildFile; fileRef = 20F6D01D1BB43E9100BF7384 /* MyParticle.sks */; settings = {ASSET_TAGS = (); }; };
 		20F6D0201BB43E9100BF7384 /* spark.png in Resources */ = {isa = PBXBuildFile; fileRef = 20F6D01E1BB43E9100BF7384 /* spark.png */; settings = {ASSET_TAGS = (); }; };
 		20F938F71BB2ECE700378744 /* background.png in Resources */ = {isa = PBXBuildFile; fileRef = 20F938F61BB2ECE700378744 /* background.png */; settings = {ASSET_TAGS = (); }; };
+		20FAABE71BB6AC0200327C28 /* bgImage.png in Resources */ = {isa = PBXBuildFile; fileRef = 20FAABE61BB6AC0200327C28 /* bgImage.png */; settings = {ASSET_TAGS = (); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -141,6 +142,7 @@
 		20F6D01D1BB43E9100BF7384 /* MyParticle.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; name = MyParticle.sks; path = ../MyParticle.sks; sourceTree = "<group>"; };
 		20F6D01E1BB43E9100BF7384 /* spark.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = spark.png; path = ../spark.png; sourceTree = "<group>"; };
 		20F938F61BB2ECE700378744 /* background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = background.png; sourceTree = "<group>"; };
+		20FAABE61BB6AC0200327C28 /* bgImage.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bgImage.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -270,6 +272,7 @@
 			isa = PBXGroup;
 			children = (
 				20F938F61BB2ECE700378744 /* background.png */,
+				20FAABE61BB6AC0200327C28 /* bgImage.png */,
 				200895C71BB1AB9E001444B4 /* bumm.png */,
 				20F6D01E1BB43E9100BF7384 /* spark.png */,
 				200141491BAEE3DC003E0950 /* aquarium.png */,
@@ -418,6 +421,7 @@
 				2001415A1BAEE3DC003E0950 /* finger.png in Resources */,
 				200141611BAEE3DC003E0950 /* sprite3.png in Resources */,
 				200140E81BAEA96A003E0950 /* Assets.xcassets in Resources */,
+				20FAABE71BB6AC0200327C28 /* bgImage.png in Resources */,
 				200140E31BAEA96A003E0950 /* Main.storyboard in Resources */,
 				2001415E1BAEE3DC003E0950 /* sprite0.png in Resources */,
 				200141271BAEB1F6003E0950 /* MyMusic.m4a in Resources */,

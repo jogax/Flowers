@@ -189,6 +189,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
     var spriteCount = 0
     var stopped = true
     var collisionActive = false
+    var bgImage: SKSpriteNode?
+    var bgAdder: CGFloat = 0
+    let showHelpLines = 1
     
 
 //    let deviceIndex = GV.onIpad ? 0 : 1
@@ -392,12 +395,15 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         targetScoreLabel.text = "\(targetScoreText) \(targetScore)"
         self.addChild(targetScoreLabel)
         
-        let bgImage = SKSpriteNode(imageNamed: "background.png")
-        print("\(self.size)")
-        bgImage.position = CGPointMake(size.width/2, size.height/2)
-        bgImage.size = CGSizeMake(self.size.width, self.size.height)
-        bgImage.zPosition = -1000
-        self.addChild(bgImage)
+        bgImage = SKSpriteNode(imageNamed: "bgImage.png")
+        print("ImageSize: \(bgImage?.size)")
+        bgAdder = 0.1
+        
+        bgImage!.anchorPoint = CGPointZero
+        bgImage!.position = CGPointMake(0, 0)
+        bgImage!.zPosition = -15
+        self.addChild(bgImage!)
+        
 
         let restartTextureNormal = SKTexture(imageNamed: "restart")
 
@@ -661,15 +667,15 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
                     nodeOnTheWall.name = "nodeOnTheWall"
                     nodeOnTheWall.position = pointOnTheWall
                     nodeOnTheWall.size = movedFromNode.size
-                    self.addChild(nodeOnTheWall)
+                    //self.addChild(nodeOnTheWall)
                     
-                    makeHelpLine(movedFromNode.position, toPoint: pointOnTheWall, lineWidth: movedFromNode.size.width)
+                    makeHelpLine(movedFromNode.position, toPoint: pointOnTheWall, lineWidth: movedFromNode.size.width, numberOfLine: 1)
                     
 
                     
                     
                     let mirroredLine = line.createMirroredLine()
-                    makeHelpLine(mirroredLine.line.fromPoint, toPoint: mirroredLine.line.toPoint, lineWidth: movedFromNode.size.width)
+                    makeHelpLine(mirroredLine.line.fromPoint, toPoint: mirroredLine.line.toPoint, lineWidth: movedFromNode.size.width, numberOfLine: 2)
 
                     let pointOnTheWall1 = mirroredLine.line.toPoint
                     //let pointOnTheWall = findPointOnTheWall(movedFromNode.position, pointTo: touchLocation, nodeSize: movedFromNode.size)
@@ -680,7 +686,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
                     //self.addChild(nodeOnTheWall1)
 
                     let mirroredLine2 = mirroredLine.createMirroredLine()
-                    makeHelpLine(mirroredLine2.line.fromPoint, toPoint: mirroredLine2.line.toPoint, lineWidth: movedFromNode.size.width)
+                    makeHelpLine(mirroredLine2.line.fromPoint, toPoint: mirroredLine2.line.toPoint, lineWidth: movedFromNode.size.width, numberOfLine: 3)
                     
                     let pointOnTheWall2 = mirroredLine.line.toPoint
                     //let pointOnTheWall = findPointOnTheWall(movedFromNode.position, pointTo: touchLocation, nodeSize: movedFromNode.size)
@@ -691,7 +697,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
                     //self.addChild(nodeOnTheWall2)
  
                     let mirroredLine3 = mirroredLine2.createMirroredLine()
-                    makeHelpLine(mirroredLine3.line.fromPoint, toPoint: mirroredLine3.line.toPoint, lineWidth: movedFromNode.size.width)
+                    makeHelpLine(mirroredLine3.line.fromPoint, toPoint: mirroredLine3.line.toPoint, lineWidth: movedFromNode.size.width, numberOfLine: 4)
 
                     var bummTexture = SKTexture()
                     bummTexture = SKTexture(imageNamed: "bumm")
@@ -700,7 +706,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
                     nodeOnTheWall3.name = "nodeOnTheWall"
                     nodeOnTheWall3.position = pointOnTheWall3
                     nodeOnTheWall3.size = movedFromNode.size
-                    self.addChild(nodeOnTheWall3)
+                    //self.addChild(nodeOnTheWall3)
                 }
             }
             
@@ -851,35 +857,46 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
     }
     
 
-    func makeHelpLine(fromPoint: CGPoint, toPoint: CGPoint, lineWidth: CGFloat) {
-        //print("makeHelpLine: fromPoint: \(fromPoint), toPoint: \(toPoint)")
-        let offset = toPoint - fromPoint
-        let direction = offset.normalized()
-        let shootAmount = direction * 1200
-        let realDest = shootAmount + fromPoint
-        
-        let pathToDraw:CGMutablePathRef = CGPathCreateMutable()
-        let myLine:SKShapeNode = SKShapeNode(path:pathToDraw)
-        myLine.lineWidth = lineWidth
-        
-        myLine.name = "myLine"
-        CGPathMoveToPoint(pathToDraw, nil, fromPoint.x, fromPoint.y)
-        CGPathAddLineToPoint(pathToDraw, nil, realDest.x, realDest.y)
-        
-        myLine.path = pathToDraw
-        //let name = fromPoint.name!
-        //let colorIndex = name.toInt()! - 100
-        //let colorIndex = fromPoint.colorIndex
-        
-        myLine.strokeColor = SKColor(red: 1.0, green: 0, blue: 0, alpha: 0.15) // GV.colorSets[GV.colorSetIndex][colorIndex + 1]
-        
-        
-        self.addChild(myLine)
+    func makeHelpLine(fromPoint: CGPoint, toPoint: CGPoint, lineWidth: CGFloat, numberOfLine: Int) {
+        if showHelpLines >= numberOfLine {
+            //print("makeHelpLine: fromPoint: \(fromPoint), toPoint: \(toPoint)")
+            let offset = toPoint - fromPoint
+            let direction = offset.normalized()
+            let shootAmount = direction * 1200
+            let realDest = shootAmount + fromPoint
+            
+            let pathToDraw:CGMutablePathRef = CGPathCreateMutable()
+            let myLine:SKShapeNode = SKShapeNode(path:pathToDraw)
+            myLine.lineWidth = lineWidth
+            
+            myLine.name = "myLine"
+            CGPathMoveToPoint(pathToDraw, nil, fromPoint.x, fromPoint.y)
+            CGPathAddLineToPoint(pathToDraw, nil, realDest.x, realDest.y)
+            
+            myLine.path = pathToDraw
+            //let name = fromPoint.name!
+            //let colorIndex = name.toInt()! - 100
+            //let colorIndex = fromPoint.colorIndex
+            
+            myLine.strokeColor = SKColor(red: 1.0, green: 0, blue: 0, alpha: 0.15) // GV.colorSets[GV.colorSetIndex][colorIndex + 1]
+            
+            
+            self.addChild(myLine)
+        }
     }
     
-//    override func update(currentTime: NSTimeInterval) {
-//        print("in update:\(currentTime)")
-//    }
+    override func update(currentTime: NSTimeInterval) {
+        backgroudScrollUpdate()
+    }
+
+    func backgroudScrollUpdate(){
+        
+        bgImage!.position = CGPointMake(bgImage!.position.x - bgAdder, bgImage!.position.y)
+        
+        if bgImage!.position.x <= -bgImage!.size.width + self.size.width  || bgImage!.position.x >= 0 {
+            bgAdder = -bgAdder
+        }
+    }
 
     func showScore() {
         levelScore = 0

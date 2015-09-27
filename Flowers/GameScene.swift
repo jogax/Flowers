@@ -191,8 +191,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
     var collisionActive = false
     var bgImage: SKSpriteNode?
     var bgAdder: CGFloat = 0
-    let showHelpLines = 1
-    
+    let showHelpLines = 2
 
 //    let deviceIndex = GV.onIpad ? 0 : 1
     var buttonField: SKSpriteNode?
@@ -314,13 +313,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             containers[index].mySKNode.position = CGPoint(x: centerX, y: centerY)
             containers[index].mySKNode.size.width = containerSize
             containers[index].mySKNode.size.height = containerSize
+            
             containers[index].label.text = "0"
             containers[index].label.fontSize = 20;
-            //containers[index].label.fontName = "ArielBold"
-            containers[index].label.position = CGPointMake(CGRectGetMidX(containers[index].mySKNode.frame), CGRectGetMidY(containers[index].mySKNode.frame) * 1.05)
+            containers[index].label.fontName = "ArielBold"
+            containers[index].label.position = CGPointMake(CGRectGetMidX(containers[index].mySKNode.frame), CGRectGetMidY(containers[index].mySKNode.frame) * 1.03)
             containers[index].label.name = "label"
             containers[index].label.fontColor = SKColor.blackColor()
-            //self.addChild(containers[index].label)
+            self.addChild(containers[index].label)
             
             containers[index].mySKNode.colorIndex = index
             containers[index].mySKNode.physicsBody = SKPhysicsBody(circleOfRadius: containers[index].mySKNode.size.width / 3) // 1
@@ -396,7 +396,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         self.addChild(targetScoreLabel)
         
         bgImage = SKSpriteNode(imageNamed: "bgImage.png")
-        print("ImageSize: \(bgImage?.size)")
+        //print("ImageSize: \(bgImage?.size)")
         bgAdder = 0.1
         
         bgImage!.anchorPoint = CGPointZero
@@ -619,7 +619,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
                     addChild(fingerNode)
                 }
 
-            case MyNodeTypes.ContainerNode: movedFromNode = nil
+            case MyNodeTypes.ContainerNode:
+                movedFromNode = nil
+            
             case MyNodeTypes.ButtonNode:
                 movedFromNode = self.nodeAtPoint(touchLocation) as! MySKNode
                 let textureName = "\(testNode.name!)Pressed"
@@ -654,22 +656,22 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
                     movedFromNode.texture = SKTexture(imageNamed: "\(movedFromNode.name!)")
                 } else {
                     let line = JGXLine(fromPoint: movedFromNode.position, toPoint: touchLocation, inFrame: self.frame, lineSize: movedFromNode.size.width)
-
-                    let intersectNode = MySKNode(texture: movedFromNode.texture!, type: .SpriteType)
-                    intersectNode.name = "nodeOnTheWall"
-                    intersectNode.position = line.line.toPoint
-                    intersectNode.size = movedFromNode.size
-                    self.addChild(intersectNode)
-                    
-                    
                     let pointOnTheWall = line.line.toPoint
-                    let nodeOnTheWall = MySKNode(texture: movedFromNode.texture!, type: .SpriteType)
-                    nodeOnTheWall.name = "nodeOnTheWall"
-                    nodeOnTheWall.position = pointOnTheWall
-                    nodeOnTheWall.size = movedFromNode.size
-                    //self.addChild(nodeOnTheWall)
-                    
                     makeHelpLine(movedFromNode.position, toPoint: pointOnTheWall, lineWidth: movedFromNode.size.width, numberOfLine: 1)
+
+//                    let intersectNode = MySKNode(texture: movedFromNode.texture!, type: .SpriteType)
+//                    intersectNode.name = "nodeOnTheWall"
+//                    intersectNode.position = line.line.toPoint
+//                    intersectNode.size = movedFromNode.size
+//                    self.addChild(intersectNode)
+//                    
+//                    
+//                    let nodeOnTheWall = MySKNode(texture: movedFromNode.texture!, type: .SpriteType)
+//                    nodeOnTheWall.name = "nodeOnTheWall"
+//                    nodeOnTheWall.position = pointOnTheWall
+//                    nodeOnTheWall.size = movedFromNode.size
+//                    self.addChild(nodeOnTheWall)
+                    
                     
 
                     
@@ -677,36 +679,37 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
                     let mirroredLine = line.createMirroredLine()
                     makeHelpLine(mirroredLine.line.fromPoint, toPoint: mirroredLine.line.toPoint, lineWidth: movedFromNode.size.width, numberOfLine: 2)
 
-                    let pointOnTheWall1 = mirroredLine.line.toPoint
-                    //let pointOnTheWall = findPointOnTheWall(movedFromNode.position, pointTo: touchLocation, nodeSize: movedFromNode.size)
-                    let nodeOnTheWall1 = MySKNode(texture: movedFromNode.texture!, type: .SpriteType)
-                    nodeOnTheWall1.name = "nodeOnTheWall"
-                    nodeOnTheWall1.position = pointOnTheWall1
-                    nodeOnTheWall1.size = movedFromNode.size
-                    //self.addChild(nodeOnTheWall1)
+//                    let pointOnTheWall1 = mirroredLine.line.toPoint
+                    
+//                    let pointOnTheWall = findPointOnTheWall(movedFromNode.position, pointTo: touchLocation, nodeSize: movedFromNode.size)
+//                    let nodeOnTheWall1 = MySKNode(texture: movedFromNode.texture!, type: .SpriteType)
+//                    nodeOnTheWall1.name = "nodeOnTheWall"
+//                    nodeOnTheWall1.position = pointOnTheWall1
+//                    nodeOnTheWall1.size = movedFromNode.size
+//                    self.addChild(nodeOnTheWall1)
 
                     let mirroredLine2 = mirroredLine.createMirroredLine()
                     makeHelpLine(mirroredLine2.line.fromPoint, toPoint: mirroredLine2.line.toPoint, lineWidth: movedFromNode.size.width, numberOfLine: 3)
                     
-                    let pointOnTheWall2 = mirroredLine.line.toPoint
-                    //let pointOnTheWall = findPointOnTheWall(movedFromNode.position, pointTo: touchLocation, nodeSize: movedFromNode.size)
-                    let nodeOnTheWall2 = MySKNode(texture: movedFromNode.texture!, type: .SpriteType)
-                    nodeOnTheWall2.name = "nodeOnTheWall"
-                    nodeOnTheWall2.position = pointOnTheWall2
-                    nodeOnTheWall2.size = movedFromNode.size
-                    //self.addChild(nodeOnTheWall2)
+//                    let pointOnTheWall2 = mirroredLine.line.toPoint
+//                    let pointOnTheWall = findPointOnTheWall(movedFromNode.position, pointTo: touchLocation, nodeSize: movedFromNode.size)
+//                    let nodeOnTheWall2 = MySKNode(texture: movedFromNode.texture!, type: .SpriteType)
+//                    nodeOnTheWall2.name = "nodeOnTheWall"
+//                    nodeOnTheWall2.position = pointOnTheWall2
+//                    nodeOnTheWall2.size = movedFromNode.size
+//                    self.addChild(nodeOnTheWall2)
  
                     let mirroredLine3 = mirroredLine2.createMirroredLine()
                     makeHelpLine(mirroredLine3.line.fromPoint, toPoint: mirroredLine3.line.toPoint, lineWidth: movedFromNode.size.width, numberOfLine: 4)
 
-                    var bummTexture = SKTexture()
-                    bummTexture = SKTexture(imageNamed: "bumm")
-                    let pointOnTheWall3 = mirroredLine3.line.toPoint
-                    let nodeOnTheWall3 = MySKNode(texture: bummTexture, type: .SpriteType)
-                    nodeOnTheWall3.name = "nodeOnTheWall"
-                    nodeOnTheWall3.position = pointOnTheWall3
-                    nodeOnTheWall3.size = movedFromNode.size
-                    //self.addChild(nodeOnTheWall3)
+//                    var bummTexture = SKTexture()
+//                    bummTexture = SKTexture(imageNamed: "bumm")
+//                    let pointOnTheWall3 = mirroredLine3.line.toPoint
+//                    let nodeOnTheWall3 = MySKNode(texture: bummTexture, type: .SpriteType)
+//                    nodeOnTheWall3.name = "nodeOnTheWall"
+//                    nodeOnTheWall3.position = pointOnTheWall3
+//                    nodeOnTheWall3.size = movedFromNode.size
+//                    self.addChild(nodeOnTheWall3)
                 }
             }
             
@@ -801,6 +804,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
                 let countAndPushAction = SKAction.runBlock({
                     self.push(sprite, status: .Mirrored)
                     sprite.hitCounter *= 2
+                    sprite.hitLabel.text = "\(sprite.hitCounter)"
                 })
 
                 let actionMove = SKAction.moveTo(pointOnTheWall, duration: line.duration)
@@ -829,7 +833,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
                     
                     let wait = SKAction.waitForDuration(NSTimeInterval(emitterDuration))
                     
-                    let remove = SKAction.runBlock({sparkEmitter!.removeFromParent(); print("Emitter removed")})
+                    let remove = SKAction.runBlock({sparkEmitter!.removeFromParent()/*; print("Emitter removed")*/})
                     sparkEmitter!.runAction(SKAction.sequence([wait, remove]))
                     self.addChild(sparkEmitter!)
                     self.userInteractionEnabled = true
@@ -902,6 +906,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         levelScore = 0
         for index in 0..<containers.count {
             levelScore += containers[index].mySKNode.hitCounter
+            containers[index].label.text = "\(containers[index].mySKNode.hitCounter)"
         }
         let levelScoreText: String = GV.language.getText(.TCLevelScore)
         levelScoreLabel.text = "\(levelScoreText) \(levelScore)"
@@ -981,9 +986,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             push(movingSprite, status: .Removed)
             
             sprite.hitCounter = movingSprite.hitCounter + sprite.hitCounter
-            let aktSize = spriteSize + 1.2 * CGFloat(sprite.hitCounter)
-            sprite.size.width = aktSize
-            sprite.size.height = aktSize
+            sprite.hitLabel.text = "\(sprite.hitCounter)"
+
+//            let aktSize = spriteSize + 1.2 * CGFloat(sprite.hitCounter)
+//            sprite.size.width = aktSize
+//            sprite.size.height = aktSize
             playSound("Sprite1", volume: 0.03)
             
             gameArray[movingSprite.column][movingSprite.row] = false
@@ -1279,6 +1286,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
                     sprite.column = savedSpriteInCycle.column
                     sprite.row = savedSpriteInCycle.row
                     sprite.hitCounter = savedSpriteInCycle.hitCounter
+                    sprite.hitLabel.text = "\(sprite.hitCounter)"
                     sprite.name = savedSpriteInCycle.name
                     gameArray[savedSpriteInCycle.column][savedSpriteInCycle.row] = true
                     addPhysicsBody(sprite)
@@ -1291,6 +1299,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
                     let sprite = self.childNodeWithName(savedSpriteInCycle.name)! as! MySKNode
                     sprite.hitCounter = savedSpriteInCycle.hitCounter
                     sprite.size = savedSpriteInCycle.size
+                    sprite.hitLabel.text = "\(sprite.hitCounter)"
 
                 case .HitcounterChanged:
                     containers[savedSpriteInCycle.colorIndex].mySKNode.hitCounter = savedSpriteInCycle.hitCounter
@@ -1299,6 +1308,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
                 case .MovingStarted:
                     let sprite = self.childNodeWithName(savedSpriteInCycle.name)! as! MySKNode
                     sprite.hitCounter = savedSpriteInCycle.hitCounter
+                    sprite.hitLabel.text = "\(sprite.hitCounter)"
                     sprite.startPosition = savedSpriteInCycle.startPosition
                     actionMoveArray.append(SKAction.moveTo(savedSpriteInCycle.endPosition, duration: duration))
                     sprite.runAction(SKAction.sequence(actionMoveArray))

@@ -19,25 +19,30 @@ class MySKNode: SKSpriteNode {
     var startPosition = CGPointZero
     
     let type: MySKNodeType
-    //var hitLabel = SKLabelNode()
+    var hitLabel = SKLabelNode()
     
 
     init(texture: SKTexture, type:MySKNodeType) {
         self.type = type
         hitCounter = type == .ContainerType ? 0 : 1  // Sprites have a Startvalue 1
         super.init(texture: texture, color: UIColor.clearColor(), size: texture.size())
-        /*
-        hitLabel.position = self.position
+      
+        hitLabel.position = CGPointMake(self.position.x, self.position.y + self.size.height * 0.04)
+        //hitLabel.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMaxY(self.frame) * 0.08)
+
         //hitLabel.size = self.size
         hitLabel.fontSize = 15;
+        
         hitLabel.fontName = "ArielBold"
         hitLabel.fontColor = SKColor.blackColor()
         hitLabel.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.Center
-        hitLabel.verticalAlignmentMode = SKLabelVerticalAlignmentMode.Center
+        //hitLabel.verticalAlignmentMode = SKLabelVerticalAlignmentMode.Center
         hitLabel.text = "\(hitCounter)"
         hitLabel.userInteractionEnabled = false
-        self.addChild(hitLabel)
-*/
+        if type == .SpriteType {
+           self.addChild(hitLabel)
+        }
+
     }
 
     required init?(coder aDecoder: NSCoder) {

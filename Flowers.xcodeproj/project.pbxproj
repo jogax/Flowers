@@ -61,6 +61,7 @@
 		20F6D01F1BB43E9100BF7384 /* MyParticle.sks in Resources */ = {isa = PBXBuildFile; fileRef = 20F6D01D1BB43E9100BF7384 /* MyParticle.sks */; settings = {ASSET_TAGS = (); }; };
 		20F6D0201BB43E9100BF7384 /* spark.png in Resources */ = {isa = PBXBuildFile; fileRef = 20F6D01E1BB43E9100BF7384 /* spark.png */; settings = {ASSET_TAGS = (); }; };
 		20F938F71BB2ECE700378744 /* background.png in Resources */ = {isa = PBXBuildFile; fileRef = 20F938F61BB2ECE700378744 /* background.png */; settings = {ASSET_TAGS = (); }; };
+		20FA8BB71BB95A9C00CCFA3F /* frozen.png in Resources */ = {isa = PBXBuildFile; fileRef = 20FA8BB61BB95A9C00CCFA3F /* frozen.png */; settings = {ASSET_TAGS = (); }; };
 		20FAABE71BB6AC0200327C28 /* bgImage.png in Resources */ = {isa = PBXBuildFile; fileRef = 20FAABE61BB6AC0200327C28 /* bgImage.png */; settings = {ASSET_TAGS = (); }; };
 /* End PBXBuildFile section */
 
@@ -142,6 +143,7 @@
 		20F6D01D1BB43E9100BF7384 /* MyParticle.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; name = MyParticle.sks; path = ../MyParticle.sks; sourceTree = "<group>"; };
 		20F6D01E1BB43E9100BF7384 /* spark.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = spark.png; path = ../spark.png; sourceTree = "<group>"; };
 		20F938F61BB2ECE700378744 /* background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = background.png; sourceTree = "<group>"; };
+		20FA8BB61BB95A9C00CCFA3F /* frozen.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = frozen.png; sourceTree = "<group>"; };
 		20FAABE61BB6AC0200327C28 /* bgImage.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bgImage.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -271,6 +273,7 @@
 		200141481BAEE358003E0950 /* Pictures */ = {
 			isa = PBXGroup;
 			children = (
+				20FA8BB61BB95A9C00CCFA3F /* frozen.png */,
 				20F938F61BB2ECE700378744 /* background.png */,
 				20FAABE61BB6AC0200327C28 /* bgImage.png */,
 				200895C71BB1AB9E001444B4 /* bumm.png */,
@@ -399,6 +402,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				200141231BAEB1F6003E0950 /* Drop.m4a in Resources */,
+				20FA8BB71BB95A9C00CCFA3F /* frozen.png in Resources */,
 				20F938F71BB2ECE700378744 /* background.png in Resources */,
 				200141621BAEE3DC003E0950 /* sprite4.png in Resources */,
 				200141201BAEB1F6003E0950 /* Container.m4a in Resources */,

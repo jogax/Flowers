@@ -7,7 +7,7 @@
 //
 
 enum MySKNodeType: Int {
-    case SpriteType = 0, MovingSpriteType, ContainerType, ButtonType
+    case SpriteType = 0, FrozenSprite, MovingSpriteType, ContainerType, ButtonType
 }
 import SpriteKit
 
@@ -20,6 +20,7 @@ class MySKNode: SKSpriteNode {
     
     let type: MySKNodeType
     var hitLabel = SKLabelNode()
+    var frozen = SKSpriteNode(imageNamed: "frozen.png" )
     
 
     init(texture: SKTexture, type:MySKNodeType) {
@@ -39,8 +40,17 @@ class MySKNode: SKSpriteNode {
         //hitLabel.verticalAlignmentMode = SKLabelVerticalAlignmentMode.Center
         hitLabel.text = "\(hitCounter)"
         hitLabel.userInteractionEnabled = false
+        
+        if type == .FrozenSprite {
+            frozen.position = self.position
+            frozen.size = CGSizeMake(30, 30)
+            frozen.zPosition = 100
+            frozen.colorBlendFactor = 0.5
+            self.addChild(frozen)
+        }
+        
         if type == .SpriteType {
-           self.addChild(hitLabel)
+            self.addChild(hitLabel)
         }
 
     }

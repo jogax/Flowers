@@ -192,6 +192,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
     var bgImage: SKSpriteNode?
     var bgAdder: CGFloat = 0
     let showHelpLines = 2
+    var undoCount = 0
+    var inFirstGenerateSprites = true
+    var lastShownNode: MySKNode?
 
 //    let deviceIndex = GV.onIpad ? 0 : 1
     var buttonField: SKSpriteNode?
@@ -245,6 +248,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
 
         myView = view
         levelsForPlayWithSprites.setAktLevel(levelIndex)
+
         prepareNextGame()
         generateSprites()
 
@@ -279,6 +283,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         
         gameArray.removeAll(keepCapacity: false)
         containers.removeAll(keepCapacity: false)
+        undoCount = 3
 
         for _ in 0..<countRows {
             gameArray.append(Array(count: countRows, repeatedValue:false))
@@ -436,6 +441,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         makeLineAroundGameboard(.RightVertical)
         makeLineAroundGameboard(.BottomHorizontal)
         makeLineAroundGameboard(.LeftVertical)
+        self.inFirstGenerateSprites = true
     }
     
 
@@ -493,7 +499,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
     }
 
     func generateSprites() {
-        
+        var first = inFirstGenerateSprites
         var positionsTab = [(Int, Int)]() // all available Positions
         for column in 0..<countColumns {
             for row in 0..<countRows {
@@ -538,12 +544,21 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             sprite.row = aktRow
             sprite.name = spriteName
             sprite.colorIndex = colorIndex
-            
+            if first {
+                lastShownNode = sprite
+                first = false
+            } else if inFirstGenerateSprites {
+                sprite.hidden = true
+            }
             addPhysicsBody(sprite)
             push(sprite, status: .Added)
             addChild(sprite)
         }
         stopped = false
+    }
+    
+    func waitForTap() -> Bool {
+        return true
     }
 
     func addPhysicsBody(sprite: MySKNode) {
@@ -599,6 +614,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
 
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?)
     {
+        if inFirstGenerateSprites {
+            return
+        }
         //let countTouches = touches.count
         let firstTouch = touches.first
         let touchLocation = firstTouch!.locationInNode(self)
@@ -632,6 +650,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
     }
 
     override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?) {
+        if inFirstGenerateSprites {
+            return
+        }
         if movedFromNode != nil {
             while self.childNodeWithName("myLine") != nil {
                 self.childNodeWithName("myLine")!.removeFromParent()
@@ -730,14 +751,18 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         while self.childNodeWithName("nodeOnTheWall") != nil {
             self.childNodeWithName("nodeOnTheWall")!.removeFromParent()
         }
+        let firstTouch = touches.first
+        let touchLocation = firstTouch!.locationInNode(self)
+        if self.inFirstGenerateSprites {
+            showNextSprite(touchLocation)
+        }
         if movedFromNode != nil && !stopped {
             //let countTouches = touches.count
-            let firstTouch = touches.first
-            let touchLocation = firstTouch!.locationInNode(self)
             let testNode = self.nodeAtPoint(touchLocation)
             
             let aktNodeType = analyzeNode(testNode)
             var aktNode: SKNode? = nil
+
             let startNode = movedFromNode
             switch aktNodeType {
                 case MyNodeTypes.LabelNode: aktNode = self.nodeAtPoint(touchLocation).parent as! MySKNode
@@ -886,6 +911,29 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             
             
             self.addChild(myLine)
+        }
+    }
+    
+    func showNextSprite(touchLocation:  CGPoint) {
+        print("\(inFirstGenerateSprites)")
+        let aktNode = self.nodeAtPoint(touchLocation)
+        if aktNode.name == lastShownNode!.name {
+            undoCount++
+            for index in 0..<self.children.count {
+                if self.children[index].hidden {
+                    lastShownNode = self.children[index] as? MySKNode
+                    self.children[index].hidden = false
+                    return
+                }
+            }
+            inFirstGenerateSprites = false
+        } else {
+            inFirstGenerateSprites = false
+            for index in 0..<self.children.count {
+                if self.children[index].hidden {
+                    self.children[index].hidden = false
+                }
+            }
         }
     }
     

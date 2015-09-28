@@ -29,8 +29,9 @@ class LevelsForPlayWithSprites {
     var aktLevel: LevelParam
     let levelChanges = [
         "5,0,10,0,0,0,0,0,0,0,0",    // 5 times CountSpritesProContainer += 10
+        "1,0,0,1,1,0,0,0,0,1,-1",     // 1 time CountColumns += 1, CountRows += 1, TargetScoreCorr += 1
         "5,0,5,0,0,5,0,0,0,1,0",     // 5 times CountSpritesProContainer += 5, MinProzent += 5, TargetScoreCorr += 1
-        "1,0,0,1,1,0,0,0,0,1,0",     // 1 time CountColumns += 1, CountRows += 1, TargetScoreCorr += 1
+        "1,0,0,1,1,0,0,0,0,1,-1",     // 1 time CountColumns += 1, CountRows += 1, TargetScoreCorr += 1
         "5,0,5,0,0,0,5,0,0,0,0",     // 5 times MinProzent -= 3, MaxProzent += 5
         "2,0,10,0,0,0,0,0,0,0,0",    // 2 times CountSpritesProContainer += 5
         "1,0,0,1,1,0,0,0,0,1,0",     // 1 time CountColumns += 1, CountRows += 1, TargetScoreCorr += 1

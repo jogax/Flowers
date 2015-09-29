@@ -755,6 +755,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         let touchLocation = firstTouch!.locationInNode(self)
         if self.inFirstGenerateSprites {
             showNextSprite(touchLocation)
+            return
         }
         if movedFromNode != nil && !stopped {
             //let countTouches = touches.count
@@ -934,6 +935,27 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
                     self.children[index].hidden = false
                 }
             }
+            print ("Start!")
+            let atlas = SKTextureAtlas(named: "go")
+            var three_two_one_go = [SKTexture]()
+            three_two_one_go.append(atlas.textureNamed("3"))
+            three_two_one_go.append(atlas.textureNamed("2"))
+            three_two_one_go.append(atlas.textureNamed("1"))
+            three_two_one_go.append(atlas.textureNamed("go"))
+            
+            let firstFrame = three_two_one_go[0]
+            let go = SKSpriteNode(texture: firstFrame)
+            self.addChild(go)
+            
+
+            go.position = CGPointMake(self.frame.midX, self.frame.midY)
+            go.size = CGSizeMake(600, 600)
+            go.zPosition = 100
+            go.runAction(SKAction.repeatAction(
+                SKAction.animateWithTextures(three_two_one_go, timePerFrame: 0.1, resize: false, restore: true),
+                count: 3)
+            )
+
         }
     }
     

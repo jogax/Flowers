@@ -60,6 +60,11 @@
 		200895C81BB1AB9E001444B4 /* bumm.png in Resources */ = {isa = PBXBuildFile; fileRef = 200895C71BB1AB9E001444B4 /* bumm.png */; settings = {ASSET_TAGS = (); }; };
 		20F6D01F1BB43E9100BF7384 /* MyParticle.sks in Resources */ = {isa = PBXBuildFile; fileRef = 20F6D01D1BB43E9100BF7384 /* MyParticle.sks */; settings = {ASSET_TAGS = (); }; };
 		20F6D0201BB43E9100BF7384 /* spark.png in Resources */ = {isa = PBXBuildFile; fileRef = 20F6D01E1BB43E9100BF7384 /* spark.png */; settings = {ASSET_TAGS = (); }; };
+		20F7E7101BBB03A200451984 /* SpriteKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 20F7E70F1BBB03A200451984 /* SpriteKit.framework */; };
+		20F8A61E1BBAC6F500A60960 /* 1.png in Resources */ = {isa = PBXBuildFile; fileRef = 20F8A61A1BBAC6F500A60960 /* 1.png */; settings = {ASSET_TAGS = (); }; };
+		20F8A61F1BBAC6F500A60960 /* 2.png in Resources */ = {isa = PBXBuildFile; fileRef = 20F8A61B1BBAC6F500A60960 /* 2.png */; settings = {ASSET_TAGS = (); }; };
+		20F8A6201BBAC6F500A60960 /* 3.png in Resources */ = {isa = PBXBuildFile; fileRef = 20F8A61C1BBAC6F500A60960 /* 3.png */; settings = {ASSET_TAGS = (); }; };
+		20F8A6211BBAC6F500A60960 /* go.png in Resources */ = {isa = PBXBuildFile; fileRef = 20F8A61D1BBAC6F500A60960 /* go.png */; settings = {ASSET_TAGS = (); }; };
 		20F938F71BB2ECE700378744 /* background.png in Resources */ = {isa = PBXBuildFile; fileRef = 20F938F61BB2ECE700378744 /* background.png */; settings = {ASSET_TAGS = (); }; };
 		20FA8BB71BB95A9C00CCFA3F /* frozen.png in Resources */ = {isa = PBXBuildFile; fileRef = 20FA8BB61BB95A9C00CCFA3F /* frozen.png */; settings = {ASSET_TAGS = (); }; };
 		20FAABE71BB6AC0200327C28 /* bgImage.png in Resources */ = {isa = PBXBuildFile; fileRef = 20FAABE61BB6AC0200327C28 /* bgImage.png */; settings = {ASSET_TAGS = (); }; };
@@ -142,6 +147,11 @@
 		200895C71BB1AB9E001444B4 /* bumm.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bumm.png; sourceTree = "<group>"; };
 		20F6D01D1BB43E9100BF7384 /* MyParticle.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; name = MyParticle.sks; path = ../MyParticle.sks; sourceTree = "<group>"; };
 		20F6D01E1BB43E9100BF7384 /* spark.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = spark.png; path = ../spark.png; sourceTree = "<group>"; };
+		20F7E70F1BBB03A200451984 /* SpriteKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SpriteKit.framework; path = System/Library/Frameworks/SpriteKit.framework; sourceTree = SDKROOT; };
+		20F8A61A1BBAC6F500A60960 /* 1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 1.png; sourceTree = "<group>"; };
+		20F8A61B1BBAC6F500A60960 /* 2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 2.png; sourceTree = "<group>"; };
+		20F8A61C1BBAC6F500A60960 /* 3.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 3.png; sourceTree = "<group>"; };
+		20F8A61D1BBAC6F500A60960 /* go.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = go.png; sourceTree = "<group>"; };
 		20F938F61BB2ECE700378744 /* background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = background.png; sourceTree = "<group>"; };
 		20FA8BB61BB95A9C00CCFA3F /* frozen.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = frozen.png; sourceTree = "<group>"; };
 		20FAABE61BB6AC0200327C28 /* bgImage.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bgImage.png; sourceTree = "<group>"; };
@@ -152,6 +162,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				20F7E7101BBB03A200451984 /* SpriteKit.framework in Frameworks */,
 				200141131BAEAFB4003E0950 /* StoreKit.framework in Frameworks */,
 				200141111BAEAFA3003E0950 /* GameKit.framework in Frameworks */,
 			);
@@ -177,6 +188,7 @@
 		200140D11BAEA96A003E0950 = {
 			isa = PBXGroup;
 			children = (
+				20F7E70F1BBB03A200451984 /* SpriteKit.framework */,
 				200141121BAEAFB4003E0950 /* StoreKit.framework */,
 				200141101BAEAFA3003E0950 /* GameKit.framework */,
 				200140DC1BAEA96A003E0950 /* Flowers */,
@@ -215,6 +227,7 @@
 				2001416A1BAEF7AA003E0950 /* Flowers.xcdatamodeld */,
 				200140E91BAEA96A003E0950 /* LaunchScreen.storyboard */,
 				200140EC1BAEA96A003E0950 /* Info.plist */,
+				20F7E70A1BBAFDF600451984 /* go.atlas */,
 				200141481BAEE358003E0950 /* Pictures */,
 				200141141BAEB1CA003E0950 /* SoundFiles */,
 				200141311BAEB521003E0950 /* Languages */,
@@ -298,6 +311,17 @@
 			name = Pictures;
 			sourceTree = "<group>";
 		};
+		20F7E70A1BBAFDF600451984 /* go.atlas */ = {
+			isa = PBXGroup;
+			children = (
+				20F8A61C1BBAC6F500A60960 /* 3.png */,
+				20F8A61B1BBAC6F500A60960 /* 2.png */,
+				20F8A61A1BBAC6F500A60960 /* 1.png */,
+				20F8A61D1BBAC6F500A60960 /* go.png */,
+			);
+			name = go.atlas;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -365,6 +389,7 @@
 				TargetAttributes = {
 					200140D91BAEA96A003E0950 = {
 						CreatedOnToolsVersion = 7.0;
+						DevelopmentTeam = WT499VC842;
 					};
 					200140F01BAEA96A003E0950 = {
 						CreatedOnToolsVersion = 7.0;
@@ -416,11 +441,14 @@
 				200141651BAEE3DC003E0950 /* sprite7.png in Resources */,
 				2001412A1BAEB1F6003E0950 /* Winner.m4a in Resources */,
 				200895C81BB1AB9E001444B4 /* bumm.png in Resources */,
+				20F8A6211BBAC6F500A60960 /* go.png in Resources */,
 				200141221BAEB1F6003E0950 /* Do_2.m4a in Resources */,
+				20F8A61F1BBAC6F500A60960 /* 2.png in Resources */,
 				2001415D1BAEE3DC003E0950 /* restartPressed.png in Resources */,
 				200141241BAEB1F6003E0950 /* Funk_Bot.m4a in Resources */,
 				200141631BAEE3DC003E0950 /* sprite5.png in Resources */,
 				200141681BAEE3DC003E0950 /* undoPressed.png in Resources */,
+				20F8A6201BBAC6F500A60960 /* 3.png in Resources */,
 				200141671BAEE3DC003E0950 /* undo.png in Resources */,
 				2001415A1BAEE3DC003E0950 /* finger.png in Resources */,
 				200141611BAEE3DC003E0950 /* sprite3.png in Resources */,
@@ -437,6 +465,7 @@
 				200141251BAEB1F6003E0950 /* Lost.m4a in Resources */,
 				200141591BAEE3DC003E0950 /* aquarium.png in Resources */,
 				20F6D0201BB43E9100BF7384 /* spark.png in Resources */,
+				20F8A61E1BBAC6F500A60960 /* 1.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -618,11 +647,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = Flowers/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MACH_O_TYPE = mh_execute;
 				PRODUCT_BUNDLE_IDENTIFIER = JOGAX.Flowers;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 			};
 			name = Debug;
 		};
@@ -630,11 +662,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = Flowers/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MACH_O_TYPE = mh_execute;
 				PRODUCT_BUNDLE_IDENTIFIER = JOGAX.Flowers;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 			};
 			name = Release;
 		};

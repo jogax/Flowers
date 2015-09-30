@@ -415,7 +415,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         restartButton = MySKNode(texture: restartTextureNormal, type: MySKNodeType.ButtonType)
         //restartButton = SKButton(normalTexture: restartTextureNormal, selectedTexture: restartTextureSelected, disabledTexture: restartTextureNormal)
         restartButton!.position = CGPointMake(myView.frame.width / 2, myView.frame.height * 0.05)
-        restartButton!.size = CGSizeMake(myView.frame.width / 20, myView.frame.width / 20)
+        restartButton!.size = CGSizeMake(myView.frame.width / 10, myView.frame.width / 10)
         //restartButton!.setButtonAction(self, triggerEvent: .TouchUpInside, action:"restartButtonPressed")
         restartButton!.name = "restart"
         addChild(restartButton!)
@@ -425,7 +425,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         //undoButton = SKButton(normalTexture: undoTextureNormal, selectedTexture: undoTextureSelected, disabledTexture: undoTextureNormal)
         undoButton = MySKNode(texture: undoTextureNormal, type: MySKNodeType.ButtonType)
         undoButton!.position = CGPointMake(myView.frame.width / 3, myView.frame.height * 0.05)
-        undoButton!.size = CGSizeMake(myView.frame.width / 20, myView.frame.width / 20)
+        undoButton!.size = CGSizeMake(myView.frame.width / 10, myView.frame.width / 10)
         //undoButton!.setButtonAction(self, triggerEvent: .TouchUpInside, action:"undoButtonPressed")
         undoButton!.name = "undo"
         addChild(undoButton!)
@@ -450,7 +450,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
     }
     
     func undoButtonPressed() {
-    pull()
+        let undoButton = self.childNodeWithName("undo")! as! MySKNode
+        if undoButton.hitCounter > 0 {
+            pull()
+            undoButton.hitCounter--
+            undoButton.hitLabel.text = "\(undoButton.hitCounter)"
+        }
     }
     
 
@@ -957,7 +962,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         
 
         go.position = CGPointMake(self.frame.midX, self.frame.midY)
-        go.size = CGSizeMake(600, 600)
+        if GV.onIpad {
+            go.size = CGSizeMake(600, 600)
+        } else {
+            go.size = CGSizeMake(400, 400)
+        }
         go.zPosition = 100
         
         let removeAction = SKAction.removeFromParent()

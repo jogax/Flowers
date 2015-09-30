@@ -48,8 +48,9 @@ class MySKNode: SKSpriteNode {
         if type == .ButtonType {
             //hitLabel.position = CGPointMake(self.position.x, self.position.y -  self.size.height * 0.008)
             hitLabel.verticalAlignmentMode = SKLabelVerticalAlignmentMode.Center
-            hitLabel.fontSize = 25;
+            hitLabel.fontSize = 20;
             hitLabel.text = "\(hitCounter)"
+            hitLabel.zPosition = 100
             print("\(hitLabel.text)")
         } else {
             hitLabel.position = CGPointMake(self.position.x, self.position.y + self.size.height * 0.04)

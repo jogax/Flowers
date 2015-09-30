@@ -433,7 +433,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         backgroundColor = UIColor.whiteColor() //SKColor.whiteColor()
         physicsWorld.gravity = CGVectorMake(0, 0)
         physicsWorld.contactDelegate = self
-        self.countDown = NSTimer.scheduledTimerWithTimeInterval(1.0, target: self, selector: Selector("doCountDown"), userInfo: nil, repeats: true)
+//        self.countDown = NSTimer.scheduledTimerWithTimeInterval(1.0, target: self, selector: Selector("doCountDown"), userInfo: nil, repeats: true)
 //        GV.currentTime = NSDate()
 //        GV.elapsedTime = GV.currentTime.timeIntervalSinceDate(GV.startTime) //* 1000
         //print("prepareNextGame Laufzeit: \(GV.elapsedTime)")
@@ -753,15 +753,18 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         }
         let firstTouch = touches.first
         let touchLocation = firstTouch!.locationInNode(self)
+        let testNode = self.nodeAtPoint(touchLocation)
+        
+        let aktNodeType = analyzeNode(testNode)
         if self.inFirstGenerateSprites {
-            showNextSprite(touchLocation)
+            switch aktNodeType {
+                case MyNodeTypes.LabelNode, MyNodeTypes.SpriteNode: showNextSprite(touchLocation)
+                default: return
+            }
             return
         }
         if movedFromNode != nil && !stopped {
             //let countTouches = touches.count
-            let testNode = self.nodeAtPoint(touchLocation)
-            
-            let aktNodeType = analyzeNode(testNode)
             var aktNode: SKNode? = nil
 
             let startNode = movedFromNode
@@ -916,7 +919,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
     }
     
     func showNextSprite(touchLocation:  CGPoint) {
-        print("\(inFirstGenerateSprites)")
         let aktNode = self.nodeAtPoint(touchLocation)
         if aktNode.name == lastShownNode!.name {
             undoCount++
@@ -924,6 +926,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
                 if self.children[index].hidden {
                     lastShownNode = self.children[index] as? MySKNode
                     self.children[index].hidden = false
+                    let undoButton = self.childNodeWithName("undo")! as! MySKNode
+                    undoButton.hitCounter++
+                   //(self.childNodeWithName("undo")! as! MySKNode).hitCounter++
+                    undoButton.hitLabel.text = "\(undoButton.hitCounter)"
+                    print("undoButton.hitLabel.text: \(undoButton.hitLabel.text)")
                     return
                 }
             }
@@ -935,28 +942,34 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
                     self.children[index].hidden = false
                 }
             }
-            print ("Start!")
-            let atlas = SKTextureAtlas(named: "go")
-            var three_two_one_go = [SKTexture]()
-            three_two_one_go.append(atlas.textureNamed("3"))
-            three_two_one_go.append(atlas.textureNamed("2"))
-            three_two_one_go.append(atlas.textureNamed("1"))
-            three_two_one_go.append(atlas.textureNamed("go"))
-            
-            let firstFrame = three_two_one_go[0]
-            let go = SKSpriteNode(texture: firstFrame)
-            self.addChild(go)
-            
-
-            go.position = CGPointMake(self.frame.midX, self.frame.midY)
-            go.size = CGSizeMake(600, 600)
-            go.zPosition = 100
-            go.runAction(SKAction.repeatAction(
-                SKAction.animateWithTextures(three_two_one_go, timePerFrame: 0.1, resize: false, restore: true),
-                count: 3)
-            )
-
         }
+
+        let atlas = SKTextureAtlas(named: "sprites")
+        var three_two_one_go = [SKTexture]()
+        three_two_one_go.append(atlas.textureNamed("3"))
+        three_two_one_go.append(atlas.textureNamed("2"))
+        three_two_one_go.append(atlas.textureNamed("1"))
+        three_two_one_go.append(atlas.textureNamed("goText"))
+        
+        let firstFrame = three_two_one_go[0]
+        let go = SKSpriteNode(texture: firstFrame)
+        self.addChild(go)
+        
+
+        go.position = CGPointMake(self.frame.midX, self.frame.midY)
+        go.size = CGSizeMake(600, 600)
+        go.zPosition = 100
+        
+        let removeAction = SKAction.removeFromParent()
+        let goAction = SKAction.repeatAction(
+            SKAction.animateWithTextures(three_two_one_go, timePerFrame: 1.0, resize: false, restore: false),
+            count: 1)
+        let startCounterAction = SKAction.runBlock({self.countDown = NSTimer.scheduledTimerWithTimeInterval(1.0, target: self, selector: Selector("doCountDown"), userInfo: nil, repeats: true)})
+
+        
+        go.runAction(SKAction.sequence([goAction, removeAction, startCounterAction]))
+
+
     }
     
     override func update(currentTime: NSTimeInterval) {

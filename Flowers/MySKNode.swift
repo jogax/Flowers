@@ -12,7 +12,14 @@ enum MySKNodeType: Int {
 import SpriteKit
 
 class MySKNode: SKSpriteNode {
-    var hitCounter = 0
+    var hitCounter = 0 {
+        didSet {
+            if hitCounter != oldValue {
+                
+            }
+        }
+    }
+    
     var column = 0
     var row = 0
     var colorIndex = 0
@@ -25,14 +32,32 @@ class MySKNode: SKSpriteNode {
 
     init(texture: SKTexture, type:MySKNodeType) {
         self.type = type
-        hitCounter = type == .ContainerType ? 0 : 1  // Sprites have a Startvalue 1
+        switch type {
+        case .ContainerType:
+            hitCounter = 0
+        case .ButtonType:
+            hitCounter = 3
+        case .SpriteType:
+            hitCounter = 1
+        default:
+            hitCounter = 0
+        }
+        //hitCounter = type == .ContainerType ? 0 : 1  // Sprites have a Startvalue 1
         super.init(texture: texture, color: UIColor.clearColor(), size: texture.size())
       
-        hitLabel.position = CGPointMake(self.position.x, self.position.y + self.size.height * 0.04)
+        if type == .ButtonType {
+            //hitLabel.position = CGPointMake(self.position.x, self.position.y -  self.size.height * 0.008)
+            hitLabel.verticalAlignmentMode = SKLabelVerticalAlignmentMode.Center
+            hitLabel.fontSize = 25;
+            hitLabel.text = "\(hitCounter)"
+            print("\(hitLabel.text)")
+        } else {
+            hitLabel.position = CGPointMake(self.position.x, self.position.y + self.size.height * 0.04)
+            hitLabel.fontSize = 15;
+        }
         //hitLabel.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMaxY(self.frame) * 0.08)
 
         //hitLabel.size = self.size
-        hitLabel.fontSize = 15;
         
         hitLabel.fontName = "ArielBold"
         hitLabel.fontColor = SKColor.blackColor()
@@ -49,7 +74,7 @@ class MySKNode: SKSpriteNode {
             self.addChild(frozen)
         }
         
-        if type == .SpriteType {
+        if type == .SpriteType || type == .ButtonType {
             self.addChild(hitLabel)
         }
 

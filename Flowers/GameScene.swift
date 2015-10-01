@@ -172,6 +172,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
     let spriteCountPosKorr = CGPointMake(GV.onIpad ? 0.05 : 0.05, GV.onIpad ? 0.91 : 0.90)
     let countdownPosKorr = CGPointMake(GV.onIpad ? 0.98 : 0.98, GV.onIpad ? 0.95 : 0.94)
     let targetPosKorr = CGPointMake(GV.onIpad ? 0.98 : 0.98, GV.onIpad ? 0.93 : 0.92)
+    let atlas = SKTextureAtlas(named: "sprites")
     var countColorsProContainer = [Int]()
     var labelBackground = SKSpriteNode()
     var levelLabel = SKLabelNode(fontNamed: "AvenirNext-Bold")
@@ -228,6 +229,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
 
 */
     override func didMoveToView(view: SKView) {
+        FMSynthesizer.sharedSynth().play(440, modulatorFrequency: 695, modulatorAmplitude: 0.15, length: 0.01)
+        //playFMSound(880.0, modulatorFrequency: 440.0, modulatorAmplitude: 0.1, length: 0.1)
+
         //levelArray = GV.cloudData.readLevelDataArray()
         let url = NSURL.fileURLWithPath(
             NSBundle.mainBundle().pathForResource("MyMusic",
@@ -307,7 +311,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             let centerY = size.height * containersPosCorr.y
             let cont: Container
             //if index == 0 {
-            cont = Container(mySKNode: MySKNode(texture: SKTexture(imageNamed:"sprite\(index)"), type: .ContainerType), label: SKLabelNode(), countHits: 0)
+            //cont = Container(mySKNode: MySKNode(texture: SKTexture(imageNamed:"sprite\(index)"), type: .ContainerType), label: SKLabelNode(), countHits: 0)
+            cont = Container(mySKNode: MySKNode(texture: atlas.textureNamed("sprite\(index)"), type: .ContainerType), label: SKLabelNode(), countHits: 0)
 /*
         } else {
                 cont = Container(mySKNode: MySKNode(texture: containerTexture, type: .ContainerType), label: SKLabelNode(), countHits: 0)
@@ -410,8 +415,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         self.addChild(bgImage!)
         
 
-        let restartTextureNormal = SKTexture(imageNamed: "restart")
-
+        //let restartTextureNormal = SKTexture(imageNamed: "restart")
+        let restartTextureNormal = atlas.textureNamed("restart")
+        
         restartButton = MySKNode(texture: restartTextureNormal, type: MySKNodeType.ButtonType)
         //restartButton = SKButton(normalTexture: restartTextureNormal, selectedTexture: restartTextureSelected, disabledTexture: restartTextureNormal)
         restartButton!.position = CGPointMake(myView.frame.width / 2, myView.frame.height * 0.05)
@@ -420,7 +426,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         restartButton!.name = "restart"
         addChild(restartButton!)
         
-        let undoTextureNormal = SKTexture(imageNamed: "undo")
+        //let undoTextureNormal = SKTexture(imageNamed: "undo")
+        let undoTextureNormal = atlas.textureNamed("undo")
         
         //undoButton = SKButton(normalTexture: undoTextureNormal, selectedTexture: undoTextureSelected, disabledTexture: undoTextureNormal)
         undoButton = MySKNode(texture: undoTextureNormal, type: MySKNodeType.ButtonType)
@@ -524,7 +531,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             //let aktColor = GV.colorSets[GV.colorSetIndex][colorIndex + 1].CGColor
             var spriteTexture = SKTexture()
 //            if colorIndex == 0 {
-                spriteTexture = SKTexture(imageNamed: "sprite\(colorIndex)")
+                spriteTexture = atlas.textureNamed("sprite\(colorIndex)")
+                //spriteTexture = SKTexture(imageNamed: "sprite\(colorIndex)")
 //            } else {
 //                containerTexture = SKTexture(image: GV.drawCircle(CGSizeMake(spriteSize,spriteSize), imageColor: aktColor))
 //            }
@@ -647,9 +655,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             
             case MyNodeTypes.ButtonNode:
                 movedFromNode = self.nodeAtPoint(touchLocation) as! MySKNode
-                let textureName = "\(testNode.name!)Pressed"
-                let textureSelected = SKTexture(imageNamed: textureName)
-                (testNode as! MySKNode).texture = textureSelected
+                //let textureName = "\(testNode.name!)Pressed"
+                //let textureSelected = SKTexture(imageNamed: textureName)
+                //(testNode as! MySKNode).texture = textureSelected
+                (testNode as! MySKNode).texture = atlas.textureNamed("\(testNode.name!)Pressed")
             default: movedFromNode = nil
         }
     }
@@ -679,7 +688,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             }
             if movedFromNode != aktNode {
                 if movedFromNode.type == .ButtonType {
-                    movedFromNode.texture = SKTexture(imageNamed: "\(movedFromNode.name!)")
+                    //movedFromNode.texture = SKTexture(imageNamed: "\(movedFromNode.name!)")
+                    movedFromNode.texture = atlas.textureNamed("\(movedFromNode.name!)")
                 } else {
                     let line = JGXLine(fromPoint: movedFromNode.position, toPoint: touchLocation, inFrame: self.frame, lineSize: movedFromNode.size.width)
                     let pointOnTheWall = line.line.toPoint
@@ -777,7 +787,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
                 case MyNodeTypes.LabelNode: aktNode = self.nodeAtPoint(touchLocation).parent as! MySKNode
                 case MyNodeTypes.SpriteNode: aktNode = self.nodeAtPoint(touchLocation) as! MySKNode
                 case MyNodeTypes.ButtonNode:
-                    (testNode as! MySKNode).texture = SKTexture(imageNamed: "\(testNode.name!)")
+                    //(testNode as! MySKNode).texture = SKTexture(imageNamed: "\(testNode.name!)")
+                    (testNode as! MySKNode).texture = atlas.textureNamed("\(testNode.name!)")
                     aktNode = self.nodeAtPoint(touchLocation) as! MySKNode
                 default: aktNode = nil
             }
@@ -929,6 +940,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             undoCount++
             for index in 0..<self.children.count {
                 if self.children[index].hidden {
+                    FMSynthesizer.sharedSynth().play(440, modulatorFrequency: 220, modulatorAmplitude: 0.05, length: 0.05)
+
+                    //playFMSound(220.0, modulatorFrequency: 880.0, modulatorAmplitude: 0.01, length: 1)
                     lastShownNode = self.children[index] as? MySKNode
                     self.children[index].hidden = false
                     let undoButton = self.childNodeWithName("undo")! as! MySKNode
@@ -949,7 +963,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             }
         }
 
-        let atlas = SKTextureAtlas(named: "sprites")
         var three_two_one_go = [SKTexture]()
         three_two_one_go.append(atlas.textureNamed("3"))
         three_two_one_go.append(atlas.textureNamed("2"))
@@ -1369,7 +1382,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
                         gameArray[savedSpriteInCycle.column][savedSpriteInCycle.row] = false
                     }
                 case .Removed:
-                    let spriteTexture = SKTexture(imageNamed: "sprite\(savedSpriteInCycle.colorIndex)")
+                    //let spriteTexture = SKTexture(imageNamed: "sprite\(savedSpriteInCycle.colorIndex)")
+                    let spriteTexture = atlas.textureNamed("sprite\(savedSpriteInCycle.colorIndex)")
                     let sprite = MySKNode(texture: spriteTexture, type: .SpriteType)
                     sprite.colorIndex = savedSpriteInCycle.colorIndex
                     sprite.position = savedSpriteInCycle.endPosition
@@ -1445,6 +1459,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             
     }
 
+    func playFMSound(carrierFrequency: Float32, modulatorFrequency: Float32, modulatorAmplitude: Float32, length: Float32) {
+        let time = dispatch_time(dispatch_time_t(DISPATCH_TIME_NOW), 1 * Int64(NSEC_PER_SEC))
+        dispatch_after(time, dispatch_get_main_queue()) {
+            FMSynthesizer.sharedSynth().play(carrierFrequency, modulatorFrequency: modulatorFrequency, modulatorAmplitude: modulatorAmplitude, length: 0.1)
+        }
+    }
 
     func audioPlayerDidFinishPlaying(player: AVAudioPlayer!, successfullyflag: Bool) {
     }

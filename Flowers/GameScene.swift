@@ -188,6 +188,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
     var undoButton: MySKNode?
     var targetScore = 0
     var spriteCount = 0
+    var restartCount = 0
     var stopped = true
     var collisionActive = false
     var bgImage: SKSpriteNode?
@@ -229,30 +230,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
 
 */
     override func didMoveToView(view: SKView) {
-        FMSynthesizer.sharedSynth().play(440, modulatorFrequency: 695, modulatorAmplitude: 0.15, length: 0.01)
-        //playFMSound(880.0, modulatorFrequency: 440.0, modulatorAmplitude: 0.1, length: 0.1)
 
-        //levelArray = GV.cloudData.readLevelDataArray()
-        let url = NSURL.fileURLWithPath(
-            NSBundle.mainBundle().pathForResource("MyMusic",
-                ofType: "m4a")!)
-        //backgroundColor = SKColor(patternImage: UIImage(named: "aquarium.png")!)
-        
-        do {
-            try audioPlayer = AVAudioPlayer(contentsOfURL: url)
-            audioPlayer?.delegate = self
-            audioPlayer?.prepareToPlay()
-            audioPlayer?.volume = 0.03
-            audioPlayer?.numberOfLoops = -1
-            audioPlayer?.play()
-        } catch {
-            print("audioPlayer error")
-        }
 
 
         myView = view
         levelsForPlayWithSprites.setAktLevel(levelIndex)
 
+        restartCount = 3
         prepareNextGame()
         generateSprites()
 
@@ -424,6 +408,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         restartButton!.size = CGSizeMake(myView.frame.width / 10, myView.frame.width / 10)
         //restartButton!.setButtonAction(self, triggerEvent: .TouchUpInside, action:"restartButtonPressed")
         restartButton!.name = "restart"
+        restartButton!.hitLabel.text = "\(restartCount)"
         addChild(restartButton!)
         
         //let undoTextureNormal = SKTexture(imageNamed: "undo")
@@ -435,6 +420,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         undoButton!.size = CGSizeMake(myView.frame.width / 10, myView.frame.width / 10)
         //undoButton!.setButtonAction(self, triggerEvent: .TouchUpInside, action:"undoButtonPressed")
         undoButton!.name = "undo"
+        undoButton!.hitLabel.text = "\(undoCount)"
         addChild(undoButton!)
         
         backgroundColor = UIColor.whiteColor() //SKColor.whiteColor()
@@ -453,7 +439,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
     
 
     func restartButtonPressed() {
-    newGame(false)
+        if restartCount > 0 {
+            let restartButton = self.childNodeWithName("restart") as! MySKNode
+            restartCount--
+            playMusic("NoSound", volume: 0.01, loops: 0)
+            restartButton.hitLabel.text = "\(restartCount)"
+            newGame(false)
+        }
     }
     
     func undoButtonPressed() {
@@ -489,6 +481,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
 
             levelIndex = levelsForPlayWithSprites.getNextLevel()
             gameScore += levelScore
+            restartCount = 3
+            let restartButton = self.childNodeWithName("restart") as! MySKNode
+            restartButton.hitLabel.text = "\(restartCount)"
             var spriteData = SpriteGameData()
             spriteData.spriteLevelIndex = Int64(levelIndex)
             spriteData.spriteGameScore = Int64(gameScore)
@@ -940,16 +935,15 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             undoCount++
             for index in 0..<self.children.count {
                 if self.children[index].hidden {
-                    FMSynthesizer.sharedSynth().play(440, modulatorFrequency: 220, modulatorAmplitude: 0.05, length: 0.05)
-
-                    //playFMSound(220.0, modulatorFrequency: 880.0, modulatorAmplitude: 0.01, length: 1)
+                    //SKAction.playSoundFileNamed("Do_1", waitForCompletion: false)
+                    self.playSound("Do_1", volume: 0.25)
                     lastShownNode = self.children[index] as? MySKNode
                     self.children[index].hidden = false
                     let undoButton = self.childNodeWithName("undo")! as! MySKNode
                     undoButton.hitCounter++
                    //(self.childNodeWithName("undo")! as! MySKNode).hitCounter++
                     undoButton.hitLabel.text = "\(undoButton.hitCounter)"
-                    print("undoButton.hitLabel.text: \(undoButton.hitLabel.text)")
+                    //print("undoButton.hitLabel.text: \(undoButton.hitLabel.text)")
                     return
                 }
             }
@@ -982,14 +976,21 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         }
         go.zPosition = 100
         
-        let removeAction = SKAction.removeFromParent()
+        
         let goAction = SKAction.repeatAction(
-            SKAction.animateWithTextures(three_two_one_go, timePerFrame: 1.0, resize: false, restore: false),
+                SKAction.sequence([
+                    //SKAction.playSoundFileNamed("Do_1", waitForCompletion:false),
+                    SKAction.runBlock({self.playSound("Go321", volume: 0.2)}),
+                    SKAction.animateWithTextures(three_two_one_go, timePerFrame: 1.2, resize: false, restore: false)
+                ]),
             count: 1)
+        //let waitAction = SKAction.waitForDuration(8)
+        let removeAction = SKAction.removeFromParent()
         let startCounterAction = SKAction.runBlock({self.countDown = NSTimer.scheduledTimerWithTimeInterval(1.0, target: self, selector: Selector("doCountDown"), userInfo: nil, repeats: true)})
 
         
-        go.runAction(SKAction.sequence([goAction, removeAction, startCounterAction]))
+        go.runAction(SKAction.sequence([goAction, removeAction, startCounterAction, SKAction.runBlock({self.playMusic("MyMusic", volume: 0.03, loops: -1)})]))
+        
 
 
     }
@@ -1016,6 +1017,24 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         let levelScoreText: String = GV.language.getText(.TCLevelScore)
         levelScoreLabel.text = "\(levelScoreText) \(levelScore)"
 
+    }
+    
+    func playMusic(fileName: String, volume: Float, loops: Int) {
+        //levelArray = GV.cloudData.readLevelDataArray()
+        let url = NSURL.fileURLWithPath(
+            NSBundle.mainBundle().pathForResource(fileName, ofType: "m4a")!)
+        //backgroundColor = SKColor(patternImage: UIImage(named: "aquarium.png")!)
+        
+        do {
+            try audioPlayer = AVAudioPlayer(contentsOfURL: url)
+            audioPlayer?.delegate = self
+            audioPlayer?.prepareToPlay()
+            audioPlayer?.volume = 0.03
+            audioPlayer?.numberOfLoops = loops
+            audioPlayer?.play()
+        } catch {
+        print("audioPlayer error")
+        }
     }
 
     func playSound(fileName: String, volume: Float) {
@@ -1260,7 +1279,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             if countDown != nil {
                 countDown!.invalidate()
                 countDown = nil
-                playSound("Lost", volume: 0.03)
+                //playMusic("Winner", volume: 0.03)
             }
             
             if levelScore < targetScore {
@@ -1283,6 +1302,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
                 parentViewController!.presentViewController(alert, animated: true, completion: nil)
             } else {
                 
+                playMusic("Winner", volume: 0.2, loops: 0)
+                
                 let alert = UIAlertController(title: GV.language.getText(.TCLevelComplete),
                     message: GV.language.getText(TextConstants.TCCongratulations),
                     preferredStyle: .Alert)
@@ -1293,7 +1314,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
                 })
                 alert.addAction(cancelAction)
                 alert.addAction(againAction)
-                playSound("Winner", volume: 0.03)
                 parentViewController!.presentViewController(alert, animated: true, completion: nil)
             }
         }
@@ -1459,12 +1479,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             
     }
 
-    func playFMSound(carrierFrequency: Float32, modulatorFrequency: Float32, modulatorAmplitude: Float32, length: Float32) {
-        let time = dispatch_time(dispatch_time_t(DISPATCH_TIME_NOW), 1 * Int64(NSEC_PER_SEC))
-        dispatch_after(time, dispatch_get_main_queue()) {
-            FMSynthesizer.sharedSynth().play(carrierFrequency, modulatorFrequency: modulatorFrequency, modulatorAmplitude: modulatorAmplitude, length: 0.1)
-        }
-    }
 
     func audioPlayerDidFinishPlaying(player: AVAudioPlayer!, successfullyflag: Bool) {
     }

@@ -49,12 +49,13 @@ class MySKNode: SKSpriteNode {
             //hitLabel.position = CGPointMake(self.position.x, self.position.y -  self.size.height * 0.008)
             hitLabel.verticalAlignmentMode = SKLabelVerticalAlignmentMode.Center
             hitLabel.fontSize = 20;
-            hitLabel.text = "\(hitCounter)"
+            //hitLabel.text = "\(hitCounter)"
             hitLabel.zPosition = 100
             print("\(hitLabel.text)")
         } else {
             hitLabel.position = CGPointMake(self.position.x, self.position.y + self.size.height * 0.04)
             hitLabel.fontSize = 15;
+            hitLabel.text = "\(hitCounter)"
         }
         //hitLabel.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMaxY(self.frame) * 0.08)
 
@@ -64,7 +65,6 @@ class MySKNode: SKSpriteNode {
         hitLabel.fontColor = SKColor.blackColor()
         hitLabel.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.Center
         //hitLabel.verticalAlignmentMode = SKLabelVerticalAlignmentMode.Center
-        hitLabel.text = "\(hitCounter)"
         hitLabel.userInteractionEnabled = false
         
         if type == .FrozenSprite {

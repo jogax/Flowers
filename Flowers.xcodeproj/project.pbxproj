@@ -41,7 +41,8 @@
 		200141741BAEF900003E0950 /* SpriteGame.swift in Sources */ = {isa = PBXBuildFile; fileRef = 200141721BAEF900003E0950 /* SpriteGame.swift */; settings = {ASSET_TAGS = (); }; };
 		200141761BAEFB4F003E0950 /* JGXLine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 200141751BAEFB4F003E0950 /* JGXLine.swift */; settings = {ASSET_TAGS = (); }; };
 		200141781BAEFBCA003E0950 /* DataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 200141771BAEFBCA003E0950 /* DataStore.swift */; settings = {ASSET_TAGS = (); }; };
-		2031BA211BBD72D00051F1E3 /* FMSynthesizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2031BA201BBD72D00051F1E3 /* FMSynthesizer.swift */; settings = {ASSET_TAGS = (); }; };
+		205574411BBEB85C00C165A1 /* Go321.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 205574401BBEB85C00C165A1 /* Go321.m4a */; settings = {ASSET_TAGS = (); }; };
+		205574431BBECB6200C165A1 /* NoSound.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 205574421BBECB6200C165A1 /* NoSound.m4a */; settings = {ASSET_TAGS = (); }; };
 		20F6D01F1BB43E9100BF7384 /* MyParticle.sks in Resources */ = {isa = PBXBuildFile; fileRef = 20F6D01D1BB43E9100BF7384 /* MyParticle.sks */; settings = {ASSET_TAGS = (); }; };
 		20F7E7101BBB03A200451984 /* SpriteKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 20F7E70F1BBB03A200451984 /* SpriteKit.framework */; };
 		20FC65BE1BBBC82000775322 /* sprites.atlas in Resources */ = {isa = PBXBuildFile; fileRef = 20FC65BD1BBBC82000775322 /* sprites.atlas */; settings = {ASSET_TAGS = (); }; };
@@ -52,10 +53,6 @@
 		20FC65E01BBC127800775322 /* frozen.png in Resources */ = {isa = PBXBuildFile; fileRef = 20FC65DD1BBC127800775322 /* frozen.png */; settings = {ASSET_TAGS = (); }; };
 		20FC65E51BBC12A100775322 /* Holz.png in Resources */ = {isa = PBXBuildFile; fileRef = 20FC65E11BBC12A100775322 /* Holz.png */; settings = {ASSET_TAGS = (); }; };
 		20FC65E81BBC12A100775322 /* spark.png in Resources */ = {isa = PBXBuildFile; fileRef = 20FC65E41BBC12A100775322 /* spark.png */; settings = {ASSET_TAGS = (); }; };
-		20FEB3F61BBD6B6D0005ED7E /* restart.png in Resources */ = {isa = PBXBuildFile; fileRef = 20FEB3F41BBD6B6D0005ED7E /* restart.png */; settings = {ASSET_TAGS = (); }; };
-		20FEB3F71BBD6B6D0005ED7E /* restartPressed.png in Resources */ = {isa = PBXBuildFile; fileRef = 20FEB3F51BBD6B6D0005ED7E /* restartPressed.png */; settings = {ASSET_TAGS = (); }; };
-		20FEB3FA1BBD6BAA0005ED7E /* undo.png in Resources */ = {isa = PBXBuildFile; fileRef = 20FEB3F81BBD6BAA0005ED7E /* undo.png */; settings = {ASSET_TAGS = (); }; };
-		20FEB3FB1BBD6BAA0005ED7E /* undoPressed.png in Resources */ = {isa = PBXBuildFile; fileRef = 20FEB3F91BBD6BAA0005ED7E /* undoPressed.png */; settings = {ASSET_TAGS = (); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -116,7 +113,8 @@
 		200141721BAEF900003E0950 /* SpriteGame.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpriteGame.swift; sourceTree = "<group>"; };
 		200141751BAEFB4F003E0950 /* JGXLine.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JGXLine.swift; sourceTree = "<group>"; };
 		200141771BAEFBCA003E0950 /* DataStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataStore.swift; sourceTree = "<group>"; };
-		2031BA201BBD72D00051F1E3 /* FMSynthesizer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FMSynthesizer.swift; path = ../FMSynthesizer.swift; sourceTree = "<group>"; };
+		205574401BBEB85C00C165A1 /* Go321.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = Go321.m4a; sourceTree = "<group>"; };
+		205574421BBECB6200C165A1 /* NoSound.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = NoSound.m4a; sourceTree = "<group>"; };
 		20F6D01D1BB43E9100BF7384 /* MyParticle.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; name = MyParticle.sks; path = ../MyParticle.sks; sourceTree = "<group>"; };
 		20F7E70F1BBB03A200451984 /* SpriteKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SpriteKit.framework; path = System/Library/Frameworks/SpriteKit.framework; sourceTree = SDKROOT; };
 		20FC65BD1BBBC82000775322 /* sprites.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; path = sprites.atlas; sourceTree = "<group>"; };
@@ -128,10 +126,6 @@
 		20FC65DD1BBC127800775322 /* frozen.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = frozen.png; sourceTree = "<group>"; };
 		20FC65E11BBC12A100775322 /* Holz.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Holz.png; sourceTree = "<group>"; };
 		20FC65E41BBC12A100775322 /* spark.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = spark.png; sourceTree = "<group>"; };
-		20FEB3F41BBD6B6D0005ED7E /* restart.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = restart.png; path = Flowers/sprites.atlas/restart.png; sourceTree = "<group>"; };
-		20FEB3F51BBD6B6D0005ED7E /* restartPressed.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = restartPressed.png; path = Flowers/sprites.atlas/restartPressed.png; sourceTree = "<group>"; };
-		20FEB3F81BBD6BAA0005ED7E /* undo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = undo.png; path = Flowers/sprites.atlas/undo.png; sourceTree = "<group>"; };
-		20FEB3F91BBD6BAA0005ED7E /* undoPressed.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = undoPressed.png; path = Flowers/sprites.atlas/undoPressed.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -165,10 +159,6 @@
 		200140D11BAEA96A003E0950 = {
 			isa = PBXGroup;
 			children = (
-				20FEB3F81BBD6BAA0005ED7E /* undo.png */,
-				20FEB3F91BBD6BAA0005ED7E /* undoPressed.png */,
-				20FEB3F41BBD6B6D0005ED7E /* restart.png */,
-				20FEB3F51BBD6B6D0005ED7E /* restartPressed.png */,
 				20F7E70F1BBB03A200451984 /* SpriteKit.framework */,
 				200141121BAEAFB4003E0950 /* StoreKit.framework */,
 				200141101BAEAFA3003E0950 /* GameKit.framework */,
@@ -196,7 +186,6 @@
 				20F6D01D1BB43E9100BF7384 /* MyParticle.sks */,
 				200141461BAEDAE5003E0950 /* MySKNode.swift */,
 				2001410E1BAEAA82003E0950 /* GameScene.swift */,
-				2031BA201BBD72D00051F1E3 /* FMSynthesizer.swift */,
 				200141751BAEFB4F003E0950 /* JGXLine.swift */,
 				200141721BAEF900003E0950 /* SpriteGame.swift */,
 				2001412D1BAEB2DE003E0950 /* MyStructs.swift */,
@@ -238,6 +227,8 @@
 		200141141BAEB1CA003E0950 /* SoundFiles */ = {
 			isa = PBXGroup;
 			children = (
+				205574421BBECB6200C165A1 /* NoSound.m4a */,
+				205574401BBEB85C00C165A1 /* Go321.m4a */,
 				200141151BAEB1F6003E0950 /* Container.m4a */,
 				200141161BAEB1F6003E0950 /* Do_1.m4a */,
 				200141171BAEB1F6003E0950 /* Do_2.m4a */,
@@ -388,25 +379,23 @@
 				20FC65E01BBC127800775322 /* frozen.png in Resources */,
 				200141231BAEB1F6003E0950 /* Drop.m4a in Resources */,
 				20FC65D91BBC123300775322 /* background.png in Resources */,
-				20FEB3F71BBD6B6D0005ED7E /* restartPressed.png in Resources */,
 				20FC65DA1BBC123300775322 /* bgImage.png in Resources */,
 				200141201BAEB1F6003E0950 /* Container.m4a in Resources */,
-				20FEB3FA1BBD6BAA0005ED7E /* undo.png in Resources */,
 				200140EB1BAEA96A003E0950 /* LaunchScreen.storyboard in Resources */,
 				200141281BAEB1F6003E0950 /* Sprite1.m4a in Resources */,
 				200141261BAEB1F6003E0950 /* Mirror.m4a in Resources */,
 				2001412A1BAEB1F6003E0950 /* Winner.m4a in Resources */,
 				20FC65E51BBC12A100775322 /* Holz.png in Resources */,
-				20FEB3FB1BBD6BAA0005ED7E /* undoPressed.png in Resources */,
 				200141221BAEB1F6003E0950 /* Do_2.m4a in Resources */,
 				200141241BAEB1F6003E0950 /* Funk_Bot.m4a in Resources */,
+				205574411BBEB85C00C165A1 /* Go321.m4a in Resources */,
 				20FC65BE1BBBC82000775322 /* sprites.atlas in Resources */,
 				200140E81BAEA96A003E0950 /* Assets.xcassets in Resources */,
 				20FC65E81BBC12A100775322 /* spark.png in Resources */,
 				200140E31BAEA96A003E0950 /* Main.storyboard in Resources */,
 				200141271BAEB1F6003E0950 /* MyMusic.m4a in Resources */,
 				200141291BAEB1F6003E0950 /* Timeout.m4a in Resources */,
-				20FEB3F61BBD6B6D0005ED7E /* restart.png in Resources */,
+				205574431BBECB6200C165A1 /* NoSound.m4a in Resources */,
 				20F6D01F1BB43E9100BF7384 /* MyParticle.sks in Resources */,
 				200141211BAEB1F6003E0950 /* Do_1.m4a in Resources */,
 				200141251BAEB1F6003E0950 /* Lost.m4a in Resources */,
@@ -441,7 +430,6 @@
 				2001413F1BAEB95B003E0950 /* en.swift in Sources */,
 				200140E01BAEA96A003E0950 /* ViewController.swift in Sources */,
 				2001412E1BAEB2DE003E0950 /* MyStructs.swift in Sources */,
-				2031BA211BBD72D00051F1E3 /* FMSynthesizer.swift in Sources */,
 				200141471BAEDAE5003E0950 /* MySKNode.swift in Sources */,
 				2001413D1BAEB714003E0950 /* de.swift in Sources */,
 				2001416C1BAEF7AA003E0950 /* Flowers.xcdatamodeld in Sources */,

@@ -197,6 +197,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
     var undoCount = 0
     var inFirstGenerateSprites = true
     var lastShownNode: MySKNode?
+    
+    var spriteTabRect = CGRectZero
 
 //    let deviceIndex = GV.onIpad ? 0 : 1
     var buttonField: SKSpriteNode?
@@ -255,6 +257,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
 //        buttonField!.position = CGPointMake(self.position.x + self.size.width / 2, self.position.y)
 //        buttonField!.size = CGSizeMake(self.size.width, self.size.height * 0.2)
 //        self.addChild(buttonField!)
+        
+        spriteTabRect.origin = CGPointMake(self.frame.midX, self.frame.midY * 0.9)
+        spriteTabRect.size = CGSizeMake(self.frame.size.width * 0.90, self.frame.size.width * 0.90)
 
         countContainers = levelsForPlayWithSprites.aktLevel.countContainers
         countSpritesProContainer = levelsForPlayWithSprites.aktLevel.countSpritesProContainer
@@ -287,7 +292,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         }
         
         let xDelta = size.width / CGFloat(countContainers)
-        tableCellSize = size.width / CGFloat(countColumns)
         for index in 0..<countContainers {
             _ = GV.colorSets[GV.colorSetIndex][index + 1].CGColor
             //let containerTexture = SKTexture(image: GV.drawCircle(CGSizeMake(containerSize, containerSize), imageColor: aktColor))
@@ -423,6 +427,21 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         undoButton!.hitLabel.text = "\(undoCount)"
         addChild(undoButton!)
         
+        
+        let sparkles = SKTexture(imageNamed: "bumm") //reusing the bird texture for now
+        let burstEmitter = SKEmitterNode()
+        burstEmitter.particleTexture = sparkles
+        burstEmitter.particleSize = CGSizeMake(5, 5)
+        burstEmitter.position = CGPointMake(0, 0)
+        burstEmitter.particleBirthRate = 20
+        burstEmitter.numParticlesToEmit = 1000;
+        burstEmitter.particleLifetime = 3.0
+        burstEmitter.particleSpeed = 10.0
+        burstEmitter.xAcceleration = 100
+        burstEmitter.yAcceleration = 50
+        //timer.addChild(burstEmitter)
+        
+        
         backgroundColor = UIColor.whiteColor() //SKColor.whiteColor()
         physicsWorld.gravity = CGVectorMake(0, 0)
         physicsWorld.contactDelegate = self
@@ -506,6 +525,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
     }
 
     func generateSprites() {
+        let testNode = SKSpriteNode (imageNamed: "Holz.png")
+        testNode.position = self.spriteTabRect.origin
+        testNode.size = self.spriteTabRect.size
+        //testNode.zPosition = -100
+        //self.addChild(testNode)
+        
         var first = inFirstGenerateSprites
         var positionsTab = [(Int, Int)]() // all available Positions
         for column in 0..<countColumns {
@@ -536,13 +561,17 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             sprite.size.height = spriteSize
 //            let yKorr1: CGFloat = GV.onIpad ? 0.9 : 0.8
 //            let yKorr2: CGFloat = GV.onIpad ? 1.8 : 2.0
-            let yKorr1: CGFloat = GV.onIpad ? 0.8 : 1.0
-            let yKorr2: CGFloat = GV.onIpad ? 0.8 : 1.0
+            //let yKorr1: CGFloat = GV.onIpad ? 0.8 : 1.0
+            //let yKorr2: CGFloat = GV.onIpad ? 0.8 : 1.0
 
             let index = GV.random(0, max: positionsTab.count - 1)
             let (aktColumn, aktRow) = positionsTab[index]
-            let xPosition = CGFloat(aktColumn) * tableCellSize + tableCellSize / 2
-            let yPosition = CGFloat(aktRow) * tableCellSize * yKorr1 + tableCellSize * yKorr2
+            tableCellSize = spriteTabRect.width / CGFloat(countColumns)
+
+            let xPosition = spriteTabRect.origin.x - spriteTabRect.size.width / 2 + CGFloat(aktColumn) * tableCellSize + tableCellSize / 2
+            //let yPosition = spriteTabRect.origin.y - spriteTabRect.size.height / 2 CGFloat(aktRow) * tableCellSize * yKorr1 + tableCellSize * yKorr2
+            let yPosition = spriteTabRect.origin.y - spriteTabRect.size.height / 2 + tableCellSize / 2 + CGFloat(aktRow) * tableCellSize
+            
             sprite.position = CGPoint(x: xPosition, y: yPosition)
             sprite.startPosition = sprite.position
             gameArray[aktColumn][aktRow] = true
@@ -697,11 +726,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
 //                    self.addChild(intersectNode)
 //                    
 //                    
-//                    let nodeOnTheWall = MySKNode(texture: movedFromNode.texture!, type: .SpriteType)
-//                    nodeOnTheWall.name = "nodeOnTheWall"
-//                    nodeOnTheWall.position = pointOnTheWall
-//                    nodeOnTheWall.size = movedFromNode.size
-//                    self.addChild(nodeOnTheWall)
+                    let nodeOnTheWall = MySKNode(texture: movedFromNode.texture!, type: .SpriteType)
+                    nodeOnTheWall.name = "nodeOnTheWall"
+                    nodeOnTheWall.position = pointOnTheWall
+                    nodeOnTheWall.size = movedFromNode.size
+                    self.addChild(nodeOnTheWall)
                     
                     
 
@@ -710,14 +739,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
                     let mirroredLine = line.createMirroredLine()
                     makeHelpLine(mirroredLine.line.fromPoint, toPoint: mirroredLine.line.toPoint, lineWidth: movedFromNode.size.width, numberOfLine: 2)
 
-//                    let pointOnTheWall1 = mirroredLine.line.toPoint
+                    let pointOnTheWall1 = mirroredLine.line.toPoint
                     
-//                    let pointOnTheWall = findPointOnTheWall(movedFromNode.position, pointTo: touchLocation, nodeSize: movedFromNode.size)
-//                    let nodeOnTheWall1 = MySKNode(texture: movedFromNode.texture!, type: .SpriteType)
-//                    nodeOnTheWall1.name = "nodeOnTheWall"
-//                    nodeOnTheWall1.position = pointOnTheWall1
-//                    nodeOnTheWall1.size = movedFromNode.size
-//                    self.addChild(nodeOnTheWall1)
+//                    let pointOnTheWall1 = findPointOnTheWall(movedFromNode.position, pointTo: touchLocation, nodeSize: movedFromNode.size)
+                    let nodeOnTheWall1 = MySKNode(texture: movedFromNode.texture!, type: .SpriteType)
+                    nodeOnTheWall1.name = "nodeOnTheWall"
+                    nodeOnTheWall1.position = pointOnTheWall1
+                    nodeOnTheWall1.size = movedFromNode.size
+                    self.addChild(nodeOnTheWall1)
 
                     let mirroredLine2 = mirroredLine.createMirroredLine()
                     makeHelpLine(mirroredLine2.line.fromPoint, toPoint: mirroredLine2.line.toPoint, lineWidth: movedFromNode.size.width, numberOfLine: 3)
@@ -807,6 +836,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
 
             if startNode.type == .SpriteType && (aktNode == nil || (aktNode as! MySKNode) != movedFromNode) {
                 let sprite = movedFromNode// as! SKSpriteNode
+                
                 sprite!.physicsBody = SKPhysicsBody(circleOfRadius: sprite!.size.width/2)
                 sprite.physicsBody?.dynamic = true
                 sprite.physicsBody?.categoryBitMask = PhysicsCategory.MovingSprite
@@ -846,18 +876,24 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
                     sprite.hitCounter *= 2
                     sprite.hitLabel.text = "\(sprite.hitCounter)"
                 })
+                
+
 
                 let actionMove = SKAction.moveTo(pointOnTheWall, duration: line.duration)
-                let actionMove1 = SKAction.moveTo(pointOnTheWall1, duration: mirroredLine1.duration)
-                let actionMove2 = SKAction.moveTo(pointOnTheWall2, duration: mirroredLine2.duration)
 
+                let actionMove1 = SKAction.moveTo(pointOnTheWall1, duration: mirroredLine1.duration)
+                
+                let actionMove2 = SKAction.moveTo(pointOnTheWall2, duration: mirroredLine2.duration)
+                
                 let actionMove3 = SKAction.moveTo(pointOnTheWall3, duration: mirroredLine2.duration)
-               
+                
+                
                 let waitSparkAction = SKAction.runBlock({
                     sprite.hidden = true
                     sleep(0)
                     sprite.removeFromParent()
                 })
+                
                 let actionMoveStopped =  SKAction.runBlock({
                     self.push(sprite, status: .Removed)
                     sprite.hidden = true
@@ -1100,9 +1136,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         let sprite = node2
         let movingSpriteColorIndex = movingSprite.colorIndex
         let spriteColorIndex = sprite.colorIndex
+        
         //let aktColor = GV.colorSets[GV.colorSetIndex][sprite.colorIndex + 1].CGColor
         collisionActive = false
-        
+
         let OK = movingSpriteColorIndex == spriteColorIndex
         if OK {
             

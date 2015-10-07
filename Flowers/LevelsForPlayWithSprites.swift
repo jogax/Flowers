@@ -28,7 +28,7 @@ class LevelsForPlayWithSprites {
     var level: Int
     var aktLevel: LevelParam
     let levelChanges = [
-        "5,0,10,0,0,0,0,0,0,0,0",    // 5 times CountSpritesProContainer += 10
+        "5,0,10,0,0,0,0,0,0,0,-1",    // 5 times CountSpritesProContainer += 10
         "1,0,0,1,1,0,0,0,0,1,-1",     // 1 time CountColumns += 1, CountRows += 1, TargetScoreCorr += 1
         "5,0,5,0,0,5,0,0,0,1,0",     // 5 times CountSpritesProContainer += 5, MinProzent += 5, TargetScoreCorr += 1
         "1,0,0,1,1,0,0,0,0,1,-1",     // 1 time CountColumns += 1, CountRows += 1, TargetScoreCorr += 1
@@ -41,8 +41,8 @@ class LevelsForPlayWithSprites {
         "5,0,10,0,0,0,0,0,0,0,0"     // 5 times CountSpritesProContainer += 10
     ]
     private var levelContent = [
-        1: "-1,3,10,5,5,25,70,50,25,1,4", // first param (levelCount) say, how many levels to make for this Line, if -1, than all levels according levelchanges
-        2: "-1,4,20,5,5,20,70,60,30,2,4",
+        1: "-1,3,10,5,5,25,70,50,35,1,9", // first param (levelCount) say, how many levels to make for this Line, if -1, than all levels according levelchanges
+        2: "-1,4,20,5,5,20,70,60,35,2,4",
         3: "-1,5,20,5,5,20,70,50,30,2,4",
         4: "-1,6,20,5,5,20,70,50,30,2,4",
         5: "-1,7,20,5,5,20,70,40,25,2,4",

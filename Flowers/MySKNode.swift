@@ -12,19 +12,15 @@ enum MySKNodeType: Int {
 import SpriteKit
 
 class MySKNode: SKSpriteNode {
-    var hitCounter = 0 {
-        didSet {
-            if hitCounter != oldValue {
-                
-            }
-        }
-    }
     
     var column = 0
     var row = 0
     var colorIndex = 0
     var startPosition = CGPointZero
     
+
+    var hitCounter: Int = 0
+
     let type: MySKNodeType
     var hitLabel = SKLabelNode()
     var frozen = SKSpriteNode(imageNamed: "frozen.png" )
@@ -53,7 +49,7 @@ class MySKNode: SKSpriteNode {
             hitLabel.zPosition = 100
             print("\(hitLabel.text)")
         } else {
-            hitLabel.position = CGPointMake(self.position.x, self.position.y + self.size.height * 0.04)
+            hitLabel.position = CGPointMake(self.position.x, self.position.y + self.size.height * 0.1)
             hitLabel.fontSize = 15;
             hitLabel.text = "\(hitCounter)"
         }

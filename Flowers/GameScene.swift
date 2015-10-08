@@ -193,7 +193,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
     var collisionActive = false
     var bgImage: SKSpriteNode?
     var bgAdder: CGFloat = 0
-    let showHelpLines = 2
+    let showHelpLines = 4
     var undoCount = 0
     var inFirstGenerateSprites = true
     var lastShownNode: MySKNode?

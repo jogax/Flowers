@@ -194,6 +194,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
     var bgImage: SKSpriteNode?
     var bgAdder: CGFloat = 0
     let showHelpLines = 4
+    let maxHelpLinesCount = 4
     var undoCount = 0
     var inFirstGenerateSprites = true
     var lastShownNode: MySKNode?
@@ -482,7 +483,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         let testNode = node as! SKNode
         switch node  {
         case is GameScene: return MyNodeTypes.GameScene
-        case is SKLabelNode: return MyNodeTypes.LabelNode
+        case is SKLabelNode:
+            if testNode.parent is GameScene {
+               return MyNodeTypes.GameScene
+            }
+            return MyNodeTypes.LabelNode
         case is MySKNode:
             switch (testNode as! MySKNode).type {
             case .ContainerType: return MyNodeTypes.ContainerNode
@@ -715,55 +720,48 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
                     //movedFromNode.texture = SKTexture(imageNamed: "\(movedFromNode.name!)")
                     movedFromNode.texture = atlas.textureNamed("\(movedFromNode.name!)")
                 } else {
+//                    print("make Line")
                     let line = JGXLine(fromPoint: movedFromNode.position, toPoint: touchLocation, inFrame: self.frame, lineSize: movedFromNode.size.width)
                     let pointOnTheWall = line.line.toPoint
                     makeHelpLine(movedFromNode.position, toPoint: pointOnTheWall, lineWidth: movedFromNode.size.width, numberOfLine: 1)
 
-//                    let intersectNode = MySKNode(texture: movedFromNode.texture!, type: .SpriteType)
-//                    intersectNode.name = "nodeOnTheWall"
-//                    intersectNode.position = line.line.toPoint
-//                    intersectNode.size = movedFromNode.size
-//                    self.addChild(intersectNode)
-//                    
-//                    
-                    let nodeOnTheWall = MySKNode(texture: movedFromNode.texture!, type: .SpriteType)
-                    nodeOnTheWall.name = "nodeOnTheWall"
-                    nodeOnTheWall.position = pointOnTheWall
-                    nodeOnTheWall.size = movedFromNode.size
-                    self.addChild(nodeOnTheWall)
+//                    let nodeOnTheWall = MySKNode(texture: movedFromNode.texture!, type: .SpriteType)
+//                    nodeOnTheWall.name = "nodeOnTheWall"
+//                    nodeOnTheWall.position = pointOnTheWall
+//                    nodeOnTheWall.size = movedFromNode.size
+//                    self.addChild(nodeOnTheWall)
                     
-                    
+                    if showHelpLines > 1 {
+//                        print("make mirroredLine1")
+                        let mirroredLine1 = line.createMirroredLine()
+                        makeHelpLine(mirroredLine1.line.fromPoint, toPoint: mirroredLine1.line.toPoint, lineWidth: movedFromNode.size.width, numberOfLine: 2)
 
-                    
-                    
-                    let mirroredLine = line.createMirroredLine()
-                    makeHelpLine(mirroredLine.line.fromPoint, toPoint: mirroredLine.line.toPoint, lineWidth: movedFromNode.size.width, numberOfLine: 2)
+//                    let pointOnTheWall1 = mirroredLine.line.toPoint
+//                    let nodeOnTheWall1 = MySKNode(texture: movedFromNode.texture!, type: .SpriteType)
+//                    nodeOnTheWall1.name = "nodeOnTheWall"
+//                    nodeOnTheWall1.position = pointOnTheWall1
+//                    nodeOnTheWall1.size = movedFromNode.size
+//                    self.addChild(nodeOnTheWall1)
+                        if showHelpLines > 2 {
+//                            print("make mirroredLine2")
+                            let mirroredLine2 = mirroredLine1.createMirroredLine()
+                            makeHelpLine(mirroredLine2.line.fromPoint, toPoint: mirroredLine2.line.toPoint, lineWidth: movedFromNode.size.width, numberOfLine: 3)
 
-                    let pointOnTheWall1 = mirroredLine.line.toPoint
-                    
-//                    let pointOnTheWall1 = findPointOnTheWall(movedFromNode.position, pointTo: touchLocation, nodeSize: movedFromNode.size)
-                    let nodeOnTheWall1 = MySKNode(texture: movedFromNode.texture!, type: .SpriteType)
-                    nodeOnTheWall1.name = "nodeOnTheWall"
-                    nodeOnTheWall1.position = pointOnTheWall1
-                    nodeOnTheWall1.size = movedFromNode.size
-                    self.addChild(nodeOnTheWall1)
-
-                    let mirroredLine2 = mirroredLine.createMirroredLine()
-                    makeHelpLine(mirroredLine2.line.fromPoint, toPoint: mirroredLine2.line.toPoint, lineWidth: movedFromNode.size.width, numberOfLine: 3)
-                    
-//                    let pointOnTheWall2 = mirroredLine.line.toPoint
-//                    let pointOnTheWall = findPointOnTheWall(movedFromNode.position, pointTo: touchLocation, nodeSize: movedFromNode.size)
+//                    let pointOnTheWall2 = mirroredLine2.line.toPoint
 //                    let nodeOnTheWall2 = MySKNode(texture: movedFromNode.texture!, type: .SpriteType)
 //                    nodeOnTheWall2.name = "nodeOnTheWall"
 //                    nodeOnTheWall2.position = pointOnTheWall2
 //                    nodeOnTheWall2.size = movedFromNode.size
 //                    self.addChild(nodeOnTheWall2)
- 
-                    let mirroredLine3 = mirroredLine2.createMirroredLine()
-                    makeHelpLine(mirroredLine3.line.fromPoint, toPoint: mirroredLine3.line.toPoint, lineWidth: movedFromNode.size.width, numberOfLine: 4)
-
+                            if showHelpLines > 3 {
+//                                print("make mirroredLine3")
+                                let mirroredLine3 = mirroredLine2.createMirroredLine()
+                                makeHelpLine(mirroredLine3.line.fromPoint, toPoint: mirroredLine3.line.toPoint, lineWidth: movedFromNode.size.width, numberOfLine: 4)
+                            }
+                        }
+                    }
 //                    var bummTexture = SKTexture()
-//                    bummTexture = SKTexture(imageNamed: "bumm")
+//                    let bummTexture = SKTexture(imageNamed: "bumm")
 //                    let pointOnTheWall3 = mirroredLine3.line.toPoint
 //                    let nodeOnTheWall3 = MySKNode(texture: bummTexture, type: .SpriteType)
 //                    nodeOnTheWall3.name = "nodeOnTheWall"
@@ -962,6 +960,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             
             
             self.addChild(myLine)
+            let texture = numberOfLine < maxHelpLinesCount ? movedFromNode.texture! : SKTexture(imageNamed: "bumm")
+            let nodeOnTheWall = MySKNode(texture: texture, type: .SpriteType)
+            nodeOnTheWall.name = "nodeOnTheWall"
+            nodeOnTheWall.position = toPoint
+            nodeOnTheWall.size = movedFromNode.size
+            self.addChild(nodeOnTheWall)
+
         }
     }
     

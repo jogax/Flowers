@@ -28,26 +28,26 @@ class LevelsForPlayWithSprites {
     var level: Int
     var aktLevel: LevelParam
     let levelChanges = [
-        "5,0,10,0,0,0,0,0,0,0,0",    // 5 times CountSpritesProContainer += 10
-        "1,0,0,1,1,0,0,0,0,2,-1",     // 1 time CountColumns += 1, CountRows += 1, TargetScoreCorr += 1
-        "5,0,10,0,0,5,0,0,0,1,0",     // 5 times CountSpritesProContainer += 5, MinProzent += 5, TargetScoreCorr += 1
+        "5,0,1,0,0,0,0,0,0,2,0",    // 5 times CountSpritesProContainer += 10
+        "1,0,1,1,1,0,0,0,0,2,-1",     // 1 time CountColumns += 1, CountRows += 1, TargetScoreCorr += 1
+        "5,0,1,0,0,5,0,0,0,2,0",     // 5 times CountSpritesProContainer += 5, MinProzent += 5, TargetScoreCorr += 1
         "1,0,0,1,1,0,0,0,0,1,-1",     // 1 time CountColumns += 1, CountRows += 1, TargetScoreCorr += 1
         "5,0,10,0,0,0,5,0,0,0,0",     // 5 times MinProzent -= 3, MaxProzent += 5
         "2,0,10,0,0,0,0,0,0,0,0",    // 2 times CountSpritesProContainer += 5
         "1,0,0,1,1,0,0,0,0,1,0",     // 1 time CountColumns += 1, CountRows += 1, TargetScoreCorr += 1
         "5,0,10,0,0,0,0,0,0,1,0",     // 5 times CountSpritesProContainer + 5, TargetScoreCorr += 1
-        "1,0,5,0,0,0,0,0,0,0,-1",    // 2 times TimeLimitKorr -= 1
+        "1,0,5,0,0,0,0,0,0,0,0",    // 2 times TimeLimitKorr -= 1
         "1,0,0,1,1,0,0,0,0,1,0",     // 1 time CountColumns += 1, CountRows += 1, TargetScoreCorr += 1
         "5,0,10,0,0,0,0,0,0,0,0"     // 5 times CountSpritesProContainer += 10
     ]
     private var levelContent = [
-        1: "-1,3,10,5,5,25,70,50,35,1,4", // first param (levelCount) say, how many levels to make for this Line, if -1, than all levels according levelchanges
-        2: "-1,4,280,5,5,20,70,60,35,3,4",
-        3: "-1,5,20,5,5,20,70,50,30,3,4",
-        4: "-1,6,20,5,5,20,70,50,30,2,4",
-        5: "-1,7,20,5,5,20,70,40,25,2,4",
-        6: "-1,8,20,5,5,20,70,40,25,2,4",
-        7: "-1,9,30,5,5,20,70,40,25,2,4"
+        1: "-1,3,10,5,5,30,70,50,35,1,4", // first param (levelCount) say, how many levels to make for this Line, if -1, than all levels according levelchanges
+        2: "-1,4,20,5,5,30,70,60,35,3,3",
+        3: "-1,5,20,5,5,30,70,50,30,3,3",
+        4: "-1,6,20,5,5,30,70,50,30,2,3",
+        5: "-1,7,20,5,5,30,70,40,25,2,3",
+        6: "-1,8,20,5,5,30,70,40,25,2,3",
+        7: "-1,9,30,5,5,30,70,40,25,2,3"
     ]
     var levelParam = [LevelParam]()
     

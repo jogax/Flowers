@@ -182,7 +182,6 @@
 		200140DC1BAEA96A003E0950 /* Flowers */ = {
 			isa = PBXGroup;
 			children = (
-				20FC65BD1BBBC82000775322 /* sprites.atlas */,
 				20F6D01D1BB43E9100BF7384 /* MyParticle.sks */,
 				200141461BAEDAE5003E0950 /* MySKNode.swift */,
 				2001410E1BAEAA82003E0950 /* GameScene.swift */,
@@ -196,6 +195,7 @@
 				200140DF1BAEA96A003E0950 /* ViewController.swift */,
 				200140E11BAEA96A003E0950 /* Main.storyboard */,
 				200140E71BAEA96A003E0950 /* Assets.xcassets */,
+				20FC65BD1BBBC82000775322 /* sprites.atlas */,
 				2001416A1BAEF7AA003E0950 /* Flowers.xcdatamodeld */,
 				200140E91BAEA96A003E0950 /* LaunchScreen.storyboard */,
 				200140EC1BAEA96A003E0950 /* Info.plist */,

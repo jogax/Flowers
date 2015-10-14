@@ -110,7 +110,6 @@ class JGXLine {
         let checkLine = frameLines[index]
         
         
-        
         switch (self.line.lineType, checkLine.lineType) {
             case (.Vertical, .Vertical):
                 hasIntersection = false
@@ -145,6 +144,8 @@ class JGXLine {
                 intersectionPoint.x = (intersectionPoint.y - self.line.a) / self.line.b
                 let distanceFromPoint =  (intersectionPoint - self.line.fromPoint).length()
                 let distanceToPoint =  (intersectionPoint - self.line.toPoint).length()
+                
+
                 if distanceFromPoint > distanceToPoint && intersectionPoint.x >= self.frame.origin.x && intersectionPoint.x <= self.frame.origin.x + self.frame.width {
                     hasIntersection = true
                 }
@@ -152,7 +153,6 @@ class JGXLine {
                 
             default: hasIntersection = false
         }
-        
         return (hasIntersection, intersectionPoint)
     }
     
@@ -163,11 +163,15 @@ class JGXLine {
         switch mirrorAxis {
         case .Vertical:
             mirroredPoint.x = self.line.toPoint.x + offset.x
+        case .Horizontal:
+            mirroredPoint.y = self.line.toPoint.y + offset.y
         default:
             mirroredPoint.y = self.line.toPoint.y + offset.y
         }
         
-        let mirroredLine = JGXLine(fromPoint: self.line.toPoint, toPoint: mirroredPoint, inFrame: self.frame, lineSize: self.lineSize)
+        let mirroredOffset = mirroredPoint - line.toPoint
+        
+        let mirroredLine = JGXLine(fromPoint: self.line.toPoint, toPoint: self.line.toPoint + mirroredOffset.normalized(), inFrame: self.frame, lineSize: self.lineSize)
         return mirroredLine
     }
 }

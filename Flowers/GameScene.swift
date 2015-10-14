@@ -712,62 +712,32 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             switch aktNodeType {
                 case MyNodeTypes.LabelNode: aktNode = self.nodeAtPoint(touchLocation).parent as! MySKNode
                 case MyNodeTypes.SpriteNode: aktNode = self.nodeAtPoint(touchLocation) as! MySKNode
-                case MyNodeTypes.ButtonNode: self.nodeAtPoint(touchLocation) as! MySKNode
+                case MyNodeTypes.ButtonNode: aktNode = self.nodeAtPoint(touchLocation) as! MySKNode
                 default: aktNode = nil
             }
             if movedFromNode != aktNode {
                 if movedFromNode.type == .ButtonType {
-                    //movedFromNode.texture = SKTexture(imageNamed: "\(movedFromNode.name!)")
                     movedFromNode.texture = atlas.textureNamed("\(movedFromNode.name!)")
                 } else {
-//                    print("make Line")
                     let line = JGXLine(fromPoint: movedFromNode.position, toPoint: touchLocation, inFrame: self.frame, lineSize: movedFromNode.size.width)
                     let pointOnTheWall = line.line.toPoint
                     makeHelpLine(movedFromNode.position, toPoint: pointOnTheWall, lineWidth: movedFromNode.size.width, numberOfLine: 1)
 
-//                    let nodeOnTheWall = MySKNode(texture: movedFromNode.texture!, type: .SpriteType)
-//                    nodeOnTheWall.name = "nodeOnTheWall"
-//                    nodeOnTheWall.position = pointOnTheWall
-//                    nodeOnTheWall.size = movedFromNode.size
-//                    self.addChild(nodeOnTheWall)
                     
                     if showHelpLines > 1 {
-//                        print("make mirroredLine1")
                         let mirroredLine1 = line.createMirroredLine()
                         makeHelpLine(mirroredLine1.line.fromPoint, toPoint: mirroredLine1.line.toPoint, lineWidth: movedFromNode.size.width, numberOfLine: 2)
 
-//                    let pointOnTheWall1 = mirroredLine.line.toPoint
-//                    let nodeOnTheWall1 = MySKNode(texture: movedFromNode.texture!, type: .SpriteType)
-//                    nodeOnTheWall1.name = "nodeOnTheWall"
-//                    nodeOnTheWall1.position = pointOnTheWall1
-//                    nodeOnTheWall1.size = movedFromNode.size
-//                    self.addChild(nodeOnTheWall1)
                         if showHelpLines > 2 {
-//                            print("make mirroredLine2")
                             let mirroredLine2 = mirroredLine1.createMirroredLine()
                             makeHelpLine(mirroredLine2.line.fromPoint, toPoint: mirroredLine2.line.toPoint, lineWidth: movedFromNode.size.width, numberOfLine: 3)
 
-//                    let pointOnTheWall2 = mirroredLine2.line.toPoint
-//                    let nodeOnTheWall2 = MySKNode(texture: movedFromNode.texture!, type: .SpriteType)
-//                    nodeOnTheWall2.name = "nodeOnTheWall"
-//                    nodeOnTheWall2.position = pointOnTheWall2
-//                    nodeOnTheWall2.size = movedFromNode.size
-//                    self.addChild(nodeOnTheWall2)
                             if showHelpLines > 3 {
-//                                print("make mirroredLine3")
                                 let mirroredLine3 = mirroredLine2.createMirroredLine()
                                 makeHelpLine(mirroredLine3.line.fromPoint, toPoint: mirroredLine3.line.toPoint, lineWidth: movedFromNode.size.width, numberOfLine: 4)
                             }
                         }
                     }
-//                    var bummTexture = SKTexture()
-//                    let bummTexture = SKTexture(imageNamed: "bumm")
-//                    let pointOnTheWall3 = mirroredLine3.line.toPoint
-//                    let nodeOnTheWall3 = MySKNode(texture: bummTexture, type: .SpriteType)
-//                    nodeOnTheWall3.name = "nodeOnTheWall"
-//                    nodeOnTheWall3.position = pointOnTheWall3
-//                    nodeOnTheWall3.size = movedFromNode.size
-//                    self.addChild(nodeOnTheWall3)
                 }
             }
             

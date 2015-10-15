@@ -73,7 +73,7 @@ struct GV {
 //    static let debuggingTime = false
 //    static let printGeneratedLine = true
 
-/*
+
     // globale Labels
     
     static let moveCountLabel = UILabel()
@@ -148,7 +148,7 @@ struct GV {
         
         
     ]
-*/
+
     // Constraints
     // static let myDevice = MyDevice()
     

@@ -184,8 +184,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
     var gameScore = Int(GV.spriteGameData.spriteGameScore)
     var levelScore = 0
     var movedFromNode: MySKNode!
-    var restartButton: MySKNode?
-    var undoButton: MySKNode?
+    var settingsButton: MySKButton?
+    var undoButton: MySKButton?
+    var previousLevelButton: MySKButton?
+    var nextLevelButton: MySKButton?
     var targetScore = 0
     var spriteCount = 0
     var restartCount = 0
@@ -403,30 +405,31 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         bgImage!.zPosition = -15
         self.addChild(bgImage!)
         
-
-        //let restartTextureNormal = SKTexture(imageNamed: "restart")
-        let restartTextureNormal = atlas.textureNamed("restart")
+        let buttonSize = myView.frame.width / 12
+        let buttonYPos = myView.frame.height * 0.05
+        let buttonXPosNormalized = myView.frame.width / 10
+        let images = DrawImages()
         
-        restartButton = MySKNode(texture: restartTextureNormal, type: MySKNodeType.ButtonType)
-        //restartButton = SKButton(normalTexture: restartTextureNormal, selectedTexture: restartTextureSelected, disabledTexture: restartTextureNormal)
-        restartButton!.position = CGPointMake(myView.frame.width / 2, myView.frame.height * 0.05)
-        restartButton!.size = CGSizeMake(myView.frame.width / 10, myView.frame.width / 10)
-        //restartButton!.setButtonAction(self, triggerEvent: .TouchUpInside, action:"restartButtonPressed")
-        restartButton!.name = "restart"
-        restartButton!.hitLabel.text = "\(restartCount)"
-        addChild(restartButton!)
+        let settingsTexture = SKTexture(image: images.getSettings())
+        settingsButton = MySKButton(texture: settingsTexture, frame: CGRectMake(buttonXPosNormalized * 3, buttonYPos, buttonSize, buttonSize))
+        settingsButton!.name = "settings"
+        addChild(settingsButton!)
         
-        //let undoTextureNormal = SKTexture(imageNamed: "undo")
-        let undoTextureNormal = atlas.textureNamed("undo")
-        
-        //undoButton = SKButton(normalTexture: undoTextureNormal, selectedTexture: undoTextureSelected, disabledTexture: undoTextureNormal)
-        undoButton = MySKNode(texture: undoTextureNormal, type: MySKNodeType.ButtonType)
-        undoButton!.position = CGPointMake(myView.frame.width / 3, myView.frame.height * 0.05)
-        undoButton!.size = CGSizeMake(myView.frame.width / 10, myView.frame.width / 10)
-        //undoButton!.setButtonAction(self, triggerEvent: .TouchUpInside, action:"undoButtonPressed")
+        let undoTexture = SKTexture(image: images.getUndo())
+        undoButton = MySKButton(texture: undoTexture, frame: CGRectMake(buttonXPosNormalized * 6, buttonYPos, buttonSize, buttonSize))
         undoButton!.name = "undo"
         undoButton!.hitLabel.text = "\(undoCount)"
         addChild(undoButton!)
+        
+        let previousLevelButtonTexture = SKTexture(image: images.getPfeillinks())
+        previousLevelButton = MySKButton(texture: previousLevelButtonTexture, frame: CGRectMake(buttonXPosNormalized * 1, buttonYPos, buttonSize, buttonSize))
+        previousLevelButton!.name = "pfeilLinks"
+        addChild(previousLevelButton!)
+        
+        let nextLevelButtonTexture = SKTexture(image: images.getPfeilrechts())
+        nextLevelButton = MySKButton(texture: nextLevelButtonTexture, frame: CGRectMake(buttonXPosNormalized * 9, buttonYPos, buttonSize, buttonSize))
+        nextLevelButton!.name = "pfeilRechts"
+        addChild(nextLevelButton!)
         
         
         let sparkles = SKTexture(imageNamed: "bumm") //reusing the bird texture for now
@@ -458,12 +461,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
     }
     
 
-    func restartButtonPressed() {
+    func settingsButtonPressed() {
         if restartCount > 0 {
-            let restartButton = self.childNodeWithName("restart") as! MySKNode
+            let settingsButton = self.childNodeWithName("restart") as! MySKNode
             restartCount--
             playMusic("NoSound", volume: 0.01, loops: 0)
-            restartButton.hitLabel.text = "\(restartCount)"
+            settingsButton.hitLabel.text = "\(restartCount)"
             newGame(false)
         }
     }
@@ -506,8 +509,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             levelIndex = levelsForPlayWithSprites.getNextLevel()
             gameScore += levelScore
             restartCount = 3
-            let restartButton = self.childNodeWithName("restart") as! MySKNode
-            restartButton.hitLabel.text = "\(restartCount)"
+            let settingsButton = self.childNodeWithName("settings") as! MySKNode
+            settingsButton.hitLabel.text = "\(restartCount)"
             var spriteData = SpriteGameData()
             spriteData.spriteLevelIndex = Int64(levelIndex)
             spriteData.spriteGameScore = Int64(gameScore)
@@ -795,7 +798,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
 
             if aktNode != nil && (aktNode as! MySKNode).type == .ButtonType && startNode.type == .ButtonType  {
                 switch (aktNode as! MySKNode).name! {
-                    case "restart": restartButtonPressed()
+                    case "restart": settingsButtonPressed()
                     case "undo": undoButtonPressed()
                     default: undoButtonPressed()
                 }

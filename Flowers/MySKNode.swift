@@ -85,4 +85,10 @@ class MySKNode: SKSpriteNode {
         //hitLabel.text = "\(hitCounter)"
     }
 */
+    
+//    override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
+//        let firstTouch = touches.first
+//        let touchLocation = firstTouch!.locationInNode(self)
+//    }
+
 }

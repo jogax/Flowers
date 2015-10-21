@@ -41,8 +41,9 @@
 		200141741BAEF900003E0950 /* SpriteGame.swift in Sources */ = {isa = PBXBuildFile; fileRef = 200141721BAEF900003E0950 /* SpriteGame.swift */; settings = {ASSET_TAGS = (); }; };
 		200141761BAEFB4F003E0950 /* JGXLine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 200141751BAEFB4F003E0950 /* JGXLine.swift */; settings = {ASSET_TAGS = (); }; };
 		200141781BAEFBCA003E0950 /* DataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 200141771BAEFBCA003E0950 /* DataStore.swift */; settings = {ASSET_TAGS = (); }; };
+		20097FC71BD7E44B0074C3F5 /* MyScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20097FC61BD7E44B0074C3F5 /* MyScene.swift */; settings = {ASSET_TAGS = (); }; };
+		200AEF9C1BD4ED8400B39001 /* SettingsScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 200AEF9B1BD4ED8400B39001 /* SettingsScene.swift */; settings = {ASSET_TAGS = (); }; };
 		200BDA071BCFDEE600F72109 /* DrawImages.swift in Sources */ = {isa = PBXBuildFile; fileRef = 200BDA061BCFDEE600F72109 /* DrawImages.swift */; settings = {ASSET_TAGS = (); }; };
-		200BDA091BCFE79900F72109 /* settings.png in Resources */ = {isa = PBXBuildFile; fileRef = 200BDA081BCFE79900F72109 /* settings.png */; settings = {ASSET_TAGS = (); }; };
 		200BDA0B1BCFEF5100F72109 /* MySKButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 200BDA0A1BCFEF5100F72109 /* MySKButton.swift */; settings = {ASSET_TAGS = (); }; };
 		205574411BBEB85C00C165A1 /* Go321.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 205574401BBEB85C00C165A1 /* Go321.m4a */; settings = {ASSET_TAGS = (); }; };
 		205574431BBECB6200C165A1 /* NoSound.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 205574421BBECB6200C165A1 /* NoSound.m4a */; settings = {ASSET_TAGS = (); }; };
@@ -116,8 +117,9 @@
 		200141721BAEF900003E0950 /* SpriteGame.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpriteGame.swift; sourceTree = "<group>"; };
 		200141751BAEFB4F003E0950 /* JGXLine.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JGXLine.swift; sourceTree = "<group>"; };
 		200141771BAEFBCA003E0950 /* DataStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataStore.swift; sourceTree = "<group>"; };
+		20097FC61BD7E44B0074C3F5 /* MyScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MyScene.swift; sourceTree = "<group>"; };
+		200AEF9B1BD4ED8400B39001 /* SettingsScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsScene.swift; sourceTree = "<group>"; };
 		200BDA061BCFDEE600F72109 /* DrawImages.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DrawImages.swift; sourceTree = "<group>"; };
-		200BDA081BCFE79900F72109 /* settings.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = settings.png; sourceTree = "<group>"; };
 		200BDA0A1BCFEF5100F72109 /* MySKButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MySKButton.swift; sourceTree = "<group>"; };
 		205574401BBEB85C00C165A1 /* Go321.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = Go321.m4a; sourceTree = "<group>"; };
 		205574421BBECB6200C165A1 /* NoSound.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = NoSound.m4a; sourceTree = "<group>"; };
@@ -192,6 +194,8 @@
 				20F6D01D1BB43E9100BF7384 /* MyParticle.sks */,
 				200141461BAEDAE5003E0950 /* MySKNode.swift */,
 				200BDA0A1BCFEF5100F72109 /* MySKButton.swift */,
+				20097FC61BD7E44B0074C3F5 /* MyScene.swift */,
+				200AEF9B1BD4ED8400B39001 /* SettingsScene.swift */,
 				2001410E1BAEAA82003E0950 /* GameScene.swift */,
 				200141751BAEFB4F003E0950 /* JGXLine.swift */,
 				200141721BAEF900003E0950 /* SpriteGame.swift */,
@@ -275,7 +279,6 @@
 				20FC65D71BBC123300775322 /* background.png */,
 				20FC65D81BBC123300775322 /* bgImage.png */,
 				20FC65D11BBC0FD400775322 /* aquarium.png */,
-				200BDA081BCFE79900F72109 /* settings.png */,
 			);
 			name = Pictures;
 			sourceTree = "<group>";
@@ -394,7 +397,6 @@
 				200141281BAEB1F6003E0950 /* Sprite1.m4a in Resources */,
 				200141261BAEB1F6003E0950 /* Mirror.m4a in Resources */,
 				2001412A1BAEB1F6003E0950 /* Winner.m4a in Resources */,
-				200BDA091BCFE79900F72109 /* settings.png in Resources */,
 				20FC65E51BBC12A100775322 /* Holz.png in Resources */,
 				200141221BAEB1F6003E0950 /* Do_2.m4a in Resources */,
 				200141241BAEB1F6003E0950 /* Funk_Bot.m4a in Resources */,
@@ -438,6 +440,7 @@
 				200141781BAEFBCA003E0950 /* DataStore.swift in Sources */,
 				200141411BAEB9F7003E0950 /* hu.swift in Sources */,
 				2001413F1BAEB95B003E0950 /* en.swift in Sources */,
+				200AEF9C1BD4ED8400B39001 /* SettingsScene.swift in Sources */,
 				200140E01BAEA96A003E0950 /* ViewController.swift in Sources */,
 				2001412E1BAEB2DE003E0950 /* MyStructs.swift in Sources */,
 				200141471BAEDAE5003E0950 /* MySKNode.swift in Sources */,
@@ -445,6 +448,7 @@
 				2001416C1BAEF7AA003E0950 /* Flowers.xcdatamodeld in Sources */,
 				200BDA0B1BCFEF5100F72109 /* MySKButton.swift in Sources */,
 				200141761BAEFB4F003E0950 /* JGXLine.swift in Sources */,
+				20097FC71BD7E44B0074C3F5 /* MyScene.swift in Sources */,
 				200141301BAEB4F6003E0950 /* Language.swift in Sources */,
 				2001410F1BAEAA82003E0950 /* GameScene.swift in Sources */,
 				200141741BAEF900003E0950 /* SpriteGame.swift in Sources */,

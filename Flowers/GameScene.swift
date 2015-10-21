@@ -120,7 +120,10 @@ enum LinePosition: Int, CustomStringConvertible {
         
 }
 
-class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
+let atlas = SKTextureAtlas(named: "sprites")
+
+
+class GameScene: MyScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
 
     struct ColorTabLine {
         var colorIndex: Int
@@ -157,7 +160,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
     var lastMirrored = ""
     var audioPlayer: AVAudioPlayer?
     var soundPlayer: AVAudioPlayer?
-    var parentViewController: UIViewController?
     var myView = SKView()
     var levelsForPlayWithSprites = LevelsForPlayWithSprites()
     var levelIndex = Int(GV.spriteGameData.spriteLevelIndex)
@@ -172,7 +174,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
     let spriteCountPosKorr = CGPointMake(GV.onIpad ? 0.05 : 0.05, GV.onIpad ? 0.91 : 0.90)
     let countdownPosKorr = CGPointMake(GV.onIpad ? 0.98 : 0.98, GV.onIpad ? 0.95 : 0.94)
     let targetPosKorr = CGPointMake(GV.onIpad ? 0.98 : 0.98, GV.onIpad ? 0.93 : 0.92)
-    let atlas = SKTextureAtlas(named: "sprites")
     var countColorsProContainer = [Int]()
     var labelBackground = SKSpriteNode()
     var levelLabel = SKLabelNode(fontNamed: "AvenirNext-Bold")
@@ -190,7 +191,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
     var nextLevelButton: MySKButton?
     var targetScore = 0
     var spriteCount = 0
-    var restartCount = 0
+    //var restartCount = 0
     var stopped = true
     var collisionActive = false
     var bgImage: SKSpriteNode?
@@ -200,6 +201,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
     var undoCount = 0
     var inFirstGenerateSprites = true
     var lastShownNode: MySKNode?
+    //var settingsNode = SettingsNode()
     
     var spriteTabRect = CGRectZero
 
@@ -219,21 +221,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
     let scoreAddCorrected = [1:1, 2:2, 3:3, 4:4, 5:5, 6:7, 7:8, 8:10, 9:11, 10:13, 11:14, 12:16,13:17,14:19, 15:20, 16:22, 17:23, 18:24, 19:25, 20:27, 21:28, 22:30, 23:31, 24:33, 25:34, 26:36, 27:37, 28:39, 29:40, 30:42, 31:43, 32:45, 33:46, 34:47, 35:48, 36:50, 37:51, 38:53, 39:54, 40:54, 41:53, 42:53, 43:52, 44:52, 45:51, 46:51, 47:51, 48:50, 49:50, 50:50, 51:51, 52:52, 53:53, 54:54, 55:55, 56:56, 57:57, 58:58, 59:59, 60:60, 61:61, 62:62, 63:63, 64:64, 65:65, 66:66, 67:67, 68:68, 69:69, 70:70, 71:71, 72:72, 73:73, 74:74, 75:75, 76:76, 77:77, 78:78, 79:79, 80:80, 81:81, 82:82, 83:83, 84:84, 85:85, 86:86, 87:87, 88:88, 89:89, 90:90, 91:91, 92:92, 93:93, 94:94, 95:95, 96:96, 97:97, 98:98, 99:99, 100:100]
     
 
-/*
-    var packageOfLevels: Dictionary<String, AnyObject>?
-    var json: JSON?
-    //var packageName: AnyObject
-
-    override init(size: CGSize) {
-        
-        super.init()
-    }
-
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-*/
     override func didMoveToView(view: SKView) {
 
 
@@ -241,7 +228,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         myView = view
         levelsForPlayWithSprites.setAktLevel(levelIndex)
 
-        restartCount = 3
+        //restartCount = 3
         prepareNextGame()
         generateSprites()
 
@@ -462,13 +449,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
     
 
     func settingsButtonPressed() {
-        if restartCount > 0 {
-            let settingsButton = self.childNodeWithName("restart") as! MySKNode
-            restartCount--
-            playMusic("NoSound", volume: 0.01, loops: 0)
-            settingsButton.hitLabel.text = "\(restartCount)"
-            newGame(false)
-        }
+        //playMusic("NoSound", volume: 0.01, loops: 0)
+        //settingsNode = SettingsNode()
+        //settingsNode.position = CGPointMake(self.size.width / 2, self.size.height / 2)
+        let scene = SettingsScene(size: (view?.frame.size)!)
+        let transition = SKTransition.revealWithDirection(SKTransitionDirection.Down, duration: 1.0)
+
+        self.view?.presentScene(scene, transition: transition)
+        //addChild(settingsNode)
     }
     
     func undoButtonPressed() {
@@ -492,10 +480,15 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             }
             return MyNodeTypes.LabelNode
         case is MySKNode:
-            switch (testNode as! MySKNode).type {
+            var mySKNode: MySKNode = (testNode as! MySKNode)
+            switch mySKNode.type {
             case .ContainerType: return MyNodeTypes.ContainerNode
             case .SpriteType: return MyNodeTypes.SpriteNode
-            case .ButtonType: return MyNodeTypes.ButtonNode
+            case .ButtonType:
+                if mySKNode.name == "buttonPicture" {
+                   mySKNode = mySKNode.parent as! MySKNode
+                }
+                return MyNodeTypes.ButtonNode
             default: return MyNodeTypes.none
             }
         default: return MyNodeTypes.none
@@ -508,9 +501,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
 
             levelIndex = levelsForPlayWithSprites.getNextLevel()
             gameScore += levelScore
-            restartCount = 3
-            let settingsButton = self.childNodeWithName("settings") as! MySKNode
-            settingsButton.hitLabel.text = "\(restartCount)"
+            //restartCount = 3
+            //let settingsButton = self.childNodeWithName("settings") as! MySKNode
+            //settingsButton.hitLabel.text = "\(restartCount)"
             var spriteData = SpriteGameData()
             spriteData.spriteLevelIndex = Int64(levelIndex)
             spriteData.spriteGameScore = Int64(gameScore)
@@ -690,8 +683,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
                 //let textureName = "\(testNode.name!)Pressed"
                 //let textureSelected = SKTexture(imageNamed: textureName)
                 //(testNode as! MySKNode).texture = textureSelected
-                (testNode as! MySKNode).texture = atlas.textureNamed("\(testNode.name!)Pressed")
-            default: movedFromNode = nil
+                //(testNode as! MySKNode).texture = atlas.textureNamed("\(testNode.name!)Pressed")
+             default: movedFromNode = nil
         }
     }
 
@@ -720,7 +713,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             }
             if movedFromNode != aktNode {
                 if movedFromNode.type == .ButtonType {
-                    movedFromNode.texture = atlas.textureNamed("\(movedFromNode.name!)")
+                    //movedFromNode.texture = atlas.textureNamed("\(movedFromNode.name!)")
                 } else {
                     let line = JGXLine(fromPoint: movedFromNode.position, toPoint: touchLocation, inFrame: self.frame, lineSize: movedFromNode.size.width)
                     let pointOnTheWall = line.line.toPoint
@@ -778,12 +771,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             var aktNode: SKNode? = nil
 
             let startNode = movedFromNode
+            
             switch aktNodeType {
                 case MyNodeTypes.LabelNode: aktNode = self.nodeAtPoint(touchLocation).parent as! MySKNode
                 case MyNodeTypes.SpriteNode: aktNode = self.nodeAtPoint(touchLocation) as! MySKNode
                 case MyNodeTypes.ButtonNode:
                     //(testNode as! MySKNode).texture = SKTexture(imageNamed: "\(testNode.name!)")
-                    (testNode as! MySKNode).texture = atlas.textureNamed("\(testNode.name!)")
+                    //(testNode as! MySKNode).texture = atlas.textureNamed("\(testNode.name!)")
                     aktNode = self.nodeAtPoint(touchLocation) as! MySKNode
                 default: aktNode = nil
             }
@@ -795,10 +789,17 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
                 }
                 
             }
-
             if aktNode != nil && (aktNode as! MySKNode).type == .ButtonType && startNode.type == .ButtonType  {
-                switch (aktNode as! MySKNode).name! {
-                    case "restart": settingsButtonPressed()
+//            if aktNode != nil && mySKNode.type == .ButtonType && startNode.type == .ButtonType  {
+                var mySKNode = aktNode as! MySKNode
+
+//                var name = (aktNode as! MySKNode).parent!.name
+                if mySKNode.name == "buttonPicture" || mySKNode.name == "shadow" {
+                    mySKNode = (mySKNode.parent) as! MySKNode
+                }
+                //switch (aktNode as! MySKNode).name! {
+                switch mySKNode.name! {
+                    case "settings": settingsButtonPressed()
                     case "undo": undoButtonPressed()
                     default: undoButtonPressed()
                 }
@@ -856,7 +857,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
                 
                 let actionMove2 = SKAction.moveTo(pointOnTheWall2, duration: mirroredLine2.duration)
                 
-                let actionMove3 = SKAction.moveTo(pointOnTheWall3, duration: mirroredLine2.duration)
+                let actionMove3 = SKAction.moveTo(pointOnTheWall3, duration: mirroredLine3.duration)
                 
                 
                 let waitSparkAction = SKAction.runBlock({

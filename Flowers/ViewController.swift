@@ -15,7 +15,7 @@ let RadiansToDegrees = 180 / Pi
 
 
 class ViewController: UIViewController {
-
+    var scene: SKScene?
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
@@ -32,13 +32,13 @@ class ViewController: UIViewController {
     
         GV.spriteGameData = GV.dataStore.getSpriteData()
         
-        let scene:GameScene = GameScene(size: CGSizeMake(view.frame.width, view.frame.height))
+        scene = GameScene(size: CGSizeMake(view.frame.width, view.frame.height), parentViewController: self)
         
         skView.showsFPS = true
         skView.showsNodeCount = true
         skView.ignoresSiblingOrder = true
-        scene.scaleMode = .ResizeFill
-        scene.parentViewController = self
+        scene!.scaleMode = .ResizeFill
+       // scene!.parentViewController = self
         
         
         skView.presentScene(scene)
@@ -47,6 +47,10 @@ class ViewController: UIViewController {
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
+    }
+    
+    func changeScene(scene: SKScene) {
+        
     }
 
 

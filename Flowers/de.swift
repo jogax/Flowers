@@ -26,8 +26,12 @@ let deDictionary: [TextConstants: String] = [
     .TCGameAgain:        "Restart",
     .TCTimeout:          "Timeout",
     .TCGameOver:         "Spiel vorbei",
-    .TCCongratulations:  "Herzliches Glückwunsch!"
-
+    .TCCongratulations:  "Herzliches Glückwunsch!",
+    .TCName:             "Dein Name",
+    .TCMusicVolume:      "Musik Lautstärke",
+    .TCSoundVolume:      "Sound Lautstärke",
+    .TCCountHelpLines:   "Anzahl Hilfslinien",
+    .TCLanguage:         "Sprache",
 ]
 
 

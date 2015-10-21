@@ -10,9 +10,25 @@ import SpriteKit
 
 class MySKButton: MySKNode {
     init(texture: SKTexture, frame: CGRect) {
-        super.init(texture: texture, type:.ButtonType)
+        let buttonTexture = atlas.textureNamed("myRoundButton")
+        super.init(texture: buttonTexture, type:.ButtonType)
         self.position = frame.origin
         self.size = frame.size
+        let buttonPicture = MySKNode(texture: texture, type: .ButtonType)
+        buttonPicture.size = size * 0.95
+        buttonPicture.zPosition = 5
+        buttonPicture.name = "buttonPicture"
+        addChild(buttonPicture)
+        let shadow = MySKNode(texture: texture, type: .ButtonType)
+        shadow.blendMode = SKBlendMode.Alpha
+        shadow.colorBlendFactor = 0.5;
+        shadow.color = SKColor.redColor()
+        shadow.alpha = 0.25
+        shadow.size = size
+        shadow.anchorPoint = self.anchorPoint + CGPointMake(-0.09, 0.04)
+        shadow.zPosition = 10
+        shadow.name = "shadow"
+        addChild(shadow)
     }
 
     required init?(coder aDecoder: NSCoder) {

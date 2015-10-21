@@ -28,7 +28,12 @@ enum TextConstants: Int {
     TCGameAgain,
     TCTimeout,
     TCGameOver,
-    TCCongratulations
+    TCCongratulations,
+    TCName,
+    TCMusicVolume,
+    TCSoundVolume,
+    TCCountHelpLines,
+    TCLanguage
 }
 
 

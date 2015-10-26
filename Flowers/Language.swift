@@ -11,7 +11,8 @@ import UIKit
 
 enum TextConstants: Int {
     case
-    TCLevel = 0,
+    TCAktLanguage = 0,
+    TCLevel,
     TCLevelScore,
     TCGameScore,
     TCTargetScore,
@@ -33,7 +34,12 @@ enum TextConstants: Int {
     TCMusicVolume,
     TCSoundVolume,
     TCCountHelpLines,
-    TCLanguage
+    TCLanguage,
+    TCEnglish,
+    TCGerman,
+    TCHungarian,
+    TCRussian
+
 }
 
 
@@ -53,14 +59,15 @@ class Language {
     init() {
         
         let myString = NSLocale.preferredLanguages()[0]
-        aktLanguage = languages[myString[myString.startIndex..<myString.startIndex.advancedBy(2)]]!
+        let languageKey = myString[myString.startIndex..<myString.startIndex.advancedBy(2)]
+        aktLanguage = languages[languageKey]!
 
         
     }
     
-    func setLanguage(language: String) {
+    func setLanguage(languageKey: String) {
         
-        aktLanguage = languages[language]!
+        aktLanguage = languages[languageKey]!
 
         for index in 0..<callBacks.count {
             callBacks[index]()
@@ -68,8 +75,25 @@ class Language {
     }
     
     func getText (textIndex: TextConstants) -> String {
-            return aktLanguage[textIndex]!
+        return aktLanguage[textIndex]!
     }
+
+    func getAktLanguageKey() -> String {
+        return aktLanguage[.TCAktLanguage]!
+    }
+    
+    func isAktLanguage(language:TextConstants)->Bool {
+        let languageName = GV.language.getText(language)
+        let ind = languageName.lowercaseString.rangeOfString(" (")
+        let startIndex = ind?.startIndex.advancedBy(2)
+        let endIndex = ind?.endIndex.advancedBy(2)
+        let substring = languageName.lowercaseString.substringWithRange(Range<String.Index>(start: startIndex!, end: endIndex!))
+        print(ind)
+        return substring == GV.language.getText(.TCAktLanguage)
+        
+        
+    }
+    
 /*
     func getLanguageCount() -> Int {
         var index = 0
@@ -95,11 +119,11 @@ class Language {
         }
 
     }
-
     func getAktLanguageIndex() -> Int {
        return Int(json!["languageIndex"].string!)!
     }
-*/
+    */
+
 }
 
 

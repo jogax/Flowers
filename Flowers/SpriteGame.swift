@@ -11,6 +11,7 @@ import CoreData
 
 class SpriteGame: NSManagedObject {
 
+    @NSManaged var aktLanguageKey: NSString?
     @NSManaged var spriteGameScore: NSNumber?
     @NSManaged var spriteLevelIndex: NSNumber?
 

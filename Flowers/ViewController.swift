@@ -15,16 +15,16 @@ let RadiansToDegrees = 180 / Pi
 
 
 class ViewController: UIViewController {
-    var scene: SKScene?
+    var skView: SKView?
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
-        let skView = self.view as! SKView
-        skView.showsFPS = true
-        skView.showsNodeCount = true
+        skView = self.view as? SKView
+        skView!.showsFPS = true
+        skView!.showsNodeCount = true
         
         /* Sprite Kit applies additional optimizations to improve rendering performance */
-        skView.ignoresSiblingOrder = true
+        skView!.ignoresSiblingOrder = true
         
         /* Set the scale mode to scale to fit the window */
         //scene.scaleMode = .AspectFill
@@ -32,16 +32,16 @@ class ViewController: UIViewController {
     
         GV.spriteGameData = GV.dataStore.getSpriteData()
         
-        scene = GameScene(size: CGSizeMake(view.frame.width, view.frame.height), parentViewController: self)
+        let scene = GameScene(size: CGSizeMake(view.frame.width, view.frame.height))
         
-        skView.showsFPS = true
-        skView.showsNodeCount = true
-        skView.ignoresSiblingOrder = true
-        scene!.scaleMode = .ResizeFill
-       // scene!.parentViewController = self
+        skView!.showsFPS = true
+        skView!.showsNodeCount = true
+        skView!.ignoresSiblingOrder = true
+        scene.scaleMode = .ResizeFill
+        scene.parentViewController = self
         
         
-        skView.presentScene(scene)
+        skView!.presentScene(scene)
     }
 
     override func didReceiveMemoryWarning() {
@@ -49,10 +49,6 @@ class ViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
-    func changeScene(scene: SKScene) {
-        
-    }
-
 
 }
 

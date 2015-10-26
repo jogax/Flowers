@@ -9,6 +9,7 @@
 //import Foundation
 
 let enDictionary: [TextConstants: String] = [
+    .TCAktLanguage:      "en",
     .TCLevel:            "Level",
     .TCLevelScore:       "score:",
     .TCGameScore:        "Game score:",
@@ -32,5 +33,9 @@ let enDictionary: [TextConstants: String] = [
     .TCSoundVolume:      "Sound Lautstärke",
     .TCCountHelpLines:   "Count helplines",
     .TCLanguage:         "Language",
+    .TCEnglish:          "English (English)",
+    .TCGerman:           "Deutsch (German)",
+    .TCHungarian:        "Magyar (Hungarian)",
+    .TCRussian:          "Русский (Russian)",
     
 ]

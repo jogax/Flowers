@@ -8,9 +8,9 @@
 
 import SpriteKit
 
-class MyScene: SKScene {
-    var parentViewController: UIViewController?
-    init(size: CGSize, parentViewController: UIViewController) {
+class XXScene: SKScene {
+    var parentViewController: ViewController?
+    init(size: CGSize, parentViewController: ViewController) {
         self.parentViewController = parentViewController
         super.init(size: size)
     }

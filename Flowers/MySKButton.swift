@@ -8,6 +8,7 @@
 
 import SpriteKit
 
+let buttonName = "buttonName"
 class MySKButton: MySKNode {
     init(texture: SKTexture, frame: CGRect) {
         let buttonTexture = atlas.textureNamed("myRoundButton")
@@ -17,7 +18,7 @@ class MySKButton: MySKNode {
         let buttonPicture = MySKNode(texture: texture, type: .ButtonType)
         buttonPicture.size = size * 0.95
         buttonPicture.zPosition = 5
-        buttonPicture.name = "buttonPicture"
+        buttonPicture.name = buttonName
         addChild(buttonPicture)
         let shadow = MySKNode(texture: texture, type: .ButtonType)
         shadow.blendMode = SKBlendMode.Alpha
@@ -27,7 +28,7 @@ class MySKButton: MySKNode {
         shadow.size = size
         shadow.anchorPoint = self.anchorPoint + CGPointMake(-0.09, 0.04)
         shadow.zPosition = 10
-        shadow.name = "shadow"
+        shadow.name = buttonName
         addChild(shadow)
     }
 

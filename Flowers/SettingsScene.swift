@@ -27,6 +27,8 @@ func / (point: CGSize, scalar: CGFloat) -> CGSize {
 
 
 class SettingsScene: SKScene {
+    var returnToScene: SKScene?
+    
     let tcName = 1
     let tcSoundVolume = 2
     let tcMusicVolume = 3
@@ -34,16 +36,22 @@ class SettingsScene: SKScene {
     let tcLanguage = 5
     let tcReturn = 6
     
-    var settingsWindow: SKSpriteNode
+    let tcEnglish = 1
+    let tcDeutsch = 2
+    let tcHungarian = 3
+    let tcRussian = 4
+    
+    var settingsWindow: SKSpriteNode?
+    var languageWindow: SKSpriteNode?
     
     override func didMoveToView(view: SKView) {
         
         self.backgroundColor = UIColor.whiteColor()
        
-        settingsWindow.position = CGPointMake(self.frame.size.width / 2, self.frame.size.height / 2)
-        settingsWindow.size = self.size / 1.3
+        settingsWindow!.position = CGPointMake(self.frame.size.width / 2, self.frame.size.height / 2)
+        settingsWindow!.size = self.size / 1.3
         
-        self.addChild(settingsWindow)
+        self.addChild(settingsWindow!)
         
         
         addNewButton("\(GV.language.getText(.TCName))", buttonNr: tcName)
@@ -65,15 +73,15 @@ class SettingsScene: SKScene {
     }
  
     func addNewButton(buttonName: String, buttonNr: Int) {
-        let yPosMultiplier = settingsWindow.size.height / 7
-        let yPosKorr = settingsWindow.size.height / 3
+        let yPosMultiplier = settingsWindow!.size.height / 7
+        let yPosKorr = settingsWindow!.size.height / 3
         let texture = atlas.textureNamed("mybutton")
         let button = SKSpriteNode(texture: texture)
         
         //button.position.x = settingsWindow.position.x
         let buttonSizeKorr = button.size.height / button.size.width
-        button.position.y = settingsWindow.frame.minY + yPosKorr - CGFloat(buttonNr) * yPosMultiplier
-        button.size.width = settingsWindow.size.width * 0.9
+        button.position.y = settingsWindow!.frame.minY + yPosKorr - CGFloat(buttonNr) * yPosMultiplier
+        button.size.width = settingsWindow!.size.width * 0.9
         button.size.height = button.size.width * buttonSizeKorr
         button.name = "\(buttonNr)"
         
@@ -84,13 +92,29 @@ class SettingsScene: SKScene {
         buttonText.fontColor = SKColor.blackColor()
         buttonText.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.Center
         buttonText.verticalAlignmentMode = SKLabelVerticalAlignmentMode.Center
-        buttonText.fontSize = settingsWindow.size.height / 20
+        buttonText.fontSize = settingsWindow!.size.height / 20
         buttonText.zPosition = 10
         button.addChild(buttonText)
         button.zPosition = 10
-        settingsWindow.addChild(button)
+        settingsWindow!.addChild(button)
 
     }
+    
+    func addNewRadioButton(language: TextConstants) {
+        var texture: SKTexture
+        let radioText = SKLabelNode(text: GV.language.getText(language))
+        //let aktLanguage = GV.language.getAktLanguageKey()
+        if GV.language.isAktLanguage(language) {
+            texture = atlas.textureNamed("radioButtonChecked")
+        } else {
+            texture = atlas.textureNamed("radioButton")
+        }
+        let radioPane = SKSpriteNode(texture: texture)
+        radioPane.addChild(radioText)
+        languageWindow!.addChild(radioPane)
+        
+    }
+    
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?)
     {
         let firstTouch = touches.first
@@ -138,7 +162,7 @@ class SettingsScene: SKScene {
         case tcCountHelpLines?:
             _ = 4
         case tcLanguage?:
-            _ = 5
+            tcLanguageFunc()
         case tcReturn?:
             tcReturnFunc()
         default:
@@ -148,8 +172,25 @@ class SettingsScene: SKScene {
     }
         
     func tcReturnFunc() {
-        print ("return")
-        print(self.parent)
+        let transition = SKTransition.revealWithDirection(SKTransitionDirection.Up, duration: 1.0)
+        self.view?.presentScene(self.returnToScene!, transition: transition)
     }
+    
+    func tcLanguageFunc() {
+        
+        let texture = atlas.textureNamed("settings")
+        languageWindow = SKSpriteNode(texture: texture)
+        languageWindow!.size = settingsWindow!.size
+        languageWindow!.position = settingsWindow!.position
+        languageWindow!.zPosition = settingsWindow!.zPosition + 1
+        settingsWindow!.removeFromParent()
+        self.addChild(languageWindow!)
+        addNewRadioButton(.TCEnglish)
+        addNewRadioButton(.TCGerman)
+        addNewRadioButton(.TCHungarian)
+        addNewRadioButton(.TCRussian)
+
+    }
+
     
 }

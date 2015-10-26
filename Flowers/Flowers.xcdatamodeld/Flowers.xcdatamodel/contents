@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="8195" systemVersion="14F27" minimumToolsVersion="Xcode 7.0">
+<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="9057" systemVersion="15B42" minimumToolsVersion="Xcode 7.0">
     <entity name="SpriteGame" representedClassName=".SpriteGame" syncable="YES">
+        <attribute name="aktLanguageKey" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="spriteGameScore" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
         <attribute name="spriteLevelIndex" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
     </entity>
     <elements>
-        <element name="SpriteGame" positionX="-54" positionY="-9" width="128" height="75"/>
+        <element name="SpriteGame" positionX="-54" positionY="-9" width="128" height="90"/>
     </elements>
 </model>

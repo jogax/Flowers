@@ -356,10 +356,12 @@ struct GameData {
 //}
 
 struct SpriteGameData {
+    var aktLanguageKey: String
     var spriteLevelIndex: Int64
     var spriteGameScore: Int64
     
     init() {
+        aktLanguageKey = GV.language.getAktLanguageKey()
         spriteLevelIndex = 0
         spriteGameScore = 0
     }

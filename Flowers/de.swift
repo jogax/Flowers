@@ -9,6 +9,7 @@
 //import Foundation
 
 let deDictionary: [TextConstants: String] = [
+    .TCAktLanguage:      "de",
     .TCLevel:            "Level",
     .TCLevelScore:       "Summe",
     .TCGameScore:        "Gesamtsumme",
@@ -32,6 +33,10 @@ let deDictionary: [TextConstants: String] = [
     .TCSoundVolume:      "Sound Lautstärke",
     .TCCountHelpLines:   "Anzahl Hilfslinien",
     .TCLanguage:         "Sprache",
+    .TCEnglish:          "English (Englisch)",
+    .TCGerman:           "Deutsch (Deutsch)",
+    .TCHungarian:        "Magyar (Ungarisch)",
+    .TCRussian:          "Русский (Russisch)",
 ]
 
 

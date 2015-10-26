@@ -9,6 +9,7 @@
 //import Foundation
 
 let huDictionary: [TextConstants: String] = [
+    .TCAktLanguage:      "hu",
     .TCLevel:            "Szint",
     .TCLevelScore:       "Pontszám:",
     .TCGameScore:        "Játék pontszám:",
@@ -32,4 +33,8 @@ let huDictionary: [TextConstants: String] = [
     .TCSoundVolume:      "Effekt hangerő",
     .TCCountHelpLines:   "Segédvonalak száma",
     .TCLanguage:         "Nyelv",
+    .TCEnglish:          "English (Angol)",
+    .TCGerman:           "Deutsch (Német)",
+    .TCHungarian:        "Magyar (Magyar)",
+    .TCRussian:          "Русский (Orosz)",
 ]

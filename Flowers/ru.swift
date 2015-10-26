@@ -9,6 +9,7 @@
 //import Foundation
 
 let ruDictionary: [TextConstants: String] = [
+    .TCAktLanguage:      "ru",
     .TCLevel:            "Уровень",
     .TCLevelScore:       "Очки:",
     .TCGameScore:        "Очки в игре:",
@@ -32,4 +33,8 @@ let ruDictionary: [TextConstants: String] = [
     .TCSoundVolume:      "Громкость звука",
     .TCCountHelpLines:   "кол. вспомогательных линий",
     .TCLanguage:         "Язык",
+    .TCEnglish:          "English (Английский)",
+    .TCGerman:           "Deutsch (Немецкий)",
+    .TCHungarian:        "Magyar (Венгерский)",
+    .TCRussian:          "Русский (Русский)",
 ]

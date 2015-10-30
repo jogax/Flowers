@@ -36,8 +36,8 @@ class SettingsScene: SKScene {
     let tcLanguage = 5
     let tcReturn = 6
     
-    let tcEnglish = 1
-    let tcDeutsch = 2
+    let tcGerman = 1
+    let tcEnglish = 2
     let tcHungarian = 3
     let tcRussian = 4
     
@@ -100,9 +100,17 @@ class SettingsScene: SKScene {
 
     }
     
-    func addNewRadioButton(language: TextConstants) {
+    func addNewRadioButton(language: String, languageNr: Int) {
         var texture: SKTexture
-        let radioText = SKLabelNode(text: GV.language.getText(language))
+        var text = ""
+        switch language {
+            case LanguageDE: text = GV.language.getText(.TCGerman)
+            case LanguageEN: text = GV.language.getText(.TCEnglish)
+            case LanguageHU: text = GV.language.getText(.TCHungarian)
+            case LanguageRU: text = GV.language.getText(.TCRussian)
+            default: text = ""
+        }
+        let radioText = SKLabelNode(text: text)
         //let aktLanguage = GV.language.getAktLanguageKey()
         if GV.language.isAktLanguage(language) {
             texture = atlas.textureNamed("radioButtonChecked")
@@ -185,10 +193,10 @@ class SettingsScene: SKScene {
         languageWindow!.zPosition = settingsWindow!.zPosition + 1
         settingsWindow!.removeFromParent()
         self.addChild(languageWindow!)
-        addNewRadioButton(.TCEnglish)
-        addNewRadioButton(.TCGerman)
-        addNewRadioButton(.TCHungarian)
-        addNewRadioButton(.TCRussian)
+        addNewRadioButton(LanguageDE, languageNr: tcGerman)
+        addNewRadioButton(LanguageEN, languageNr: tcEnglish)
+        addNewRadioButton(LanguageHU, languageNr: tcHungarian)
+        addNewRadioButton(LanguageRU, languageNr: tcRussian)
 
     }
 

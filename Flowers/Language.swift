@@ -42,6 +42,12 @@ enum TextConstants: Int {
 
 }
 
+    let LanguageDE = "de"
+    let LanguageEN = "en"
+    let LanguageHU = "hu"
+    let LanguageRU = "ru"
+
+
 
 
 class Language {
@@ -68,10 +74,11 @@ class Language {
     func setLanguage(languageKey: String) {
         
         aktLanguage = languages[languageKey]!
-
+/*
         for index in 0..<callBacks.count {
             callBacks[index]()
         }
+*/
     }
     
     func getText (textIndex: TextConstants) -> String {
@@ -82,48 +89,9 @@ class Language {
         return aktLanguage[.TCAktLanguage]!
     }
     
-    func isAktLanguage(language:TextConstants)->Bool {
-        let languageName = GV.language.getText(language)
-        let ind = languageName.lowercaseString.rangeOfString(" (")
-        let startIndex = ind?.startIndex.advancedBy(2)
-        let endIndex = ind?.endIndex.advancedBy(2)
-        let substring = languageName.lowercaseString.substringWithRange(Range<String.Index>(start: startIndex!, end: endIndex!))
-        print(ind)
-        return substring == GV.language.getText(.TCAktLanguage)
-        
-        
+    func isAktLanguage(language:String)->Bool {
+        return language == aktLanguage[.TCAktLanguage]
     }
-    
-/*
-    func getLanguageCount() -> Int {
-        var index = 0
-        while json!["languages"][index]["EN"] != nil {
-            index++
-        }
-        return index
-    }
-
-    func getLanguages() -> [String] {
-        var index = 0
-        var languages: [String] = []
-        while json!["languages"][index] != nil {
-            languages.append(json!["languages"][index++].string!)
-        }
-        return languages
-    }
-    
-    func callBackWhenNewLanguage(updateLanguage: ()->()) {
-        callBacks.append(updateLanguage)
-        for index in 0..<callBacks.count {
-            callBacks[index]()
-        }
-
-    }
-    func getAktLanguageIndex() -> Int {
-       return Int(json!["languageIndex"].string!)!
-    }
-    */
-
 }
 
 

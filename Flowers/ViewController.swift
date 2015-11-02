@@ -14,7 +14,7 @@ let DegreesToRadians = Pi / 180
 let RadiansToDegrees = 180 / Pi
 
 
-class ViewController: UIViewController {
+class ViewController: UIViewController, SettingsDelegate {
     var skView: SKView?
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -39,9 +39,16 @@ class ViewController: UIViewController {
         skView!.ignoresSiblingOrder = true
         scene.scaleMode = .ResizeFill
         scene.parentViewController = self
-        
+        scene.settingsDelegate = self
         
         skView!.presentScene(scene)
+    }
+    
+    func settingsDelegateFunc() {
+        self.performSegueWithIdentifier("SettingsSegue", sender: nil)
+    }
+
+    @IBAction func unwindToVC(segue: UIStoryboardSegue) {
     }
 
     override func didReceiveMemoryWarning() {

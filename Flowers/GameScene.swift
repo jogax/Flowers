@@ -9,6 +9,24 @@
 import SpriteKit
 import AVFoundation
 
+func + (left: CGSize, right: CGSize) -> CGSize {
+    return CGSize(width: left.width + right.width, height: left.height + right.height)
+}
+
+func - (left: CGSize, right: CGSize) -> CGSize {
+    return CGSize(width: left.width - right.width, height: left.height - right.height)
+}
+
+func * (point: CGSize, scalar: CGFloat) -> CGSize {
+    return CGSize(width: point.width * scalar, height: point.height * scalar)
+}
+
+func / (point: CGSize, scalar: CGFloat) -> CGSize {
+    return CGSize(width: point.width / scalar, height: point.height / scalar)
+}
+
+
+
 func + (left: CGPoint, right: CGPoint) -> CGPoint {
     return CGPoint(x: left.x + right.x, y: left.y + right.y)
 }
@@ -122,6 +140,9 @@ enum LinePosition: Int, CustomStringConvertible {
 
 let atlas = SKTextureAtlas(named: "sprites")
 
+@objc protocol SettingsDelegate {
+    func settingsDelegateFunc()
+}
 
 class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
 
@@ -204,6 +225,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
     var parentViewController: UIViewController?
     var settingsSceneStarted = false
     var settingsScene: SettingsScene?
+    var settingsDelegate: SettingsDelegate?
     //var settingsNode = SettingsNode()
     
     var spriteTabRect = CGRectZero
@@ -223,7 +245,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
     
     let scoreAddCorrected = [1:1, 2:2, 3:3, 4:4, 5:5, 6:7, 7:8, 8:10, 9:11, 10:13, 11:14, 12:16,13:17,14:19, 15:20, 16:22, 17:23, 18:24, 19:25, 20:27, 21:28, 22:30, 23:31, 24:33, 25:34, 26:36, 27:37, 28:39, 29:40, 30:42, 31:43, 32:45, 33:46, 34:47, 35:48, 36:50, 37:51, 38:53, 39:54, 40:54, 41:53, 42:53, 43:52, 44:52, 45:51, 46:51, 47:51, 48:50, 49:50, 50:50, 51:51, 52:52, 53:53, 54:54, 55:55, 56:56, 57:57, 58:58, 59:59, 60:60, 61:61, 62:62, 63:63, 64:64, 65:65, 66:66, 67:67, 68:68, 69:69, 70:70, 71:71, 72:72, 73:73, 74:74, 75:75, 76:76, 77:77, 78:78, 79:79, 80:80, 81:81, 82:82, 83:83, 84:84, 85:85, 86:86, 87:87, 88:88, 89:89, 90:90, 91:91, 92:92, 93:93, 94:94, 95:95, 96:96, 97:97, 98:98, 99:99, 100:100]
     
-    
+
     override func didMoveToView(view: SKView) {
 
         if !settingsSceneStarted {
@@ -457,16 +479,23 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
 
     func settingsButtonPressed() {
         playMusic("NoSound", volume: 0.01, loops: 0)
+        
+        settingsDelegate?.settingsDelegateFunc()
         //settingsNode = SettingsNode()
         //settingsNode.position = CGPointMake(self.size.width / 2, self.size.height / 2)
         
-        settingsScene = SettingsScene(size: self.size)
-        settingsScene!.returnToScene = self    // add this property to CreditsScene
-        settingsScene!.scaleMode = self.scaleMode
-        let transition = SKTransition.revealWithDirection(SKTransitionDirection.Down, duration: 1.0)
         
-        settingsSceneStarted = true
-        self.view?.presentScene(settingsScene!, transition: transition)
+        
+        //viewController?.presentedViewController(settingsViewController)
+        
+//        
+//        settingsScene = SettingsScene(size: self.size)
+//        settingsScene!.returnToScene = self    // add this property to CreditsScene
+//        settingsScene!.scaleMode = self.scaleMode
+//        let transition = SKTransition.revealWithDirection(SKTransitionDirection.Down, duration: 1.0)
+//        
+//        settingsSceneStarted = true
+//        self.view?.presentScene(settingsScene!, transition: transition)
     }
     
     func undoButtonPressed() {

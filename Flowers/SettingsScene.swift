@@ -9,23 +9,6 @@
 import SpriteKit
 
 
-func + (left: CGSize, right: CGSize) -> CGSize {
-    return CGSize(width: left.width + right.width, height: left.height + right.height)
-}
-
-func - (left: CGSize, right: CGSize) -> CGSize {
-    return CGSize(width: left.width - right.width, height: left.height - right.height)
-}
-
-func * (point: CGSize, scalar: CGFloat) -> CGSize {
-    return CGSize(width: point.width * scalar, height: point.height * scalar)
-}
-
-func / (point: CGSize, scalar: CGFloat) -> CGSize {
-    return CGSize(width: point.width / scalar, height: point.height / scalar)
-}
-
-
 class SettingsScene: SKScene {
     var returnToScene: SKScene?
     
@@ -54,12 +37,12 @@ class SettingsScene: SKScene {
         self.addChild(settingsWindow!)
         
         
-        addNewButton("\(GV.language.getText(.TCName))", buttonNr: tcName)
-        addNewButton("\(GV.language.getText(.TCSoundVolume))", buttonNr: tcSoundVolume)
-        addNewButton("\(GV.language.getText(.TCMusicVolume))", buttonNr: tcMusicVolume)
-        addNewButton("\(GV.language.getText(.TCCountHelpLines))", buttonNr: tcCountHelpLines)
-        addNewButton("\(GV.language.getText(.TCLanguage))", buttonNr: tcLanguage)
-        addNewButton("\(GV.language.getText(.TCReturn))", buttonNr: tcReturn)
+//        addNewButton("\(GV.language.getText(.TCName))", buttonNr: tcName)
+//        addNewButton("\(GV.language.getText(.TCSoundVolume))", buttonNr: tcSoundVolume)
+//        addNewButton("\(GV.language.getText(.TCMusicVolume))", buttonNr: tcMusicVolume)
+//        addNewButton("\(GV.language.getText(.TCCountHelpLines))", buttonNr: tcCountHelpLines)
+//        addNewButton("\(GV.language.getText(.TCLanguage))", buttonNr: tcLanguage)
+//        addNewButton("\(GV.language.getText(.TCReturn))", buttonNr: tcReturn)
         
     }
 

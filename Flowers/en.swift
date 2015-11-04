@@ -36,5 +36,6 @@ let enDictionary: [TextConstants: String] = [
     .TCGerman:           "Deutsch (German)",
     .TCHungarian:        "Magyar (Hungarian)",
     .TCRussian:          "Русский (Russian)",
-    
+    .TCCancel:           "Cancel",
+    .TCDone:             "Done",    
 ]

@@ -8,6 +8,13 @@
 
 import UIKit
 
+let nameText = "getName"
+let volumeText = "setVolume"
+let helpLinesText = "setCountHelpLines"
+let languageText = "setLanguage"
+let returnText = "goBack"
+
+
 class SettingsViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
     @IBOutlet weak var tableView: UITableView!
     
@@ -23,7 +30,7 @@ class SettingsViewController: UIViewController, UITableViewDataSource, UITableVi
     let helpLinesRow = 2
     let languageRow = 3
     let returnRow = 4
-    
+
 
     let textCellIdentifier = "TextCell"
     
@@ -57,21 +64,171 @@ class SettingsViewController: UIViewController, UITableViewDataSource, UITableVi
     
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
          switch indexPath.row {
-            case nameRow:       self.performSegueWithIdentifier("getName", sender: self)
-            case volumeRow:     self.performSegueWithIdentifier("setVolume", sender: self)
-            case helpLinesRow:  self.performSegueWithIdentifier("setCountHelpLines", sender: self)
-            case languageRow:   self.performSegueWithIdentifier("setLanguage", sender: self)
-            case returnRow:     self.performSegueWithIdentifier("goBack", sender: self)
+            case nameRow:       self.performSegueWithIdentifier(nameText, sender: self)
+            case volumeRow:     self.performSegueWithIdentifier(volumeText, sender: self)
+            case helpLinesRow:  self.performSegueWithIdentifier(helpLinesText, sender: self)
+            case languageRow:   self.performSegueWithIdentifier(languageText, sender: self)
+            case returnRow:     self.performSegueWithIdentifier(returnText, sender: self)
             default: _ = 0
         }
-        self.performSegueWithIdentifier("getName", sender: self)
+        //self.performSegueWithIdentifier(nameText, sender: self)
     }
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        if segue.identifier == "getName" {
-            if let setParametersViewController = segue.destinationViewController as? SetParametersViewController {
+//        if segue.identifier == nameText {
+////            let test = segue.destinationViewController  as? SetParametersViewController
+            if let setParametersViewController = segue.destinationViewController as? ChooseLanguageViewController {
                 setParametersViewController.toDo = segue.identifier!
             }
+//        }
+    }
+}
+
+class ChooseLanguageViewController: UIViewController, UITableViewDataSource, UITableViewDelegate  {
+    let enRow = 0
+    let deRow = 1
+    let huRow = 2
+    let ruRow = 3
+    var cancelButton = UIButton()
+    var doneButton = UIButton()
+    var aktLanguageRow = 0
+    var toDo = ""
+    @IBOutlet weak var languageTableView: UITableView!
+    let textCellIdentifier = "languageTextCell"
+    var textCell = [
+        "\(GV.language.getText(.TCEnglish))",
+        "\(GV.language.getText(.TCGerman))",
+        "\(GV.language.getText(.TCHungarian))",
+        "\(GV.language.getText(.TCRussian))",
+    ]
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        setAktlanguageRow()
+        
+
+        switch toDo {
+            case nameText: makeNameView()
+            case volumeText: makeVolumeView()
+            case helpLinesText: makeHelpLinesView()
+            case languageText: makeLangageView()
+            default: break
+        }
+        cancelButton.setTitle(GV.language.getText(.TCCancel), forState: .Normal)
+        doneButton.setTitle(GV.language.getText(.TCDone), forState: .Normal)
+        self.view.addSubview(cancelButton)
+        self.view.addSubview(doneButton)
+        setupLayout()
+    }
+    
+    func makeNameView() {
+        let _ = 0
+    }
+    func makeVolumeView() {
+        let _ = 0
+    }
+    func makeHelpLinesView() {
+        let _ = 0
+    }
+    func makeLangageView() {
+        //languageTableView = UITableView()
+        languageTableView.delegate = self
+        languageTableView.dataSource = self
+        
+        
+    }
+    
+    func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+        return 1
+    }
+    
+    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return textCell.count
+    }
+    
+    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+        let cell = languageTableView.dequeueReusableCellWithIdentifier(textCellIdentifier, forIndexPath: indexPath) as UITableViewCell
+        
+        let row = indexPath.row
+        cell.textLabel?.text = textCell[row]
+        if row == aktLanguageRow {
+            cell.accessoryType = .Checkmark
+        } else {
+            cell.accessoryType = .None
+        }
+
+        return cell
+    }
+
+    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        switch indexPath.row {
+        case enRow:  GV.language.setLanguage(LanguageEN)
+        case deRow:  GV.language.setLanguage(LanguageDE)
+        case huRow:  GV.language.setLanguage(LanguageHU)
+        case ruRow:  GV.language.setLanguage(LanguageRU)
+        default: _ = 0
+        }
+        textCell.removeAll()
+        textCell = [
+            "\(GV.language.getText(.TCEnglish))",
+            "\(GV.language.getText(.TCGerman))",
+            "\(GV.language.getText(.TCHungarian))",
+            "\(GV.language.getText(.TCRussian))",
+        ]
+        setAktlanguageRow()
+        languageTableView.reloadData()
+    }
+
+    func setAktlanguageRow() {
+        switch GV.language.getAktLanguageKey() {
+            case LanguageEN: aktLanguageRow = enRow
+            case LanguageDE: aktLanguageRow = deRow
+            case LanguageHU: aktLanguageRow = huRow
+            case LanguageRU: aktLanguageRow = ruRow
+            default: aktLanguageRow = enRow
         }
     }
+    
+    func setupLayout() {
+        var constraintsArray = Array<NSLayoutConstraint>()
+        languageTableView.translatesAutoresizingMaskIntoConstraints = false
+        cancelButton.translatesAutoresizingMaskIntoConstraints = false
+        doneButton.translatesAutoresizingMaskIntoConstraints = false
+        
+        
+        //languageTableView
+        constraintsArray.append(NSLayoutConstraint(item: cancelButton, attribute: NSLayoutAttribute.Right, relatedBy: .Equal, toItem: self.view, attribute: NSLayoutAttribute.Right, multiplier: 1.0, constant: 100))
+        
+        constraintsArray.append(NSLayoutConstraint(item: cancelButton, attribute: .Top, relatedBy: .Equal, toItem: self.view, attribute: .Top, multiplier: 1.0, constant: 100.0))
+        
+        constraintsArray.append(NSLayoutConstraint(item: cancelButton, attribute: .Width, relatedBy: .Equal, toItem: self.view, attribute: .Width, multiplier: 0.05, constant: 0.0))
+        
+        constraintsArray.append(NSLayoutConstraint(item: cancelButton, attribute: .Height , relatedBy: .Equal, toItem: cancelButton, attribute: .Width, multiplier: 1.0, constant: 0.0))
+        
+        // doneButton
+        
+        
+        // cancelButton
+        constraintsArray.append(NSLayoutConstraint(item: cancelButton, attribute: NSLayoutAttribute.Right, relatedBy: .Equal, toItem: self.view, attribute: NSLayoutAttribute.Right, multiplier: 1.0, constant: 50))
+        
+        constraintsArray.append(NSLayoutConstraint(item: cancelButton, attribute: .Top, relatedBy: .Equal, toItem: self.view, attribute: .Top, multiplier: 1.0, constant: 20.0))
+        
+        constraintsArray.append(NSLayoutConstraint(item: cancelButton, attribute: .Width, relatedBy: .Equal, toItem: self.view, attribute: .Width, multiplier: 0.05, constant: 0.0))
+        
+        constraintsArray.append(NSLayoutConstraint(item: cancelButton, attribute: .Height , relatedBy: .Equal, toItem: cancelButton, attribute: .Width, multiplier: 1.0, constant: 0.0))
+        
+        // doneButton
+        constraintsArray.append(NSLayoutConstraint(item: doneButton, attribute: NSLayoutAttribute.Right, relatedBy: .Equal, toItem: self.view, attribute: NSLayoutAttribute.Right, multiplier: 1.0, constant: 100.0))
+        
+        constraintsArray.append(NSLayoutConstraint(item: doneButton, attribute: .Top, relatedBy: .Equal, toItem: self.view, attribute: .Top, multiplier: 1.0, constant: 20.0))
+        
+        constraintsArray.append(NSLayoutConstraint(item: doneButton, attribute: .Width, relatedBy: .Equal, toItem: self.view, attribute: .Width, multiplier: 0.05, constant: 0.0))
+        
+        constraintsArray.append(NSLayoutConstraint(item: doneButton, attribute: .Height , relatedBy: .Equal, toItem: doneButton, attribute: .Width, multiplier: 1.0, constant: 0.0))
+        
+        
+        self.view.addConstraints(constraintsArray)
+    }
+    
+
 }

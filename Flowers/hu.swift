@@ -36,4 +36,7 @@ let huDictionary: [TextConstants: String] = [
     .TCGerman:           "Deutsch (Német)",
     .TCHungarian:        "Magyar (Magyar)",
     .TCRussian:          "Русский (Orosz)",
+    .TCCancel:           "Mégsem",
+    .TCDone:             "Kész",
+
 ]

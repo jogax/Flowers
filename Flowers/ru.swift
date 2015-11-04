@@ -36,4 +36,6 @@ let ruDictionary: [TextConstants: String] = [
     .TCGerman:           "Deutsch (Немецкий)",
     .TCHungarian:        "Magyar (Венгерский)",
     .TCRussian:          "Русский (Русский)",
+    .TCCancel:           "Отменить",
+    .TCDone:             "Готово",
 ]

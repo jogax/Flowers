@@ -37,7 +37,9 @@ enum TextConstants: Int {
     TCEnglish,
     TCGerman,
     TCHungarian,
-    TCRussian
+    TCRussian,
+    TCCancel,
+    TCDone
 
 }
 

@@ -36,6 +36,8 @@ let deDictionary: [TextConstants: String] = [
     .TCGerman:           "Deutsch (Deutsch)",
     .TCHungarian:        "Magyar (Ungarisch)",
     .TCRussian:          "Русский (Russisch)",
+    .TCCancel:           "Abbrechen",
+    .TCDone:             "Fertig",
 ]
 
 

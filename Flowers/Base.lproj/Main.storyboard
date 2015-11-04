@@ -61,8 +61,11 @@
                     </view>
                     <connections>
                         <outlet property="tableView" destination="w7O-Tc-X3R" id="GZi-UA-2Jy"/>
-                        <segue destination="ehI-fQ-waT" kind="unwind" identifier="setParameters" unwindAction="unwindToVC:" id="fS8-fC-GaR"/>
                         <segue destination="eIG-aO-Yuv" kind="show" identifier="getName" id="Bci-fp-6ba"/>
+                        <segue destination="ehI-fQ-waT" kind="unwind" identifier="goBack" unwindAction="unwindToVC:" id="Bd7-iO-ZBE"/>
+                        <segue destination="eIG-aO-Yuv" kind="show" identifier="setVolume" id="Ccd-sY-7mg"/>
+                        <segue destination="eIG-aO-Yuv" kind="show" identifier="setCountHelpLines" id="C13-Xk-MuD"/>
+                        <segue destination="eIG-aO-Yuv" kind="show" identifier="setLanguage" id="UxH-gp-4a5"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="O0w-cB-Yue" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -70,10 +73,10 @@
             </objects>
             <point key="canvasLocation" x="488" y="278"/>
         </scene>
-        <!--Set Parameters View Controller-->
+        <!--Choose Language View Controller-->
         <scene sceneID="KYy-33-hLv">
             <objects>
-                <viewController id="eIG-aO-Yuv" customClass="setParametersViewController" customModule="Flowers" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="eIG-aO-Yuv" customClass="ChooseLanguageViewController" customModule="Flowers" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="lm8-U4-0vH"/>
                         <viewControllerLayoutGuide type="bottom" id="TqX-2d-7ef"/>
@@ -81,13 +84,38 @@
                     <view key="view" contentMode="scaleToFill" id="4dc-lY-ve3">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="9Zk-3p-jWk">
+                                <rect key="frame" x="123" y="110" width="317" height="212"/>
+                                <animations/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <prototypes>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="languageTextCell" id="OYU-na-OS3">
+                                        <rect key="frame" x="0.0" y="28" width="317" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="OYU-na-OS3" id="UTr-7o-qrE">
+                                            <rect key="frame" x="0.0" y="0.0" width="317" height="44"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <animations/>
+                                        </tableViewCellContentView>
+                                        <animations/>
+                                    </tableViewCell>
+                                </prototypes>
+                            </tableView>
+                        </subviews>
                         <animations/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
+                    <connections>
+                        <outlet property="languageTableView" destination="9Zk-3p-jWk" id="4QX-e7-ZdK"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="VMk-NA-X9I" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1600" y="278"/>
+            <point key="canvasLocation" x="1274" y="278"/>
         </scene>
     </scenes>
+    <inferredMetricsTieBreakers>
+        <segue reference="UxH-gp-4a5"/>
+    </inferredMetricsTieBreakers>
 </document>

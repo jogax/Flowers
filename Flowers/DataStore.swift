@@ -235,7 +235,7 @@ class DataStore {
         do {
             let results = try managedObjectContext.executeFetchRequest(request)
             if let match = results.first as? NSManagedObject {
-                spriteData.spriteLevelIndex = Int64(match.valueForKey("aktLanguageKey") as! String)!
+                spriteData.aktLanguageKey = match.valueForKey("aktLanguageKey") as! String!
                 spriteData.spriteLevelIndex = Int64(match.valueForKey("spriteLevelIndex") as! NSInteger)
                 spriteData.spriteGameScore = Int64(match.valueForKey("spriteGameScore") as! NSInteger)
             } else {

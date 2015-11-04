@@ -224,7 +224,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
     var lastShownNode: MySKNode?
     var parentViewController: UIViewController?
     var settingsSceneStarted = false
-    var settingsScene: SettingsScene?
     var settingsDelegate: SettingsDelegate?
     //var settingsNode = SettingsNode()
     
@@ -258,7 +257,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             generateSprites()
         } else {
             playMusic("MyMusic", volume: 0.03, loops: 0)
-            settingsScene = nil
 
         }
        

@@ -94,7 +94,7 @@
                                         <rect key="frame" x="0.0" y="28" width="317" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="OYU-na-OS3" id="UTr-7o-qrE">
-                                            <rect key="frame" x="0.0" y="0.0" width="317" height="44"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="317" height="43.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <animations/>
                                         </tableViewCellContentView>

@@ -47,7 +47,7 @@ class MySKNode: SKSpriteNode {
             hitLabel.fontSize = 20;
             //hitLabel.text = "\(hitCounter)"
             hitLabel.zPosition = 100
-            print("\(hitLabel.text)")
+            //print("\(hitLabel.text)")
         } else {
             hitLabel.position = CGPointMake(self.position.x, self.position.y + self.size.height * 0.1)
             hitLabel.fontSize = 15;

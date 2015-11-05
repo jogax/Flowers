@@ -114,10 +114,11 @@ class ChooseLanguageViewController: UIViewController, UITableViewDataSource, UIT
             case languageText: makeLangageView()
             default: break
         }
-        cancelButton.setTitle(GV.language.getText(.TCCancel), forState: .Normal)
+        cancelButton.setTitle(GV.language.getText(.TCCancel), forState:.Normal)
         doneButton.setTitle(GV.language.getText(.TCDone), forState: .Normal)
         self.view.addSubview(cancelButton)
         self.view.addSubview(doneButton)
+        
         setupLayout()
     }
     
@@ -197,36 +198,27 @@ class ChooseLanguageViewController: UIViewController, UITableViewDataSource, UIT
         
         
         //languageTableView
-        constraintsArray.append(NSLayoutConstraint(item: cancelButton, attribute: NSLayoutAttribute.Right, relatedBy: .Equal, toItem: self.view, attribute: NSLayoutAttribute.Right, multiplier: 1.0, constant: 100))
+        constraintsArray.append(NSLayoutConstraint(item: cancelButton, attribute: NSLayoutAttribute.Left, relatedBy: .Equal, toItem: self.view, attribute: NSLayoutAttribute.Left, multiplier: 1.0, constant: 40))
         
-        constraintsArray.append(NSLayoutConstraint(item: cancelButton, attribute: .Top, relatedBy: .Equal, toItem: self.view, attribute: .Top, multiplier: 1.0, constant: 100.0))
+        constraintsArray.append(NSLayoutConstraint(item: cancelButton, attribute: .Bottom, relatedBy: .Equal, toItem: self.view, attribute: .Bottom, multiplier: 1.0, constant: -50.0))
         
-        constraintsArray.append(NSLayoutConstraint(item: cancelButton, attribute: .Width, relatedBy: .Equal, toItem: self.view, attribute: .Width, multiplier: 0.05, constant: 0.0))
+        constraintsArray.append(NSLayoutConstraint(item: cancelButton, attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: 100))
         
-        constraintsArray.append(NSLayoutConstraint(item: cancelButton, attribute: .Height , relatedBy: .Equal, toItem: cancelButton, attribute: .Width, multiplier: 1.0, constant: 0.0))
-        
-        // doneButton
+        constraintsArray.append(NSLayoutConstraint(item: cancelButton, attribute: .Height , relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: 50))
         
         
-        // cancelButton
-        constraintsArray.append(NSLayoutConstraint(item: cancelButton, attribute: NSLayoutAttribute.Right, relatedBy: .Equal, toItem: self.view, attribute: NSLayoutAttribute.Right, multiplier: 1.0, constant: 50))
-        
-        constraintsArray.append(NSLayoutConstraint(item: cancelButton, attribute: .Top, relatedBy: .Equal, toItem: self.view, attribute: .Top, multiplier: 1.0, constant: 20.0))
-        
-        constraintsArray.append(NSLayoutConstraint(item: cancelButton, attribute: .Width, relatedBy: .Equal, toItem: self.view, attribute: .Width, multiplier: 0.05, constant: 0.0))
-        
-        constraintsArray.append(NSLayoutConstraint(item: cancelButton, attribute: .Height , relatedBy: .Equal, toItem: cancelButton, attribute: .Width, multiplier: 1.0, constant: 0.0))
-        
-        // doneButton
-        constraintsArray.append(NSLayoutConstraint(item: doneButton, attribute: NSLayoutAttribute.Right, relatedBy: .Equal, toItem: self.view, attribute: NSLayoutAttribute.Right, multiplier: 1.0, constant: 100.0))
-        
-        constraintsArray.append(NSLayoutConstraint(item: doneButton, attribute: .Top, relatedBy: .Equal, toItem: self.view, attribute: .Top, multiplier: 1.0, constant: 20.0))
-        
-        constraintsArray.append(NSLayoutConstraint(item: doneButton, attribute: .Width, relatedBy: .Equal, toItem: self.view, attribute: .Width, multiplier: 0.05, constant: 0.0))
-        
-        constraintsArray.append(NSLayoutConstraint(item: doneButton, attribute: .Height , relatedBy: .Equal, toItem: doneButton, attribute: .Width, multiplier: 1.0, constant: 0.0))
         
         
+//        // doneButton
+//        constraintsArray.append(NSLayoutConstraint(item: doneButton, attribute: NSLayoutAttribute.Right, relatedBy: .Equal, toItem: self.view, attribute: NSLayoutAttribute.Right, multiplier: 1.0, constant: 100.0))
+//        
+//        constraintsArray.append(NSLayoutConstraint(item: doneButton, attribute: .Top, relatedBy: .Equal, toItem: self.view, attribute: .Top, multiplier: 1.0, constant: 20.0))
+//        
+//        constraintsArray.append(NSLayoutConstraint(item: doneButton, attribute: .Width, relatedBy: .Equal, toItem: self.view, attribute: .Width, multiplier: 0.05, constant: 0.0))
+//        
+//        constraintsArray.append(NSLayoutConstraint(item: doneButton, attribute: .Height , relatedBy: .Equal, toItem: doneButton, attribute: .Width, multiplier: 1.0, constant: 0.0))
+//        
+//        
         self.view.addConstraints(constraintsArray)
     }
     

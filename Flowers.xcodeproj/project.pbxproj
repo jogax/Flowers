@@ -15,8 +15,6 @@
 		200140F61BAEA96A003E0950 /* FlowersTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 200140F51BAEA96A003E0950 /* FlowersTests.swift */; };
 		200141011BAEA96A003E0950 /* FlowersUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 200141001BAEA96A003E0950 /* FlowersUITests.swift */; };
 		2001410F1BAEAA82003E0950 /* GameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2001410E1BAEAA82003E0950 /* GameScene.swift */; };
-		200141111BAEAFA3003E0950 /* GameKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 200141101BAEAFA3003E0950 /* GameKit.framework */; };
-		200141131BAEAFB4003E0950 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 200141121BAEAFB4003E0950 /* StoreKit.framework */; };
 		200141201BAEB1F6003E0950 /* Container.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 200141151BAEB1F6003E0950 /* Container.m4a */; };
 		200141211BAEB1F6003E0950 /* Do_1.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 200141161BAEB1F6003E0950 /* Do_1.m4a */; };
 		200141221BAEB1F6003E0950 /* Do_2.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 200141171BAEB1F6003E0950 /* Do_2.m4a */; };
@@ -91,8 +89,6 @@
 		200141001BAEA96A003E0950 /* FlowersUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowersUITests.swift; sourceTree = "<group>"; };
 		200141021BAEA96A003E0950 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		2001410E1BAEAA82003E0950 /* GameScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameScene.swift; sourceTree = "<group>"; };
-		200141101BAEAFA3003E0950 /* GameKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameKit.framework; path = System/Library/Frameworks/GameKit.framework; sourceTree = SDKROOT; };
-		200141121BAEAFB4003E0950 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		200141151BAEB1F6003E0950 /* Container.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = Container.m4a; sourceTree = "<group>"; };
 		200141161BAEB1F6003E0950 /* Do_1.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = Do_1.m4a; sourceTree = "<group>"; };
 		200141171BAEB1F6003E0950 /* Do_2.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = Do_2.m4a; sourceTree = "<group>"; };
@@ -143,8 +139,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				20F7E7101BBB03A200451984 /* SpriteKit.framework in Frameworks */,
-				200141131BAEAFB4003E0950 /* StoreKit.framework in Frameworks */,
-				200141111BAEAFA3003E0950 /* GameKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -169,8 +163,6 @@
 			isa = PBXGroup;
 			children = (
 				20F7E70F1BBB03A200451984 /* SpriteKit.framework */,
-				200141121BAEAFB4003E0950 /* StoreKit.framework */,
-				200141101BAEAFA3003E0950 /* GameKit.framework */,
 				200140DC1BAEA96A003E0950 /* Flowers */,
 				200140F41BAEA96A003E0950 /* FlowersTests */,
 				200140FF1BAEA96A003E0950 /* FlowersUITests */,
@@ -352,6 +344,14 @@
 					200140D91BAEA96A003E0950 = {
 						CreatedOnToolsVersion = 7.0;
 						DevelopmentTeam = WT499VC842;
+						SystemCapabilities = {
+							com.apple.GameCenter = {
+								enabled = 0;
+							};
+							com.apple.InAppPurchase = {
+								enabled = 0;
+							};
+						};
 					};
 					200140F01BAEA96A003E0950 = {
 						CreatedOnToolsVersion = 7.0;
@@ -630,6 +630,7 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				INFOPLIST_FILE = FlowersTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				New_Setting = "";
 				PRODUCT_BUNDLE_IDENTIFIER = JOGAX.FlowersTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Flowers.app/Flowers";
@@ -642,6 +643,7 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				INFOPLIST_FILE = FlowersTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				New_Setting = "";
 				PRODUCT_BUNDLE_IDENTIFIER = JOGAX.FlowersTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Flowers.app/Flowers";

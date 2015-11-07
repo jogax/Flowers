@@ -18,17 +18,12 @@ enum GameControll: Int {
 
 struct GV {
     static var vBounds = CGRect(x: 0, y: 0, width: 0, height: 0)
-    //static var horNormWert: CGFloat = 0 // Geräteabhängige Constante
-    //static var vertNormWert: CGFloat = 0 // Geräteabhängige Constante
     static var notificationCenter = NSNotificationCenter.defaultCenter()
     static let notificationGameControllChanged = "gameModusChanged"
     static let notificationMadeMove = "MadeMove"
     static let notificationJoystickMoved = "joystickMoved"
     static let notificationColorChanged = "colorChanged"
     static var dX: CGFloat = 0
-    //static var dY: CGFloat = 0
-    //static let accelerometer   = Accelerometer()
-    //static var aktColor: LineType = .Unknown
     static var speed: CGSize = CGSizeZero
     static var touchPoint = CGPointZero
     static var gameSize = 5
@@ -49,31 +44,6 @@ struct GV {
     static var spriteGameData = SpriteGameData()
     static var sublayer = CALayer()
     
-    // Colors
-//    static let lightSalmonColor     = UIColor(red: 255/255, green: 160/255, blue: 122/255, alpha: 1)
-//    static let darkTurquoiseColor   = UIColor(red: 0/255,   green: 206/255, blue: 209/255, alpha: 1)
-//    static let turquoiseColor       = UIColor(red: 64/255,  green: 224/255, blue: 208/255, alpha: 1)
-//    static let darkBlueColor        = UIColor(red: 0/255,   green: 0/255,   blue: 139/255, alpha: 1)
-//    static let springGreenColor     = UIColor(red: 0/255,   green: 255/255, blue: 127/255, alpha: 1)
-//    static let khakiColor           = UIColor(red: 240/255, green: 230/255, blue: 140/255, alpha: 1)
-//    static let PaleGoldenrodColor   = UIColor(red: 238/255, green: 232/255, blue: 170/255, alpha: 1)
-//    static let PeachPuffColor       = UIColor(red: 255/255, green: 218/255, blue: 185/255, alpha: 1)
-//    static let SilverColor          = UIColor(red: 192/255, green: 192/255, blue: 192/255, alpha: 1)
-//    static let BlackColor           = UIColor(red: 0/255,   green: 0/255,   blue: 0/255,    alpha: 1)
-//    static let DarkForrestGreen     = UIColor(red: 0x25/0xff, green: 0x41/0xff, blue: 0x17/0xff, alpha: 1)
-//    static let backgroundColor      = UIColor(red: 0xff/0xff, green: 0xff/0xff, blue: 0xff/0xff, alpha: 1)
-//    static let lightBackgroundColor = UIColor(red: 0xc3/0xff, green: 0xfd/0xff, blue: 0xb8/0xff, alpha: 1)
-//    static let clearWhiteColor      = UIColor(red: 0xff/0xff, green: 0xff/0xff, blue: 0xff/0xff, alpha: 0.7)
-//
-//
-    // generierung new game
-//    static let createNewGame = false
-//    static let debugging = false
-//    static let debuggingFunctions = false
-//    static let debuggingTime = false
-//    static let printGeneratedLine = true
-
-
     // globale Labels
     
     static let moveCountLabel = UILabel()

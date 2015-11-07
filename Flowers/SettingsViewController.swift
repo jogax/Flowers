@@ -13,12 +13,13 @@ let volumeText = "setVolume"
 let helpLinesText = "setCountHelpLines"
 let languageText = "setLanguage"
 let returnText = "goBack"
+let backToSettings = "backToSettings"
 
 
 class SettingsViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
     @IBOutlet weak var tableView: UITableView!
     
-    let textCell = [
+    var textCell = [
         "\(GV.language.getText(.TCName))",
         "\(GV.language.getText(.TCVolume))",
         "\(GV.language.getText(.TCCountHelpLines))",
@@ -37,6 +38,7 @@ class SettingsViewController: UIViewController, UITableViewDataSource, UITableVi
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        GV.language.addCallback(changeLanguage)
 
         tableView.delegate = self
         tableView.dataSource = self
@@ -82,6 +84,23 @@ class SettingsViewController: UIViewController, UITableViewDataSource, UITableVi
             }
 //        }
     }
+    
+    func changeLanguage()->Bool {
+        textCell = [
+            "\(GV.language.getText(.TCName))",
+            "\(GV.language.getText(.TCVolume))",
+            "\(GV.language.getText(.TCCountHelpLines))",
+            "\(GV.language.getText(.TCLanguage))",
+            "\(GV.language.getText(.TCReturn))"
+        ]
+        self.tableView.reloadData()
+        return true
+    }
+
+    
+    @IBAction func unwindToSC(segue: UIStoryboardSegue) {
+    }
+
 }
 
 class ChooseLanguageViewController: UIViewController, UITableViewDataSource, UITableViewDelegate  {
@@ -92,6 +111,7 @@ class ChooseLanguageViewController: UIViewController, UITableViewDataSource, UIT
     var cancelButton = UIButton()
     var doneButton = UIButton()
     var aktLanguageRow = 0
+    var aktLanguageKey: String?
     var toDo = ""
     @IBOutlet weak var languageTableView: UITableView!
     let textCellIdentifier = "languageTextCell"
@@ -104,6 +124,8 @@ class ChooseLanguageViewController: UIViewController, UITableViewDataSource, UIT
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        GV.language.addCallback(changeLanguage)
+        aktLanguageKey = GV.language.getAktLanguageKey()
         setAktlanguageRow()
         
 
@@ -115,7 +137,13 @@ class ChooseLanguageViewController: UIViewController, UITableViewDataSource, UIT
             default: break
         }
         cancelButton.setTitle(GV.language.getText(.TCCancel), forState:.Normal)
+        let titleColor = UIColor(red: 0.0, green: 0.0, blue: 1.0, alpha: 1.0)
+        cancelButton.setTitleColor(titleColor, forState: UIControlState.Normal)
+
         doneButton.setTitle(GV.language.getText(.TCDone), forState: .Normal)
+        doneButton.setTitleColor(titleColor, forState: UIControlState.Normal)
+        cancelButton.addTarget(self, action: "cancelPressed:", forControlEvents: UIControlEvents.TouchUpInside)
+        doneButton.addTarget(self, action: "donePressed:", forControlEvents: UIControlEvents.TouchUpInside)
         self.view.addSubview(cancelButton)
         self.view.addSubview(doneButton)
         
@@ -190,6 +218,27 @@ class ChooseLanguageViewController: UIViewController, UITableViewDataSource, UIT
         }
     }
     
+    func cancelPressed(sender: UIButton) {
+        GV.language.setLanguage(aktLanguageKey!)
+        self.performSegueWithIdentifier(backToSettings, sender: self)
+    }
+
+    func donePressed(sender: UIButton) {
+        
+        GV.spriteGameData.aktLanguageKey = GV.language.getAktLanguageKey()
+        
+        GV.dataStore.createSpriteGameRecord(GV.spriteGameData)
+
+        self.performSegueWithIdentifier(backToSettings, sender: self)
+    }
+    
+    func changeLanguage()->Bool {
+        cancelButton.setTitle(GV.language.getText(.TCCancel), forState:.Normal)
+        doneButton.setTitle(GV.language.getText(.TCDone), forState: .Normal)
+        return true
+    }
+
+   
     func setupLayout() {
         var constraintsArray = Array<NSLayoutConstraint>()
         languageTableView.translatesAutoresizingMaskIntoConstraints = false
@@ -200,7 +249,7 @@ class ChooseLanguageViewController: UIViewController, UITableViewDataSource, UIT
         //languageTableView
         constraintsArray.append(NSLayoutConstraint(item: cancelButton, attribute: NSLayoutAttribute.Left, relatedBy: .Equal, toItem: self.view, attribute: NSLayoutAttribute.Left, multiplier: 1.0, constant: 40))
         
-        constraintsArray.append(NSLayoutConstraint(item: cancelButton, attribute: .Bottom, relatedBy: .Equal, toItem: self.view, attribute: .Bottom, multiplier: 1.0, constant: -50.0))
+        constraintsArray.append(NSLayoutConstraint(item: cancelButton, attribute: .Top, relatedBy: .Equal, toItem: self.view, attribute: .Top, multiplier: 1.0, constant: 50))
         
         constraintsArray.append(NSLayoutConstraint(item: cancelButton, attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: 100))
         
@@ -210,15 +259,15 @@ class ChooseLanguageViewController: UIViewController, UITableViewDataSource, UIT
         
         
 //        // doneButton
-//        constraintsArray.append(NSLayoutConstraint(item: doneButton, attribute: NSLayoutAttribute.Right, relatedBy: .Equal, toItem: self.view, attribute: NSLayoutAttribute.Right, multiplier: 1.0, constant: 100.0))
-//        
-//        constraintsArray.append(NSLayoutConstraint(item: doneButton, attribute: .Top, relatedBy: .Equal, toItem: self.view, attribute: .Top, multiplier: 1.0, constant: 20.0))
-//        
-//        constraintsArray.append(NSLayoutConstraint(item: doneButton, attribute: .Width, relatedBy: .Equal, toItem: self.view, attribute: .Width, multiplier: 0.05, constant: 0.0))
-//        
-//        constraintsArray.append(NSLayoutConstraint(item: doneButton, attribute: .Height , relatedBy: .Equal, toItem: doneButton, attribute: .Width, multiplier: 1.0, constant: 0.0))
-//        
-//        
+        constraintsArray.append(NSLayoutConstraint(item: doneButton, attribute: NSLayoutAttribute.Right, relatedBy: .Equal, toItem: self.view, attribute: NSLayoutAttribute.Right, multiplier: 1.0, constant: -40.0))
+        
+        constraintsArray.append(NSLayoutConstraint(item: doneButton, attribute: .Top, relatedBy: .Equal, toItem: self.view, attribute: .Top, multiplier: 1.0, constant: 50.0))
+        
+        constraintsArray.append(NSLayoutConstraint(item: doneButton, attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: 100))
+        
+        constraintsArray.append(NSLayoutConstraint(item: doneButton, attribute: .Height , relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: 50))
+        
+        
         self.view.addConstraints(constraintsArray)
     }
     

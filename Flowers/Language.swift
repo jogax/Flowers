@@ -60,7 +60,7 @@ class Language {
         "ru": ruDictionary
     ]
     
-    var callBacks: [()->()] = []
+    var callBacks: [()->Bool] = []
     var aktLanguage = [TextConstants: String]()
     
     init() {
@@ -75,11 +75,9 @@ class Language {
     func setLanguage(languageKey: String) {
         
         aktLanguage = languages[languageKey]!
-/*
         for index in 0..<callBacks.count {
             callBacks[index]()
         }
-*/
     }
     
     func getText (textIndex: TextConstants) -> String {
@@ -93,6 +91,11 @@ class Language {
     func isAktLanguage(language:String)->Bool {
         return language == aktLanguage[.TCAktLanguage]
     }
+    
+    func addCallback(callBack: ()->Bool) {
+        callBacks.append(callBack)
+    }
+    
 }
 
 

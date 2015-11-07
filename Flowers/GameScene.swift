@@ -541,10 +541,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             //restartCount = 3
             //let settingsButton = self.childNodeWithName("settings") as! MySKNode
             //settingsButton.hitLabel.text = "\(restartCount)"
-            var spriteData = SpriteGameData()
-            spriteData.spriteLevelIndex = Int64(levelIndex)
-            spriteData.spriteGameScore = Int64(gameScore)
-            GV.dataStore.createSpriteGameRecord(spriteData)
+            GV.spriteGameData = SpriteGameData()
+            GV.spriteGameData.spriteLevelIndex = Int64(levelIndex)
+            GV.spriteGameData.spriteGameScore = Int64(gameScore)
+            GV.dataStore.createSpriteGameRecord(GV.spriteGameData)
             let gameScoreText: String = GV.language.getText(.TCGameScore)
             gameScoreLabel.text = "\(gameScoreText) \(gameScore)"
         }
@@ -1545,7 +1545,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
     func audioPlayerEndInterruption(player: AVAudioPlayer) {
     }
   
-
+    func changeLanguage()->Bool {
+        levelLabel.text = GV.language.getText(TextConstants.TCLevel) + ": \(levelIndex + 1)"
+        gameScoreLabel.text = "\(GV.language.getText(.TCGameScore)) \(gameScore)"
+        spriteCountLabel.text = "\(GV.language.getText(.TCSpriteCount)) \(spriteCount)"
+        targetScoreLabel.text = "\(GV.language.getText(.TCTargetScore)) \(targetScore)"
+        showScore()
+        return true
+    }
 
 }
 

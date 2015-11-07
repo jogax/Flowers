@@ -31,9 +31,10 @@ class ViewController: UIViewController, SettingsDelegate {
         //print("in viewDidLoad:\(view.frame.size)")
     
         GV.spriteGameData = GV.dataStore.getSpriteData()
-        
+        GV.language.setLanguage(GV.spriteGameData.aktLanguageKey)
         let scene = GameScene(size: CGSizeMake(view.frame.width, view.frame.height))
         
+        GV.language.addCallback(scene.changeLanguage)
         skView!.showsFPS = true
         skView!.showsNodeCount = true
         skView!.ignoresSiblingOrder = true

@@ -39,7 +39,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="w7O-Tc-X3R">
-                                <rect key="frame" x="60" y="93" width="364" height="318"/>
+                                <rect key="frame" x="20" y="96" width="364" height="318"/>
                                 <animations/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <prototypes>
@@ -86,15 +86,15 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="9Zk-3p-jWk">
-                                <rect key="frame" x="123" y="110" width="317" height="212"/>
+                                <rect key="frame" x="69" y="183" width="309" height="212"/>
                                 <animations/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="languageTextCell" id="OYU-na-OS3">
-                                        <rect key="frame" x="0.0" y="28" width="317" height="44"/>
+                                        <rect key="frame" x="0.0" y="28" width="309" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="OYU-na-OS3" id="UTr-7o-qrE">
-                                            <rect key="frame" x="0.0" y="0.0" width="317" height="43.5"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="309" height="43.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <animations/>
                                         </tableViewCellContentView>
@@ -108,9 +108,11 @@
                     </view>
                     <connections>
                         <outlet property="languageTableView" destination="9Zk-3p-jWk" id="4QX-e7-ZdK"/>
+                        <segue destination="P05-Rw-a9n" kind="unwind" identifier="backToSettings" unwindAction="unwindToSC:" id="Ens-uD-ah7"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="VMk-NA-X9I" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <exit id="P05-Rw-a9n" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
             <point key="canvasLocation" x="1274" y="278"/>
         </scene>

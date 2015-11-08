@@ -46,6 +46,7 @@ class DataStore {
         //GV.cloudData.saveRecord(gameData)
         spriteGameEntity = SpriteGame(entity:spriteGameDescription!, insertIntoManagedObjectContext: managedObjectContext)
         spriteGameEntity!.aktLanguageKey = spriteData.aktLanguageKey
+        spriteGameEntity!.name = spriteData.name
         spriteGameEntity!.showHelpLines = NSNumber(longLong: spriteData.showHelpLines)
         spriteGameEntity!.spriteLevelIndex = NSNumber(longLong: spriteData.spriteLevelIndex)
         spriteGameEntity!.spriteGameScore = NSNumber(longLong: spriteData.spriteGameScore)
@@ -72,11 +73,13 @@ class DataStore {
             let results = try managedObjectContext.executeFetchRequest(request)
             if let match = results.first as? NSManagedObject {
                 spriteData.aktLanguageKey = match.valueForKey("aktLanguageKey") as! String!
+                spriteData.name = match.valueForKey("name") as! String!
                 spriteData.showHelpLines  = Int64(match.valueForKey("showHelpLines") as! NSInteger)
                 spriteData.spriteLevelIndex = Int64(match.valueForKey("spriteLevelIndex") as! NSInteger)
                 spriteData.spriteGameScore = Int64(match.valueForKey("spriteGameScore") as! NSInteger)
             } else {
                 spriteData.aktLanguageKey = GV.language.getAktLanguageKey()
+                spriteData.name = "dummy"
                 spriteData.showHelpLines  = 0
                 spriteData.spriteLevelIndex  = 0
                 spriteData.spriteGameScore = 0

@@ -39,11 +39,13 @@ struct GV {
 
     static let language = Language()
     static var showHelpLines = 0
+    static var aktName = "dummy"
 
     static let dataStore = DataStore()
 
     static var spriteGameData = SpriteGameData()
     static var sublayer = CALayer()
+    static var namensTab: [String] = []
     
     // globale Labels
     
@@ -327,12 +329,14 @@ struct GameData {
 //}
 
 struct SpriteGameData {
+    var name: String
     var aktLanguageKey: String
     var showHelpLines: Int64
     var spriteLevelIndex: Int64
     var spriteGameScore: Int64
     
     init() {
+        name = GV.aktName
         aktLanguageKey = GV.language.getAktLanguageKey()
         showHelpLines = 0
         spriteLevelIndex = 0

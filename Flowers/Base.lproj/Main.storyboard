@@ -73,10 +73,10 @@
             </objects>
             <point key="canvasLocation" x="488" y="278"/>
         </scene>
-        <!--Choose Language View Controller-->
+        <!--Details View Controller-->
         <scene sceneID="KYy-33-hLv">
             <objects>
-                <viewController id="eIG-aO-Yuv" customClass="ChooseLanguageViewController" customModule="Flowers" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="eIG-aO-Yuv" customClass="DetailsViewController" customModule="Flowers" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="lm8-U4-0vH"/>
                         <viewControllerLayoutGuide type="bottom" id="TqX-2d-7ef"/>
@@ -107,7 +107,7 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
                     <connections>
-                        <outlet property="languageTableView" destination="9Zk-3p-jWk" id="4QX-e7-ZdK"/>
+                        <outlet property="tableView" destination="9Zk-3p-jWk" id="gbX-Gr-7cY"/>
                         <segue destination="P05-Rw-a9n" kind="unwind" identifier="backToSettings" unwindAction="unwindToSC:" id="Ens-uD-ah7"/>
                     </connections>
                 </viewController>

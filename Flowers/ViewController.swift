@@ -42,7 +42,8 @@ class ViewController: UIViewController, SettingsDelegate {
         scene.scaleMode = .ResizeFill
         scene.parentViewController = self
         scene.settingsDelegate = self
-        
+
+
         skView!.presentScene(scene)
     }
     

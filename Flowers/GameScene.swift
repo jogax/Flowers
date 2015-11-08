@@ -544,6 +544,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             GV.spriteGameData = SpriteGameData()
             GV.spriteGameData.spriteLevelIndex = Int64(levelIndex)
             GV.spriteGameData.spriteGameScore = Int64(gameScore)
+            GV.spriteGameData.aktLanguageKey = GV.language.getAktLanguageKey()
+            GV.spriteGameData.showHelpLines = Int64(GV.showHelpLines)
             GV.dataStore.createSpriteGameRecord(GV.spriteGameData)
             let gameScoreText: String = GV.language.getText(.TCGameScore)
             gameScoreLabel.text = "\(gameScoreText) \(gameScore)"

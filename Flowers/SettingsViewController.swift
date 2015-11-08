@@ -103,7 +103,7 @@ class SettingsViewController: UIViewController, UITableViewDataSource, UITableVi
 
 }
 
-class ChooseLanguageViewController: UIViewController, UITableViewDataSource, UITableViewDelegate  {
+class ChooseLanguageViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UIPickerViewDataSource, UIPickerViewDelegate  {
     let enRow = 0
     let deRow = 1
     let huRow = 2
@@ -111,10 +111,14 @@ class ChooseLanguageViewController: UIViewController, UITableViewDataSource, UIT
     var cancelButton = UIButton()
     var doneButton = UIButton()
     var aktLanguageRow = 0
+    var oldHelpLines = 0
     var aktLanguageKey: String?
     var toDo = ""
     @IBOutlet weak var languageTableView: UITableView!
     let textCellIdentifier = "languageTextCell"
+    
+    var lineCountPicker: UIPickerView?
+    var lineCounts = ["0","1","2","3","4"]
     var textCell = [
         "\(GV.language.getText(.TCEnglish))",
         "\(GV.language.getText(.TCGerman))",
@@ -157,10 +161,28 @@ class ChooseLanguageViewController: UIViewController, UITableViewDataSource, UIT
         let _ = 0
     }
     func makeHelpLinesView() {
-        let _ = 0
+        languageTableView.layer.hidden = true
+        oldHelpLines = GV.showHelpLines
+        lineCountPicker = UIPickerView()
+        self.view.addSubview(lineCountPicker!)
+        lineCountPicker!.delegate = self
+        lineCountPicker!.dataSource = self
+        lineCountPicker!.selectRow(Int(GV.spriteGameData.showHelpLines), inComponent: 0, animated: false)
+        
+        lineCountPicker!.translatesAutoresizingMaskIntoConstraints = false
+
+        self.view.addConstraint(NSLayoutConstraint(item: lineCountPicker!, attribute: NSLayoutAttribute.CenterX, relatedBy: .Equal, toItem: self.view, attribute: NSLayoutAttribute.CenterX, multiplier: 1.0, constant: 0))
+        
+        self.view.addConstraint(NSLayoutConstraint(item: lineCountPicker!, attribute: .CenterY, relatedBy: .Equal, toItem: self.view, attribute: .CenterY, multiplier: 1.0, constant: -100))
+        
+        self.view.addConstraint(NSLayoutConstraint(item: lineCountPicker!, attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: 100))
+        
+        self.view.addConstraint(NSLayoutConstraint(item: lineCountPicker!, attribute: .Height , relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: 200))
     }
+    
     func makeLangageView() {
         //languageTableView = UITableView()
+        languageTableView.layer.hidden = false
         languageTableView.delegate = self
         languageTableView.dataSource = self
         
@@ -208,6 +230,23 @@ class ChooseLanguageViewController: UIViewController, UITableViewDataSource, UIT
         languageTableView.reloadData()
     }
 
+    func numberOfComponentsInPickerView(pickerView: UIPickerView) -> Int {
+        return 1
+    }
+    
+    func pickerView(pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+        return lineCounts.count
+    }
+
+    func pickerView(pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+        return lineCounts[row]
+    }
+    
+    func pickerView(pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+
+        GV.showHelpLines = Int(lineCounts[row])!
+    }
+    
     func setAktlanguageRow() {
         switch GV.language.getAktLanguageKey() {
             case LanguageEN: aktLanguageRow = enRow
@@ -219,13 +258,26 @@ class ChooseLanguageViewController: UIViewController, UITableViewDataSource, UIT
     }
     
     func cancelPressed(sender: UIButton) {
-        GV.language.setLanguage(aktLanguageKey!)
+        switch toDo {
+            case nameText: _ = 0
+            case volumeText: _ = 0
+            case helpLinesText: GV.showHelpLines = oldHelpLines
+            case languageText:  GV.language.setLanguage(aktLanguageKey!)
+            default: break
+        }
         self.performSegueWithIdentifier(backToSettings, sender: self)
     }
 
     func donePressed(sender: UIButton) {
+        switch toDo {
+        case nameText: _ = 0
+        case volumeText: _ = 0
+        case helpLinesText: GV.spriteGameData.showHelpLines = Int64(GV.showHelpLines)
+        case languageText:  GV.spriteGameData.aktLanguageKey = GV.language.getAktLanguageKey()
+        default: break
+        }
         
-        GV.spriteGameData.aktLanguageKey = GV.language.getAktLanguageKey()
+        
         
         GV.dataStore.createSpriteGameRecord(GV.spriteGameData)
 

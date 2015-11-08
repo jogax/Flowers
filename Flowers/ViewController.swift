@@ -32,6 +32,7 @@ class ViewController: UIViewController, SettingsDelegate {
     
         GV.spriteGameData = GV.dataStore.getSpriteData()
         GV.language.setLanguage(GV.spriteGameData.aktLanguageKey)
+        GV.showHelpLines = Int(GV.spriteGameData.showHelpLines)
         let scene = GameScene(size: CGSizeMake(view.frame.width, view.frame.height))
         
         GV.language.addCallback(scene.changeLanguage)

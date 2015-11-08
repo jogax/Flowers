@@ -38,6 +38,7 @@ struct GV {
     static var gameRectSize: CGFloat = 0 // rectSize in gameboard
 
     static let language = Language()
+    static var showHelpLines = 0
 
     static let dataStore = DataStore()
 
@@ -327,11 +328,13 @@ struct GameData {
 
 struct SpriteGameData {
     var aktLanguageKey: String
+    var showHelpLines: Int64
     var spriteLevelIndex: Int64
     var spriteGameScore: Int64
     
     init() {
         aktLanguageKey = GV.language.getAktLanguageKey()
+        showHelpLines = 0
         spriteLevelIndex = 0
         spriteGameScore = 0
     }

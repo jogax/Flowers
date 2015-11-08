@@ -217,7 +217,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
     var collisionActive = false
     var bgImage: SKSpriteNode?
     var bgAdder: CGFloat = 0
-    let showHelpLines = 4
+    //let showHelpLines = 4
     let maxHelpLinesCount = 4
     var undoCount = 0
     var inFirstGenerateSprites = true
@@ -757,15 +757,15 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
                     makeHelpLine(movedFromNode.position, toPoint: pointOnTheWall, lineWidth: movedFromNode.size.width, numberOfLine: 1)
 
                     
-                    if showHelpLines > 1 {
+                    if GV.showHelpLines > 1 {
                         let mirroredLine1 = line.createMirroredLine()
                         makeHelpLine(mirroredLine1.line.fromPoint, toPoint: mirroredLine1.line.toPoint, lineWidth: movedFromNode.size.width, numberOfLine: 2)
 
-                        if showHelpLines > 2 {
+                        if GV.showHelpLines > 2 {
                             let mirroredLine2 = mirroredLine1.createMirroredLine()
                             makeHelpLine(mirroredLine2.line.fromPoint, toPoint: mirroredLine2.line.toPoint, lineWidth: movedFromNode.size.width, numberOfLine: 3)
 
-                            if showHelpLines > 3 {
+                            if GV.showHelpLines > 3 {
                                 let mirroredLine3 = mirroredLine2.createMirroredLine()
                                 makeHelpLine(mirroredLine3.line.fromPoint, toPoint: mirroredLine3.line.toPoint, lineWidth: movedFromNode.size.width, numberOfLine: 4)
                             }
@@ -947,7 +947,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
     
 
     func makeHelpLine(fromPoint: CGPoint, toPoint: CGPoint, lineWidth: CGFloat, numberOfLine: Int) {
-        if showHelpLines >= numberOfLine {
+        if GV.showHelpLines >= numberOfLine {
             //print("makeHelpLine: fromPoint: \(fromPoint), toPoint: \(toPoint)")
             let offset = toPoint - fromPoint
             let direction = offset.normalized()

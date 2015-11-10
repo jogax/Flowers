@@ -8,7 +8,7 @@
 
 import UIKit
 
-class DetailsViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UIPickerViewDataSource, UIPickerViewDelegate  {
+class LanguageViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UIPickerViewDataSource, UIPickerViewDelegate  {
     let enRow = 0
     let deRow = 1
     let huRow = 2
@@ -30,10 +30,13 @@ class DetailsViewController: UIViewController, UITableViewDataSource, UITableVie
         "\(GV.language.getText(.TCHungarian))",
         "\(GV.language.getText(.TCRussian))",
     ]
-    @IBOutlet weak var tableView: UITableView!
+    var cell: UITableViewCell?
+    //@IBOutlet weak 
+    var tableView: UITableView?
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        tableView = UITableView()
         GV.language.addCallback(changeLanguage)
         aktLanguageKey = GV.language.getAktLanguageKey()
         setAktlanguageRow()
@@ -61,7 +64,9 @@ class DetailsViewController: UIViewController, UITableViewDataSource, UITableVie
     }
     
     func makeNameView() {
-        tableView.layer.hidden = false
+        tableView!.layer.hidden = false
+        tableView!.layer.borderWidth = 2
+        tableView!.layer.borderColor = UIColor.blackColor().CGColor
         nameInputField = UITextField()
         if GV.aktName == "dummy" {
             nameInputField!.text = ""
@@ -73,6 +78,7 @@ class DetailsViewController: UIViewController, UITableViewDataSource, UITableVie
         self.view.addSubview(nameInputField!)
         nameInputField!.translatesAutoresizingMaskIntoConstraints = false
         tableView!.translatesAutoresizingMaskIntoConstraints = false
+        
         self.view.addConstraint(NSLayoutConstraint(item: nameInputField!, attribute: NSLayoutAttribute.CenterX, relatedBy: .Equal, toItem: self.view, attribute: NSLayoutAttribute.CenterX, multiplier: 1.0, constant: 0))
         
         self.view.addConstraint(NSLayoutConstraint(item: nameInputField!, attribute: .Top, relatedBy: .Equal, toItem: self.view, attribute: .Top, multiplier: 1.0, constant: 400))
@@ -81,22 +87,22 @@ class DetailsViewController: UIViewController, UITableViewDataSource, UITableVie
         
         self.view.addConstraint(NSLayoutConstraint(item: nameInputField!, attribute: .Height , relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: 50))
         
-        
-        self.view.addConstraint(NSLayoutConstraint(item: tableView!, attribute: NSLayoutAttribute.CenterX, relatedBy: .Equal, toItem: self.view, attribute: NSLayoutAttribute.CenterX, multiplier: 1.0, constant: 0))
-        
-        self.view.addConstraint(NSLayoutConstraint(item: tableView!, attribute: .Top, relatedBy: .Equal, toItem: nameInputField!, attribute: .Bottom, multiplier: 1.0, constant: 100))
-        
-        self.view.addConstraint(NSLayoutConstraint(item: tableView!, attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: 400))
-        
-        self.view.addConstraint(NSLayoutConstraint(item: tableView!, attribute: .Height , relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: 400))
-        
+//
+//        self.view.addConstraint(NSLayoutConstraint(item: tableView!, attribute: NSLayoutAttribute.CenterX, relatedBy: .Equal, toItem: self.view, attribute: NSLayoutAttribute.CenterX, multiplier: 1.0, constant: 100))
+//        
+//        self.view.addConstraint(NSLayoutConstraint(item: tableView!, attribute: .Top, relatedBy: .Equal, toItem: nameInputField!, attribute: .Bottom, multiplier: 1.0, constant: 100))
+//        
+//        self.view.addConstraint(NSLayoutConstraint(item: tableView!, attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: 600))
+//        
+//        self.view.addConstraint(NSLayoutConstraint(item: tableView!, attribute: .Height , relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: 400))
+//        
 
     }
     func makeVolumeView() {
         let _ = 0
     }
     func makeHelpLinesView() {
-        tableView.layer.hidden = true
+        tableView!.layer.hidden = true
         oldHelpLines = GV.showHelpLines
         lineCountPicker = UIPickerView()
         self.view.addSubview(lineCountPicker!)
@@ -117,9 +123,9 @@ class DetailsViewController: UIViewController, UITableViewDataSource, UITableVie
     
     func makeLangageView() {
         //languageTableView = UITableView()
-        tableView.layer.hidden = false
-        tableView.delegate = self
-        tableView.dataSource = self
+        tableView!.layer.hidden = false
+        tableView!.delegate = self
+        tableView!.dataSource = self
         
         
     }
@@ -133,29 +139,31 @@ class DetailsViewController: UIViewController, UITableViewDataSource, UITableVie
     }
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = self.tableView.dequeueReusableCellWithIdentifier(textCellIdentifier, forIndexPath: indexPath) as UITableViewCell
+        cell = self.tableView!.dequeueReusableCellWithIdentifier(textCellIdentifier, forIndexPath: indexPath) as UITableViewCell
         
         let row = indexPath.row
-        cell.textLabel?.text = textCell[row]
+        cell!.textLabel?.text = textCell[row]
+        cell!.backgroundColor = UIColor(red: 0x00/0xff, green: 0xff/0xff, blue: 0x7f/0xff, alpha: 1) // Springgreen
+        cell!.frame.origin.x = self.view.frame.midX - (cell?.frame.size.width)! / 2
         if row == aktLanguageRow {
-            cell.accessoryType = .Checkmark
+            cell!.accessoryType = .Checkmark
         } else {
-            cell.accessoryType = .None
+            cell!.accessoryType = .None
         }
         
-        return cell
+        return cell!
     }
     
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         switch indexPath.row {
-        case enRow:  GV.language.setLanguage(LanguageEN)
-        case deRow:  GV.language.setLanguage(LanguageDE)
-        case huRow:  GV.language.setLanguage(LanguageHU)
-        case ruRow:  GV.language.setLanguage(LanguageRU)
-        default: _ = 0
+            case enRow:  GV.language.setLanguage(LanguageEN)
+            case deRow:  GV.language.setLanguage(LanguageDE)
+            case huRow:  GV.language.setLanguage(LanguageHU)
+            case ruRow:  GV.language.setLanguage(LanguageRU)
+            default: _ = 0
         }
         textCell.removeAll()
-        textCell = [
+        textCell = [ //
             "\(GV.language.getText(.TCEnglish))",
             "\(GV.language.getText(.TCGerman))",
             "\(GV.language.getText(.TCHungarian))",
@@ -228,7 +236,7 @@ class DetailsViewController: UIViewController, UITableViewDataSource, UITableVie
     
     func setupLayout() {
         var constraintsArray = Array<NSLayoutConstraint>()
-        tableView.translatesAutoresizingMaskIntoConstraints = false
+        tableView!.translatesAutoresizingMaskIntoConstraints = false
         cancelButton.translatesAutoresizingMaskIntoConstraints = false
         doneButton.translatesAutoresizingMaskIntoConstraints = false
         

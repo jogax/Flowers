@@ -43,9 +43,10 @@
 		200BDA071BCFDEE600F72109 /* DrawImages.swift in Sources */ = {isa = PBXBuildFile; fileRef = 200BDA061BCFDEE600F72109 /* DrawImages.swift */; };
 		200BDA0B1BCFEF5100F72109 /* MySKButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 200BDA0A1BCFEF5100F72109 /* MySKButton.swift */; };
 		201728FA1BE3D0C9005F6CA8 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201728F91BE3D0C9005F6CA8 /* SettingsViewController.swift */; };
-		204A8A181BEF93B90061D14F /* DetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 204A8A171BEF93B90061D14F /* DetailsViewController.swift */; };
+		204A8A181BEF93B90061D14F /* LanguageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 204A8A171BEF93B90061D14F /* LanguageViewController.swift */; };
 		205574411BBEB85C00C165A1 /* Go321.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 205574401BBEB85C00C165A1 /* Go321.m4a */; };
 		205574431BBECB6200C165A1 /* NoSound.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 205574421BBECB6200C165A1 /* NoSound.m4a */; };
+		206BF77C1BF247380009928E /* ChooseNameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 206BF77B1BF247380009928E /* ChooseNameViewController.swift */; };
 		20F6D01F1BB43E9100BF7384 /* MyParticle.sks in Resources */ = {isa = PBXBuildFile; fileRef = 20F6D01D1BB43E9100BF7384 /* MyParticle.sks */; };
 		20F7E7101BBB03A200451984 /* SpriteKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 20F7E70F1BBB03A200451984 /* SpriteKit.framework */; };
 		20FC65BE1BBBC82000775322 /* sprites.atlas in Resources */ = {isa = PBXBuildFile; fileRef = 20FC65BD1BBBC82000775322 /* sprites.atlas */; };
@@ -119,9 +120,10 @@
 		200BDA0A1BCFEF5100F72109 /* MySKButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MySKButton.swift; sourceTree = "<group>"; };
 		201728F91BE3D0C9005F6CA8 /* SettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		2034B0061BDE796300D296DA /* Flowers.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Flowers.xcdatamodel; sourceTree = "<group>"; };
-		204A8A171BEF93B90061D14F /* DetailsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailsViewController.swift; sourceTree = "<group>"; };
+		204A8A171BEF93B90061D14F /* LanguageViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LanguageViewController.swift; sourceTree = "<group>"; };
 		205574401BBEB85C00C165A1 /* Go321.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = Go321.m4a; sourceTree = "<group>"; };
 		205574421BBECB6200C165A1 /* NoSound.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = NoSound.m4a; sourceTree = "<group>"; };
+		206BF77B1BF247380009928E /* ChooseNameViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChooseNameViewController.swift; sourceTree = "<group>"; };
 		20F6D01D1BB43E9100BF7384 /* MyParticle.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; name = MyParticle.sks; path = ../MyParticle.sks; sourceTree = "<group>"; };
 		20F7E70F1BBB03A200451984 /* SpriteKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SpriteKit.framework; path = System/Library/Frameworks/SpriteKit.framework; sourceTree = SDKROOT; };
 		20FC65BD1BBBC82000775322 /* sprites.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; path = sprites.atlas; sourceTree = "<group>"; };
@@ -192,7 +194,8 @@
 				20097FC61BD7E44B0074C3F5 /* MyScene.swift */,
 				200140DF1BAEA96A003E0950 /* ViewController.swift */,
 				201728F91BE3D0C9005F6CA8 /* SettingsViewController.swift */,
-				204A8A171BEF93B90061D14F /* DetailsViewController.swift */,
+				204A8A171BEF93B90061D14F /* LanguageViewController.swift */,
+				206BF77B1BF247380009928E /* ChooseNameViewController.swift */,
 				2001410E1BAEAA82003E0950 /* GameScene.swift */,
 				200141751BAEFB4F003E0950 /* JGXLine.swift */,
 				200141721BAEF900003E0950 /* SpriteGame.swift */,
@@ -443,6 +446,7 @@
 				200141451BAED8BF003E0950 /* Stack.swift in Sources */,
 				200141781BAEFBCA003E0950 /* DataStore.swift in Sources */,
 				200141411BAEB9F7003E0950 /* hu.swift in Sources */,
+				206BF77C1BF247380009928E /* ChooseNameViewController.swift in Sources */,
 				2001413F1BAEB95B003E0950 /* en.swift in Sources */,
 				200140E01BAEA96A003E0950 /* ViewController.swift in Sources */,
 				2001412E1BAEB2DE003E0950 /* MyStructs.swift in Sources */,
@@ -451,7 +455,7 @@
 				201728FA1BE3D0C9005F6CA8 /* SettingsViewController.swift in Sources */,
 				2001416C1BAEF7AA003E0950 /* Flowers.xcdatamodeld in Sources */,
 				200BDA0B1BCFEF5100F72109 /* MySKButton.swift in Sources */,
-				204A8A181BEF93B90061D14F /* DetailsViewController.swift in Sources */,
+				204A8A181BEF93B90061D14F /* LanguageViewController.swift in Sources */,
 				200141761BAEFB4F003E0950 /* JGXLine.swift in Sources */,
 				20097FC71BD7E44B0074C3F5 /* MyScene.swift in Sources */,
 				200141301BAEB4F6003E0950 /* Language.swift in Sources */,

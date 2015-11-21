@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="9057" systemVersion="15B42" minimumToolsVersion="Xcode 7.0">
+    <entity name="GlobalParam" representedClassName=".GlobalParam" syncable="YES">
+        <attribute name="aktName" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
     <entity name="SpriteGame" representedClassName=".SpriteGame" syncable="YES">
         <attribute name="aktLanguageKey" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
@@ -8,6 +11,7 @@
         <attribute name="spriteLevelIndex" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
     </entity>
     <elements>
-        <element name="SpriteGame" positionX="-54" positionY="-9" width="128" height="120"/>
+        <element name="SpriteGame" positionX="-110" positionY="162" width="128" height="118"/>
+        <element name="GlobalParam" positionX="-414" positionY="-9" width="128" height="58"/>
     </elements>
 </model>

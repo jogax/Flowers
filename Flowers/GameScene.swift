@@ -310,7 +310,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         
         let xDelta = size.width / CGFloat(countContainers)
         for index in 0..<countContainers {
-            _ = GV.colorSets[GV.colorSetIndex][index + 1].CGColor
+//            _ = GV.colorSets[GV.colorSetIndex][index + 1].CGColor
             //let containerTexture = SKTexture(image: GV.drawCircle(CGSizeMake(containerSize, containerSize), imageColor: aktColor))
             let centerX = (size.width / CGFloat(countContainers)) * CGFloat(index) + xDelta / 2
             let centerY = size.height * containersPosCorr.y

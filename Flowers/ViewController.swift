@@ -30,7 +30,13 @@ class ViewController: UIViewController, SettingsDelegate {
         //scene.scaleMode = .AspectFill
         //print("in viewDidLoad:\(view.frame.size)")
     
-        GV.spriteGameData = GV.dataStore.getSpriteData()
+        GV.globalParam = GV.dataStore.getGlobalParam()
+        GV.spriteGameDataArray = GV.dataStore.getSpriteData()
+        for index in 0..<GV.spriteGameDataArray.count {
+            if GV.globalParam.aktName == GV.spriteGameDataArray[index].name {
+                GV.spriteGameData = GV.spriteGameDataArray[index]
+            }
+        }
         GV.language.setLanguage(GV.spriteGameData.aktLanguageKey)
         GV.showHelpLines = Int(GV.spriteGameData.showHelpLines)
         let scene = GameScene(size: CGSizeMake(view.frame.width, view.frame.height))

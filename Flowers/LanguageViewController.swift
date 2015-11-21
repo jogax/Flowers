@@ -21,7 +21,6 @@ class LanguageViewController: UIViewController, UITableViewDataSource, UITableVi
     var toDo = ""
     let textCellIdentifier = "languageTextCell"
     
-    var nameInputField: UITextField?
     var lineCountPicker: UIPickerView?
     var lineCounts = ["0","1","2","3","4"]
     var textCell = [
@@ -30,20 +29,19 @@ class LanguageViewController: UIViewController, UITableViewDataSource, UITableVi
         "\(GV.language.getText(.TCHungarian))",
         "\(GV.language.getText(.TCRussian))",
     ]
-    var cell: UITableViewCell?
-    //@IBOutlet weak 
-    var tableView: UITableView?
+    var cell: UITableViewCell = UITableViewCell()
+    var tableView: UITableView = UITableView()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        tableView = UITableView()
+        tableView.registerClass(UITableViewCell.self, forCellReuseIdentifier: "languageTextCell")
         GV.language.addCallback(changeLanguage)
         aktLanguageKey = GV.language.getAktLanguageKey()
         setAktlanguageRow()
         
         
         switch toDo {
-        case nameText: makeNameView()
+        //case nameText: makeNameView()
         case volumeText: makeVolumeView()
         case helpLinesText: makeHelpLinesView()
         case languageText: makeLangageView()
@@ -63,46 +61,11 @@ class LanguageViewController: UIViewController, UITableViewDataSource, UITableVi
         setupLayout()
     }
     
-    func makeNameView() {
-        tableView!.layer.hidden = false
-        tableView!.layer.borderWidth = 2
-        tableView!.layer.borderColor = UIColor.blackColor().CGColor
-        nameInputField = UITextField()
-        if GV.aktName == "dummy" {
-            nameInputField!.text = ""
-        } else {
-            nameInputField!.text = GV.aktName
-        }
-        nameInputField!.layer.borderColor = UIColor.blackColor().CGColor
-        nameInputField!.layer.borderWidth = 1
-        self.view.addSubview(nameInputField!)
-        nameInputField!.translatesAutoresizingMaskIntoConstraints = false
-        tableView!.translatesAutoresizingMaskIntoConstraints = false
-        
-        self.view.addConstraint(NSLayoutConstraint(item: nameInputField!, attribute: NSLayoutAttribute.CenterX, relatedBy: .Equal, toItem: self.view, attribute: NSLayoutAttribute.CenterX, multiplier: 1.0, constant: 0))
-        
-        self.view.addConstraint(NSLayoutConstraint(item: nameInputField!, attribute: .Top, relatedBy: .Equal, toItem: self.view, attribute: .Top, multiplier: 1.0, constant: 400))
-        
-        self.view.addConstraint(NSLayoutConstraint(item: nameInputField!, attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: 300))
-        
-        self.view.addConstraint(NSLayoutConstraint(item: nameInputField!, attribute: .Height , relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: 50))
-        
-//
-//        self.view.addConstraint(NSLayoutConstraint(item: tableView!, attribute: NSLayoutAttribute.CenterX, relatedBy: .Equal, toItem: self.view, attribute: NSLayoutAttribute.CenterX, multiplier: 1.0, constant: 100))
-//        
-//        self.view.addConstraint(NSLayoutConstraint(item: tableView!, attribute: .Top, relatedBy: .Equal, toItem: nameInputField!, attribute: .Bottom, multiplier: 1.0, constant: 100))
-//        
-//        self.view.addConstraint(NSLayoutConstraint(item: tableView!, attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: 600))
-//        
-//        self.view.addConstraint(NSLayoutConstraint(item: tableView!, attribute: .Height , relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: 400))
-//        
-
-    }
     func makeVolumeView() {
         let _ = 0
     }
     func makeHelpLinesView() {
-        tableView!.layer.hidden = true
+        tableView.layer.hidden = true
         oldHelpLines = GV.showHelpLines
         lineCountPicker = UIPickerView()
         self.view.addSubview(lineCountPicker!)
@@ -123,9 +86,24 @@ class LanguageViewController: UIViewController, UITableViewDataSource, UITableVi
     
     func makeLangageView() {
         //languageTableView = UITableView()
-        tableView!.layer.hidden = false
-        tableView!.delegate = self
-        tableView!.dataSource = self
+        self.view.addSubview(tableView)
+        tableView.layer.hidden = false
+        tableView.layer.borderColor = UIColor.blackColor().CGColor
+        tableView.layer.borderWidth = 0.5
+        tableView.delegate = self
+        tableView.dataSource = self
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        
+        let tableHeight = cell.frame.height * CGFloat(textCell.count)
+        
+        self.view.addConstraint(NSLayoutConstraint(item: tableView, attribute: NSLayoutAttribute.CenterX, relatedBy: .Equal, toItem: self.view, attribute: NSLayoutAttribute.CenterX, multiplier: 1.0, constant: 0))
+        
+        self.view.addConstraint(NSLayoutConstraint(item: tableView, attribute: .Top, relatedBy: .Equal, toItem: self.view!, attribute: .Top, multiplier: 1.0, constant: 200))
+        
+        self.view.addConstraint(NSLayoutConstraint(item: tableView, attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: 300))
+        
+        self.view.addConstraint(NSLayoutConstraint(item: tableView, attribute: .Height , relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: tableHeight))
+        
         
         
     }
@@ -139,19 +117,20 @@ class LanguageViewController: UIViewController, UITableViewDataSource, UITableVi
     }
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        cell = self.tableView!.dequeueReusableCellWithIdentifier(textCellIdentifier, forIndexPath: indexPath) as UITableViewCell
+        cell = self.tableView.dequeueReusableCellWithIdentifier(textCellIdentifier, forIndexPath: indexPath) as UITableViewCell
         
         let row = indexPath.row
-        cell!.textLabel?.text = textCell[row]
-        cell!.backgroundColor = UIColor(red: 0x00/0xff, green: 0xff/0xff, blue: 0x7f/0xff, alpha: 1) // Springgreen
-        cell!.frame.origin.x = self.view.frame.midX - (cell?.frame.size.width)! / 2
+        cell.textLabel?.text = textCell[row]
+        cell.frame.origin.x = self.view.frame.midX - (cell.frame.size.width) / 2
         if row == aktLanguageRow {
-            cell!.accessoryType = .Checkmark
+            cell.accessoryType = .Checkmark
+            cell.backgroundColor = UIColor(red: 0x00/0xff, green: 0xff/0xff, blue: 0x7f/0xff, alpha: 1) // Springgreen
         } else {
-            cell!.accessoryType = .None
+            cell.backgroundColor = UIColor(red: 0xff/0xff, green: 0xff/0xff, blue: 0xff/0xff, alpha: 1) // Springgreen
+            cell.accessoryType = .None
         }
         
-        return cell!
+        return cell
     }
     
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
@@ -235,35 +214,33 @@ class LanguageViewController: UIViewController, UITableViewDataSource, UITableVi
     
     
     func setupLayout() {
-        var constraintsArray = Array<NSLayoutConstraint>()
-        tableView!.translatesAutoresizingMaskIntoConstraints = false
         cancelButton.translatesAutoresizingMaskIntoConstraints = false
         doneButton.translatesAutoresizingMaskIntoConstraints = false
         
         
         //languageTableView
-        constraintsArray.append(NSLayoutConstraint(item: cancelButton, attribute: NSLayoutAttribute.Left, relatedBy: .Equal, toItem: self.view, attribute: NSLayoutAttribute.Left, multiplier: 1.0, constant: 40))
+        self.view.addConstraint(NSLayoutConstraint(item: cancelButton, attribute: NSLayoutAttribute.Left, relatedBy: .Equal, toItem: self.view, attribute: NSLayoutAttribute.Left, multiplier: 1.0, constant: 40))
         
-        constraintsArray.append(NSLayoutConstraint(item: cancelButton, attribute: .Top, relatedBy: .Equal, toItem: self.view, attribute: .Top, multiplier: 1.0, constant: 50))
+        self.view.addConstraint(NSLayoutConstraint(item: cancelButton, attribute: .Top, relatedBy: .Equal, toItem: self.view, attribute: .Top, multiplier: 1.0, constant: 50))
         
-        constraintsArray.append(NSLayoutConstraint(item: cancelButton, attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: 100))
+        self.view.addConstraint(NSLayoutConstraint(item: cancelButton, attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: 100))
         
-        constraintsArray.append(NSLayoutConstraint(item: cancelButton, attribute: .Height , relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: 50))
+        self.view.addConstraint(NSLayoutConstraint(item: cancelButton, attribute: .Height , relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: 50))
         
         
         
         
         //        // doneButton
-        constraintsArray.append(NSLayoutConstraint(item: doneButton, attribute: NSLayoutAttribute.Right, relatedBy: .Equal, toItem: self.view, attribute: NSLayoutAttribute.Right, multiplier: 1.0, constant: -40.0))
+        self.view.addConstraint(NSLayoutConstraint(item: doneButton, attribute: NSLayoutAttribute.Right, relatedBy: .Equal, toItem: self.view, attribute: NSLayoutAttribute.Right, multiplier: 1.0, constant: -40.0))
         
-        constraintsArray.append(NSLayoutConstraint(item: doneButton, attribute: .Top, relatedBy: .Equal, toItem: self.view, attribute: .Top, multiplier: 1.0, constant: 50.0))
+        self.view.addConstraint(NSLayoutConstraint(item: doneButton, attribute: .Top, relatedBy: .Equal, toItem: self.view, attribute: .Top, multiplier: 1.0, constant: 50.0))
         
-        constraintsArray.append(NSLayoutConstraint(item: doneButton, attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: 100))
+        self.view.addConstraint(NSLayoutConstraint(item: doneButton, attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: 100))
         
-        constraintsArray.append(NSLayoutConstraint(item: doneButton, attribute: .Height , relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: 50))
+        self.view.addConstraint(NSLayoutConstraint(item: doneButton, attribute: .Height , relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: 50))
+
         
         
-        self.view.addConstraints(constraintsArray)
     }
     
     

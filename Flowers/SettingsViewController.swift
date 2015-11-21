@@ -17,7 +17,8 @@ let backToSettings = "backToSettings"
 
 
 class SettingsViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
-    @IBOutlet weak var tableView: UITableView!
+    var tableView: UITableView = UITableView()
+    var cell: UITableViewCell = UITableViewCell()
     
     var textCell = [
         "\(GV.language.getText(.TCName))",
@@ -34,15 +35,31 @@ class SettingsViewController: UIViewController, UITableViewDataSource, UITableVi
 
 
     let textCellIdentifier = "TextCell"
-    
+
     
     override func viewDidLoad() {
         super.viewDidLoad()
         GV.language.addCallback(changeLanguage)
+        
+        tableView.registerClass(UITableViewCell.self, forCellReuseIdentifier: "TextCell")
 
         tableView.delegate = self
         tableView.dataSource = self
-        //tableView.backgroundColor = UIColor(red: 0x00/0xff, green: 0xff/0xff, blue: 0x7f/0xff, alpha: 1) // Springgreen
+        tableView.layer.hidden = false
+        tableView.layer.borderColor = UIColor.blackColor().CGColor
+        tableView.layer.borderWidth = 0.5
+        self.view.addSubview(tableView)
+        let tableHeight = cell.frame.height * CGFloat(textCell.count)
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+
+        self.view.addConstraint(NSLayoutConstraint(item: tableView, attribute: NSLayoutAttribute.CenterX, relatedBy: .Equal, toItem: self.view, attribute: NSLayoutAttribute.CenterX, multiplier: 1.0, constant: 0))
+        
+        self.view.addConstraint(NSLayoutConstraint(item: tableView, attribute: .Top, relatedBy: .Equal, toItem: self.view!, attribute: .Top, multiplier: 1.0, constant: 200))
+        
+        self.view.addConstraint(NSLayoutConstraint(item: tableView, attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: 300))
+        
+        self.view.addConstraint(NSLayoutConstraint(item: tableView, attribute: .Height , relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: tableHeight))
+        
 
     }
     
@@ -81,7 +98,7 @@ class SettingsViewController: UIViewController, UITableViewDataSource, UITableVi
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
 //        if segue.identifier == nameText {
 ////            let test = segue.destinationViewController  as? SetParametersViewController
-            if let setParametersViewController = segue.destinationViewController as? DetailsViewController {
+            if let setParametersViewController = segue.destinationViewController as? LanguageViewController {
                 setParametersViewController.toDo = segue.identifier!
             }
 //        }

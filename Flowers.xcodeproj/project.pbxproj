@@ -46,7 +46,9 @@
 		204A8A181BEF93B90061D14F /* LanguageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 204A8A171BEF93B90061D14F /* LanguageViewController.swift */; };
 		205574411BBEB85C00C165A1 /* Go321.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 205574401BBEB85C00C165A1 /* Go321.m4a */; };
 		205574431BBECB6200C165A1 /* NoSound.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 205574421BBECB6200C165A1 /* NoSound.m4a */; };
+		205ADED01BFF6D9400C9F341 /* GlobalParam.swift in Sources */ = {isa = PBXBuildFile; fileRef = 205ADECE1BFF6D9400C9F341 /* GlobalParam.swift */; };
 		206BF77C1BF247380009928E /* ChooseNameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 206BF77B1BF247380009928E /* ChooseNameViewController.swift */; };
+		206BF77E1BF386D00009928E /* MySegue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 206BF77D1BF386D00009928E /* MySegue.swift */; };
 		20F6D01F1BB43E9100BF7384 /* MyParticle.sks in Resources */ = {isa = PBXBuildFile; fileRef = 20F6D01D1BB43E9100BF7384 /* MyParticle.sks */; };
 		20F7E7101BBB03A200451984 /* SpriteKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 20F7E70F1BBB03A200451984 /* SpriteKit.framework */; };
 		20FC65BE1BBBC82000775322 /* sprites.atlas in Resources */ = {isa = PBXBuildFile; fileRef = 20FC65BD1BBBC82000775322 /* sprites.atlas */; };
@@ -123,7 +125,9 @@
 		204A8A171BEF93B90061D14F /* LanguageViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LanguageViewController.swift; sourceTree = "<group>"; };
 		205574401BBEB85C00C165A1 /* Go321.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = Go321.m4a; sourceTree = "<group>"; };
 		205574421BBECB6200C165A1 /* NoSound.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = NoSound.m4a; sourceTree = "<group>"; };
+		205ADECE1BFF6D9400C9F341 /* GlobalParam.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = GlobalParam.swift; path = ../GlobalParam.swift; sourceTree = "<group>"; };
 		206BF77B1BF247380009928E /* ChooseNameViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChooseNameViewController.swift; sourceTree = "<group>"; };
+		206BF77D1BF386D00009928E /* MySegue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MySegue.swift; sourceTree = "<group>"; };
 		20F6D01D1BB43E9100BF7384 /* MyParticle.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; name = MyParticle.sks; path = ../MyParticle.sks; sourceTree = "<group>"; };
 		20F7E70F1BBB03A200451984 /* SpriteKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SpriteKit.framework; path = System/Library/Frameworks/SpriteKit.framework; sourceTree = SDKROOT; };
 		20FC65BD1BBBC82000775322 /* sprites.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; path = sprites.atlas; sourceTree = "<group>"; };
@@ -196,9 +200,11 @@
 				201728F91BE3D0C9005F6CA8 /* SettingsViewController.swift */,
 				204A8A171BEF93B90061D14F /* LanguageViewController.swift */,
 				206BF77B1BF247380009928E /* ChooseNameViewController.swift */,
+				206BF77D1BF386D00009928E /* MySegue.swift */,
 				2001410E1BAEAA82003E0950 /* GameScene.swift */,
 				200141751BAEFB4F003E0950 /* JGXLine.swift */,
 				200141721BAEF900003E0950 /* SpriteGame.swift */,
+				205ADECE1BFF6D9400C9F341 /* GlobalParam.swift */,
 				2001412D1BAEB2DE003E0950 /* MyStructs.swift */,
 				200141771BAEFBCA003E0950 /* DataStore.swift */,
 				2001412B1BAEB285003E0950 /* LevelsForPlayWithSprites.swift */,
@@ -443,6 +449,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				206BF77E1BF386D00009928E /* MySegue.swift in Sources */,
 				200141451BAED8BF003E0950 /* Stack.swift in Sources */,
 				200141781BAEFBCA003E0950 /* DataStore.swift in Sources */,
 				200141411BAEB9F7003E0950 /* hu.swift in Sources */,
@@ -450,6 +457,7 @@
 				2001413F1BAEB95B003E0950 /* en.swift in Sources */,
 				200140E01BAEA96A003E0950 /* ViewController.swift in Sources */,
 				2001412E1BAEB2DE003E0950 /* MyStructs.swift in Sources */,
+				205ADED01BFF6D9400C9F341 /* GlobalParam.swift in Sources */,
 				200141471BAEDAE5003E0950 /* MySKNode.swift in Sources */,
 				2001413D1BAEB714003E0950 /* de.swift in Sources */,
 				201728FA1BE3D0C9005F6CA8 /* SettingsViewController.swift in Sources */,

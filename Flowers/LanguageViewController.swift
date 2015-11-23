@@ -201,7 +201,7 @@ class LanguageViewController: UIViewController, UITableViewDataSource, UITableVi
         
         
         
-        GV.dataStore.createSpriteGameRecord(GV.spriteGameData)
+        GV.dataStore.saveSpriteGameRecord()
         
         self.performSegueWithIdentifier(backToSettings, sender: self)
     }

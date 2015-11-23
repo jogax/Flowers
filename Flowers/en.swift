@@ -38,4 +38,8 @@ let enDictionary: [TextConstants: String] = [
     .TCRussian:          "Русский (Russian)",
     .TCCancel:           "Cancel",
     .TCDone:             "Done",    
+    .TCModify:           "Modify",
+    .TCDelete:           "Delete",
+    .TCNewName:          "New Name",
+    .TCChoose:           "Choose",
 ]

@@ -15,10 +15,16 @@ let RadiansToDegrees = 180 / Pi
 
 
 class ViewController: UIViewController, SettingsDelegate {
+    var aktName = ""
     var skView: SKView?
+    var scene: GameScene?
     override func viewDidLoad() {
         super.viewDidLoad()
+        startScene()
         // Do any additional setup after loading the view, typically from a nib.
+     }
+    
+    func startScene() {
         skView = self.view as? SKView
         skView!.showsFPS = true
         skView!.showsNodeCount = true
@@ -29,8 +35,9 @@ class ViewController: UIViewController, SettingsDelegate {
         /* Set the scale mode to scale to fit the window */
         //scene.scaleMode = .AspectFill
         //print("in viewDidLoad:\(view.frame.size)")
-    
+        
         GV.globalParam = GV.dataStore.getGlobalParam()
+        
         GV.spriteGameDataArray = GV.dataStore.getSpriteData()
         for index in 0..<GV.spriteGameDataArray.count {
             if GV.globalParam.aktName == GV.spriteGameDataArray[index].name {
@@ -39,25 +46,30 @@ class ViewController: UIViewController, SettingsDelegate {
         }
         GV.language.setLanguage(GV.spriteGameData.aktLanguageKey)
         GV.showHelpLines = Int(GV.spriteGameData.showHelpLines)
-        let scene = GameScene(size: CGSizeMake(view.frame.width, view.frame.height))
+        scene = GameScene(size: CGSizeMake(view.frame.width, view.frame.height))
         
-        GV.language.addCallback(scene.changeLanguage)
+        GV.language.addCallback(scene!.changeLanguage)
         skView!.showsFPS = true
         skView!.showsNodeCount = true
         skView!.ignoresSiblingOrder = true
-        scene.scaleMode = .ResizeFill
-        scene.parentViewController = self
-        scene.settingsDelegate = self
-
-
+        scene!.scaleMode = .ResizeFill
+        scene!.parentViewController = self
+        scene!.settingsDelegate = self
+        
+        
         skView!.presentScene(scene)
+
     }
     
     func settingsDelegateFunc() {
+        aktName = GV.globalParam.aktName
         self.performSegueWithIdentifier("SettingsSegue", sender: nil)
     }
 
     @IBAction func unwindToVC(segue: UIStoryboardSegue) {
+        if aktName != GV.globalParam.aktName {
+            startScene()
+        }
     }
 
     override func didReceiveMemoryWarning() {

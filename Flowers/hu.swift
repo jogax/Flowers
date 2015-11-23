@@ -38,5 +38,9 @@ let huDictionary: [TextConstants: String] = [
     .TCRussian:          "Русский (Orosz)",
     .TCCancel:           "Mégsem",
     .TCDone:             "Kész",
+    .TCModify:           "Módosítás",
+    .TCDelete:           "Eltávolítás",
+    .TCNewName:          "Új név",
+    .TCChoose:           "Kiválasztás",
 
 ]

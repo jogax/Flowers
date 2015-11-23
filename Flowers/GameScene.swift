@@ -259,6 +259,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             playMusic("MyMusic", volume: 0.03, loops: 0)
 
         }
+//        if GV.globalParam.aktName == GV.dummyName { // get gamer name
+//            GV.initName = true
+//            settingsDelegate?.settingsDelegateFunc()
+//        }
+
        
     }
     
@@ -479,21 +484,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         playMusic("NoSound", volume: 0.01, loops: 0)
         
         settingsDelegate?.settingsDelegateFunc()
-        //settingsNode = SettingsNode()
-        //settingsNode.position = CGPointMake(self.size.width / 2, self.size.height / 2)
-        
-        
-        
-        //viewController?.presentedViewController(settingsViewController)
-        
-//        
-//        settingsScene = SettingsScene(size: self.size)
-//        settingsScene!.returnToScene = self    // add this property to CreditsScene
-//        settingsScene!.scaleMode = self.scaleMode
-//        let transition = SKTransition.revealWithDirection(SKTransitionDirection.Down, duration: 1.0)
-//        
-//        settingsSceneStarted = true
-//        self.view?.presentScene(settingsScene!, transition: transition)
     }
     
     func undoButtonPressed() {
@@ -532,21 +522,28 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         }
     }
     
+    func restartGame() {
+        
+    }
+    
     func newGame(next: Bool) {
         stopped = true
         if next {
 
             levelIndex = levelsForPlayWithSprites.getNextLevel()
             gameScore += levelScore
-            //restartCount = 3
-            //let settingsButton = self.childNodeWithName("settings") as! MySKNode
-            //settingsButton.hitLabel.text = "\(restartCount)"
-            GV.spriteGameData = SpriteGameData()
-            GV.spriteGameData.spriteLevelIndex = Int64(levelIndex)
-            GV.spriteGameData.spriteGameScore = Int64(gameScore)
-            GV.spriteGameData.aktLanguageKey = GV.language.getAktLanguageKey()
-            GV.spriteGameData.showHelpLines = Int64(GV.showHelpLines)
-            GV.dataStore.createSpriteGameRecord(GV.spriteGameData)
+
+            for index in 0..<GV.spriteGameDataArray.count {
+                if GV.spriteGameDataArray[index].name == GV.globalParam.aktName {
+                    GV.spriteGameDataArray[index] = SpriteGameData()
+                    GV.spriteGameDataArray[index].spriteLevelIndex = Int64(levelIndex)
+                    GV.spriteGameDataArray[index].spriteGameScore = Int64(gameScore)
+                    GV.spriteGameDataArray[index].aktLanguageKey = GV.language.getAktLanguageKey()
+                    GV.spriteGameDataArray[index].showHelpLines = Int64(GV.showHelpLines)
+                    break
+                }
+            }
+            GV.dataStore.saveSpriteGameRecord()
             let gameScoreText: String = GV.language.getText(.TCGameScore)
             gameScoreLabel.text = "\(gameScoreText) \(gameScore)"
         }

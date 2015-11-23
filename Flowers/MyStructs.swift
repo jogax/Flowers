@@ -41,6 +41,7 @@ struct GV {
     static var showHelpLines = 0
     static var globalParam = GlobalParamData()
     static let dummyName = "dummy"
+    static var initName = false
 
     static let dataStore = DataStore()
 

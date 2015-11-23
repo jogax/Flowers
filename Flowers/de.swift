@@ -38,6 +38,10 @@ let deDictionary: [TextConstants: String] = [
     .TCRussian:          "Русский (Russisch)",
     .TCCancel:           "Abbrechen",
     .TCDone:             "Fertig",
+    .TCModify:           "Name ändern",
+    .TCDelete:           "Name löschen",
+    .TCNewName:          "Name eingeben",
+    .TCChoose:           "Name wählen",
 ]
 
 

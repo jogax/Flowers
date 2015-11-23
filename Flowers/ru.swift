@@ -38,4 +38,8 @@ let ruDictionary: [TextConstants: String] = [
     .TCRussian:          "Русский (Русский)",
     .TCCancel:           "Отменить",
     .TCDone:             "Готово",
+    .TCModify:           "Изменить",
+    .TCDelete:           "Удалить",
+    .TCNewName:          "Новое имя",
+    .TCChoose:           "Выбрать",
 ]

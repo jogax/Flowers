@@ -12,7 +12,8 @@ import CoreData
 import CloudKit
 
 
-
+let GameModusFlowers = 0
+let GameModusCards = 1
 
 
 class DataStore {
@@ -41,12 +42,14 @@ class DataStore {
         deleteRecords(spriteGameDescription)
         
         for index in 0..<GV.spriteGameDataArray.count {
+            
             spriteGameEntity = SpriteGame(entity:spriteGameDescription!, insertIntoManagedObjectContext: managedObjectContext)
-            spriteGameEntity!.aktLanguageKey = GV.spriteGameDataArray[index].aktLanguageKey
+//            spriteGameEntity!.aktLanguageKey = GV.spriteGameDataArray[index].aktLanguageKey
+//            spriteGameEntity!.showHelpLines = NSNumber(longLong: GV.spriteGameDataArray[index].showHelpLines)
+//            spriteGameEntity!.spriteLevelIndex = NSNumber(longLong: GV.spriteGameDataArray[index].spriteLevelIndex)
+//            spriteGameEntity!.spriteGameScore = NSNumber(longLong: GV.spriteGameDataArray[index].spriteGameScore)
             spriteGameEntity!.name = GV.spriteGameDataArray[index].name
-            spriteGameEntity!.showHelpLines = NSNumber(longLong: GV.spriteGameDataArray[index].showHelpLines)
-            spriteGameEntity!.spriteLevelIndex = NSNumber(longLong: GV.spriteGameDataArray[index].spriteLevelIndex)
-            spriteGameEntity!.spriteGameScore = NSNumber(longLong: GV.spriteGameDataArray[index].spriteGameScore)
+            spriteGameEntity!.allParams = coder(GV.spriteGameDataArray[index])
             
             do {
                 try self.managedObjectContext.save()
@@ -56,6 +59,27 @@ class DataStore {
                 abort()
             }
         }
+    }
+    
+    func coder(spriteGameData: SpriteGameData)->String {
+        var allParams = ""
+        allParams = spriteGameData.aktLanguageKey + "/"
+        allParams += String(spriteGameData.showHelpLines) + "/"
+        allParams += String(spriteGameData.spriteGameScore) + "/"
+        allParams += String(spriteGameData.spriteLevelIndex) + "/"
+        allParams += String(spriteGameData.gameModus)
+        return allParams
+    }
+    
+    func decoder(allParams: String)->SpriteGameData {
+        var spriteGameData = SpriteGameData()
+        var arr = allParams.componentsSeparatedByString("/")
+        spriteGameData.aktLanguageKey = arr[0]
+        spriteGameData.showHelpLines = Int64(arr[1])!
+        spriteGameData.spriteGameScore = Int64(arr[2])!
+        spriteGameData.spriteLevelIndex = Int64(arr[3])!
+        spriteGameData.gameModus = Int64(arr[4])!
+        return spriteGameData
     }
     
     func getSpriteData()->[SpriteGameData] {
@@ -72,15 +96,15 @@ class DataStore {
             
             for (_, result) in results.enumerate() {
                 let match = result as! NSManagedObject
-                var gameData = SpriteGameData()
-                gameData.aktLanguageKey = match.valueForKey("aktLanguageKey")! as! String
-                gameData.name = match.valueForKey("name")! as! String
-                gameData.showHelpLines = Int64(match.valueForKey("showHelpLines")! as! NSInteger)
-                gameData.spriteLevelIndex = Int64(match.valueForKey("spriteLevelIndex")! as! NSInteger)
-                gameData.spriteGameScore = Int64(match.valueForKey("spriteGameScore")! as! NSInteger)
-                //let allParams = match.valueForKey("allParams")! as! String
-//                var gameData = dekoder(allParams)
+//                var gameData = SpriteGameData()
+//                gameData.aktLanguageKey = match.valueForKey("aktLanguageKey")! as! String
 //                gameData.name = match.valueForKey("name")! as! String
+//                gameData.showHelpLines = Int64(match.valueForKey("showHelpLines")! as! NSInteger)
+//                gameData.spriteLevelIndex = Int64(match.valueForKey("spriteLevelIndex")! as! NSInteger)
+//                gameData.spriteGameScore = Int64(match.valueForKey("spriteGameScore")! as! NSInteger)
+                let allParams = match.valueForKey("allParams")! as! String
+                var gameData = decoder(allParams)
+                gameData.name = match.valueForKey("name")! as! String
                 dataArray.append(gameData)
             }
 

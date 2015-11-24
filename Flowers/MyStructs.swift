@@ -92,6 +92,7 @@ struct SpriteGameData {
     var showHelpLines: Int64
     var spriteLevelIndex: Int64
     var spriteGameScore: Int64
+    var gameModus: Int64
     
     init() {
         name = GV.globalParam.aktName
@@ -99,6 +100,7 @@ struct SpriteGameData {
         showHelpLines = 0
         spriteLevelIndex = 0
         spriteGameScore = 0
+        gameModus = Int64(GameModusFlowers)
     }
     
 }

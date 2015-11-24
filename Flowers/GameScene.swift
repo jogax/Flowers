@@ -183,7 +183,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
     var soundPlayer: AVAudioPlayer?
     var myView = SKView()
     var levelsForPlayWithSprites = LevelsForPlayWithSprites()
-    var levelIndex = Int(GV.spriteGameData.spriteLevelIndex)
+    var levelIndex = Int(GV.spriteGameDataArray[GV.getAktNameIndex()].spriteLevelIndex)
     var stack:Stack<SavedSprite> = Stack()
     var gameArray = [[Bool]]() // true if Cell used
     var containers = [Container]()
@@ -203,7 +203,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
     var levelScoreLabel = SKLabelNode(fontNamed: "AvenirNext-Bold")
     var countdownLabel = SKLabelNode(fontNamed: "AvenirNext-Bold")
     var targetScoreLabel = SKLabelNode(fontNamed: "AvenirNext-Bold")
-    var gameScore = Int(GV.spriteGameData.spriteGameScore)
+    var gameScore = Int(GV.spriteGameDataArray[GV.getAktNameIndex()].spriteGameScore)
     var levelScore = 0
     var movedFromNode: MySKNode!
     var settingsButton: MySKButton?
@@ -220,7 +220,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
     //let showHelpLines = 4
     let maxHelpLinesCount = 4
     var undoCount = 0
-    var inFirstGenerateSprites = true
+    var inFirstGenerateSprites = false
     var lastShownNode: MySKNode?
     var parentViewController: UIViewController?
     var settingsSceneStarted = false
@@ -476,7 +476,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         makeLineAroundGameboard(.RightVertical)
         makeLineAroundGameboard(.BottomHorizontal)
         makeLineAroundGameboard(.LeftVertical)
-        self.inFirstGenerateSprites = true
+        self.inFirstGenerateSprites = false
     }
     
 

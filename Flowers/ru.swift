@@ -28,7 +28,7 @@ let ruDictionary: [TextConstants: String] = [
     .TCTimeout:          "Время закончилось",
     .TCGameOver:         "Игра проиграна",
     .TCCongratulations:  "Поздравления!",
-    .TCName:             "Твое имя",
+    .TCName:             "Выбирай имя",
     .TCVolume:           "Громкость",
     .TCCountHelpLines:   "кол. вспомогательных линий",
     .TCLanguage:         "Язык",
@@ -42,4 +42,6 @@ let ruDictionary: [TextConstants: String] = [
     .TCDelete:           "Удалить",
     .TCNewName:          "Новое имя",
     .TCChoose:           "Выбрать",
+    .TCGamer:            "Игрок: ",
+    .TCGameModus:        "Тип игры",
 ]

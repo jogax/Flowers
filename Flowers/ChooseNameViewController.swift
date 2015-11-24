@@ -21,9 +21,10 @@ class ChooseNameViewController: UIViewController, UITableViewDataSource, UITable
     var doneNameButton = UIButton()
     var cancelNameButton = UIButton()
     var newNameButton = UIButton()
-    var getNameModus = false
+    var newNameModus = true
     var originalAktName = ""
     var tableViewConstraints = [NSLayoutConstraint]()
+    var gamerName = UILabel()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -50,18 +51,18 @@ class ChooseNameViewController: UIViewController, UITableViewDataSource, UITable
 
  
         prepareButton(cancelButton, text: .TCCancel, action: "cancelPressed:", placeOffset: CGPointMake(20, 20), relativeTo: tableView)
-        prepareButton(chooseButton, text: .TCChoose, action: "choosePressed:", placeOffset: CGPointMake(220, 20), relativeTo: tableView)
+        prepareButton(chooseButton, text: .TCChoose, action: "choosePressed:", placeOffset: CGPointMake(240, 20), relativeTo: tableView)
         prepareButton(modifyButton, text: .TCNewName , action: "newNamePressed:", placeOffset: CGPointMake(20, 80), relativeTo: tableView)
-        prepareButton(deleteButton, text: .TCModify, action: "modifyPressed:", placeOffset: CGPointMake(120, 80), relativeTo: tableView)
-        prepareButton(newNameButton, text: .TCDelete, action: "deletePressed:", placeOffset: CGPointMake(220, 80), relativeTo: tableView)
+        prepareButton(deleteButton, text: .TCModify, action: "modifyPressed:", placeOffset: CGPointMake(140, 80), relativeTo: tableView)
+        prepareButton(newNameButton, text: .TCDelete, action: "deletePressed:", placeOffset: CGPointMake(240, 80), relativeTo: tableView)
 
         prepareButton(cancelNameButton, text: .TCCancel, action: "cancelNamePressed:", placeOffset: CGPointMake(20, 50), relativeTo: nameInputField)
-        prepareButton(doneNameButton, text: .TCDone, action: "doneNamePressed:", placeOffset: CGPointMake(220, 50), relativeTo: nameInputField)
+        prepareButton(doneNameButton, text: .TCDone, action: "doneNamePressed:", placeOffset: CGPointMake(240, 50), relativeTo: nameInputField)
         
         hideNameTableButtons(false)
         
         if GV.globalParam.aktName == GV.dummyName {
-            getNewName()
+            getNewName("")
         } else {
             textCell.removeAll()
             for index in 0..<GV.spriteGameDataArray.count {
@@ -69,6 +70,18 @@ class ChooseNameViewController: UIViewController, UITableViewDataSource, UITable
             }
             setupTableViewLayout()
         }
+        gamerName.text = GV.language.getText(.TCGamer) + originalAktName
+        self.view.addSubview(gamerName)
+        gamerName.translatesAutoresizingMaskIntoConstraints = false
+        
+        self.view.addConstraint(NSLayoutConstraint(item: gamerName, attribute: NSLayoutAttribute.CenterX, relatedBy: .Equal, toItem: self.view, attribute: NSLayoutAttribute.CenterX, multiplier: 1.0, constant: 0.0))
+        
+        self.view.addConstraint(NSLayoutConstraint(item: gamerName, attribute: .Top, relatedBy: .Equal, toItem: self.view, attribute: .Top, multiplier: 1.0, constant: 50.0))
+        
+        self.view.addConstraint(NSLayoutConstraint(item: gamerName, attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: 120))
+        
+        self.view.addConstraint(NSLayoutConstraint(item: gamerName, attribute: .Height , relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: 50))
+        
         
     }
     
@@ -83,7 +96,7 @@ class ChooseNameViewController: UIViewController, UITableViewDataSource, UITable
         
         self.view.addConstraint(NSLayoutConstraint(item: button, attribute: .Top, relatedBy: .Equal, toItem: relativeTo, attribute: .Bottom, multiplier: 1.0, constant: placeOffset.y))
         
-        self.view.addConstraint(NSLayoutConstraint(item: button, attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: 100))
+        self.view.addConstraint(NSLayoutConstraint(item: button, attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: 120))
         
         self.view.addConstraint(NSLayoutConstraint(item: button, attribute: .Height , relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: 50))
     }
@@ -118,10 +131,10 @@ class ChooseNameViewController: UIViewController, UITableViewDataSource, UITable
         tableView.reloadData()
     }
     
-    func getNewName() {
+    func getNewName(placeHolder: String) {
 
         hideNameTableButtons(true)
-        nameInputField.text = ""
+        nameInputField.text = placeHolder
         nameInputField.placeholder = GV.language.getText(.TCName)
         nameInputField.borderStyle = .RoundedRect
         nameInputField.layer.borderColor = UIColor.blackColor().CGColor
@@ -181,36 +194,41 @@ class ChooseNameViewController: UIViewController, UITableViewDataSource, UITable
         }
         nameInputField.layer.hidden = true
         tableView.layer.hidden = false
+        GV.language.setLanguage(GV.spriteGameDataArray[GV.getAktNameIndex()].aktLanguageKey)
         self.performSegueWithIdentifier(backToSettings, sender: self)
     }
     
     func modifyPressed(sender: UIButton) {
+        newNameModus = false
+        getNewName(GV.globalParam.aktName)
     }
 
     func newNamePressed(sender: UIButton) {
-        getNewName()
+        getNewName("")
     }
     
     func deletePressed(sender: UIButton) {
         var ind = 0
-        for index in 0..<GV.spriteGameDataArray.count {
-            if GV.spriteGameDataArray[index].name == GV.globalParam.aktName {
-                GV.spriteGameDataArray.removeAtIndex(index)
-                textCell.removeAtIndex(index)
-                if index >= GV.spriteGameDataArray.count {
-                    ind = GV.spriteGameDataArray.count - 1
-                } else {
-                    ind = index
+        if GV.spriteGameDataArray.count > 1 {
+            for index in 0..<GV.spriteGameDataArray.count {
+                if GV.spriteGameDataArray[index].name == GV.globalParam.aktName {
+                    GV.spriteGameDataArray.removeAtIndex(index)
+                    textCell.removeAtIndex(index)
+                    if index >= GV.spriteGameDataArray.count {
+                        ind = GV.spriteGameDataArray.count - 1
+                    } else {
+                        ind = index
+                    }
+                    break
                 }
-                break
             }
+            
+            GV.globalParam.aktName = GV.spriteGameDataArray[ind].name
+            GV.dataStore.saveGlobalParamRecord()
+            GV.dataStore.saveSpriteGameRecord()
+            tableView.reloadData()
+            setupTableViewLayout()
         }
-        
-        GV.globalParam.aktName = GV.spriteGameDataArray[ind].name
-        GV.dataStore.saveGlobalParamRecord()
-        GV.dataStore.saveSpriteGameRecord()
-        tableView.reloadData()
-        setupTableViewLayout()
     }
     
     func cancelNamePressed(sender: UIButton) {
@@ -223,18 +241,23 @@ class ChooseNameViewController: UIViewController, UITableViewDataSource, UITable
             var newGameParam: SpriteGameData
             if GV.globalParam.aktName == GV.dummyName {
                 GV.spriteGameDataArray[0].name = newName
+                textCell.append(newName)
+            } else if !newNameModus {
+                GV.spriteGameDataArray[GV.getAktNameIndex()].name = newName
+                textCell[GV.getAktNameIndex()] = newName
             } else {
                 newGameParam = SpriteGameData()
                 newGameParam.name = newName
                 GV.spriteGameDataArray.append(newGameParam)
+                textCell.append(newName)
             }
             GV.globalParam.aktName = newName
             GV.dataStore.saveSpriteGameRecord()
-            textCell.append(newName)
-            tableView.reloadData()
+           tableView.reloadData()
             setupTableViewLayout()
             nameInputField.endEditing(true)
         }
+        newNameModus = true
         hideNameTableButtons(false)
     }
     

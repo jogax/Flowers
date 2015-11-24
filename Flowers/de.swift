@@ -28,7 +28,7 @@ let deDictionary: [TextConstants: String] = [
     .TCTimeout:          "Timeout",
     .TCGameOver:         "Spiel vorbei",
     .TCCongratulations:  "Herzliches Glückwunsch!",
-    .TCName:             "Dein Name",
+    .TCName:             "Wähle Name",
     .TCVolume:           "Lautstärke",
     .TCCountHelpLines:   "Anzahl Hilfslinien",
     .TCLanguage:         "Sprache",
@@ -38,10 +38,12 @@ let deDictionary: [TextConstants: String] = [
     .TCRussian:          "Русский (Russisch)",
     .TCCancel:           "Abbrechen",
     .TCDone:             "Fertig",
-    .TCModify:           "Name ändern",
-    .TCDelete:           "Name löschen",
-    .TCNewName:          "Name eingeben",
-    .TCChoose:           "Name wählen",
+    .TCModify:           "Ändern",
+    .TCDelete:           "Löschen",
+    .TCNewName:          "Neuer Name",
+    .TCChoose:           "Wählen",
+    .TCGamer:            "Spieler: ",
+    .TCGameModus:        "Spielmodus",
 ]
 
 

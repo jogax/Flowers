@@ -46,6 +46,7 @@
                         <segue destination="eIG-aO-Yuv" kind="show" identifier="setCountHelpLines" id="C13-Xk-MuD"/>
                         <segue destination="eIG-aO-Yuv" kind="show" identifier="setLanguage" id="UxH-gp-4a5"/>
                         <segue destination="l1M-bz-U9G" kind="show" identifier="getName" id="jZT-Y6-hf5"/>
+                        <segue destination="eIG-aO-Yuv" kind="show" identifier="setGameModus" id="rjM-OX-3Tf"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="O0w-cB-Yue" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -101,6 +102,6 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="Ccd-sY-7mg"/>
+        <segue reference="rjM-OX-3Tf"/>
     </inferredMetricsTieBreakers>
 </document>

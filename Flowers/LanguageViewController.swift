@@ -41,7 +41,7 @@ class LanguageViewController: UIViewController, UITableViewDataSource, UITableVi
         
         
         switch toDo {
-        //case nameText: makeNameView()
+        case gameModusText: makeGameModusView()
         case volumeText: makeVolumeView()
         case helpLinesText: makeHelpLinesView()
         case languageText: makeLangageView()
@@ -60,6 +60,10 @@ class LanguageViewController: UIViewController, UITableViewDataSource, UITableVi
         
         setupLayout()
     }
+
+    func makeGameModusView() {
+        let _ = 0
+    }
     
     func makeVolumeView() {
         let _ = 0
@@ -71,7 +75,7 @@ class LanguageViewController: UIViewController, UITableViewDataSource, UITableVi
         self.view.addSubview(lineCountPicker!)
         lineCountPicker!.delegate = self
         lineCountPicker!.dataSource = self
-        lineCountPicker!.selectRow(Int(GV.spriteGameData.showHelpLines), inComponent: 0, animated: false)
+        lineCountPicker!.selectRow(Int(GV.spriteGameDataArray[GV.getAktNameIndex()].showHelpLines), inComponent: 0, animated: false)
         
         lineCountPicker!.translatesAutoresizingMaskIntoConstraints = false
         
@@ -191,11 +195,12 @@ class LanguageViewController: UIViewController, UITableViewDataSource, UITableVi
     }
     
     func donePressed(sender: UIButton) {
+        let index = GV.getAktNameIndex()
         switch toDo {
         case nameText: _ = 0
         case volumeText: _ = 0
-        case helpLinesText: GV.spriteGameData.showHelpLines = Int64(GV.showHelpLines)
-        case languageText:  GV.spriteGameData.aktLanguageKey = GV.language.getAktLanguageKey()
+        case helpLinesText: GV.spriteGameDataArray[index].showHelpLines = Int64(GV.showHelpLines)
+        case languageText:  GV.spriteGameDataArray[index].aktLanguageKey = GV.language.getAktLanguageKey()
         default: break
         }
         

@@ -28,7 +28,7 @@ let huDictionary: [TextConstants: String] = [
     .TCTimeout:          "Lejárt az időd",
     .TCGameOver:         "Vesztettél",
     .TCCongratulations:  "Gratulálok!",
-    .TCName:             "Add meg a neved",
+    .TCName:             "Válassz egy neved",
     .TCVolume:           "Hangerő",
     .TCCountHelpLines:   "Segédvonalak száma",
     .TCLanguage:         "Nyelv",
@@ -42,5 +42,6 @@ let huDictionary: [TextConstants: String] = [
     .TCDelete:           "Eltávolítás",
     .TCNewName:          "Új név",
     .TCChoose:           "Kiválasztás",
-
+    .TCGamer:            "Játékos: ",
+    .TCGameModus:        "Játékmód",
 ]

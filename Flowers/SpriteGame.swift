@@ -13,6 +13,7 @@ class SpriteGame: NSManagedObject {
 
     @NSManaged var aktLanguageKey: NSString?
     @NSManaged var name: NSString?
+    @NSManaged var allParams: NSString?
     @NSManaged var showHelpLines: NSNumber?
     @NSManaged var spriteGameScore: NSNumber?
     @NSManaged var spriteLevelIndex: NSNumber?

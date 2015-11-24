@@ -39,13 +39,14 @@ class ViewController: UIViewController, SettingsDelegate {
         GV.globalParam = GV.dataStore.getGlobalParam()
         
         GV.spriteGameDataArray = GV.dataStore.getSpriteData()
-        for index in 0..<GV.spriteGameDataArray.count {
-            if GV.globalParam.aktName == GV.spriteGameDataArray[index].name {
-                GV.spriteGameData = GV.spriteGameDataArray[index]
-            }
-        }
-        GV.language.setLanguage(GV.spriteGameData.aktLanguageKey)
-        GV.showHelpLines = Int(GV.spriteGameData.showHelpLines)
+//        for index in 0..<GV.spriteGameDataArray.count {
+//            if GV.globalParam.aktName == GV.spriteGameDataArray[index].name {
+//                GV.spriteGameData = GV.spriteGameDataArray[index]
+//            }
+//        }
+        let index = GV.getAktNameIndex()
+        GV.language.setLanguage(GV.spriteGameDataArray[index].aktLanguageKey)
+        GV.showHelpLines = Int(GV.spriteGameDataArray[index].showHelpLines)
         scene = GameScene(size: CGSizeMake(view.frame.width, view.frame.height))
         
         GV.language.addCallback(scene!.changeLanguage)

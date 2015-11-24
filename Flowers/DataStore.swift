@@ -78,6 +78,9 @@ class DataStore {
                 gameData.showHelpLines = Int64(match.valueForKey("showHelpLines")! as! NSInteger)
                 gameData.spriteLevelIndex = Int64(match.valueForKey("spriteLevelIndex")! as! NSInteger)
                 gameData.spriteGameScore = Int64(match.valueForKey("spriteGameScore")! as! NSInteger)
+                //let allParams = match.valueForKey("allParams")! as! String
+//                var gameData = dekoder(allParams)
+//                gameData.name = match.valueForKey("name")! as! String
                 dataArray.append(gameData)
             }
 

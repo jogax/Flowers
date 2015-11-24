@@ -45,11 +45,29 @@ struct GV {
 
     static let dataStore = DataStore()
 
-    static var spriteGameData = SpriteGameData()
+//    static var spriteGameData = SpriteGameData()
 //    static var sublayer = CALayer()
     static var spriteGameDataArray: [SpriteGameData] = []
     // Constraints
     // static let myDevice = MyDevice()
+
+    static func getAktNameIndex()->Int {
+        for index in 0..<GV.spriteGameDataArray.count {
+            if GV.spriteGameDataArray[index].name == GV.globalParam.aktName {
+                return index
+            }
+        }
+        return 0
+    }
+    
+//    static func getAktSpriteGameData()->SpriteGameData {
+//        for index in 0..<GV.spriteGameDataArray.count {
+//            if GV.spriteGameDataArray[index].name == GV.globalParam.aktName {
+//                return GV.spriteGameDataArray[index]
+//            }
+//        }
+//        return GV.spriteGameDataArray[0]
+//    }
     
     static func random(min: Int, max: Int) -> Int {
         let randomInt = min + Int(arc4random_uniform(UInt32(max + 1 - min)))

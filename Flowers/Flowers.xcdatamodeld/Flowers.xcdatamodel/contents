@@ -4,15 +4,11 @@
         <attribute name="aktName" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
     <entity name="SpriteGame" representedClassName=".SpriteGame" syncable="YES">
-        <attribute name="aktLanguageKey" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="allParams" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="showHelpLines" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
-        <attribute name="spriteGameScore" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
-        <attribute name="spriteLevelIndex" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
     </entity>
     <elements>
         <element name="GlobalParam" positionX="-414" positionY="-9" width="128" height="58"/>
-        <element name="SpriteGame" positionX="-110" positionY="162" width="128" height="135"/>
+        <element name="SpriteGame" positionX="-110" positionY="162" width="128" height="75"/>
     </elements>
 </model>

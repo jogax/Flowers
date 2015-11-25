@@ -65,7 +65,7 @@ class SettingsViewController: UIViewController, UITableViewDataSource, UITableVi
         
         self.view.addConstraint(NSLayoutConstraint(item: tableView, attribute: .Height , relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: tableHeight))
         
-        gamerName.text = GV.language.getText(.TCGamer)  + GV.globalParam.aktName
+        gamerName.text = GV.language.getText(.TCGamer)  + (GV.globalParam.aktName == GV.dummyName ? "" : GV.globalParam.aktName)
         self.view.addSubview(gamerName)
         gamerName.translatesAutoresizingMaskIntoConstraints = false
         
@@ -118,7 +118,6 @@ class SettingsViewController: UIViewController, UITableViewDataSource, UITableVi
                 self.performSegueWithIdentifier(returnText, sender: self)
             default: _ = 0
         }
-        //self.performSegueWithIdentifier(nameText, sender: self)
     }
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
@@ -145,7 +144,7 @@ class SettingsViewController: UIViewController, UITableViewDataSource, UITableVi
 
     
     @IBAction func unwindToSC(segue: UIStoryboardSegue) {
-        gamerName.text = GV.language.getText(.TCGamer) + GV.globalParam.aktName
+        gamerName.text = GV.language.getText(.TCGamer) + (GV.globalParam.aktName == GV.dummyName ? "" : GV.globalParam.aktName)
     }
 
 }

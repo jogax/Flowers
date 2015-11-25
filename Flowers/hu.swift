@@ -44,4 +44,6 @@ let huDictionary: [TextConstants: String] = [
     .TCChoose:           "Kiválasztás",
     .TCGamer:            "Játékos: ",
     .TCGameModus:        "Játékmód",
+    .TCSoundVolume:      "Zörejek hangerő",
+    .TCMusicVolume:      "Zene hangerő",
 ]

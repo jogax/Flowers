@@ -44,4 +44,6 @@ let enDictionary: [TextConstants: String] = [
     .TCChoose:           "Choose",
     .TCGamer:            "Gamer: ",
     .TCGameModus:        "Gamemodus",
+    .TCSoundVolume:      "Sound Volume",
+    .TCMusicVolume:      "Musik Volume",
 ]

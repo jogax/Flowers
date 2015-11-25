@@ -63,22 +63,26 @@ class DataStore {
     
     func coder(spriteGameData: SpriteGameData)->String {
         var allParams = ""
-        allParams = spriteGameData.aktLanguageKey + "/"
-        allParams += String(spriteGameData.showHelpLines) + "/"
-        allParams += String(spriteGameData.spriteGameScore) + "/"
-        allParams += String(spriteGameData.spriteLevelIndex) + "/"
-        allParams += String(spriteGameData.gameModus)
+        allParams = spriteGameData.aktLanguageKey + "/°/"
+        allParams += String(spriteGameData.showHelpLines) + "/°/"
+        allParams += String(spriteGameData.spriteGameScore) + "/°/"
+        allParams += String(spriteGameData.spriteLevelIndex) + "/°/"
+        allParams += String(spriteGameData.gameModus) + "/°/"
+        allParams += String(spriteGameData.soundVolume) + "/°/"
+        allParams += String(spriteGameData.musicVolume)
         return allParams
     }
     
     func decoder(allParams: String)->SpriteGameData {
         var spriteGameData = SpriteGameData()
-        var arr = allParams.componentsSeparatedByString("/")
-        spriteGameData.aktLanguageKey = arr[0]
-        spriteGameData.showHelpLines = Int64(arr[1])!
-        spriteGameData.spriteGameScore = Int64(arr[2])!
-        spriteGameData.spriteLevelIndex = Int64(arr[3])!
-        spriteGameData.gameModus = Int64(arr[4])!
+        var components = allParams.componentsSeparatedByString("/°/")
+        spriteGameData.aktLanguageKey = components[0]
+        if components.count > 1 {spriteGameData.showHelpLines = Int64(components[1])!}
+        if components.count > 2 {spriteGameData.spriteGameScore = Int64(components[2])!}
+        if components.count > 3 {spriteGameData.spriteLevelIndex = Int64(components[3])!}
+        if components.count > 4 {spriteGameData.gameModus = Int64(components[4])!}
+        if components.count > 5 {spriteGameData.soundVolume = Float(components[5])!}
+        if components.count > 6 {spriteGameData.musicVolume = Float(components[6])!}
         return spriteGameData
     }
     
@@ -96,12 +100,6 @@ class DataStore {
             
             for (_, result) in results.enumerate() {
                 let match = result as! NSManagedObject
-//                var gameData = SpriteGameData()
-//                gameData.aktLanguageKey = match.valueForKey("aktLanguageKey")! as! String
-//                gameData.name = match.valueForKey("name")! as! String
-//                gameData.showHelpLines = Int64(match.valueForKey("showHelpLines")! as! NSInteger)
-//                gameData.spriteLevelIndex = Int64(match.valueForKey("spriteLevelIndex")! as! NSInteger)
-//                gameData.spriteGameScore = Int64(match.valueForKey("spriteGameScore")! as! NSInteger)
                 let allParams = match.valueForKey("allParams")! as! String
                 var gameData = decoder(allParams)
                 gameData.name = match.valueForKey("name")! as! String

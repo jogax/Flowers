@@ -44,6 +44,8 @@ let deDictionary: [TextConstants: String] = [
     .TCChoose:           "Wählen",
     .TCGamer:            "Spieler: ",
     .TCGameModus:        "Spielmodus",
+    .TCSoundVolume:      "Geräusch Lautstärke",
+    .TCMusicVolume:      "Musik Lautstärke",
 ]
 
 

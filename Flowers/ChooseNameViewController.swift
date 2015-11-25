@@ -50,14 +50,14 @@ class ChooseNameViewController: UIViewController, UITableViewDataSource, UITable
  
 
  
-        prepareButton(cancelButton, text: .TCCancel, action: "cancelPressed:", placeOffset: CGPointMake(20, 20), relativeTo: tableView)
-        prepareButton(chooseButton, text: .TCChoose, action: "choosePressed:", placeOffset: CGPointMake(240, 20), relativeTo: tableView)
-        prepareButton(modifyButton, text: .TCNewName , action: "newNamePressed:", placeOffset: CGPointMake(20, 80), relativeTo: tableView)
-        prepareButton(deleteButton, text: .TCModify, action: "modifyPressed:", placeOffset: CGPointMake(140, 80), relativeTo: tableView)
-        prepareButton(newNameButton, text: .TCDelete, action: "deletePressed:", placeOffset: CGPointMake(240, 80), relativeTo: tableView)
+        prepareButton(cancelButton, text: .TCCancel, action: "cancelPressed:", placeOffset: CGPointMake(-120, 20), relativeTo: tableView)
+        prepareButton(chooseButton, text: .TCChoose, action: "choosePressed:", placeOffset: CGPointMake(120, 20), relativeTo: tableView)
+        prepareButton(modifyButton, text: .TCNewName , action: "newNamePressed:", placeOffset: CGPointMake(-120, 80), relativeTo: tableView)
+        prepareButton(deleteButton, text: .TCModify, action: "modifyPressed:", placeOffset: CGPointMake(0, 80), relativeTo: tableView)
+        prepareButton(newNameButton, text: .TCDelete, action: "deletePressed:", placeOffset: CGPointMake(120, 80), relativeTo: tableView)
 
-        prepareButton(cancelNameButton, text: .TCCancel, action: "cancelNamePressed:", placeOffset: CGPointMake(20, 50), relativeTo: nameInputField)
-        prepareButton(doneNameButton, text: .TCDone, action: "doneNamePressed:", placeOffset: CGPointMake(240, 50), relativeTo: nameInputField)
+        prepareButton(cancelNameButton, text: .TCCancel, action: "cancelNamePressed:", placeOffset: CGPointMake(-120, 50), relativeTo: nameInputField)
+        prepareButton(doneNameButton, text: .TCDone, action: "doneNamePressed:", placeOffset: CGPointMake(120, 50), relativeTo: nameInputField)
         
         hideNameTableButtons(false)
         
@@ -70,7 +70,7 @@ class ChooseNameViewController: UIViewController, UITableViewDataSource, UITable
             }
             setupTableViewLayout()
         }
-        gamerName.text = GV.language.getText(.TCGamer) + originalAktName
+        gamerName.text = GV.language.getText(.TCGamer) + (originalAktName == GV.dummyName ? "" : originalAktName)
         self.view.addSubview(gamerName)
         gamerName.translatesAutoresizingMaskIntoConstraints = false
         
@@ -92,7 +92,7 @@ class ChooseNameViewController: UIViewController, UITableViewDataSource, UITable
         button.addTarget(self, action: action, forControlEvents: UIControlEvents.TouchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         
-        self.view.addConstraint(NSLayoutConstraint(item: button, attribute: NSLayoutAttribute.Left, relatedBy: .Equal, toItem: self.view, attribute: NSLayoutAttribute.Left, multiplier: 1.0, constant: placeOffset.x))
+        self.view.addConstraint(NSLayoutConstraint(item: button, attribute: NSLayoutAttribute.CenterX, relatedBy: .Equal, toItem: self.view, attribute: NSLayoutAttribute.CenterX, multiplier: 1.0, constant: placeOffset.x))
         
         self.view.addConstraint(NSLayoutConstraint(item: button, attribute: .Top, relatedBy: .Equal, toItem: relativeTo, attribute: .Bottom, multiplier: 1.0, constant: placeOffset.y))
         
@@ -272,6 +272,7 @@ class ChooseNameViewController: UIViewController, UITableViewDataSource, UITable
         doneNameButton.hidden = !hidden
         cancelNameButton.hidden = !hidden
         nameInputField.hidden = !hidden
+        print("Anzahl Subviews: \(self.view.subviews.count)")
 
     }
 

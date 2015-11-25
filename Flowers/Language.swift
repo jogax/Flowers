@@ -45,7 +45,9 @@ enum TextConstants: Int {
     TCNewName,
     TCChoose,
     TCGamer,
-    TCGameModus
+    TCGameModus,
+    TCSoundVolume,
+    TCMusicVolume
 
 }
 

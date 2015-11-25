@@ -247,7 +247,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
 
     override func didMoveToView(view: SKView) {
 
-        if !settingsSceneStarted {
+       if !settingsSceneStarted {
 
             myView = view
             levelsForPlayWithSprites.setAktLevel(levelIndex)
@@ -256,7 +256,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             prepareNextGame()
             generateSprites()
         } else {
-            playMusic("MyMusic", volume: 0.03, loops: 0)
+            playMusic("MyMusic", volume: GV.musicVolume, loops: 0)
 
         }
 //        if GV.globalParam.aktName == GV.dummyName { // get gamer name
@@ -268,6 +268,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
     }
     
     func prepareNextGame() {
+        playMusic("MyMusic", volume: GV.musicVolume, loops: 0)
         stack = Stack()
         if countDown != nil {
             countDown!.invalidate()
@@ -481,7 +482,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
     
 
     func settingsButtonPressed() {
-        playMusic("NoSound", volume: 0.01, loops: 0)
+        playMusic("NoSound", volume: GV.musicVolume, loops: 0)
         
         settingsDelegate?.settingsDelegateFunc()
     }
@@ -628,6 +629,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             push(sprite, status: .Added)
             addChild(sprite)
         }
+        self.countDown = NSTimer.scheduledTimerWithTimeInterval(1.0, target: self, selector: Selector("doCountDown"), userInfo: nil, repeats: true)
         stopped = false
     }
     
@@ -908,7 +910,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
                     self.gameArray[sprite.column][sprite.row] = false
                     //sprite.size = CGSizeMake(sprite.size.width / 3, sprite.size.height / 3)
                     sprite.colorBlendFactor = 4
-                    self.playSound("Drop", volume: 0.03)
+                    self.playSound("Drop", volume: GV.soundVolume)
                     let sparkEmitter = SKEmitterNode(fileNamed: "MyParticle.sks")
                     sparkEmitter?.position = sprite.position
                     sparkEmitter?.zPosition = 1
@@ -987,7 +989,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             for index in 0..<self.children.count {
                 if self.children[index].hidden {
                     //SKAction.playSoundFileNamed("Do_1", waitForCompletion: false)
-                    self.playSound("Do_1", volume: 0.25)
+                    self.playSound("Do_1", volume: GV.soundVolume)
                     lastShownNode = self.children[index] as? MySKNode
                     self.children[index].hidden = false
                     let undoButton = self.childNodeWithName("undo")! as! MySKNode
@@ -1031,7 +1033,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         let goAction = SKAction.repeatAction(
                 SKAction.sequence([
                     //SKAction.playSoundFileNamed("Do_1", waitForCompletion:false),
-                    SKAction.runBlock({self.playSound("Go321", volume: 0.2)}),
+                    SKAction.runBlock({self.playSound("Go321", volume: GV.soundVolume)}),
                     SKAction.animateWithTextures(three_two_one_go, timePerFrame: 1.2, resize: false, restore: false)
                 ]),
             count: 1)
@@ -1040,7 +1042,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         let startCounterAction = SKAction.runBlock({self.countDown = NSTimer.scheduledTimerWithTimeInterval(1.0, target: self, selector: Selector("doCountDown"), userInfo: nil, repeats: true)})
 
         
-        go.runAction(SKAction.sequence([goAction, removeAction, startCounterAction, SKAction.runBlock({self.playMusic("MyMusic", volume: 0.03, loops: -1)})]))
+        go.runAction(SKAction.sequence([goAction, removeAction, startCounterAction, SKAction.runBlock({self.playMusic("MyMusic", volume: GV.musicVolume, loops: -1)})]))
         
 
 
@@ -1080,7 +1082,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             try audioPlayer = AVAudioPlayer(contentsOfURL: url)
             audioPlayer?.delegate = self
             audioPlayer?.prepareToPlay()
-            audioPlayer?.volume = 0.03
+            audioPlayer?.volume = 0.001 * volume
             audioPlayer?.numberOfLoops = loops
             audioPlayer?.play()
         } catch {
@@ -1096,7 +1098,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             try soundPlayer = AVAudioPlayer(contentsOfURL: url)
             soundPlayer?.delegate = self
             soundPlayer?.prepareToPlay()
-            soundPlayer?.volume = 0.03
+            soundPlayer?.volume = 0.001 * volume
             soundPlayer?.numberOfLoops = 0
             soundPlayer?.play()
         } catch {
@@ -1126,11 +1128,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
                 container.hitCounter += movingSprite.hitCounter
             }
             showScore()
-            playSound("Container", volume: 0.03)
+            playSound("Container", volume: GV.soundVolume)
         } else {
             container.hitCounter -= movingSprite.hitCounter
             showScore()
-            playSound("Funk_Bot", volume: 0.03)
+            playSound("Funk_Bot", volume: GV.soundVolume)
         }
 
         countMovingSprites = 0
@@ -1167,7 +1169,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
 //            let aktSize = spriteSize + 1.2 * CGFloat(sprite.hitCounter)
 //            sprite.size.width = aktSize
 //            sprite.size.height = aktSize
-            playSound("Sprite1", volume: 0.03)
+            playSound("Sprite1", volume: GV.soundVolume)
             
             gameArray[movingSprite.column][movingSprite.row] = false
             movingSprite.removeFromParent()
@@ -1206,7 +1208,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             gameArray[movingSprite.column][movingSprite.row] = false
             gameArray[sprite.column][sprite.row] = false
             spriteCount--
-            playSound("Drop", volume: 0.03)
+            playSound("Drop", volume: GV.soundVolume)
             showScore()
         }
         spriteCount--
@@ -1265,7 +1267,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             let actionMove = SKAction.moveTo(realDest, duration: 1.0)
             collisionActive = true
             movingSprite.runAction(SKAction.sequence([actionMove]))//, actionMoveDone]))
-            playSound("Mirror", volume: 0.03)
+            playSound("Mirror", volume: GV.soundVolume)
             checkGameFinished()
         }
     }
@@ -1331,7 +1333,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             if countDown != nil {
                 countDown!.invalidate()
                 countDown = nil
-                //playMusic("Winner", volume: 0.03)
+                //playMusic("Winner", volume: GV.soundVolume)
             }
             
             if levelScore < targetScore {
@@ -1354,7 +1356,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
                 parentViewController!.presentViewController(alert, animated: true, completion: nil)
             } else {
                 
-                playMusic("Winner", volume: 0.2, loops: 0)
+                playMusic("Winner", volume: GV.musicVolume, loops: 0)
                 
                 let alert = UIAlertController(title: GV.language.getText(.TCLevelComplete),
                     message: GV.language.getText(TextConstants.TCCongratulations),
@@ -1381,7 +1383,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         if timeLimit == 0 {
             stopped = true
             countLostGames++
-            playSound("Timeout", volume: 0.03)
+            playSound("Timeout", volume: GV.soundVolume)
             countDown!.invalidate()
             countDown = nil
             let alert = UIAlertController(title: GV.language.getText(TextConstants.TCTimeout),

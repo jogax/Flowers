@@ -47,6 +47,8 @@ class ViewController: UIViewController, SettingsDelegate {
         let index = GV.getAktNameIndex()
         GV.language.setLanguage(GV.spriteGameDataArray[index].aktLanguageKey)
         GV.showHelpLines = Int(GV.spriteGameDataArray[index].showHelpLines)
+        GV.soundVolume = Float(GV.spriteGameDataArray[index].soundVolume)
+        GV.musicVolume = Float(GV.spriteGameDataArray[index].musicVolume)
         scene = GameScene(size: CGSizeMake(view.frame.width, view.frame.height))
         
         GV.language.addCallback(scene!.changeLanguage)
@@ -70,6 +72,8 @@ class ViewController: UIViewController, SettingsDelegate {
     @IBAction func unwindToVC(segue: UIStoryboardSegue) {
         if aktName != GV.globalParam.aktName {
             startScene()
+        } else {
+            scene?.playMusic("MyMusic", volume: GV.musicVolume, loops: 0)
         }
     }
 

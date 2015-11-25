@@ -15,11 +15,18 @@ class LanguageViewController: UIViewController, UITableViewDataSource, UITableVi
     let ruRow = 3
     var cancelButton = UIButton()
     var doneButton = UIButton()
+    var volumeView = UIView()
+    var musicVolume = UISlider()
+    var soundVolume = UISlider()
+    var musicVolumeLabel = UILabel()
+    var soundVolumeLabel = UILabel()
+
     var aktLanguageRow = 0
     var oldHelpLines = 0
     var aktLanguageKey: String?
     var toDo = ""
     let textCellIdentifier = "languageTextCell"
+    var volumeViewConstraints = [NSLayoutConstraint]()
     
     var lineCountPicker: UIPickerView?
     var lineCounts = ["0","1","2","3","4"]
@@ -66,8 +73,82 @@ class LanguageViewController: UIViewController, UITableViewDataSource, UITableVi
     }
     
     func makeVolumeView() {
-        let _ = 0
+        
+        self.view.addSubview(volumeView)
+        volumeView.addSubview(musicVolume)
+        volumeView.addSubview(soundVolume)
+        volumeView.addSubview(musicVolumeLabel)
+        volumeView.addSubview(soundVolumeLabel)
+        volumeView.layer.borderColor = UIColor.redColor().CGColor
+        volumeView.layer.borderWidth = 2.0
+        
+        musicVolume.minimumValue = 0
+        musicVolume.maximumValue = 10
+        soundVolume.minimumValue = 0
+        soundVolume.maximumValue = 10
+        
+        soundVolume.value = GV.spriteGameDataArray[GV.getAktNameIndex()].soundVolume
+        musicVolume.value = GV.spriteGameDataArray[GV.getAktNameIndex()].musicVolume
+        
+        soundVolumeLabel.text = GV.language.getText(.TCSoundVolume)
+        musicVolumeLabel.text = GV.language.getText(.TCMusicVolume)
+        
+        volumeView.translatesAutoresizingMaskIntoConstraints = false
+        musicVolume.translatesAutoresizingMaskIntoConstraints = false
+        soundVolume.translatesAutoresizingMaskIntoConstraints = false
+        musicVolumeLabel.translatesAutoresizingMaskIntoConstraints = false
+        soundVolumeLabel.translatesAutoresizingMaskIntoConstraints = false
+        
+        let volumeViewWidth = self.view.frame.width * 0.95
+        let volumeViewHeight = self.view.frame.height * 0.50
+        
+        self.view.addConstraint(NSLayoutConstraint(item: volumeView, attribute: NSLayoutAttribute.CenterX, relatedBy: .Equal, toItem: self.view, attribute: NSLayoutAttribute.CenterX, multiplier: 1.0, constant: 0))
+        
+        self.view.addConstraint(NSLayoutConstraint(item: volumeView, attribute: .CenterY, relatedBy: .Equal, toItem: self.view, attribute: .CenterY, multiplier: 1.0, constant: 0))
+        
+        self.view.addConstraint(NSLayoutConstraint(item: volumeView, attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: volumeViewWidth))
+        
+        self.view.addConstraint(NSLayoutConstraint(item: volumeView, attribute: .Height , relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: volumeViewHeight))
+
+        
+        self.view.addConstraint(NSLayoutConstraint(item: musicVolumeLabel, attribute: NSLayoutAttribute.Left, relatedBy: .Equal, toItem: volumeView, attribute: NSLayoutAttribute.Left, multiplier: 1.0, constant: volumeViewWidth * 0.05))
+        
+        self.view.addConstraint(NSLayoutConstraint(item: musicVolumeLabel, attribute: .Top, relatedBy: .Equal, toItem: volumeView, attribute: .Top, multiplier: 1.0, constant: 100))
+        
+        self.view.addConstraint(NSLayoutConstraint(item: musicVolumeLabel, attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: 150))
+        
+        self.view.addConstraint(NSLayoutConstraint(item: musicVolumeLabel, attribute: .Height , relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: 50))
+        
+        
+        self.view.addConstraint(NSLayoutConstraint(item: soundVolumeLabel, attribute: NSLayoutAttribute.Left, relatedBy: .Equal, toItem: volumeView, attribute: NSLayoutAttribute.Left, multiplier: 1.0, constant: volumeViewWidth * 0.05))
+        
+        self.view.addConstraint(NSLayoutConstraint(item: soundVolumeLabel, attribute: .Top, relatedBy: .Equal, toItem: volumeView, attribute: .Top, multiplier: 1.0, constant: 200))
+        
+        self.view.addConstraint(NSLayoutConstraint(item: soundVolumeLabel, attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: 150))
+        
+        self.view.addConstraint(NSLayoutConstraint(item: soundVolumeLabel, attribute: .Height , relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: 50))
+        
+
+        self.view.addConstraint(NSLayoutConstraint(item: musicVolume, attribute: NSLayoutAttribute.Left, relatedBy: .Equal, toItem: musicVolumeLabel, attribute: NSLayoutAttribute.Right, multiplier: 1.0, constant: 10))
+        
+        self.view.addConstraint(NSLayoutConstraint(item: musicVolume, attribute: .Top, relatedBy: .Equal, toItem: volumeView, attribute: .Top, multiplier: 1.0, constant: 100))
+        
+        self.view.addConstraint(NSLayoutConstraint(item: musicVolume, attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: 150))
+        
+        self.view.addConstraint(NSLayoutConstraint(item: musicVolume, attribute: .Height , relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: 50))
+        
+        
+        self.view.addConstraint(NSLayoutConstraint(item: soundVolume, attribute: NSLayoutAttribute.Left, relatedBy: .Equal, toItem: soundVolumeLabel, attribute: NSLayoutAttribute.Right, multiplier: 1.0, constant: 10))
+        
+        self.view.addConstraint(NSLayoutConstraint(item: soundVolume, attribute: .Top, relatedBy: .Equal, toItem: volumeView, attribute: .Top, multiplier: 1.0, constant: 200))
+        
+        self.view.addConstraint(NSLayoutConstraint(item: soundVolume, attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: 150))
+        
+        self.view.addConstraint(NSLayoutConstraint(item: soundVolume, attribute: .Height , relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: 50))
+        
+        
     }
+    
     func makeHelpLinesView() {
         tableView.layer.hidden = true
         oldHelpLines = GV.showHelpLines
@@ -198,7 +279,11 @@ class LanguageViewController: UIViewController, UITableViewDataSource, UITableVi
         let index = GV.getAktNameIndex()
         switch toDo {
         case nameText: _ = 0
-        case volumeText: _ = 0
+        case volumeText:
+            GV.spriteGameDataArray[index].soundVolume = soundVolume.value
+            GV.spriteGameDataArray[index].musicVolume = musicVolume.value
+            GV.soundVolume = soundVolume.value
+            GV.musicVolume = musicVolume.value
         case helpLinesText: GV.spriteGameDataArray[index].showHelpLines = Int64(GV.showHelpLines)
         case languageText:  GV.spriteGameDataArray[index].aktLanguageKey = GV.language.getAktLanguageKey()
         default: break

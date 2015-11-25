@@ -39,6 +39,8 @@ struct GV {
 
     static let language = Language()
     static var showHelpLines = 0
+    static var soundVolume: Float = 0
+    static var musicVolume: Float = 0
     static var globalParam = GlobalParamData()
     static let dummyName = "dummy"
     static var initName = false
@@ -93,6 +95,8 @@ struct SpriteGameData {
     var spriteLevelIndex: Int64
     var spriteGameScore: Int64
     var gameModus: Int64
+    var soundVolume: Float
+    var musicVolume: Float
     
     init() {
         name = GV.globalParam.aktName
@@ -101,6 +105,8 @@ struct SpriteGameData {
         spriteLevelIndex = 0
         spriteGameScore = 0
         gameModus = Int64(GameModusFlowers)
+        soundVolume = 0.1
+        musicVolume = 0.1
     }
     
 }

@@ -44,4 +44,6 @@ let ruDictionary: [TextConstants: String] = [
     .TCChoose:           "Выбрать",
     .TCGamer:            "Игрок: ",
     .TCGameModus:        "Тип игры",
+    .TCSoundVolume:      "Громкость звука",
+    .TCMusicVolume:      "Громкость музыки",
 ]

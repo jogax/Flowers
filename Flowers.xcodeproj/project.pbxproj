@@ -14,7 +14,7 @@
 		200140EB1BAEA96A003E0950 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 200140E91BAEA96A003E0950 /* LaunchScreen.storyboard */; };
 		200140F61BAEA96A003E0950 /* FlowersTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 200140F51BAEA96A003E0950 /* FlowersTests.swift */; };
 		200141011BAEA96A003E0950 /* FlowersUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 200141001BAEA96A003E0950 /* FlowersUITests.swift */; };
-		2001410F1BAEAA82003E0950 /* GameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2001410E1BAEAA82003E0950 /* GameScene.swift */; };
+		2001410F1BAEAA82003E0950 /* FlowerGameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2001410E1BAEAA82003E0950 /* FlowerGameScene.swift */; };
 		200141201BAEB1F6003E0950 /* Container.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 200141151BAEB1F6003E0950 /* Container.m4a */; };
 		200141211BAEB1F6003E0950 /* Do_1.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 200141161BAEB1F6003E0950 /* Do_1.m4a */; };
 		200141221BAEB1F6003E0950 /* Do_2.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 200141171BAEB1F6003E0950 /* Do_2.m4a */; };
@@ -39,9 +39,10 @@
 		200141741BAEF900003E0950 /* SpriteGame.swift in Sources */ = {isa = PBXBuildFile; fileRef = 200141721BAEF900003E0950 /* SpriteGame.swift */; };
 		200141761BAEFB4F003E0950 /* JGXLine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 200141751BAEFB4F003E0950 /* JGXLine.swift */; };
 		200141781BAEFBCA003E0950 /* DataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 200141771BAEFBCA003E0950 /* DataStore.swift */; };
-		20097FC71BD7E44B0074C3F5 /* MyScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20097FC61BD7E44B0074C3F5 /* MyScene.swift */; };
 		200BDA071BCFDEE600F72109 /* DrawImages.swift in Sources */ = {isa = PBXBuildFile; fileRef = 200BDA061BCFDEE600F72109 /* DrawImages.swift */; };
 		200BDA0B1BCFEF5100F72109 /* MySKButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 200BDA0A1BCFEF5100F72109 /* MySKButton.swift */; };
+		201173B71C074D080022AC86 /* MyGameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201173B61C074D080022AC86 /* MyGameScene.swift */; };
+		201173B91C074D430022AC86 /* CardGameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201173B81C074D430022AC86 /* CardGameScene.swift */; };
 		201728FA1BE3D0C9005F6CA8 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201728F91BE3D0C9005F6CA8 /* SettingsViewController.swift */; };
 		204A8A181BEF93B90061D14F /* LanguageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 204A8A171BEF93B90061D14F /* LanguageViewController.swift */; };
 		205574411BBEB85C00C165A1 /* Go321.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 205574401BBEB85C00C165A1 /* Go321.m4a */; };
@@ -92,7 +93,7 @@
 		200140FC1BAEA96A003E0950 /* FlowersUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FlowersUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		200141001BAEA96A003E0950 /* FlowersUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowersUITests.swift; sourceTree = "<group>"; };
 		200141021BAEA96A003E0950 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		2001410E1BAEAA82003E0950 /* GameScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameScene.swift; sourceTree = "<group>"; };
+		2001410E1BAEAA82003E0950 /* FlowerGameScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FlowerGameScene.swift; sourceTree = "<group>"; };
 		200141151BAEB1F6003E0950 /* Container.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = Container.m4a; sourceTree = "<group>"; };
 		200141161BAEB1F6003E0950 /* Do_1.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = Do_1.m4a; sourceTree = "<group>"; };
 		200141171BAEB1F6003E0950 /* Do_2.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = Do_2.m4a; sourceTree = "<group>"; };
@@ -117,9 +118,10 @@
 		200141721BAEF900003E0950 /* SpriteGame.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpriteGame.swift; sourceTree = "<group>"; };
 		200141751BAEFB4F003E0950 /* JGXLine.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JGXLine.swift; sourceTree = "<group>"; };
 		200141771BAEFBCA003E0950 /* DataStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataStore.swift; sourceTree = "<group>"; };
-		20097FC61BD7E44B0074C3F5 /* MyScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MyScene.swift; sourceTree = "<group>"; };
 		200BDA061BCFDEE600F72109 /* DrawImages.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DrawImages.swift; sourceTree = "<group>"; };
 		200BDA0A1BCFEF5100F72109 /* MySKButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MySKButton.swift; sourceTree = "<group>"; };
+		201173B61C074D080022AC86 /* MyGameScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MyGameScene.swift; sourceTree = "<group>"; };
+		201173B81C074D430022AC86 /* CardGameScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CardGameScene.swift; sourceTree = "<group>"; };
 		201728F91BE3D0C9005F6CA8 /* SettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		2034B0061BDE796300D296DA /* Flowers.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Flowers.xcdatamodel; sourceTree = "<group>"; };
 		204A8A171BEF93B90061D14F /* LanguageViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LanguageViewController.swift; sourceTree = "<group>"; };
@@ -195,13 +197,14 @@
 				20F6D01D1BB43E9100BF7384 /* MyParticle.sks */,
 				200141461BAEDAE5003E0950 /* MySKNode.swift */,
 				200BDA0A1BCFEF5100F72109 /* MySKButton.swift */,
-				20097FC61BD7E44B0074C3F5 /* MyScene.swift */,
 				200140DF1BAEA96A003E0950 /* ViewController.swift */,
 				201728F91BE3D0C9005F6CA8 /* SettingsViewController.swift */,
 				204A8A171BEF93B90061D14F /* LanguageViewController.swift */,
 				206BF77B1BF247380009928E /* ChooseNameViewController.swift */,
 				206BF77D1BF386D00009928E /* MySegue.swift */,
-				2001410E1BAEAA82003E0950 /* GameScene.swift */,
+				201173B61C074D080022AC86 /* MyGameScene.swift */,
+				201173B81C074D430022AC86 /* CardGameScene.swift */,
+				2001410E1BAEAA82003E0950 /* FlowerGameScene.swift */,
 				200141751BAEFB4F003E0950 /* JGXLine.swift */,
 				200141721BAEF900003E0950 /* SpriteGame.swift */,
 				205ADECE1BFF6D9400C9F341 /* GlobalParam.swift */,
@@ -455,6 +458,8 @@
 				200141411BAEB9F7003E0950 /* hu.swift in Sources */,
 				206BF77C1BF247380009928E /* ChooseNameViewController.swift in Sources */,
 				2001413F1BAEB95B003E0950 /* en.swift in Sources */,
+				201173B91C074D430022AC86 /* CardGameScene.swift in Sources */,
+				201173B71C074D080022AC86 /* MyGameScene.swift in Sources */,
 				200140E01BAEA96A003E0950 /* ViewController.swift in Sources */,
 				2001412E1BAEB2DE003E0950 /* MyStructs.swift in Sources */,
 				205ADED01BFF6D9400C9F341 /* GlobalParam.swift in Sources */,
@@ -465,9 +470,8 @@
 				200BDA0B1BCFEF5100F72109 /* MySKButton.swift in Sources */,
 				204A8A181BEF93B90061D14F /* LanguageViewController.swift in Sources */,
 				200141761BAEFB4F003E0950 /* JGXLine.swift in Sources */,
-				20097FC71BD7E44B0074C3F5 /* MyScene.swift in Sources */,
 				200141301BAEB4F6003E0950 /* Language.swift in Sources */,
-				2001410F1BAEAA82003E0950 /* GameScene.swift in Sources */,
+				2001410F1BAEAA82003E0950 /* FlowerGameScene.swift in Sources */,
 				200141741BAEF900003E0950 /* SpriteGame.swift in Sources */,
 				200BDA071BCFDEE600F72109 /* DrawImages.swift in Sources */,
 				2001412C1BAEB285003E0950 /* LevelsForPlayWithSprites.swift in Sources */,

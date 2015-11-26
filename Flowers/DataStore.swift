@@ -77,10 +77,10 @@ class DataStore {
         var spriteGameData = SpriteGameData()
         var components = allParams.componentsSeparatedByString("/°/")
         spriteGameData.aktLanguageKey = components[0]
-        if components.count > 1 {spriteGameData.showHelpLines = Int64(components[1])!}
-        if components.count > 2 {spriteGameData.spriteGameScore = Int64(components[2])!}
-        if components.count > 3 {spriteGameData.spriteLevelIndex = Int64(components[3])!}
-        if components.count > 4 {spriteGameData.gameModus = Int64(components[4])!}
+        if components.count > 1 {spriteGameData.showHelpLines = Int(components[1])!}
+        if components.count > 2 {spriteGameData.spriteGameScore = Int(components[2])!}
+        if components.count > 3 {spriteGameData.spriteLevelIndex = Int(components[3])!}
+        if components.count > 4 {spriteGameData.gameModus = Int(components[4])!}
         if components.count > 5 {spriteGameData.soundVolume = Float(components[5])!}
         if components.count > 6 {spriteGameData.musicVolume = Float(components[6])!}
         return spriteGameData

@@ -46,6 +46,9 @@ let deDictionary: [TextConstants: String] = [
     .TCGameModus:        "Spielmodus",
     .TCSoundVolume:      "Geräusch Lautstärke",
     .TCMusicVolume:      "Musik Lautstärke",
+    .TCStandardGame:     "Spiel mit Blumen",
+    .TCCardGame:         "Spiel mit Karten",
+
 ]
 
 

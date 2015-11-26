@@ -16,8 +16,9 @@ let RadiansToDegrees = 180 / Pi
 
 class ViewController: UIViewController, SettingsDelegate {
     var aktName = ""
+    var aktModus = GameModusFlowers
     var skView: SKView?
-    var scene: GameScene?
+    var scene: MyGameScene?
     override func viewDidLoad() {
         super.viewDidLoad()
         startScene()
@@ -49,8 +50,12 @@ class ViewController: UIViewController, SettingsDelegate {
         GV.showHelpLines = Int(GV.spriteGameDataArray[index].showHelpLines)
         GV.soundVolume = Float(GV.spriteGameDataArray[index].soundVolume)
         GV.musicVolume = Float(GV.spriteGameDataArray[index].musicVolume)
-        scene = GameScene(size: CGSizeMake(view.frame.width, view.frame.height))
         
+        if GV.spriteGameDataArray[GV.getAktNameIndex()].gameModus == GameModusCards {
+            scene = CardGameScene(size: CGSizeMake(view.frame.width, view.frame.height))
+        } else {
+            scene = FlowerGameScene(size: CGSizeMake(view.frame.width, view.frame.height))
+        }
         GV.language.addCallback(scene!.changeLanguage)
         skView!.showsFPS = true
         skView!.showsNodeCount = true
@@ -66,11 +71,12 @@ class ViewController: UIViewController, SettingsDelegate {
     
     func settingsDelegateFunc() {
         aktName = GV.globalParam.aktName
+        aktModus = GV.spriteGameDataArray[GV.getAktNameIndex()].gameModus
         self.performSegueWithIdentifier("SettingsSegue", sender: nil)
     }
 
     @IBAction func unwindToVC(segue: UIStoryboardSegue) {
-        if aktName != GV.globalParam.aktName {
+        if aktName != GV.globalParam.aktName || aktModus != GV.spriteGameDataArray[GV.getAktNameIndex()].gameModus {
             startScene()
         } else {
             scene?.playMusic("MyMusic", volume: GV.musicVolume, loops: 0)

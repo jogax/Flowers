@@ -71,7 +71,7 @@ struct PhysicsCategory {
 
 struct MyNodeTypes {
     static let none:            UInt32 = 0
-    static let GameScene:       UInt32 = 0b1        // 1
+    static let MyGameScene:     UInt32 = 0b1        // 1
     static let LabelNode:       UInt32 = 0b10       // 2
     static let SpriteNode:      UInt32 = 0b100      // 4
     static let ContainerNode:   UInt32 = 0b1000     // 8
@@ -83,9 +83,10 @@ struct Container {
     var label: SKLabelNode
     var countHits: Int
 }
+
 enum SpriteStatus: Int, CustomStringConvertible {
     case Added = 0, MovingStarted, SizeChanged, Mirrored, FallingMovingSprite, FallingSprite, HitcounterChanged, Removed
-
+    
     var statusName: String {
         let statusNames = [
             "Added",
@@ -100,7 +101,7 @@ enum SpriteStatus: Int, CustomStringConvertible {
         
         return statusNames[rawValue]
     }
-
+    
     var description: String {
         return statusName
     }
@@ -135,7 +136,7 @@ enum LinePosition: Int, CustomStringConvertible {
     var description: String {
         return linePositionName
     }
-        
+    
 }
 
 let atlas = SKTextureAtlas(named: "sprites")
@@ -144,8 +145,8 @@ let atlas = SKTextureAtlas(named: "sprites")
     func settingsDelegateFunc()
 }
 
-class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
-
+class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
+    
     struct ColorTabLine {
         var colorIndex: Int
         var spriteName: String
@@ -154,7 +155,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             self.spriteName = spriteName
         }
     }
-
+    
     // Values from json File
     var params = ""
     var countSpritesProContainer: Int?
@@ -174,7 +175,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
     
     let timeLimitKorr = 5 // sec for pro Sprite
     var timeLimit = 0 // seconds
-
+    
     var timer: NSTimer?
     var countDown: NSTimer?
     var waitForSKActionEnded: NSTimer?
@@ -228,8 +229,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
     //var settingsNode = SettingsNode()
     
     var spriteTabRect = CGRectZero
-
-//    let deviceIndex = GV.onIpad ? 0 : 1
+    
+    //    let deviceIndex = GV.onIpad ? 0 : 1
     var buttonField: SKSpriteNode?
     //var levelArray = [Level]()
     var countLostGames = 0
@@ -240,31 +241,31 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
     
     var spriteGameLastPosition = CGPointZero
     
-
+    
     
     let scoreAddCorrected = [1:1, 2:2, 3:3, 4:4, 5:5, 6:7, 7:8, 8:10, 9:11, 10:13, 11:14, 12:16,13:17,14:19, 15:20, 16:22, 17:23, 18:24, 19:25, 20:27, 21:28, 22:30, 23:31, 24:33, 25:34, 26:36, 27:37, 28:39, 29:40, 30:42, 31:43, 32:45, 33:46, 34:47, 35:48, 36:50, 37:51, 38:53, 39:54, 40:54, 41:53, 42:53, 43:52, 44:52, 45:51, 46:51, 47:51, 48:50, 49:50, 50:50, 51:51, 52:52, 53:53, 54:54, 55:55, 56:56, 57:57, 58:58, 59:59, 60:60, 61:61, 62:62, 63:63, 64:64, 65:65, 66:66, 67:67, 68:68, 69:69, 70:70, 71:71, 72:72, 73:73, 74:74, 75:75, 76:76, 77:77, 78:78, 79:79, 80:80, 81:81, 82:82, 83:83, 84:84, 85:85, 86:86, 87:87, 88:88, 89:89, 90:90, 91:91, 92:92, 93:93, 94:94, 95:95, 96:96, 97:97, 98:98, 99:99, 100:100]
     
-
+    
     override func didMoveToView(view: SKView) {
-
-       if !settingsSceneStarted {
-
+        
+        if !settingsSceneStarted {
+            
             myView = view
             levelsForPlayWithSprites.setAktLevel(levelIndex)
-
+            
             //restartCount = 3
             prepareNextGame()
             generateSprites()
         } else {
             playMusic("MyMusic", volume: GV.musicVolume, loops: 0)
-
+            
         }
-//        if GV.globalParam.aktName == GV.dummyName { // get gamer name
-//            GV.initName = true
-//            settingsDelegate?.settingsDelegateFunc()
-//        }
-
-       
+        //        if GV.globalParam.aktName == GV.dummyName { // get gamer name
+        //            GV.initName = true
+        //            settingsDelegate?.settingsDelegateFunc()
+        //        }
+        
+        
     }
     
     func prepareNextGame() {
@@ -274,16 +275,16 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             countDown!.invalidate()
             countDown = nil
         }
-
-//        buttonField = SKSpriteNode(texture: nil)
-//        //buttonField!.color = SKColor.blueColor()
-//        buttonField!.position = CGPointMake(self.position.x + self.size.width / 2, self.position.y)
-//        buttonField!.size = CGSizeMake(self.size.width, self.size.height * 0.2)
-//        self.addChild(buttonField!)
+        
+        //        buttonField = SKSpriteNode(texture: nil)
+        //        //buttonField!.color = SKColor.blueColor()
+        //        buttonField!.position = CGPointMake(self.position.x + self.size.width / 2, self.position.y)
+        //        buttonField!.size = CGSizeMake(self.size.width, self.size.height * 0.2)
+        //        self.addChild(buttonField!)
         
         spriteTabRect.origin = CGPointMake(self.frame.midX, self.frame.midY * 0.9)
         spriteTabRect.size = CGSizeMake(self.frame.size.width * 0.90, self.frame.size.width * 0.90)
-
+        
         countContainers = levelsForPlayWithSprites.aktLevel.countContainers
         countSpritesProContainer = levelsForPlayWithSprites.aktLevel.countSpritesProContainer
         targetScoreKorr = levelsForPlayWithSprites.aktLevel.targetScoreKorr
@@ -293,14 +294,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         maxUsedCells = levelsForPlayWithSprites.aktLevel.maxProzent * countColumns * countRows / 100
         containerSize = CGFloat(levelsForPlayWithSprites.aktLevel.containerSize)
         spriteSize = CGFloat(levelsForPlayWithSprites.aktLevel.spriteSize)
-
+        
         timeLimit = countContainers * countSpritesProContainer! * levelsForPlayWithSprites.aktLevel.timeLimitKorr
         //print("timeLimit: \(timeLimit)")
         
         gameArray.removeAll(keepCapacity: false)
         containers.removeAll(keepCapacity: false)
         undoCount = 3
-
+        
         for _ in 0..<countRows {
             gameArray.append(Array(count: countRows, repeatedValue:false))
         }
@@ -316,7 +317,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         
         let xDelta = size.width / CGFloat(countContainers)
         for index in 0..<countContainers {
-//            _ = GV.colorSets[GV.colorSetIndex][index + 1].CGColor
+            //            _ = GV.colorSets[GV.colorSetIndex][index + 1].CGColor
             //let containerTexture = SKTexture(image: GV.drawCircle(CGSizeMake(containerSize, containerSize), imageColor: aktColor))
             let centerX = (size.width / CGFloat(countContainers)) * CGFloat(index) + xDelta / 2
             let centerY = size.height * containersPosCorr.y
@@ -324,11 +325,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             //if index == 0 {
             //cont = Container(mySKNode: MySKNode(texture: SKTexture(imageNamed:"sprite\(index)"), type: .ContainerType), label: SKLabelNode(), countHits: 0)
             cont = Container(mySKNode: MySKNode(texture: atlas.textureNamed("sprite\(index)"), type: .ContainerType), label: SKLabelNode(), countHits: 0)
-/*
-        } else {
-                cont = Container(mySKNode: MySKNode(texture: containerTexture, type: .ContainerType), label: SKLabelNode(), countHits: 0)
+            /*
+            } else {
+            cont = Container(mySKNode: MySKNode(texture: containerTexture, type: .ContainerType), label: SKLabelNode(), countHits: 0)
             }
-*/
+            */
             containers.append(cont)
             containers[index].mySKNode.name = "\(index)"
             containers[index].mySKNode.position = CGPoint(x: centerX, y: centerY)
@@ -394,7 +395,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         countdownLabel.fontSize = 15;
         self.addChild(countdownLabel)
         showTimeLeft()
-
+        
         spriteCountLabel.position = CGPointMake(self.position.x + self.size.width * spriteCountPosKorr.x, self.position.y + self.size.height * spriteCountPosKorr.y)
         spriteCountLabel.fontColor = SKColor.blackColor()
         spriteCountLabel.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.Left
@@ -404,7 +405,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         let spriteCountText: String = GV.language.getText(.TCSpriteCount)
         spriteCountLabel.text = "\(spriteCountText) \(spriteCount)"
         self.addChild(spriteCountLabel)
-
+        
         
         targetScoreLabel.position = CGPointMake(self.position.x + self.size.width * targetPosKorr.x, self.position.y + self.size.height * targetPosKorr.y)
         targetScoreLabel.fontColor = SKColor.blackColor()
@@ -469,9 +470,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         backgroundColor = UIColor.whiteColor() //SKColor.whiteColor()
         physicsWorld.gravity = CGVectorMake(0, 0)
         physicsWorld.contactDelegate = self
-//        self.countDown = NSTimer.scheduledTimerWithTimeInterval(1.0, target: self, selector: Selector("doCountDown"), userInfo: nil, repeats: true)
-//        GV.currentTime = NSDate()
-//        GV.elapsedTime = GV.currentTime.timeIntervalSinceDate(GV.startTime) //* 1000
+        //        self.countDown = NSTimer.scheduledTimerWithTimeInterval(1.0, target: self, selector: Selector("doCountDown"), userInfo: nil, repeats: true)
+        //        GV.currentTime = NSDate()
+        //        GV.elapsedTime = GV.currentTime.timeIntervalSinceDate(GV.startTime) //* 1000
         //print("prepareNextGame Laufzeit: \(GV.elapsedTime)")
         makeLineAroundGameboard(.UpperHorizontal)
         makeLineAroundGameboard(.RightVertical)
@@ -480,7 +481,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         self.inFirstGenerateSprites = false
     }
     
-
+    
     func settingsButtonPressed() {
         playMusic("NoSound", volume: GV.musicVolume, loops: 0)
         
@@ -496,15 +497,15 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         }
     }
     
-
+    
     
     func analyzeNode (node: AnyObject) -> UInt32 {
         let testNode = node as! SKNode
         switch node  {
-        case is GameScene: return MyNodeTypes.GameScene
+        case is MyGameScene: return MyNodeTypes.MyGameScene
         case is SKLabelNode:
-            if testNode.parent is GameScene {
-               return MyNodeTypes.GameScene
+            if testNode.parent is MyGameScene {
+                return MyNodeTypes.MyGameScene
             }
             return MyNodeTypes.LabelNode
         case is MySKNode:
@@ -514,7 +515,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             case .SpriteType: return MyNodeTypes.SpriteNode
             case .ButtonType:
                 if mySKNode.name == buttonName {
-                   mySKNode = mySKNode.parent as! MySKNode
+                    mySKNode = mySKNode.parent as! MySKNode
                 }
                 return MyNodeTypes.ButtonNode
             default: return MyNodeTypes.none
@@ -530,17 +531,17 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
     func newGame(next: Bool) {
         stopped = true
         if next {
-
+            
             levelIndex = levelsForPlayWithSprites.getNextLevel()
             gameScore += levelScore
-
+            
             for index in 0..<GV.spriteGameDataArray.count {
                 if GV.spriteGameDataArray[index].name == GV.globalParam.aktName {
                     GV.spriteGameDataArray[index] = SpriteGameData()
-                    GV.spriteGameDataArray[index].spriteLevelIndex = Int64(levelIndex)
-                    GV.spriteGameDataArray[index].spriteGameScore = Int64(gameScore)
+                    GV.spriteGameDataArray[index].spriteLevelIndex = levelIndex
+                    GV.spriteGameDataArray[index].spriteGameScore = gameScore
                     GV.spriteGameDataArray[index].aktLanguageKey = GV.language.getAktLanguageKey()
-                    GV.spriteGameDataArray[index].showHelpLines = Int64(GV.showHelpLines)
+                    GV.spriteGameDataArray[index].showHelpLines = GV.showHelpLines
                     break
                 }
             }
@@ -561,7 +562,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         prepareNextGame()
         generateSprites()
     }
-
+    
     func generateSprites() {
         let testNode = SKSpriteNode (imageNamed: "Holz.png")
         testNode.position = self.spriteTabRect.origin
@@ -579,7 +580,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
                 }
             }
         }
-
+        
         while colorTab.count > 0 && checkGameArray() < maxUsedCells {
             let colorTabIndex = GV.random(0, max: colorTab.count - 1)
             let colorIndex = colorTab[colorTabIndex].colorIndex
@@ -588,24 +589,24 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             
             //let aktColor = GV.colorSets[GV.colorSetIndex][colorIndex + 1].CGColor
             var spriteTexture = SKTexture()
-//            if colorIndex == 0 {
-                spriteTexture = atlas.textureNamed("sprite\(colorIndex)")
-                //spriteTexture = SKTexture(imageNamed: "sprite\(colorIndex)")
-//            } else {
-//                containerTexture = SKTexture(image: GV.drawCircle(CGSizeMake(spriteSize,spriteSize), imageColor: aktColor))
-//            }
+            //            if colorIndex == 0 {
+            spriteTexture = atlas.textureNamed("sprite\(colorIndex)")
+            //spriteTexture = SKTexture(imageNamed: "sprite\(colorIndex)")
+            //            } else {
+            //                containerTexture = SKTexture(image: GV.drawCircle(CGSizeMake(spriteSize,spriteSize), imageColor: aktColor))
+            //            }
             let sprite = MySKNode(texture: spriteTexture, type: .SpriteType)
             sprite.size.width = spriteSize
             sprite.size.height = spriteSize
-//            let yKorr1: CGFloat = GV.onIpad ? 0.9 : 0.8
-//            let yKorr2: CGFloat = GV.onIpad ? 1.8 : 2.0
+            //            let yKorr1: CGFloat = GV.onIpad ? 0.9 : 0.8
+            //            let yKorr2: CGFloat = GV.onIpad ? 1.8 : 2.0
             //let yKorr1: CGFloat = GV.onIpad ? 0.8 : 1.0
             //let yKorr2: CGFloat = GV.onIpad ? 0.8 : 1.0
-
+            
             let index = GV.random(0, max: positionsTab.count - 1)
             let (aktColumn, aktRow) = positionsTab[index]
             tableCellSize = spriteTabRect.width / CGFloat(countColumns)
-
+            
             let xPosition = spriteTabRect.origin.x - spriteTabRect.size.width / 2 + CGFloat(aktColumn) * tableCellSize + tableCellSize / 2
             //let yPosition = spriteTabRect.origin.y - spriteTabRect.size.height / 2 CGFloat(aktRow) * tableCellSize * yKorr1 + tableCellSize * yKorr2
             let yPosition = spriteTabRect.origin.y - spriteTabRect.size.height / 2 + tableCellSize / 2 + CGFloat(aktRow) * tableCellSize
@@ -636,7 +637,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
     func waitForTap() -> Bool {
         return true
     }
-
+    
     func addPhysicsBody(sprite: MySKNode) {
         sprite.physicsBody = SKPhysicsBody(circleOfRadius: sprite.size.width/2)
         sprite.physicsBody?.dynamic = true
@@ -645,12 +646,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         sprite.physicsBody?.collisionBitMask = PhysicsCategory.None
         sprite.physicsBody?.usesPreciseCollisionDetection = true
     }
-
+    
     func makeLineAroundGameboard(linePosition: LinePosition) {
-//        var point1: CGPoint
-//        var point2: CGPoint
+        //        var point1: CGPoint
+        //        var point2: CGPoint
         var myWallRect: CGRect
-
+        
         //var width: CGFloat = 4
         //var length: CGFloat = 0
         let yKorrBottom: CGFloat = size.height * 0.0
@@ -659,7 +660,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         case .RightVertical:    myWallRect = CGRectMake(position.x + size.width, position.y + yKorrBottom,  3, size.height)
         case .UpperHorizontal: myWallRect = CGRectMake(position.x, position.y + size.height,  size.width, 3)
         case .LeftVertical:     myWallRect = CGRectMake(position.x, position.y + yKorrBottom,  3, size.height)
-        //default:                myWallRect = CGRectZero
+            //default:                myWallRect = CGRectZero
         }
         
         let myWall = SKNode()
@@ -675,7 +676,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         myWallLine.path = pathToDraw
         
         myWallLine.strokeColor = SKColor(red: 1, green: 1, blue: 1, alpha: 1.0) // GV.colorSets[GV.colorSetIndex][colorIndex + 1]
-
+        
         myWall.name = linePosition.linePositionName
         myWall.physicsBody = SKPhysicsBody(edgeLoopFromRect: myWallRect)
         myWall.physicsBody?.dynamic = true
@@ -687,7 +688,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         self.addChild(myWall)
         self.addChild(myWallLine)
     }
-
+    
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?)
     {
         if inFirstGenerateSprites {
@@ -701,31 +702,31 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         
         let aktNodeType = analyzeNode(testNode)
         switch aktNodeType {
-            case MyNodeTypes.LabelNode: movedFromNode = self.nodeAtPoint(touchLocation).parent as! MySKNode
-            case MyNodeTypes.SpriteNode:
-                movedFromNode = self.nodeAtPoint(touchLocation) as! MySKNode
-                
-                if showFingerNode {
-                    let fingerNode = SKSpriteNode(imageNamed: "finger.png")
-                    fingerNode.name = "finger"
-                    fingerNode.position = touchLocation
-                    fingerNode.size = CGSizeMake(25,25)
-                    addChild(fingerNode)
-                }
-
-            case MyNodeTypes.ContainerNode:
-                movedFromNode = nil
+        case MyNodeTypes.LabelNode: movedFromNode = self.nodeAtPoint(touchLocation).parent as! MySKNode
+        case MyNodeTypes.SpriteNode:
+            movedFromNode = self.nodeAtPoint(touchLocation) as! MySKNode
             
-            case MyNodeTypes.ButtonNode:
-                movedFromNode = self.nodeAtPoint(touchLocation) as! MySKNode
-                //let textureName = "\(testNode.name!)Pressed"
-                //let textureSelected = SKTexture(imageNamed: textureName)
-                //(testNode as! MySKNode).texture = textureSelected
-                //(testNode as! MySKNode).texture = atlas.textureNamed("\(testNode.name!)Pressed")
-             default: movedFromNode = nil
+            if showFingerNode {
+                let fingerNode = SKSpriteNode(imageNamed: "finger.png")
+                fingerNode.name = "finger"
+                fingerNode.position = touchLocation
+                fingerNode.size = CGSizeMake(25,25)
+                addChild(fingerNode)
+            }
+            
+        case MyNodeTypes.ContainerNode:
+            movedFromNode = nil
+            
+        case MyNodeTypes.ButtonNode:
+            movedFromNode = self.nodeAtPoint(touchLocation) as! MySKNode
+            //let textureName = "\(testNode.name!)Pressed"
+            //let textureSelected = SKTexture(imageNamed: textureName)
+            //(testNode as! MySKNode).texture = textureSelected
+            //(testNode as! MySKNode).texture = atlas.textureNamed("\(testNode.name!)Pressed")
+        default: movedFromNode = nil
         }
     }
-
+    
     override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?) {
         if inFirstGenerateSprites {
             return
@@ -744,10 +745,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             let aktNodeType = analyzeNode(testNode)
             var aktNode: SKNode? = movedFromNode
             switch aktNodeType {
-                case MyNodeTypes.LabelNode: aktNode = self.nodeAtPoint(touchLocation).parent as! MySKNode
-                case MyNodeTypes.SpriteNode: aktNode = self.nodeAtPoint(touchLocation) as! MySKNode
-                case MyNodeTypes.ButtonNode: aktNode = self.nodeAtPoint(touchLocation) as! MySKNode
-                default: aktNode = nil
+            case MyNodeTypes.LabelNode: aktNode = self.nodeAtPoint(touchLocation).parent as! MySKNode
+            case MyNodeTypes.SpriteNode: aktNode = self.nodeAtPoint(touchLocation) as! MySKNode
+            case MyNodeTypes.ButtonNode: aktNode = self.nodeAtPoint(touchLocation) as! MySKNode
+            default: aktNode = nil
             }
             if movedFromNode != aktNode {
                 if movedFromNode.type == .ButtonType {
@@ -756,16 +757,16 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
                     let line = JGXLine(fromPoint: movedFromNode.position, toPoint: touchLocation, inFrame: self.frame, lineSize: movedFromNode.size.width)
                     let pointOnTheWall = line.line.toPoint
                     makeHelpLine(movedFromNode.position, toPoint: pointOnTheWall, lineWidth: movedFromNode.size.width, numberOfLine: 1)
-
+                    
                     
                     if GV.showHelpLines > 1 {
                         let mirroredLine1 = line.createMirroredLine()
                         makeHelpLine(mirroredLine1.line.fromPoint, toPoint: mirroredLine1.line.toPoint, lineWidth: movedFromNode.size.width, numberOfLine: 2)
-
+                        
                         if GV.showHelpLines > 2 {
                             let mirroredLine2 = mirroredLine1.createMirroredLine()
                             makeHelpLine(mirroredLine2.line.fromPoint, toPoint: mirroredLine2.line.toPoint, lineWidth: movedFromNode.size.width, numberOfLine: 3)
-
+                            
                             if GV.showHelpLines > 3 {
                                 let mirroredLine3 = mirroredLine2.createMirroredLine()
                                 makeHelpLine(mirroredLine3.line.fromPoint, toPoint: mirroredLine3.line.toPoint, lineWidth: movedFromNode.size.width, numberOfLine: 4)
@@ -776,7 +777,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             }
             
             if showFingerNode {
-
+                
                 if let fingerNode = self.childNodeWithName("finger")! as? SKSpriteNode {
                     fingerNode.position = touchLocation
                 }
@@ -799,27 +800,27 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         let aktNodeType = analyzeNode(testNode)
         if self.inFirstGenerateSprites {
             switch aktNodeType {
-                case MyNodeTypes.LabelNode, MyNodeTypes.SpriteNode: showNextSprite(touchLocation)
-                default: return
+            case MyNodeTypes.LabelNode, MyNodeTypes.SpriteNode: showNextSprite(touchLocation)
+            default: return
             }
             return
         }
         if movedFromNode != nil && !stopped {
             //let countTouches = touches.count
             var aktNode: SKNode? = nil
-
+            
             let startNode = movedFromNode
             
             switch aktNodeType {
-                case MyNodeTypes.LabelNode: aktNode = self.nodeAtPoint(touchLocation).parent as! MySKNode
-                case MyNodeTypes.SpriteNode: aktNode = self.nodeAtPoint(touchLocation) as! MySKNode
-                case MyNodeTypes.ButtonNode:
-                    //(testNode as! MySKNode).texture = SKTexture(imageNamed: "\(testNode.name!)")
-                    //(testNode as! MySKNode).texture = atlas.textureNamed("\(testNode.name!)")
-                    aktNode = self.nodeAtPoint(touchLocation) as! MySKNode
-                default: aktNode = nil
+            case MyNodeTypes.LabelNode: aktNode = self.nodeAtPoint(touchLocation).parent as! MySKNode
+            case MyNodeTypes.SpriteNode: aktNode = self.nodeAtPoint(touchLocation) as! MySKNode
+            case MyNodeTypes.ButtonNode:
+                //(testNode as! MySKNode).texture = SKTexture(imageNamed: "\(testNode.name!)")
+                //(testNode as! MySKNode).texture = atlas.textureNamed("\(testNode.name!)")
+                aktNode = self.nodeAtPoint(touchLocation) as! MySKNode
+            default: aktNode = nil
             }
-
+            
             if showFingerNode {
                 
                 if let fingerNode = self.childNodeWithName("finger")! as? SKSpriteNode {
@@ -828,22 +829,22 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
                 
             }
             if aktNode != nil && (aktNode as! MySKNode).type == .ButtonType && startNode.type == .ButtonType  {
-//            if aktNode != nil && mySKNode.type == .ButtonType && startNode.type == .ButtonType  {
+                //            if aktNode != nil && mySKNode.type == .ButtonType && startNode.type == .ButtonType  {
                 var mySKNode = aktNode as! MySKNode
-
-//                var name = (aktNode as! MySKNode).parent!.name
+                
+                //                var name = (aktNode as! MySKNode).parent!.name
                 if mySKNode.name == buttonName {
                     mySKNode = (mySKNode.parent) as! MySKNode
                 }
                 //switch (aktNode as! MySKNode).name! {
                 switch mySKNode.name! {
-                    case "settings": settingsButtonPressed()
-                    case "undo": undoButtonPressed()
-                    default: undoButtonPressed()
+                case "settings": settingsButtonPressed()
+                case "undo": undoButtonPressed()
+                default: undoButtonPressed()
                 }
             }
-                
-
+            
+            
             if startNode.type == .SpriteType && (aktNode == nil || (aktNode as! MySKNode) != movedFromNode) {
                 let sprite = movedFromNode// as! SKSpriteNode
                 
@@ -855,9 +856,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
                 //sprite.physicsBody?.velocity=CGVectorMake(200, 200)
                 
                 sprite.physicsBody?.usesPreciseCollisionDetection = true
-/*
+                /*
                 let offset = touchLocation - movedFromNode.position
-
+                
                 let direction = offset.normalized()
                 
                 // 7 - Make it shoot far enough to be guaranteed off screen
@@ -865,7 +866,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
                 
                 // 8 - Add the shoot amount to the current position
                 let realDest = shootAmount + movedFromNode.position
-*/
+                */
                 push(sprite, status: .MovingStarted)
                 
                 // 9 - Create the actions
@@ -877,20 +878,20 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
                 
                 let mirroredLine2 = mirroredLine1.createMirroredLine()
                 let pointOnTheWall2 = mirroredLine2.line.toPoint
-
+                
                 let mirroredLine3 = mirroredLine2.createMirroredLine()
                 let pointOnTheWall3 = mirroredLine3.line.toPoint
-
+                
                 let countAndPushAction = SKAction.runBlock({
                     self.push(sprite, status: .Mirrored)
                     sprite.hitCounter *= 2
                     sprite.hitLabel.text = "\(sprite.hitCounter)"
                 })
                 
-
-
+                
+                
                 let actionMove = SKAction.moveTo(pointOnTheWall, duration: line.duration)
-
+                
                 let actionMove1 = SKAction.moveTo(pointOnTheWall1, duration: mirroredLine1.duration)
                 
                 let actionMove2 = SKAction.moveTo(pointOnTheWall2, duration: mirroredLine2.duration)
@@ -923,7 +924,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
                     sparkEmitter!.runAction(SKAction.sequence([wait, remove]))
                     self.addChild(sparkEmitter!)
                     self.userInteractionEnabled = true
-
+                    
                     
                 })
                 
@@ -937,16 +938,16 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
                 self.userInteractionEnabled = false  // userInteraction forbidden!
                 countMovingSprites = 1
                 self.waitForSKActionEnded = NSTimer.scheduledTimerWithTimeInterval(0.1, target: self, selector: Selector("checkCountMovingSprites"), userInfo: nil, repeats: false) // start timer for check
-
+                
                 movedFromNode.runAction(SKAction.sequence([actionMove, countAndPushAction, actionMove1, countAndPushAction, actionMove2, countAndPushAction, actionMove3, actionMoveStopped,
                     waitSparkAction]))
-                    //actionMoveDone]))
+                //actionMoveDone]))
             }
-
+            
         }
     }
     
-
+    
     func makeHelpLine(fromPoint: CGPoint, toPoint: CGPoint, lineWidth: CGFloat, numberOfLine: Int) {
         if GV.showHelpLines >= numberOfLine {
             //print("makeHelpLine: fromPoint: \(fromPoint), toPoint: \(toPoint)")
@@ -978,7 +979,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             nodeOnTheWall.position = toPoint
             nodeOnTheWall.size = movedFromNode.size
             self.addChild(nodeOnTheWall)
-
+            
         }
     }
     
@@ -994,7 +995,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
                     self.children[index].hidden = false
                     let undoButton = self.childNodeWithName("undo")! as! MySKNode
                     undoButton.hitCounter++
-                   //(self.childNodeWithName("undo")! as! MySKNode).hitCounter++
+                    //(self.childNodeWithName("undo")! as! MySKNode).hitCounter++
                     undoButton.hitLabel.text = "\(undoButton.hitCounter)"
                     //print("undoButton.hitLabel.text: \(undoButton.hitLabel.text)")
                     return
@@ -1009,7 +1010,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
                 }
             }
         }
-
+        
         var three_two_one_go = [SKTexture]()
         three_two_one_go.append(atlas.textureNamed("3"))
         three_two_one_go.append(atlas.textureNamed("2"))
@@ -1020,7 +1021,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         let go = SKSpriteNode(texture: firstFrame)
         self.addChild(go)
         
-
+        
         go.position = CGPointMake(self.frame.midX, self.frame.midY)
         if GV.onIpad {
             go.size = CGSizeMake(600, 600)
@@ -1031,27 +1032,27 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         
         
         let goAction = SKAction.repeatAction(
-                SKAction.sequence([
-                    //SKAction.playSoundFileNamed("Do_1", waitForCompletion:false),
-                    SKAction.runBlock({self.playSound("Go321", volume: GV.soundVolume)}),
-                    SKAction.animateWithTextures(three_two_one_go, timePerFrame: 1.2, resize: false, restore: false)
+            SKAction.sequence([
+                //SKAction.playSoundFileNamed("Do_1", waitForCompletion:false),
+                SKAction.runBlock({self.playSound("Go321", volume: GV.soundVolume)}),
+                SKAction.animateWithTextures(three_two_one_go, timePerFrame: 1.2, resize: false, restore: false)
                 ]),
             count: 1)
         //let waitAction = SKAction.waitForDuration(8)
         let removeAction = SKAction.removeFromParent()
         let startCounterAction = SKAction.runBlock({self.countDown = NSTimer.scheduledTimerWithTimeInterval(1.0, target: self, selector: Selector("doCountDown"), userInfo: nil, repeats: true)})
-
+        
         
         go.runAction(SKAction.sequence([goAction, removeAction, startCounterAction, SKAction.runBlock({self.playMusic("MyMusic", volume: GV.musicVolume, loops: -1)})]))
         
-
-
+        
+        
     }
     
     override func update(currentTime: NSTimeInterval) {
         backgroudScrollUpdate()
     }
-
+    
     func backgroudScrollUpdate(){
         
         bgImage!.position = CGPointMake(bgImage!.position.x - bgAdder, bgImage!.position.y)
@@ -1060,7 +1061,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             bgAdder = -bgAdder
         }
     }
-
+    
     func showScore() {
         levelScore = 0
         for index in 0..<containers.count {
@@ -1069,7 +1070,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         }
         let levelScoreText: String = GV.language.getText(.TCLevelScore)
         levelScoreLabel.text = "\(levelScoreText) \(levelScore)"
-
+        
     }
     
     func playMusic(fileName: String, volume: Float, loops: Int) {
@@ -1086,10 +1087,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             audioPlayer?.numberOfLoops = loops
             audioPlayer?.play()
         } catch {
-        print("audioPlayer error")
+            print("audioPlayer error")
         }
     }
-
+    
     func playSound(fileName: String, volume: Float) {
         let url = NSURL.fileURLWithPath(
             NSBundle.mainBundle().pathForResource(fileName, ofType: "m4a")!)
@@ -1105,7 +1106,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             print("soundPlayer error")
         }
         
-
+        
     }
     
     func spriteDidCollideWithContainer(node1:MySKNode, node2:MySKNode) {
@@ -1134,13 +1135,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             showScore()
             playSound("Funk_Bot", volume: GV.soundVolume)
         }
-
+        
         countMovingSprites = 0
-
+        
         spriteCount--
         let spriteCountText: String = GV.language.getText(.TCSpriteCount)
         spriteCountLabel.text = "\(spriteCountText) \(spriteCount)"
-
+        
         collisionActive = false
         movingSprite.removeFromParent()
         gameArray[movingSprite.column][movingSprite.row] = false
@@ -1156,7 +1157,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         
         //let aktColor = GV.colorSets[GV.colorSetIndex][sprite.colorIndex + 1].CGColor
         collisionActive = false
-
+        
         let OK = movingSpriteColorIndex == spriteColorIndex
         if OK {
             
@@ -1165,10 +1166,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             
             sprite.hitCounter = movingSprite.hitCounter + sprite.hitCounter
             sprite.hitLabel.text = "\(sprite.hitCounter)"
-
-//            let aktSize = spriteSize + 1.2 * CGFloat(sprite.hitCounter)
-//            sprite.size.width = aktSize
-//            sprite.size.height = aktSize
+            
+            //            let aktSize = spriteSize + 1.2 * CGFloat(sprite.hitCounter)
+            //            sprite.size.width = aktSize
+            //            sprite.size.height = aktSize
             playSound("Sprite1", volume: GV.soundVolume)
             
             gameArray[movingSprite.column][movingSprite.row] = false
@@ -1190,7 +1191,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             push(movingSprite, status: .Removed)
             
             countMovingSprites = 2
-
+            
             let movingSpriteAction = SKAction.moveTo(movingSpriteDest, duration: 1.0)
             let actionMoveDone = SKAction.removeFromParent()
             
@@ -1202,7 +1203,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             sprite.position = spriteDest
             push(sprite, status: .Removed)
             
-
+            
             let actionMove2 = SKAction.moveTo(spriteDest, duration: 1.5)
             sprite.runAction(SKAction.sequence([actionMove2, actionMoveDone]), completion: {self.countMovingSprites--})
             gameArray[movingSprite.column][movingSprite.row] = false
@@ -1216,7 +1217,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         spriteCountLabel.text = "\(spriteCountText) \(spriteCount)"
         checkGameFinished()
     }
-
+    
     func checkCountMovingSprites() {
         if  countMovingSprites > 0 && countCheckCounts++ < 80 {
             self.waitForSKActionEnded = NSTimer.scheduledTimerWithTimeInterval(0.1, target: self, selector: Selector("checkCountMovingSprites"), userInfo: nil, repeats: false)
@@ -1241,16 +1242,16 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             let dY = movingSprite.startPosition.y - movingSprite.position.y
             
             
-
+            
             var zielPosition = CGPointZero
             switch lineAround.name! {
-                case "BH": zielPosition = CGPointMake(movingSprite.position.x - dX, originalPosition.y)
-                case "LV": zielPosition = CGPointMake(originalPosition.x, movingSprite.position.y - dY)
-                case "UH": zielPosition = CGPointMake(movingSprite.position.x - dX, originalPosition.y)
-                case "RV": zielPosition = CGPointMake(originalPosition.x, movingSprite.position.y - dY)
-                default: break
+            case "BH": zielPosition = CGPointMake(movingSprite.position.x - dX, originalPosition.y)
+            case "LV": zielPosition = CGPointMake(originalPosition.x, movingSprite.position.y - dY)
+            case "UH": zielPosition = CGPointMake(movingSprite.position.x - dX, originalPosition.y)
+            case "RV": zielPosition = CGPointMake(originalPosition.x, movingSprite.position.y - dY)
+            default: break
             }
-//            print("case: \(lineAround.name!), aktX: \(movingSprite.position.x), aktY: \(movingSprite.position.y), origX:\(movingSprite.startPosition.x), origY:\(movingSprite.startPosition.y), zielX: \(zielPosition.x), zielY: \(zielPosition.y)")
+            //            print("case: \(lineAround.name!), aktX: \(movingSprite.position.x), aktY: \(movingSprite.position.y), origX:\(movingSprite.startPosition.x), origY:\(movingSprite.startPosition.y), zielX: \(zielPosition.x), zielY: \(zielPosition.y)")
             
             let offsetNew = zielPosition - movingSprite.position
             let direction = offsetNew.normalized()
@@ -1292,26 +1293,26 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             movingSprite = contact.bodyB
             partner = contact.bodyA
             spriteDidCollideWithContainer(movingSprite.node as! MySKNode, node2: partner.node as! MySKNode)
-
+            
         case (PhysicsCategory.MovingSprite, PhysicsCategory.Container):
             movingSprite = contact.bodyA
             partner = contact.bodyB
             spriteDidCollideWithContainer(movingSprite.node as! MySKNode, node2: partner.node as! MySKNode)
-/*
-        case (PhysicsCategory.WallAround, PhysicsCategory.MovingSprite):
+            /*
+            case (PhysicsCategory.WallAround, PhysicsCategory.MovingSprite):
             movingSprite = contact.bodyB
             partner = contact.bodyA
             wallAroundDidCollideWithMovingSprite(movingSprite.node as! MySKNode, node2: partner.node!)
             
-        case (PhysicsCategory.MovingSprite, PhysicsCategory.WallAround):
+            case (PhysicsCategory.MovingSprite, PhysicsCategory.WallAround):
             movingSprite = contact.bodyA
             partner = contact.bodyB
             wallAroundDidCollideWithMovingSprite(movingSprite.node as! MySKNode, node2: partner.node!)
-*/
+            */
         default: _ = 0
-       }
+        }
     }
-
+    
     func checkGameArray() -> Int {
         var usedCellCount = 0
         for column in 0..<countColumns {
@@ -1323,12 +1324,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         }
         return usedCellCount
     }
-
+    
     func checkGameFinished() {
         
         
         let usedCellCount = checkGameArray()
-
+        
         if usedCellCount == 0 || levelScore > targetScore { // Level completed, start a new game
             if countDown != nil {
                 countDown!.invalidate()
@@ -1377,7 +1378,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
     }
     
     func doCountDown() {
-
+        
         timeLimit--
         showTimeLeft()
         if timeLimit == 0 {
@@ -1393,13 +1394,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             let againAction = UIAlertAction(title: GV.language.getText(TextConstants.TCGameAgain), style: .Default,
                 handler: {(paramAction:UIAlertAction!) in
                     self.newGame(false)
-                })
+            })
             alert.addAction(cancelAction)
             alert.addAction(againAction)
             parentViewController!.presentViewController(alert, animated: true, completion: nil)
         }
     }
-
+    
     func showTimeLeft() {
         let countdownText = GV.language.getText(.TCTimeLeft)
         let minutes = Int(timeLimit / 60)
@@ -1407,16 +1408,16 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         seconds = Int(seconds) < 10 ? "0\(seconds)" : "\(seconds)"
         countdownLabel.text = "\(countdownText) \(minutes):\(seconds)"
     }
-/*
+    /*
     func printGameArray() {
-        for column in 0..<countColumns {
-            for row in 0..<countRows {
-                print(gameArray[row][countColumns - 1 - column] ? "T " : "F ")
-            }
-            //print()
-        }
+    for column in 0..<countColumns {
+    for row in 0..<countRows {
+    print(gameArray[row][countColumns - 1 - column] ? "T " : "F ")
     }
-*/
+    //print()
+    }
+    }
+    */
     func push(sprite: MySKNode, status: SpriteStatus) {
         var savedSprite = SavedSprite()
         savedSprite.name = sprite.name!
@@ -1429,7 +1430,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         savedSprite.column = sprite.column
         savedSprite.row = sprite.row
         if savedSprite.status != .Added {
-//            print("push -> status: \(savedSprite.status), name: \(savedSprite.name), sPos: \(savedSprite.startPosition), ePos: \(savedSprite.endPosition)" )
+            //            print("push -> status: \(savedSprite.status), name: \(savedSprite.name), sPos: \(savedSprite.startPosition), ePos: \(savedSprite.endPosition)" )
         }
         stack.push(savedSprite)
     }
@@ -1441,9 +1442,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             var savedSpriteInCycle = savedSprite
             var run = true
             var stopSoon = false
-        
+            
             repeat {
-
+                
                 switch savedSpriteInCycle.status {
                 case .Added:
                     if stack.countChangesInStack() > 0 {
@@ -1480,7 +1481,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
                     sprite.hitCounter = savedSpriteInCycle.hitCounter
                     sprite.size = savedSpriteInCycle.size
                     sprite.hitLabel.text = "\(sprite.hitCounter)"
-
+                    
                 case .HitcounterChanged:
                     containers[savedSpriteInCycle.colorIndex].mySKNode.hitCounter = savedSpriteInCycle.hitCounter
                     showScore()
@@ -1492,7 +1493,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
                     sprite.startPosition = savedSpriteInCycle.startPosition
                     actionMoveArray.append(SKAction.moveTo(savedSpriteInCycle.endPosition, duration: duration))
                     sprite.runAction(SKAction.sequence(actionMoveArray))
-
+                    
                 case .FallingMovingSprite:
                     let sprite = self.childNodeWithName(savedSpriteInCycle.name)! as! MySKNode
                     sprite.hitCounter = savedSpriteInCycle.hitCounter
@@ -1511,7 +1512,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
                     //var sprite = self.childNodeWithName(savedSpriteInCycle.name)! as! MySKNode
                     actionMoveArray.append(SKAction.moveTo(savedSpriteInCycle.endPosition, duration: duration))
                     
-                //default: run = false
+                    //default: run = false
                 }
                 if let savedSprite = stack.pull() {
                     savedSpriteInCycle = savedSprite
@@ -1528,12 +1529,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             } while run
             showScore()
         }
-            
-
-            
+        
+        
+        
     }
-
-
+    
+    
     func audioPlayerDidFinishPlaying(player: AVAudioPlayer!, successfullyflag: Bool) {
     }
     
@@ -1545,7 +1546,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
     
     func audioPlayerEndInterruption(player: AVAudioPlayer) {
     }
-  
+    
     func changeLanguage()->Bool {
         levelLabel.text = GV.language.getText(TextConstants.TCLevel) + ": \(levelIndex + 1)"
         gameScoreLabel.text = "\(GV.language.getText(.TCGameScore)) \(gameScore)"
@@ -1554,7 +1555,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         showScore()
         return true
     }
-
+    
 }
 
 

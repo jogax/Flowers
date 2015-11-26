@@ -32,11 +32,6 @@ struct GV {
     static let onIpad = UIDevice.currentDevice().model.hasSuffix("iPad")
     static var ipadKorrektur: CGFloat = 0
 
-//    static var gameControll = GameControll.Finger
-//    static var joyStickRadius: CGFloat = 0.0
-//    static var rectSize: CGFloat = 0 // rectSize in Choose Table
-//    static var gameRectSize: CGFloat = 0 // rectSize in gameboard
-
     static let language = Language()
     static var showHelpLines = 0
     static var soundVolume: Float = 0
@@ -47,8 +42,6 @@ struct GV {
 
     static let dataStore = DataStore()
 
-//    static var spriteGameData = SpriteGameData()
-//    static var sublayer = CALayer()
     static var spriteGameDataArray: [SpriteGameData] = []
     // Constraints
     // static let myDevice = MyDevice()
@@ -91,10 +84,10 @@ struct GlobalParamData {
 struct SpriteGameData {
     var name: String
     var aktLanguageKey: String
-    var showHelpLines: Int64
-    var spriteLevelIndex: Int64
-    var spriteGameScore: Int64
-    var gameModus: Int64
+    var showHelpLines: Int
+    var spriteLevelIndex: Int
+    var spriteGameScore: Int
+    var gameModus: Int
     var soundVolume: Float
     var musicVolume: Float
     
@@ -104,7 +97,7 @@ struct SpriteGameData {
         showHelpLines = 0
         spriteLevelIndex = 0
         spriteGameScore = 0
-        gameModus = Int64(GameModusFlowers)
+        gameModus = GameModusFlowers
         soundVolume = 0.1
         musicVolume = 0.1
     }

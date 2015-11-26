@@ -13,6 +13,7 @@ class LanguageViewController: UIViewController, UITableViewDataSource, UITableVi
     let deRow = 1
     let huRow = 2
     let ruRow = 3
+    
     var cancelButton = UIButton()
     var doneButton = UIButton()
     var volumeView = UIView()
@@ -20,8 +21,11 @@ class LanguageViewController: UIViewController, UITableViewDataSource, UITableVi
     var soundVolume = UISlider()
     var musicVolumeLabel = UILabel()
     var soundVolumeLabel = UILabel()
+    var headerLabel = UILabel()
 
     var aktLanguageRow = 0
+    var aktGameModus = GameModusFlowers
+    
     var oldHelpLines = 0
     var aktLanguageKey: String?
     var toDo = ""
@@ -30,12 +34,7 @@ class LanguageViewController: UIViewController, UITableViewDataSource, UITableVi
     
     var lineCountPicker: UIPickerView?
     var lineCounts = ["0","1","2","3","4"]
-    var textCell = [
-        "\(GV.language.getText(.TCEnglish))",
-        "\(GV.language.getText(.TCGerman))",
-        "\(GV.language.getText(.TCHungarian))",
-        "\(GV.language.getText(.TCRussian))",
-    ]
+    var textCell = [String]()
     var cell: UITableViewCell = UITableViewCell()
     var tableView: UITableView = UITableView()
     
@@ -44,7 +43,9 @@ class LanguageViewController: UIViewController, UITableViewDataSource, UITableVi
         tableView.registerClass(UITableViewCell.self, forCellReuseIdentifier: "languageTextCell")
         GV.language.addCallback(changeLanguage)
         aktLanguageKey = GV.language.getAktLanguageKey()
+        aktGameModus = GV.spriteGameDataArray[GV.getAktNameIndex()].gameModus
         setAktlanguageRow()
+        
         
         
         switch toDo {
@@ -68,9 +69,6 @@ class LanguageViewController: UIViewController, UITableViewDataSource, UITableVi
         setupLayout()
     }
 
-    func makeGameModusView() {
-        let _ = 0
-    }
     
     func makeVolumeView() {
         
@@ -92,6 +90,8 @@ class LanguageViewController: UIViewController, UITableViewDataSource, UITableVi
         
         soundVolumeLabel.text = GV.language.getText(.TCSoundVolume)
         musicVolumeLabel.text = GV.language.getText(.TCMusicVolume)
+        soundVolumeLabel.adjustsFontSizeToFitWidth = true
+        musicVolumeLabel.adjustsFontSizeToFitWidth = true
         
         volumeView.translatesAutoresizingMaskIntoConstraints = false
         musicVolume.translatesAutoresizingMaskIntoConstraints = false
@@ -169,8 +169,42 @@ class LanguageViewController: UIViewController, UITableViewDataSource, UITableVi
         self.view.addConstraint(NSLayoutConstraint(item: lineCountPicker!, attribute: .Height , relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: 200))
     }
     
+    func makeGameModusView() {
+        //languageTableView = UITableView()
+        textCell.removeAll()
+        textCell = [
+            "\(GV.language.getText(.TCStandardGame))",
+            "\(GV.language.getText(.TCCardGame))",
+        ]
+        self.view.addSubview(tableView)
+        tableView.layer.hidden = false
+        tableView.layer.borderColor = UIColor.blackColor().CGColor
+        tableView.layer.borderWidth = 0.5
+        tableView.delegate = self
+        tableView.dataSource = self
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        
+        let tableHeight = cell.frame.height * CGFloat(textCell.count)
+        
+        self.view.addConstraint(NSLayoutConstraint(item: tableView, attribute: NSLayoutAttribute.CenterX, relatedBy: .Equal, toItem: self.view, attribute: NSLayoutAttribute.CenterX, multiplier: 1.0, constant: 0))
+        
+        self.view.addConstraint(NSLayoutConstraint(item: tableView, attribute: .Top, relatedBy: .Equal, toItem: self.view!, attribute: .Top, multiplier: 1.0, constant: 200))
+        
+        self.view.addConstraint(NSLayoutConstraint(item: tableView, attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: 300))
+        
+        self.view.addConstraint(NSLayoutConstraint(item: tableView, attribute: .Height , relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: tableHeight))
+        
+        
+    }
     func makeLangageView() {
         //languageTableView = UITableView()
+        textCell.removeAll()
+        textCell = [
+            "\(GV.language.getText(.TCEnglish))",
+            "\(GV.language.getText(.TCGerman))",
+            "\(GV.language.getText(.TCHungarian))",
+            "\(GV.language.getText(.TCRussian))",
+        ]
         self.view.addSubview(tableView)
         tableView.layer.hidden = false
         tableView.layer.borderColor = UIColor.blackColor().CGColor
@@ -207,33 +241,52 @@ class LanguageViewController: UIViewController, UITableViewDataSource, UITableVi
         let row = indexPath.row
         cell.textLabel?.text = textCell[row]
         cell.frame.origin.x = self.view.frame.midX - (cell.frame.size.width) / 2
-        if row == aktLanguageRow {
-            cell.accessoryType = .Checkmark
-            cell.backgroundColor = UIColor(red: 0x00/0xff, green: 0xff/0xff, blue: 0x7f/0xff, alpha: 1) // Springgreen
-        } else {
-            cell.backgroundColor = UIColor(red: 0xff/0xff, green: 0xff/0xff, blue: 0xff/0xff, alpha: 1) // Springgreen
-            cell.accessoryType = .None
+        switch toDo {
+        case languageText:
+            if row == aktLanguageRow {
+                cell.accessoryType = .Checkmark
+                cell.backgroundColor = UIColor(red: 0x00/0xff, green: 0xff/0xff, blue: 0x7f/0xff, alpha: 1) // Springgreen
+            } else {
+                cell.backgroundColor = UIColor(red: 0xff/0xff, green: 0xff/0xff, blue: 0xff/0xff, alpha: 1) // Springgreen
+                cell.accessoryType = .None
+            }
+        case gameModusText:
+            if row == Int(aktGameModus) {
+                cell.accessoryType = .Checkmark
+                cell.backgroundColor = UIColor(red: 0x00/0xff, green: 0xff/0xff, blue: 0x7f/0xff, alpha: 1) // Springgreen
+            } else {
+                cell.backgroundColor = UIColor(red: 0xff/0xff, green: 0xff/0xff, blue: 0xff/0xff, alpha: 1) // Springgreen
+                cell.accessoryType = .None
+            }
+        default: break
         }
         
         return cell
     }
     
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        switch indexPath.row {
-            case enRow:  GV.language.setLanguage(LanguageEN)
-            case deRow:  GV.language.setLanguage(LanguageDE)
-            case huRow:  GV.language.setLanguage(LanguageHU)
-            case ruRow:  GV.language.setLanguage(LanguageRU)
-            default: _ = 0
+        switch toDo {
+        case languageText:
+            switch indexPath.row {
+                case enRow:  GV.language.setLanguage(LanguageEN)
+                case deRow:  GV.language.setLanguage(LanguageDE)
+                case huRow:  GV.language.setLanguage(LanguageHU)
+                case ruRow:  GV.language.setLanguage(LanguageRU)
+                default: break
+            }
+            textCell.removeAll()
+            textCell = [ //
+                "\(GV.language.getText(.TCEnglish))",
+                "\(GV.language.getText(.TCGerman))",
+                "\(GV.language.getText(.TCHungarian))",
+                "\(GV.language.getText(.TCRussian))",
+            ]
+            setAktlanguageRow()
+        case gameModusText:
+            GV.spriteGameDataArray[GV.getAktNameIndex()].gameModus = indexPath.row
+            aktGameModus = indexPath.row
+        default: break
         }
-        textCell.removeAll()
-        textCell = [ //
-            "\(GV.language.getText(.TCEnglish))",
-            "\(GV.language.getText(.TCGerman))",
-            "\(GV.language.getText(.TCHungarian))",
-            "\(GV.language.getText(.TCRussian))",
-        ]
-        setAktlanguageRow()
         tableView.reloadData()
     }
     
@@ -284,7 +337,7 @@ class LanguageViewController: UIViewController, UITableViewDataSource, UITableVi
             GV.spriteGameDataArray[index].musicVolume = musicVolume.value
             GV.soundVolume = soundVolume.value
             GV.musicVolume = musicVolume.value
-        case helpLinesText: GV.spriteGameDataArray[index].showHelpLines = Int64(GV.showHelpLines)
+        case helpLinesText: GV.spriteGameDataArray[index].showHelpLines = GV.showHelpLines
         case languageText:  GV.spriteGameDataArray[index].aktLanguageKey = GV.language.getAktLanguageKey()
         default: break
         }

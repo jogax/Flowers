@@ -564,12 +564,6 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
     }
     
     func generateSprites() {
-        let testNode = SKSpriteNode (imageNamed: "Holz.png")
-        testNode.position = self.spriteTabRect.origin
-        testNode.size = self.spriteTabRect.size
-        //testNode.zPosition = -100
-        //self.addChild(testNode)
-        
         var first = inFirstGenerateSprites
         var positionsTab = [(Int, Int)]() // all available Positions
         for column in 0..<countColumns {

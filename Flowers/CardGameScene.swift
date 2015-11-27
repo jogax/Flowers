@@ -10,5 +10,8 @@ import SpriteKit
 import AVFoundation
 
 class CardGameScene: MyGameScene {
-    
+    override func getTexture(index: Int)->SKTexture {
+        return atlas.textureNamed ("sprite\(index)")
+    }
+
 }

@@ -324,7 +324,7 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             let cont: Container
             //if index == 0 {
             //cont = Container(mySKNode: MySKNode(texture: SKTexture(imageNamed:"sprite\(index)"), type: .ContainerType), label: SKLabelNode(), countHits: 0)
-            cont = Container(mySKNode: MySKNode(texture: atlas.textureNamed("sprite\(index)"), type: .ContainerType), label: SKLabelNode(), countHits: 0)
+            cont = Container(mySKNode: MySKNode(texture: getTexture(index), type: .ContainerType), label: SKLabelNode(), countHits: 0)
             /*
             } else {
             cont = Container(mySKNode: MySKNode(texture: containerTexture, type: .ContainerType), label: SKLabelNode(), countHits: 0)
@@ -480,7 +480,10 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         makeLineAroundGameboard(.LeftVertical)
         self.inFirstGenerateSprites = false
     }
-    
+
+    func getTexture(index: Int)->SKTexture {
+        return atlas.textureNamed ("sprite\(index)")
+    }
     
     func settingsButtonPressed() {
         playMusic("NoSound", volume: GV.musicVolume, loops: 0)

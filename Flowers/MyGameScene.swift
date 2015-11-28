@@ -116,6 +116,8 @@ struct SavedSprite {
     var colorIndex: Int = 0
     var size: CGSize = CGSizeMake(0, 0)
     var hitCounter: Int = 0
+    var minValue: Int = NoValue
+    var maxValue: Int = NoValue
     var column: Int = 0
     var row: Int = 0
 }
@@ -164,8 +166,9 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
     var countContainers = 0
     var targetScoreKorr: Int = 0
     var tableCellSize: CGFloat = 0
-    var containerSize:CGFloat = 0
-    var spriteSize:CGFloat = 0
+    var sizeMultiplier: CGSize = CGSizeMake(1, 1)
+    var containerSize:CGSize = CGSizeMake(0, 0)
+    var spriteSize:CGSize = CGSizeMake(0, 0)
     var minUsedCells = 0
     var maxUsedCells = 0
     
@@ -253,19 +256,13 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             myView = view
             levelsForPlayWithSprites.setAktLevel(levelIndex)
             
-            //restartCount = 3
+            makeSpezialThings()
             prepareNextGame()
             generateSprites()
         } else {
             playMusic("MyMusic", volume: GV.musicVolume, loops: 0)
             
         }
-        //        if GV.globalParam.aktName == GV.dummyName { // get gamer name
-        //            GV.initName = true
-        //            settingsDelegate?.settingsDelegateFunc()
-        //        }
-        
-        
     }
     
     func prepareNextGame() {
@@ -292,8 +289,8 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         countRows = levelsForPlayWithSprites.aktLevel.countRows
         minUsedCells = levelsForPlayWithSprites.aktLevel.minProzent * countColumns * countRows / 100
         maxUsedCells = levelsForPlayWithSprites.aktLevel.maxProzent * countColumns * countRows / 100
-        containerSize = CGFloat(levelsForPlayWithSprites.aktLevel.containerSize)
-        spriteSize = CGFloat(levelsForPlayWithSprites.aktLevel.spriteSize)
+        containerSize = CGSizeMake(CGFloat(levelsForPlayWithSprites.aktLevel.containerSize) * sizeMultiplier.width, CGFloat(levelsForPlayWithSprites.aktLevel.containerSize) * sizeMultiplier.height)
+        spriteSize = CGSizeMake(CGFloat(levelsForPlayWithSprites.aktLevel.spriteSize) * sizeMultiplier.width, CGFloat(levelsForPlayWithSprites.aktLevel.spriteSize) * sizeMultiplier.height )
         
         timeLimit = countContainers * countSpritesProContainer! * levelsForPlayWithSprites.aktLevel.timeLimitKorr
         //print("timeLimit: \(timeLimit)")
@@ -324,7 +321,7 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             let cont: Container
             //if index == 0 {
             //cont = Container(mySKNode: MySKNode(texture: SKTexture(imageNamed:"sprite\(index)"), type: .ContainerType), label: SKLabelNode(), countHits: 0)
-            cont = Container(mySKNode: MySKNode(texture: getTexture(index), type: .ContainerType), label: SKLabelNode(), countHits: 0)
+            cont = Container(mySKNode: MySKNode(texture: getTexture(index), type: .ContainerType, value: -1), label: SKLabelNode(), countHits: 0)
             /*
             } else {
             cont = Container(mySKNode: MySKNode(texture: containerTexture, type: .ContainerType), label: SKLabelNode(), countHits: 0)
@@ -333,8 +330,8 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             containers.append(cont)
             containers[index].mySKNode.name = "\(index)"
             containers[index].mySKNode.position = CGPoint(x: centerX, y: centerY)
-            containers[index].mySKNode.size.width = containerSize
-            containers[index].mySKNode.size.height = containerSize
+            containers[index].mySKNode.size.width = containerSize.width
+            containers[index].mySKNode.size.height = containerSize.height
             
             containers[index].label.text = "0"
             containers[index].label.fontSize = 20;
@@ -417,7 +414,7 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         targetScoreLabel.text = "\(targetScoreText) \(targetScore)"
         self.addChild(targetScoreLabel)
         
-        bgImage = SKSpriteNode(imageNamed: "bgImage.png")
+        bgImage = setBGImageNode()
         //print("ImageSize: \(bgImage?.size)")
         bgAdder = 0.1
         
@@ -470,21 +467,16 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         backgroundColor = UIColor.whiteColor() //SKColor.whiteColor()
         physicsWorld.gravity = CGVectorMake(0, 0)
         physicsWorld.contactDelegate = self
-        //        self.countDown = NSTimer.scheduledTimerWithTimeInterval(1.0, target: self, selector: Selector("doCountDown"), userInfo: nil, repeats: true)
-        //        GV.currentTime = NSDate()
-        //        GV.elapsedTime = GV.currentTime.timeIntervalSinceDate(GV.startTime) //* 1000
-        //print("prepareNextGame Laufzeit: \(GV.elapsedTime)")
+
         makeLineAroundGameboard(.UpperHorizontal)
         makeLineAroundGameboard(.RightVertical)
         makeLineAroundGameboard(.BottomHorizontal)
         makeLineAroundGameboard(.LeftVertical)
-        self.inFirstGenerateSprites = false
-    }
-
-    func getTexture(index: Int)->SKTexture {
-        return atlas.textureNamed ("sprite\(index)")
+//        self.inFirstGenerateSprites = false
+        spezialPrepareFunc()
     }
     
+
     func settingsButtonPressed() {
         playMusic("NoSound", volume: GV.musicVolume, loops: 0)
         
@@ -567,7 +559,7 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
     }
     
     func generateSprites() {
-        var first = inFirstGenerateSprites
+        //var first = inFirstGenerateSprites
         var positionsTab = [(Int, Int)]() // all available Positions
         for column in 0..<countColumns {
             for row in 0..<countRows {
@@ -584,17 +576,10 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             let spriteName = colorTab[colorTabIndex].spriteName
             colorTab.removeAtIndex(colorTabIndex)
             
-            //let aktColor = GV.colorSets[GV.colorSetIndex][colorIndex + 1].CGColor
-            var spriteTexture = SKTexture()
-            //            if colorIndex == 0 {
-            spriteTexture = atlas.textureNamed("sprite\(colorIndex)")
-            //spriteTexture = SKTexture(imageNamed: "sprite\(colorIndex)")
-            //            } else {
-            //                containerTexture = SKTexture(image: GV.drawCircle(CGSizeMake(spriteSize,spriteSize), imageColor: aktColor))
-            //            }
-            let sprite = MySKNode(texture: spriteTexture, type: .SpriteType)
-            sprite.size.width = spriteSize
-            sprite.size.height = spriteSize
+            
+            let sprite = MySKNode(texture: getTexture(colorIndex), type: .SpriteType, value:generateValue(colorIndex))
+            sprite.size.width = spriteSize.width
+            sprite.size.height = spriteSize.height
             //            let yKorr1: CGFloat = GV.onIpad ? 0.9 : 0.8
             //            let yKorr2: CGFloat = GV.onIpad ? 1.8 : 2.0
             //let yKorr1: CGFloat = GV.onIpad ? 0.8 : 1.0
@@ -605,7 +590,6 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             tableCellSize = spriteTabRect.width / CGFloat(countColumns)
             
             let xPosition = spriteTabRect.origin.x - spriteTabRect.size.width / 2 + CGFloat(aktColumn) * tableCellSize + tableCellSize / 2
-            //let yPosition = spriteTabRect.origin.y - spriteTabRect.size.height / 2 CGFloat(aktRow) * tableCellSize * yKorr1 + tableCellSize * yKorr2
             let yPosition = spriteTabRect.origin.y - spriteTabRect.size.height / 2 + tableCellSize / 2 + CGFloat(aktRow) * tableCellSize
             
             sprite.position = CGPoint(x: xPosition, y: yPosition)
@@ -617,12 +601,13 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             sprite.row = aktRow
             sprite.name = spriteName
             sprite.colorIndex = colorIndex
-            if first {
+
+//            if first {
                 lastShownNode = sprite
-                first = false
-            } else if inFirstGenerateSprites {
-                sprite.hidden = true
-            }
+//                first = false
+//            } else if inFirstGenerateSprites {
+//                sprite.hidden = true
+//            }
             addPhysicsBody(sprite)
             push(sprite, status: .Added)
             addChild(sprite)
@@ -795,13 +780,13 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         let testNode = self.nodeAtPoint(touchLocation)
         
         let aktNodeType = analyzeNode(testNode)
-        if self.inFirstGenerateSprites {
-            switch aktNodeType {
-            case MyNodeTypes.LabelNode, MyNodeTypes.SpriteNode: showNextSprite(touchLocation)
-            default: return
-            }
-            return
-        }
+//        if self.inFirstGenerateSprites {
+//            switch aktNodeType {
+//            case MyNodeTypes.LabelNode, MyNodeTypes.SpriteNode: showNextSprite(touchLocation)
+//            default: return
+//            }
+//            return
+//        }
         if movedFromNode != nil && !stopped {
             //let countTouches = touches.count
             var aktNode: SKNode? = nil
@@ -971,7 +956,7 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             
             self.addChild(myLine)
             let texture = numberOfLine < maxHelpLinesCount ? movedFromNode.texture! : SKTexture(imageNamed: "bumm")
-            let nodeOnTheWall = MySKNode(texture: texture, type: .SpriteType)
+            let nodeOnTheWall = MySKNode(texture: texture, type: .SpriteType, value: NoValue)
             nodeOnTheWall.name = "nodeOnTheWall"
             nodeOnTheWall.position = toPoint
             nodeOnTheWall.size = movedFromNode.size
@@ -980,72 +965,72 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         }
     }
     
-    func showNextSprite(touchLocation:  CGPoint) {
-        let aktNode = self.nodeAtPoint(touchLocation)
-        if aktNode.name == lastShownNode!.name {
-            undoCount++
-            for index in 0..<self.children.count {
-                if self.children[index].hidden {
-                    //SKAction.playSoundFileNamed("Do_1", waitForCompletion: false)
-                    self.playSound("Do_1", volume: GV.soundVolume)
-                    lastShownNode = self.children[index] as? MySKNode
-                    self.children[index].hidden = false
-                    let undoButton = self.childNodeWithName("undo")! as! MySKNode
-                    undoButton.hitCounter++
-                    //(self.childNodeWithName("undo")! as! MySKNode).hitCounter++
-                    undoButton.hitLabel.text = "\(undoButton.hitCounter)"
-                    //print("undoButton.hitLabel.text: \(undoButton.hitLabel.text)")
-                    return
-                }
-            }
-            inFirstGenerateSprites = false
-        } else {
-            inFirstGenerateSprites = false
-            for index in 0..<self.children.count {
-                if self.children[index].hidden {
-                    self.children[index].hidden = false
-                }
-            }
-        }
-        
-        var three_two_one_go = [SKTexture]()
-        three_two_one_go.append(atlas.textureNamed("3"))
-        three_two_one_go.append(atlas.textureNamed("2"))
-        three_two_one_go.append(atlas.textureNamed("1"))
-        three_two_one_go.append(atlas.textureNamed("goText"))
-        
-        let firstFrame = three_two_one_go[0]
-        let go = SKSpriteNode(texture: firstFrame)
-        self.addChild(go)
-        
-        
-        go.position = CGPointMake(self.frame.midX, self.frame.midY)
-        if GV.onIpad {
-            go.size = CGSizeMake(600, 600)
-        } else {
-            go.size = CGSizeMake(400, 400)
-        }
-        go.zPosition = 100
-        
-        
-        let goAction = SKAction.repeatAction(
-            SKAction.sequence([
-                //SKAction.playSoundFileNamed("Do_1", waitForCompletion:false),
-                SKAction.runBlock({self.playSound("Go321", volume: GV.soundVolume)}),
-                SKAction.animateWithTextures(three_two_one_go, timePerFrame: 1.2, resize: false, restore: false)
-                ]),
-            count: 1)
-        //let waitAction = SKAction.waitForDuration(8)
-        let removeAction = SKAction.removeFromParent()
-        let startCounterAction = SKAction.runBlock({self.countDown = NSTimer.scheduledTimerWithTimeInterval(1.0, target: self, selector: Selector("doCountDown"), userInfo: nil, repeats: true)})
-        
-        
-        go.runAction(SKAction.sequence([goAction, removeAction, startCounterAction, SKAction.runBlock({self.playMusic("MyMusic", volume: GV.musicVolume, loops: -1)})]))
-        
-        
-        
-    }
-    
+//    func showNextSprite(touchLocation:  CGPoint) {
+//        let aktNode = self.nodeAtPoint(touchLocation)
+//        if aktNode.name == lastShownNode!.name {
+//            undoCount++
+//            for index in 0..<self.children.count {
+//                if self.children[index].hidden {
+//                    //SKAction.playSoundFileNamed("Do_1", waitForCompletion: false)
+//                    self.playSound("Do_1", volume: GV.soundVolume)
+//                    lastShownNode = self.children[index] as? MySKNode
+//                    self.children[index].hidden = false
+//                    let undoButton = self.childNodeWithName("undo")! as! MySKNode
+//                    undoButton.hitCounter++
+//                    //(self.childNodeWithName("undo")! as! MySKNode).hitCounter++
+//                    undoButton.hitLabel.text = "\(undoButton.hitCounter)"
+//                    //print("undoButton.hitLabel.text: \(undoButton.hitLabel.text)")
+//                    return
+//                }
+//            }
+//            inFirstGenerateSprites = false
+//        } else {
+//            inFirstGenerateSprites = false
+//            for index in 0..<self.children.count {
+//                if self.children[index].hidden {
+//                    self.children[index].hidden = false
+//                }
+//            }
+//        }
+//        
+//        var three_two_one_go = [SKTexture]()
+//        three_two_one_go.append(atlas.textureNamed("3"))
+//        three_two_one_go.append(atlas.textureNamed("2"))
+//        three_two_one_go.append(atlas.textureNamed("1"))
+//        three_two_one_go.append(atlas.textureNamed("goText"))
+//        
+//        let firstFrame = three_two_one_go[0]
+//        let go = SKSpriteNode(texture: firstFrame)
+//        self.addChild(go)
+//        
+//        
+//        go.position = CGPointMake(self.frame.midX, self.frame.midY)
+//        if GV.onIpad {
+//            go.size = CGSizeMake(600, 600)
+//        } else {
+//            go.size = CGSizeMake(400, 400)
+//        }
+//        go.zPosition = 100
+//        
+//        
+//        let goAction = SKAction.repeatAction(
+//            SKAction.sequence([
+//                //SKAction.playSoundFileNamed("Do_1", waitForCompletion:false),
+//                SKAction.runBlock({self.playSound("Go321", volume: GV.soundVolume)}),
+//                SKAction.animateWithTextures(three_two_one_go, timePerFrame: 1.2, resize: false, restore: false)
+//                ]),
+//            count: 1)
+//        //let waitAction = SKAction.waitForDuration(8)
+//        let removeAction = SKAction.removeFromParent()
+//        let startCounterAction = SKAction.runBlock({self.countDown = NSTimer.scheduledTimerWithTimeInterval(1.0, target: self, selector: Selector("doCountDown"), userInfo: nil, repeats: true)})
+//        
+//        
+//        go.runAction(SKAction.sequence([goAction, removeAction, startCounterAction, SKAction.runBlock({self.playMusic("MyMusic", volume: GV.musicVolume, loops: -1)})]))
+//        
+//        
+//        
+//    }
+//    
     override func update(currentTime: NSTimeInterval) {
         backgroudScrollUpdate()
     }
@@ -1145,74 +1130,7 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         checkGameFinished()
     }
     
-    
     func spriteDidCollideWithMovingSprite(node1:MySKNode, node2:MySKNode) {
-        let movingSprite = node1
-        let sprite = node2
-        let movingSpriteColorIndex = movingSprite.colorIndex
-        let spriteColorIndex = sprite.colorIndex
-        
-        //let aktColor = GV.colorSets[GV.colorSetIndex][sprite.colorIndex + 1].CGColor
-        collisionActive = false
-        
-        let OK = movingSpriteColorIndex == spriteColorIndex
-        if OK {
-            
-            push(sprite, status: .SizeChanged)
-            push(movingSprite, status: .Removed)
-            
-            sprite.hitCounter = movingSprite.hitCounter + sprite.hitCounter
-            sprite.hitLabel.text = "\(sprite.hitCounter)"
-            
-            //            let aktSize = spriteSize + 1.2 * CGFloat(sprite.hitCounter)
-            //            sprite.size.width = aktSize
-            //            sprite.size.height = aktSize
-            playSound("Sprite1", volume: GV.soundVolume)
-            
-            gameArray[movingSprite.column][movingSprite.row] = false
-            movingSprite.removeFromParent()
-            countMovingSprites = 0
-        } else {
-            push(sprite, status: .FallingSprite)
-            push(movingSprite, status: .FallingMovingSprite)
-            
-            sprite.zPosition = 0
-            movingSprite.zPosition = 0
-            movingSprite.physicsBody?.categoryBitMask = PhysicsCategory.None
-            containers[movingSprite.colorIndex].mySKNode.hitCounter -= movingSprite.hitCounter
-            containers[sprite.colorIndex].mySKNode.hitCounter -= sprite.hitCounter
-            let movingSpriteDest = CGPointMake(movingSprite.position.x * 0.5, 0)
-            
-            movingSprite.startPosition = movingSprite.position
-            movingSprite.position = movingSpriteDest
-            push(movingSprite, status: .Removed)
-            
-            countMovingSprites = 2
-            
-            let movingSpriteAction = SKAction.moveTo(movingSpriteDest, duration: 1.0)
-            let actionMoveDone = SKAction.removeFromParent()
-            
-            movingSprite.runAction(SKAction.sequence([movingSpriteAction, actionMoveDone]), completion: {self.countMovingSprites--})
-            
-            
-            let spriteDest = CGPointMake(sprite.position.x * 1.5, 0)
-            sprite.startPosition = sprite.position
-            sprite.position = spriteDest
-            push(sprite, status: .Removed)
-            
-            
-            let actionMove2 = SKAction.moveTo(spriteDest, duration: 1.5)
-            sprite.runAction(SKAction.sequence([actionMove2, actionMoveDone]), completion: {self.countMovingSprites--})
-            gameArray[movingSprite.column][movingSprite.row] = false
-            gameArray[sprite.column][sprite.row] = false
-            spriteCount--
-            playSound("Drop", volume: GV.soundVolume)
-            showScore()
-        }
-        spriteCount--
-        let spriteCountText: String = GV.language.getText(.TCSpriteCount)
-        spriteCountLabel.text = "\(spriteCountText) \(spriteCount)"
-        checkGameFinished()
     }
     
     func checkCountMovingSprites() {
@@ -1424,11 +1342,13 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         savedSprite.colorIndex = sprite.colorIndex
         savedSprite.size = sprite.size
         savedSprite.hitCounter = sprite.hitCounter
+        savedSprite.minValue = sprite.minValue
+        savedSprite.maxValue = sprite.maxValue
         savedSprite.column = sprite.column
         savedSprite.row = sprite.row
-        if savedSprite.status != .Added {
-            //            print("push -> status: \(savedSprite.status), name: \(savedSprite.name), sPos: \(savedSprite.startPosition), ePos: \(savedSprite.endPosition)" )
-        }
+//        if savedSprite.status != .Added {
+//                        print("push -> status: \(savedSprite.status), name: \(savedSprite.name), sPos: \(savedSprite.startPosition), ePos: \(savedSprite.endPosition)" )
+//        }
         stack.push(savedSprite)
     }
     
@@ -1455,8 +1375,8 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
                     }
                 case .Removed:
                     //let spriteTexture = SKTexture(imageNamed: "sprite\(savedSpriteInCycle.colorIndex)")
-                    let spriteTexture = atlas.textureNamed("sprite\(savedSpriteInCycle.colorIndex)")
-                    let sprite = MySKNode(texture: spriteTexture, type: .SpriteType)
+                    let spriteTexture = getTexture(savedSpriteInCycle.colorIndex)
+                    let sprite = MySKNode(texture: spriteTexture, type: .SpriteType, value: NoValue)
                     sprite.colorIndex = savedSpriteInCycle.colorIndex
                     sprite.position = savedSpriteInCycle.endPosition
                     sprite.startPosition = savedSpriteInCycle.startPosition
@@ -1464,7 +1384,10 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
                     sprite.column = savedSpriteInCycle.column
                     sprite.row = savedSpriteInCycle.row
                     sprite.hitCounter = savedSpriteInCycle.hitCounter
+                    sprite.minValue = savedSpriteInCycle.minValue
+                    sprite.maxValue = savedSpriteInCycle.maxValue
                     sprite.hitLabel.text = "\(sprite.hitCounter)"
+                    sprite.valueLabel.text = "\(sprite.maxValue)"
                     sprite.name = savedSpriteInCycle.name
                     gameArray[savedSpriteInCycle.column][savedSpriteInCycle.row] = true
                     addPhysicsBody(sprite)
@@ -1551,6 +1474,29 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         targetScoreLabel.text = "\(GV.language.getText(.TCTargetScore)) \(targetScore)"
         showScore()
         return true
+    }
+    
+    
+    // FUNCTIONS FOR OVERRIDE
+    
+    func getTexture(index: Int)->SKTexture {
+        return atlas.textureNamed ("sprite\(index)")
+    }
+    
+    func makeSpezialThings() {
+        
+    }
+    
+    func setBGImageNode()->SKSpriteNode {
+        return SKSpriteNode(imageNamed: "bgImage.png")
+    }
+    
+    func generateValue(colorIndex:Int)->Int {
+        return NoValue
+    }
+
+    func spezialPrepareFunc() {
+        
     }
     
 }

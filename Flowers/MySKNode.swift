@@ -9,6 +9,7 @@
 enum MySKNodeType: Int {
     case SpriteType = 0, FrozenSprite, MovingSpriteType, ContainerType, ButtonType
 }
+let NoValue = -1
 import SpriteKit
 
 class MySKNode: SKSpriteNode {
@@ -17,17 +18,21 @@ class MySKNode: SKSpriteNode {
     var row = 0
     var colorIndex = 0
     var startPosition = CGPointZero
+    var minValue: Int
+    var maxValue: Int
     
 
     var hitCounter: Int = 0
 
     let type: MySKNodeType
     var hitLabel = SKLabelNode()
-    var frozen = SKSpriteNode(imageNamed: "frozen.png" )
-    
+    var valueLabel = SKLabelNode()
 
-    init(texture: SKTexture, type:MySKNodeType) {
+    init(texture: SKTexture, type:MySKNodeType, value: Int) {
         self.type = type
+        self.minValue = value
+        self.maxValue = value
+        
         switch type {
         case .ContainerType:
             hitCounter = 0
@@ -38,9 +43,9 @@ class MySKNode: SKSpriteNode {
         default:
             hitCounter = 0
         }
-        //hitCounter = type == .ContainerType ? 0 : 1  // Sprites have a Startvalue 1
+
         super.init(texture: texture, color: UIColor.clearColor(), size: texture.size())
-      
+        
         if type == .ButtonType {
             //hitLabel.position = CGPointMake(self.position.x, self.position.y -  self.size.height * 0.008)
             hitLabel.verticalAlignmentMode = SKLabelVerticalAlignmentMode.Center
@@ -49,30 +54,33 @@ class MySKNode: SKSpriteNode {
             hitLabel.zPosition = 100
             //print("\(hitLabel.text)")
         } else {
-            hitLabel.position = CGPointMake(self.position.x, self.position.y + self.size.height * 0.1)
+            hitLabel.position = CGPointMake(self.position.x, self.position.y + self.size.width * 0.08)
             hitLabel.fontSize = 15;
             hitLabel.text = "\(hitCounter)"
+            
+            valueLabel.position = self.position - CGPointMake(23, -35)
+            valueLabel.fontSize = 25
+            valueLabel.text = "\(maxValue)"
+            valueLabel.zPosition = 100
         }
-        //hitLabel.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMaxY(self.frame) * 0.08)
-
-        //hitLabel.size = self.size
         
         hitLabel.fontName = "ArielBold"
         hitLabel.fontColor = SKColor.blackColor()
         hitLabel.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.Center
-        //hitLabel.verticalAlignmentMode = SKLabelVerticalAlignmentMode.Center
         hitLabel.userInteractionEnabled = false
-        
-        if type == .FrozenSprite {
-            frozen.position = self.position
-            frozen.size = CGSizeMake(30, 30)
-            frozen.zPosition = 100
-            frozen.colorBlendFactor = 0.5
-            self.addChild(frozen)
-        }
-        
+
+        valueLabel.fontName = "ArielBold"
+        valueLabel.fontColor = SKColor.blackColor()
+        valueLabel.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.Left
+        valueLabel.verticalAlignmentMode = SKLabelVerticalAlignmentMode.Top
+        valueLabel.userInteractionEnabled = false
+
         if type == .SpriteType || type == .ButtonType {
-            self.addChild(hitLabel)
+            if value > NoValue {
+                self.addChild(valueLabel)
+            } else {
+                self.addChild(hitLabel)
+            }
         }
 
     }
@@ -80,15 +88,5 @@ class MySKNode: SKSpriteNode {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-/*
-    func setText() {
-        //hitLabel.text = "\(hitCounter)"
-    }
-*/
-    
-//    override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
-//        let firstTouch = touches.first
-//        let touchLocation = firstTouch!.locationInNode(self)
-//    }
 
 }

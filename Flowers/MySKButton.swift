@@ -12,15 +12,15 @@ let buttonName = "buttonName"
 class MySKButton: MySKNode {
     init(texture: SKTexture, frame: CGRect) {
         let buttonTexture = atlas.textureNamed("myRoundButton")
-        super.init(texture: buttonTexture, type:.ButtonType)
+        super.init(texture: buttonTexture, type:.ButtonType, value: NoValue)
         self.position = frame.origin
         self.size = frame.size
-        let buttonPicture = MySKNode(texture: texture, type: .ButtonType)
+        let buttonPicture = MySKNode(texture: texture, type: .ButtonType, value: NoValue)
         buttonPicture.size = size * 0.95
         buttonPicture.zPosition = 5
         buttonPicture.name = buttonName
         addChild(buttonPicture)
-        let shadow = MySKNode(texture: texture, type: .ButtonType)
+        let shadow = MySKNode(texture: texture, type: .ButtonType, value: NoValue)
         shadow.blendMode = SKBlendMode.Alpha
         shadow.colorBlendFactor = 0.5;
         shadow.color = SKColor.redColor()

@@ -513,7 +513,6 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
                     mySKNode = mySKNode.parent as! MySKNode
                 }
                 return MyNodeTypes.ButtonNode
-            default: return MyNodeTypes.none
             }
         default: return MyNodeTypes.none
         }
@@ -1386,8 +1385,7 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
                     sprite.hitCounter = savedSpriteInCycle.hitCounter
                     sprite.minValue = savedSpriteInCycle.minValue
                     sprite.maxValue = savedSpriteInCycle.maxValue
-                    sprite.hitLabel.text = "\(sprite.hitCounter)"
-                    sprite.valueLabel.text = "\(sprite.maxValue)"
+                    sprite.reload()
                     sprite.name = savedSpriteInCycle.name
                     gameArray[savedSpriteInCycle.column][savedSpriteInCycle.row] = true
                     addPhysicsBody(sprite)

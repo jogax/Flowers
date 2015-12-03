@@ -7,7 +7,7 @@
 //
 
 enum MySKNodeType: Int {
-    case SpriteType = 0, FrozenSprite, MovingSpriteType, ContainerType, ButtonType
+    case SpriteType = 0, ContainerType, ButtonType
 }
 let NoValue = -1
 import SpriteKit
@@ -21,17 +21,26 @@ class MySKNode: SKSpriteNode {
     var minValue: Int
     var maxValue: Int
     
+    var isCard = false
+    
 
     var hitCounter: Int = 0
 
     let type: MySKNodeType
     var hitLabel = SKLabelNode()
-    var valueLabel = SKLabelNode()
+    var maxValueLabel = SKLabelNode()
+    var minValueLabel = SKLabelNode()
+    var BGPicture = SKSpriteNode()
+    var BGPictureAdded = false
 
     init(texture: SKTexture, type:MySKNodeType, value: Int) {
         self.type = type
         self.minValue = value
         self.maxValue = value
+        
+        if value > NoValue {
+            isCard = true
+        }
         
         switch type {
         case .ContainerType:
@@ -40,8 +49,6 @@ class MySKNode: SKSpriteNode {
             hitCounter = 3
         case .SpriteType:
             hitCounter = 1
-        default:
-            hitCounter = 0
         }
 
         super.init(texture: texture, color: UIColor.clearColor(), size: texture.size())
@@ -58,10 +65,10 @@ class MySKNode: SKSpriteNode {
             hitLabel.fontSize = 15;
             hitLabel.text = "\(hitCounter)"
             
-            valueLabel.position = self.position - CGPointMake(23, -35)
-            valueLabel.fontSize = 25
-            valueLabel.text = "\(maxValue)"
-            valueLabel.zPosition = 100
+            minValueLabel.position = self.position - CGPointMake(23, -35)
+            minValueLabel.fontSize = 25
+            minValueLabel.text = "\(maxValue)"
+            minValueLabel.zPosition = 100
         }
         
         hitLabel.fontName = "ArielBold"
@@ -69,18 +76,50 @@ class MySKNode: SKSpriteNode {
         hitLabel.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.Center
         hitLabel.userInteractionEnabled = false
 
-        valueLabel.fontName = "ArielBold"
-        valueLabel.fontColor = SKColor.blackColor()
-        valueLabel.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.Left
-        valueLabel.verticalAlignmentMode = SKLabelVerticalAlignmentMode.Top
-        valueLabel.userInteractionEnabled = false
+        maxValueLabel.fontName = "ArielBold"
+        maxValueLabel.fontColor = SKColor.blackColor()
+        maxValueLabel.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.Left
+        maxValueLabel.verticalAlignmentMode = SKLabelVerticalAlignmentMode.Top
+        maxValueLabel.userInteractionEnabled = false
+        maxValueLabel.fontSize = 25
 
+        minValueLabel.fontName = "ArielBold"
+        minValueLabel.fontColor = SKColor.blackColor()
+        minValueLabel.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.Left
+        minValueLabel.verticalAlignmentMode = SKLabelVerticalAlignmentMode.Top
+        minValueLabel.userInteractionEnabled = false
+
+
+        
         if type == .SpriteType || type == .ButtonType {
-            if value > NoValue {
-                self.addChild(valueLabel)
+            if isCard {
+                self.addChild(minValueLabel)
             } else {
                 self.addChild(hitLabel)
             }
+        }
+
+    }
+    
+    func reload() {
+        if isCard {
+            minValueLabel.text = "\(minValue)"
+            maxValueLabel.text = "\(maxValue)"
+            if minValue != maxValue {
+                if !BGPictureAdded {
+                    self.addChild(BGPicture)
+                    BGPicture.texture = self.texture
+                    BGPictureAdded = true
+                    BGPicture.position = CGPointMake(-3, 25)
+                    BGPicture.size = size
+                    BGPicture.zPosition = self.zPosition - 1
+                    BGPicture.addChild(maxValueLabel)
+                    maxValueLabel.position = CGPointMake(-20, 35)
+                    maxValueLabel.zPosition = self.zPosition + 1
+                }
+            }
+        } else {
+            hitLabel.text = "\(hitCounter)"
         }
 
     }

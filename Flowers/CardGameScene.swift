@@ -64,6 +64,7 @@ class CardGameScene: MyGameScene {
             }
             sprite.hitCounter = movingSprite.hitCounter + sprite.hitCounter
             sprite.hitLabel.text = "\(sprite.hitCounter)"
+            sprite.reload()
             
             playSound("Sprite1", volume: GV.soundVolume)
             

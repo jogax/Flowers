@@ -25,6 +25,7 @@ enum LevelParamsType: Int {
 
 class LevelsForPlayWithSprites {
     
+    var CardPlay = false
     var level: Int
     var aktLevel: LevelParam
     let levelChanges = [
@@ -41,7 +42,7 @@ class LevelsForPlayWithSprites {
         "5,0,10,0,0,0,0,0,0,0,0"     // 5 times CountSpritesProContainer += 10
     ]
     private var levelContent = [
-        1: "-1,3,10,5,5,30,70,50,35,1,20", // first param (levelCount) say, how many levels to make for this Line, if -1, than all levels according levelchanges
+        1: "-1,4,10,5,5,30,70,50,35,1,20", // first param (levelCount) say, how many levels to make for this Line, if -1, than all levels according levelchanges
         2: "-1,4,20,5,5,30,70,60,35,3,3",
         3: "-1,5,20,5,5,30,70,50,30,3,3",
         4: "-1,6,20,5,5,30,70,50,30,2,3",

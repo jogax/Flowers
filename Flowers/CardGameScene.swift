@@ -22,7 +22,7 @@ class CardGameScene: MyGameScene {
         sizeMultiplier = CGSizeMake(multiplier, multiplier * height / width)
     }
     override func setBGImageNode()->SKSpriteNode {
-        return SKSpriteNode(imageNamed: "Holz.png")
+        return SKSpriteNode(imageNamed: "cardBackground.png")
     }
 
     override func generateValue(colorIndex: Int)->Int {
@@ -74,7 +74,8 @@ class CardGameScene: MyGameScene {
         } else {
             push(sprite, status: .FallingSprite)
             push(movingSprite, status: .FallingMovingSprite)
-            
+//            pull()
+
             sprite.zPosition = 0
             movingSprite.zPosition = 0
             movingSprite.physicsBody?.categoryBitMask = PhysicsCategory.None

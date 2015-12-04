@@ -118,6 +118,7 @@ struct SavedSprite {
     var hitCounter: Int = 0
     var minValue: Int = NoValue
     var maxValue: Int = NoValue
+    var BGPictureAdded = false
     var column: Int = 0
     var row: Int = 0
 }
@@ -499,9 +500,14 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         switch node  {
         case is MyGameScene: return MyNodeTypes.MyGameScene
         case is SKLabelNode:
-            if testNode.parent is MyGameScene {
-                return MyNodeTypes.MyGameScene
+            switch testNode.parent {
+            case is MyGameScene: return MyNodeTypes.MyGameScene
+            case is SKSpriteNode: return MyNodeTypes.none
+            default: break
             }
+//            if testNode.parent is MyGameScene {
+//                return MyNodeTypes.MyGameScene
+//            }
             return MyNodeTypes.LabelNode
         case is MySKNode:
             var mySKNode: MySKNode = (testNode as! MySKNode)
@@ -1375,7 +1381,7 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
                 case .Removed:
                     //let spriteTexture = SKTexture(imageNamed: "sprite\(savedSpriteInCycle.colorIndex)")
                     let spriteTexture = getTexture(savedSpriteInCycle.colorIndex)
-                    let sprite = MySKNode(texture: spriteTexture, type: .SpriteType, value: NoValue)
+                    let sprite = MySKNode(texture: spriteTexture, type: .SpriteType, value: savedSpriteInCycle.minValue) //NoValue)
                     sprite.colorIndex = savedSpriteInCycle.colorIndex
                     sprite.position = savedSpriteInCycle.endPosition
                     sprite.startPosition = savedSpriteInCycle.startPosition
@@ -1385,7 +1391,7 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
                     sprite.hitCounter = savedSpriteInCycle.hitCounter
                     sprite.minValue = savedSpriteInCycle.minValue
                     sprite.maxValue = savedSpriteInCycle.maxValue
-                    sprite.reload()
+                    sprite.BGPictureAdded = savedSpriteInCycle.BGPictureAdded
                     sprite.name = savedSpriteInCycle.name
                     gameArray[savedSpriteInCycle.column][savedSpriteInCycle.row] = true
                     addPhysicsBody(sprite)
@@ -1393,6 +1399,7 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
                     spriteCount++
                     let spriteCountText: String = GV.language.getText(.TCSpriteCount)
                     spriteCountLabel.text = "\(spriteCountText) \(spriteCount)"
+                    sprite.reload()
                     
                 case .SizeChanged:
                     let sprite = self.childNodeWithName(savedSpriteInCycle.name)! as! MySKNode

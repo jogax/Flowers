@@ -114,8 +114,13 @@ class MySKNode: SKSpriteNode {
                     BGPicture.size = size
                     BGPicture.zPosition = self.zPosition - 1
                     BGPicture.addChild(maxValueLabel)
+                    BGPicture.userInteractionEnabled = false
                     maxValueLabel.position = CGPointMake(-20, 35)
                     maxValueLabel.zPosition = self.zPosition + 1
+                }
+            } else {
+                if BGPictureAdded {
+                    BGPicture.removeFromParent()
                 }
             }
         } else {

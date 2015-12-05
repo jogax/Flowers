@@ -14,7 +14,7 @@ let huDictionary: [TextConstants: String] = [
     .TCLevelScore:       "Pontszám:",
     .TCGameScore:        "Játék pontszám:",
     .TCTargetScore:      "elérendö pontszám:",
-    .TCTimeLeft:         "Maradék idő:",
+    .TCTimeLeft:         "Elhasznált idő:",
     .TCGameLost:         "Vesztettél!",
     .TCGameLost3:        "3-szor vesztettél. Előző szintre vissza!!!",
     .TCTargetNotReached: "A cél nem teljesült",

@@ -90,6 +90,45 @@ class FlowerGameScene: MyGameScene {
         spriteCountLabel.text = "\(spriteCountText) \(spriteCount)"
         checkGameFinished()
     }
-    
+
+    override func spriteDidCollideWithContainer(node1:MySKNode, node2:MySKNode) {
+        let movingSprite = node1
+        let container = node2
+        
+        let containerColorIndex = container.colorIndex
+        let spriteColorIndex = movingSprite.colorIndex
+        let OK = containerColorIndex == spriteColorIndex
+        
+        push(container, status: .HitcounterChanged)
+        push(movingSprite, status: .Removed)
+        
+        
+        //print("spriteName: \(containerColorIndex), containerName: \(spriteColorIndex)")
+        if OK {
+            if movingSprite.hitCounter < 100 {
+                container.hitCounter += scoreAddCorrected[movingSprite.hitCounter]! // when only 1 sprite, then add 0
+            } else {
+                container.hitCounter += movingSprite.hitCounter
+            }
+            showScore()
+            playSound("Container", volume: GV.soundVolume)
+        } else {
+            container.hitCounter -= movingSprite.hitCounter
+            showScore()
+            playSound("Funk_Bot", volume: GV.soundVolume)
+        }
+        
+        countMovingSprites = 0
+        
+        spriteCount--
+        let spriteCountText: String = GV.language.getText(.TCSpriteCount)
+        spriteCountLabel.text = "\(spriteCountText) \(spriteCount)"
+        
+        collisionActive = false
+        movingSprite.removeFromParent()
+        gameArray[movingSprite.column][movingSprite.row] = false
+        checkGameFinished()
+    }
+
 
 }

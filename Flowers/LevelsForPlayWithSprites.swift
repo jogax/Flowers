@@ -18,8 +18,8 @@ enum LevelParamsType: Int {
     MaxProzent = 6,
     ContainerSize = 7,
     SpriteSize = 8,
-    TargetScoreKorr = 9,
-    TimeLimitKorr = 10
+    TargetScoreKorr = 9//,
+    //TimeLimitKorr = 10
 }
 
 
@@ -29,26 +29,26 @@ class LevelsForPlayWithSprites {
     var level: Int
     var aktLevel: LevelParam
     let levelChanges = [
-        "5,0,1,0,0,0,0,0,0,2,0",    // 5 times CountSpritesProContainer += 10
-        "1,0,1,1,1,0,0,0,0,2,-1",     // 1 time CountColumns += 1, CountRows += 1, TargetScoreCorr += 1
-        "5,0,1,0,0,5,0,0,0,2,0",     // 5 times CountSpritesProContainer += 5, MinProzent += 5, TargetScoreCorr += 1
-        "1,0,0,1,1,0,0,0,0,1,-1",     // 1 time CountColumns += 1, CountRows += 1, TargetScoreCorr += 1
-        "5,0,10,0,0,0,5,0,0,0,0",     // 5 times MinProzent -= 3, MaxProzent += 5
-        "2,0,10,0,0,0,0,0,0,0,0",    // 2 times CountSpritesProContainer += 5
-        "1,0,0,1,1,0,0,0,0,1,0",     // 1 time CountColumns += 1, CountRows += 1, TargetScoreCorr += 1
-        "5,0,10,0,0,0,0,0,0,1,0",     // 5 times CountSpritesProContainer + 5, TargetScoreCorr += 1
-        "1,0,5,0,0,0,0,0,0,0,0",    // 2 times TimeLimitKorr -= 1
-        "1,0,0,1,1,0,0,0,0,1,0",     // 1 time CountColumns += 1, CountRows += 1, TargetScoreCorr += 1
-        "5,0,10,0,0,0,0,0,0,0,0"     // 5 times CountSpritesProContainer += 10
+        "5,0,1,0,0,0,0,0,0,2",//0",    // 5 times CountSpritesProContainer += 10
+        "1,0,1,1,1,0,0,0,0,2",//-1",     // 1 time CountColumns += 1, CountRows += 1, TargetScoreCorr += 1
+        "5,0,1,0,0,5,0,0,0,2",//,0",     // 5 times CountSpritesProContainer += 5, MinProzent += 5, TargetScoreCorr += 1
+        "1,0,0,1,1,0,0,0,0,1",//,-1",     // 1 time CountColumns += 1, CountRows += 1, TargetScoreCorr += 1
+        "5,0,10,0,0,0,5,0,0,0",//,0",     // 5 times MinProzent -= 3, MaxProzent += 5
+        "2,0,10,0,0,0,0,0,0,0",//,0",    // 2 times CountSpritesProContainer += 5
+        "1,0,0,1,1,0,0,0,0,1",//,0",     // 1 time CountColumns += 1, CountRows += 1, TargetScoreCorr += 1
+        "5,0,10,0,0,0,0,0,0,1",//,0",     // 5 times CountSpritesProContainer + 5, TargetScoreCorr += 1
+        "1,0,5,0,0,0,0,0,0,0",//,0",    // 2 times TimeLimitKorr -= 1
+        "1,0,0,1,1,0,0,0,0,1",//,0",     // 1 time CountColumns += 1, CountRows += 1, TargetScoreCorr += 1
+        "5,0,10,0,0,0,0,0,0,0",//,0"     // 5 times CountSpritesProContainer += 10
     ]
     private var levelContent = [
-        1: "-1,4,10,5,5,30,70,50,35,1,20", // first param (levelCount) say, how many levels to make for this Line, if -1, than all levels according levelchanges
-        2: "-1,4,20,5,5,30,70,60,35,3,3",
-        3: "-1,5,20,5,5,30,70,50,30,3,3",
-        4: "-1,6,20,5,5,30,70,50,30,2,3",
-        5: "-1,7,20,5,5,30,70,40,25,2,3",
-        6: "-1,8,20,5,5,30,70,40,25,2,3",
-        7: "-1,9,30,5,5,30,70,40,25,2,3"
+        1: "-1,4,10,5,5,30,70,50,35,1",//,20", // first param (levelCount) say, how many levels to make for this Line, if -1, than all levels according levelchanges
+        2: "-1,4,20,5,5,30,70,60,35,3",//,3",
+        3: "-1,5,20,5,5,30,70,50,30,3",//,3",
+        4: "-1,6,20,5,5,30,70,50,30,2",//,3",
+        5: "-1,7,20,5,5,30,70,40,25,2",//,3",
+        6: "-1,8,20,5,5,30,70,40,25,2",//,3",
+        7: "-1,9,30,5,5,30,70,40,25,2",//,3"
     ]
     var levelParam = [LevelParam]()
     
@@ -69,7 +69,7 @@ class LevelsForPlayWithSprites {
             aktLevelParam.containerSize = Int(paramArr[7])!
             aktLevelParam.spriteSize = Int(paramArr[8])!
             aktLevelParam.targetScoreKorr = Int(paramArr[9])!
-            aktLevelParam.timeLimitKorr = Int(paramArr[10])!
+            //aktLevelParam.timeLimitKorr = Int(paramArr[10])!
             levelParam.append(aktLevelParam)
             
             let aktIndex = levelParam.count - 1
@@ -86,7 +86,7 @@ class LevelsForPlayWithSprites {
                     aktLevelParam.containerSize = levelParam.last!.containerSize + Int(levelChangeArr[LevelParamsType.ContainerSize.rawValue])!
                     aktLevelParam.spriteSize = levelParam.last!.spriteSize + Int(levelChangeArr[LevelParamsType.SpriteSize.rawValue])!
                     aktLevelParam.targetScoreKorr = levelParam.last!.targetScoreKorr + Int(levelChangeArr[LevelParamsType.TargetScoreKorr.rawValue])!
-                    aktLevelParam.timeLimitKorr = levelParam.last!.timeLimitKorr + Int(levelChangeArr[LevelParamsType.TimeLimitKorr.rawValue])!
+                    //aktLevelParam.timeLimitKorr = levelParam.last!.timeLimitKorr + Int(levelChangeArr[LevelParamsType.TimeLimitKorr.rawValue])!
                     levelParam.append(aktLevelParam)
                     if levelParam.count - aktIndex > levelCount! {
                         break

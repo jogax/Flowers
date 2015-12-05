@@ -37,6 +37,55 @@ class CardGameScene: MyGameScene {
         valueTab.removeAll()
     }
 
+    override func getValueForContainer()->Int {
+        return 0
+    }
+
+    override func spriteDidCollideWithContainer(node1:MySKNode, node2:MySKNode) {
+        let movingSprite = node1
+        let container = node2
+        
+        let containerColorIndex = container.colorIndex
+        let movingSpriteColorIndex = movingSprite.colorIndex
+        
+        let OK = movingSpriteColorIndex == containerColorIndex &&
+        (
+            container.minValue == 0 ||
+            movingSprite.maxValue + 1 == container.minValue ||
+            movingSprite.minValue - 1 == container.maxValue
+        )
+
+        push(container, status: .HitcounterChanged)
+        push(movingSprite, status: .Removed)
+        
+        
+        //print("spriteName: \(containerColorIndex), containerName: \(spriteColorIndex)")
+        if OK  {
+            if container.maxValue < movingSprite.minValue {
+                container.maxValue = movingSprite.maxValue
+            } else {
+                container.minValue = movingSprite.minValue
+            }
+            container.reload()
+            //gameArray[movingSprite.column][movingSprite.row] = false
+            movingSprite.removeFromParent()
+            playSound("Container", volume: GV.soundVolume)
+        } else {
+            pull()
+        }
+        
+        countMovingSprites = 0
+        
+        spriteCount--
+        let spriteCountText: String = GV.language.getText(.TCSpriteCount)
+        spriteCountLabel.text = "\(spriteCountText) \(spriteCount)"
+        
+        collisionActive = false
+        movingSprite.removeFromParent()
+        gameArray[movingSprite.column][movingSprite.row] = false
+        checkGameFinished()
+    }
+
     override func spriteDidCollideWithMovingSprite(node1:MySKNode, node2:MySKNode) {
         let movingSprite = node1
         let sprite = node2
@@ -62,8 +111,6 @@ class CardGameScene: MyGameScene {
             } else {
                 sprite.minValue = movingSprite.minValue
             }
-            sprite.hitCounter = movingSprite.hitCounter + sprite.hitCounter
-            sprite.hitLabel.text = "\(sprite.hitCounter)"
             sprite.reload()
             
             playSound("Sprite1", volume: GV.soundVolume)
@@ -115,4 +162,46 @@ class CardGameScene: MyGameScene {
         checkGameFinished()
     }
 
+    override func checkGameFinished() {
+        
+        
+        let usedCellCount = checkGameArray()
+        let containersOK = checkContainers()
+        
+        if usedCellCount == 0 && containersOK { // Level completed, start a new game
+            
+            stopTimer()
+//            if countUp != nil {
+//                countUp!.invalidate()
+//                countUp = nil
+//                //playMusic("Winner", volume: GV.soundVolume)
+//            }
+            playMusic("Winner", volume: GV.musicVolume, loops: 0)
+            
+            let alert = UIAlertController(title: GV.language.getText(.TCLevelComplete),
+                message: GV.language.getText(TextConstants.TCCongratulations),
+                preferredStyle: .Alert)
+            let cancelAction = UIAlertAction(title: GV.language.getText(.TCReturn), style: .Cancel, handler: nil)
+            let againAction = UIAlertAction(title: GV.language.getText(TextConstants.TCNextLevel), style: .Default,
+                handler: {(paramAction:UIAlertAction!) in
+                    self.newGame(true)
+            })
+            alert.addAction(cancelAction)
+            alert.addAction(againAction)
+            parentViewController!.presentViewController(alert, animated: true, completion: nil)
+        }
+        if usedCellCount < minUsedCells {
+            generateSprites()
+        }
+    }
+
+    func checkContainers()->Bool {
+        for index in 0..<containers.count {
+            if containers[index].mySKNode.minValue != 1 && containers[index].mySKNode.maxValue != countSpritesProContainer {
+                return false
+            }
+        }
+        return true
+
+    }
 }

@@ -14,7 +14,7 @@ let enDictionary: [TextConstants: String] = [
     .TCLevelScore:       "score:",
     .TCGameScore:        "Game score:",
     .TCTargetScore:      "target Score:",
-    .TCTimeLeft:         "time left:",
+    .TCTimeLeft:         "used time:",
     .TCGameLost:         "you lost!",
     .TCGameLost3:        "You lose 3 times. Previous level starts.",
     .TCTargetNotReached: "target not reached",

@@ -14,7 +14,7 @@ let ruDictionary: [TextConstants: String] = [
     .TCLevelScore:       "Очки:",
     .TCGameScore:        "Очки в игре:",
     .TCTargetScore:      "получить очки:",
-    .TCTimeLeft:         "оставшийся время:",
+    .TCTimeLeft:         "используемое время:",
     .TCGameLost:         "ты проиграл!",
     .TCGameLost3:        "Ты проиграл в 3 раза! Назад к предыдущему уровню!",
     .TCTargetNotReached: "Цель не достигнутa",

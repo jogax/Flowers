@@ -14,7 +14,7 @@ let deDictionary: [TextConstants: String] = [
     .TCLevelScore:       "Summe",
     .TCGameScore:        "Gesamtsumme",
     .TCTargetScore:      "Ziel Gesamtsumme:",
-    .TCTimeLeft:         "Restzeit:",
+    .TCTimeLeft:         "verwendete Zeit:",
     .TCGameLost:         "Sie haben verloren!",
     .TCGameLost3:        "Sie haben 3 mal verloren. Startet vorherige Level.",
     .TCTargetNotReached: "Das Ziel ist nicht erreicht.",

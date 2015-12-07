@@ -154,6 +154,11 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         var colorIndex: Int
         var spriteName: String
         var spriteValue: Int
+        init(colorIndex: Int, spriteName: String){
+            self.colorIndex = colorIndex
+            self.spriteName = spriteName
+            self.spriteValue = 0
+        }
         init(colorIndex: Int, spriteName: String, spriteValue: Int){
             self.colorIndex = colorIndex
             self.spriteName = spriteName
@@ -311,9 +316,10 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         
         colorTab.removeAll(keepCapacity: false)
         var spriteName = 10000
-        for containerIndex in 0..<countContainers {
-            for _ in 0..<countSpritesProContainer! {
-                let colorTabLine = ColorTabLine(colorIndex: containerIndex, spriteName: "\(spriteName++)", spriteValue: generateValue(containerIndex))
+        
+        for _ in 0..<countSpritesProContainer! {
+            for containerIndex in 0..<countContainers {
+                 let colorTabLine = ColorTabLine(colorIndex: containerIndex, spriteName: "\(spriteName++)", spriteValue: generateValue(containerIndex))
                 colorTab.append(colorTabLine)
             }
         }
@@ -574,13 +580,14 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         }
         
         while colorTab.count > 0 && checkGameArray() < maxUsedCells {
-            let colorTabIndex = GV.random(0, max: colorTab.count - 1)
+            let colorTabIndex = colorTab.count - 1 //GV.random(0, max: colorTab.count - 1)
             let colorIndex = colorTab[colorTabIndex].colorIndex
             let spriteName = colorTab[colorTabIndex].spriteName
+            let value = colorTab[colorTabIndex].spriteValue
             colorTab.removeAtIndex(colorTabIndex)
             
             
-            let sprite = MySKNode(texture: getTexture(colorIndex), type: .SpriteType, value:colorTab[colorTabIndex].spriteValue)
+            let sprite = MySKNode(texture: getTexture(colorIndex), type: .SpriteType, value:value)
             sprite.size.width = spriteSize.width
             sprite.size.height = spriteSize.height
             //            let yKorr1: CGFloat = GV.onIpad ? 0.9 : 0.8
@@ -715,9 +722,9 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
     }
     
     override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?) {
-        if inFirstGenerateSprites {
-            return
-        }
+//        if inFirstGenerateSprites {
+//            return
+//        }
         if movedFromNode != nil {
             while self.childNodeWithName("myLine") != nil {
                 self.childNodeWithName("myLine")!.removeFromParent()

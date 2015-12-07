@@ -113,14 +113,18 @@ class MySKNode: SKSpriteNode {
                     BGPicture.position = CGPointMake(-3, 25)
                     BGPicture.size = size
                     BGPicture.zPosition = self.zPosition - 1
+                    //print("vor addMaxValueLabel")
                     BGPicture.addChild(maxValueLabel)
+                    //print("nach addMaxValueLabel")
                     BGPicture.userInteractionEnabled = false
                     maxValueLabel.position = CGPointMake(-20, 35)
                     maxValueLabel.zPosition = self.zPosition + 1
                 }
             } else {
                 if BGPictureAdded {
+                    maxValueLabel.removeFromParent()
                     BGPicture.removeFromParent()
+                    BGPictureAdded = false
                 }
             }
         } else {

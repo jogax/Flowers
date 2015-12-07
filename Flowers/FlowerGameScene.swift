@@ -34,7 +34,7 @@ class FlowerGameScene: MyGameScene {
         let OK = movingSpriteColorIndex == spriteColorIndex
         if OK {
             
-            push(sprite, status: .SizeChanged)
+            push(sprite, status: .Unification)
             push(movingSprite, status: .Removed)
             
             sprite.hitCounter = movingSprite.hitCounter + sprite.hitCounter

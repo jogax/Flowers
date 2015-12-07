@@ -85,13 +85,13 @@ struct Container {
 }
 
 enum SpriteStatus: Int, CustomStringConvertible {
-    case Added = 0, MovingStarted, SizeChanged, Mirrored, FallingMovingSprite, FallingSprite, HitcounterChanged, Removed
+    case Added = 0, MovingStarted, Unification, Mirrored, FallingMovingSprite, FallingSprite, HitcounterChanged, Removed
     
     var statusName: String {
         let statusNames = [
             "Added",
             "MovingStarted",
-            "SizeChanged",
+            "Unification",
             "Mirrored",
             "FallingMovingSprite",
             "FallingSprite",
@@ -153,9 +153,11 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
     struct ColorTabLine {
         var colorIndex: Int
         var spriteName: String
-        init(colorIndex: Int, spriteName: String){
+        var spriteValue: Int
+        init(colorIndex: Int, spriteName: String, spriteValue: Int){
             self.colorIndex = colorIndex
             self.spriteName = spriteName
+            self.spriteValue = spriteValue
         }
     }
     
@@ -179,7 +181,8 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
     
     //let timeLimitKorr = 5 // sec for pro Sprite
     var timeCount = 0 // seconds
-    
+//    var startTime: NSDate?
+//    var startTimeOrig: NSDate?
     var timer: NSTimer?
     var countUp: NSTimer?
     var waitForSKActionEnded: NSTimer?
@@ -259,7 +262,7 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             
             makeSpezialThings()
             prepareNextGame()
-            generateSprites()
+            generateSprites(true)
         } else {
             playMusic("MyMusic", volume: GV.musicVolume, loops: 0)
             
@@ -310,7 +313,7 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         var spriteName = 10000
         for containerIndex in 0..<countContainers {
             for _ in 0..<countSpritesProContainer! {
-                let colorTabLine = ColorTabLine(colorIndex: containerIndex, spriteName: "\(spriteName++)")
+                let colorTabLine = ColorTabLine(colorIndex: containerIndex, spriteName: "\(spriteName++)", spriteValue: generateValue(containerIndex))
                 colorTab.append(colorTabLine)
             }
         }
@@ -430,7 +433,6 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         let undoTexture = SKTexture(image: images.getUndo())
         undoButton = MySKButton(texture: undoTexture, frame: CGRectMake(buttonXPosNormalized * 6, buttonYPos, buttonSize, buttonSize))
         undoButton!.name = "undo"
-        //undoButton!.hitLabel.text = "\(undoCount)"
         addChild(undoButton!)
         
         let previousLevelButtonTexture = SKTexture(image: images.getPfeillinks())
@@ -482,12 +484,7 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
     }
     
     func undoButtonPressed() {
-        let undoButton = self.childNodeWithName("undo")! as! MySKNode
-        if undoButton.hitCounter > 0 {
-            pull()
-            undoButton.hitCounter--
-            undoButton.hitLabel.text = "\(undoButton.hitCounter)"
-        }
+        pull()
     }
     
     func stopTimer() {
@@ -561,16 +558,11 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         
         stopTimer()
         
-//        if countUp != nil {
-//            countUp!.invalidate()
-//            countUp = nil
-//        }
         prepareNextGame()
-        generateSprites()
+        generateSprites(true)
     }
     
-    func generateSprites() {
-        //var first = inFirstGenerateSprites
+    func generateSprites(first: Bool) {
         var positionsTab = [(Int, Int)]() // all available Positions
         for column in 0..<countColumns {
             for row in 0..<countRows {
@@ -588,7 +580,7 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             colorTab.removeAtIndex(colorTabIndex)
             
             
-            let sprite = MySKNode(texture: getTexture(colorIndex), type: .SpriteType, value:generateValue(colorIndex))
+            let sprite = MySKNode(texture: getTexture(colorIndex), type: .SpriteType, value:colorTab[colorTabIndex].spriteValue)
             sprite.size.width = spriteSize.width
             sprite.size.height = spriteSize.height
             //            let yKorr1: CGFloat = GV.onIpad ? 0.9 : 0.8
@@ -613,17 +605,19 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             sprite.name = spriteName
             sprite.colorIndex = colorIndex
 
-//            if first {
-                lastShownNode = sprite
-//                first = false
-//            } else if inFirstGenerateSprites {
-//                sprite.hidden = true
-//            }
             addPhysicsBody(sprite)
             push(sprite, status: .Added)
             addChild(sprite)
         }
-        countUp = NSTimer.scheduledTimerWithTimeInterval(1.0, target: self, selector: Selector("doCountUp"), userInfo: nil, repeats: false)
+//        if first {
+//            startTime = NSDate()
+//            if (startTimeOrig != nil) {
+//                _ = 0
+//            } else {
+//                self.startTimeOrig = startTime
+//            }
+//            countUp = NSTimer.scheduledTimerWithTimeInterval(1.0, target: self, selector: Selector("doCountUp"), userInfo: nil, repeats: true)
+//        }
         stopped = false
     }
     
@@ -1265,53 +1259,26 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             }
         }
         if usedCellCount < minUsedCells {
-            generateSprites()
+            generateSprites(false)  // Nachgenerierung
         }
     }
     
     func doCountUp() {
         
         timeCount++
-        countUp = NSTimer.scheduledTimerWithTimeInterval(1.0, target: self, selector: Selector("doCountUp"), userInfo: nil, repeats: false)
+        //countUp = NSTimer.scheduledTimerWithTimeInterval(1.0, target: self, selector: Selector("doCountUp"), userInfo: nil, repeats: false)
         let countUpText = GV.language.getText(.TCTimeLeft)
         let minutes = Int(timeCount / 60)
         var seconds = "\(Int(timeCount % 60))"
         seconds = Int(seconds) < 10 ? "0\(seconds)" : "\(seconds)"
         countUpLabel.text = "\(countUpText) \(minutes):\(seconds)"
-        
-        print ("\(countUpLabel.text), timeCount: \(timeCount)")
-//        if timeLimit == 0 {
-//            stopped = true
-//            countLostGames++
-//            playSound("Timeout", volume: GV.soundVolume)
-//            countUp!.invalidate()
-//            countUp = nil
-//            let alert = UIAlertController(title: GV.language.getText(TextConstants.TCTimeout),
-//                message: GV.language.getText(.TCGameOver),
-//                preferredStyle: .Alert)
-//            let cancelAction = UIAlertAction(title: GV.language.getText(.TCReturn), style: .Cancel, handler: nil)
-//            let againAction = UIAlertAction(title: GV.language.getText(TextConstants.TCGameAgain), style: .Default,
-//                handler: {(paramAction:UIAlertAction!) in
-//                    self.newGame(false)
-//            })
-//            alert.addAction(cancelAction)
-//            alert.addAction(againAction)
-//            parentViewController!.presentViewController(alert, animated: true, completion: nil)
-//        }
+        //let timeInterval = NSDate().timeIntervalSinceDate(startTime!)
+        //print ("\(countUpLabel.text), timeCount: \(timeCount), timeInterval: \(timeInterval), startTime: \(startTime)")
     }
     
     func showTimeLeft() {
     }
-    /*
-    func printGameArray() {
-    for column in 0..<countColumns {
-    for row in 0..<countRows {
-    print(gameArray[row][countColumns - 1 - column] ? "T " : "F ")
-    }
-    //print()
-    }
-    }
-    */
+    
     func push(sprite: MySKNode, status: SpriteStatus) {
         var savedSprite = SavedSprite()
         savedSprite.name = sprite.name!
@@ -1348,7 +1315,7 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
                         let colorIndex = savedSpriteInCycle.colorIndex
                         let searchName = "\(spriteName)"
                         self.childNodeWithName(searchName)!.removeFromParent()
-                        let colorTabLine = ColorTabLine(colorIndex: colorIndex, spriteName: spriteName)
+                        let colorTabLine = ColorTabLine(colorIndex: colorIndex, spriteName: spriteName, spriteValue: savedSpriteInCycle.minValue)
                         colorTab.append(colorTabLine)
                         gameArray[savedSpriteInCycle.column][savedSpriteInCycle.row] = false
                     }
@@ -1375,11 +1342,14 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
                     spriteCountLabel.text = "\(spriteCountText) \(spriteCount)"
                     sprite.reload()
                     
-                case .SizeChanged:
+                case .Unification:
                     let sprite = self.childNodeWithName(savedSpriteInCycle.name)! as! MySKNode
                     sprite.hitCounter = savedSpriteInCycle.hitCounter
                     sprite.size = savedSpriteInCycle.size
+                    sprite.minValue = savedSpriteInCycle.minValue
+                    sprite.maxValue = savedSpriteInCycle.maxValue
                     sprite.hitLabel.text = "\(sprite.hitCounter)"
+                    sprite.reload()
                     
                 case .HitcounterChanged:
                     containers[savedSpriteInCycle.colorIndex].mySKNode.hitCounter = savedSpriteInCycle.hitCounter

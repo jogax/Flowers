@@ -103,7 +103,7 @@ class CardGameScene: MyGameScene {
         if OK {
             
             
-            push(sprite, status: .SizeChanged)
+            push(sprite, status: .Unification)
             push(movingSprite, status: .Removed)
             
             if sprite.maxValue < movingSprite.minValue {
@@ -191,7 +191,7 @@ class CardGameScene: MyGameScene {
             parentViewController!.presentViewController(alert, animated: true, completion: nil)
         }
         if usedCellCount < minUsedCells {
-            generateSprites()
+            generateSprites(false)  // Nachgenerierung
         }
     }
 

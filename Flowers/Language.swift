@@ -21,6 +21,7 @@ enum TextConstants: Int {
     TCGameLost3,
     TCTargetNotReached,
     TCSpriteCount,
+    TCCardCount,
     TCReturn,
     TCOK,
     TCLevelComplete,

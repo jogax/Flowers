@@ -10,6 +10,15 @@ import SpriteKit
 import AVFoundation
 
 class FlowerGameScene: MyGameScene {
+    let levelScorePosKorr = CGPointMake(GV.onIpad ? 0.05 : 0.05, GV.onIpad ? 0.93 : 0.92)
+    let gameScorePosKorr = CGPointMake(GV.onIpad ? 0.05 : 0.05, GV.onIpad ? 0.95 : 0.94)
+    let spriteCountPosKorr = CGPointMake(GV.onIpad ? 0.05 : 0.05, GV.onIpad ? 0.91 : 0.90)
+    let targetPosKorr = CGPointMake(GV.onIpad ? 0.98 : 0.98, GV.onIpad ? 0.93 : 0.92)
+    
+    var gameScoreLabel = SKLabelNode(fontNamed: "AvenirNext-Bold")
+    var levelScoreLabel = SKLabelNode(fontNamed: "AvenirNext-Bold")
+    var targetScoreLabel = SKLabelNode(fontNamed: "AvenirNext-Bold")
+    
     override func getTexture(index: Int)->SKTexture {
         return atlas.textureNamed ("sprite\(index)")
     }
@@ -20,6 +29,72 @@ class FlowerGameScene: MyGameScene {
     }
     override func setBGImageNode()->SKSpriteNode {
         return SKSpriteNode(imageNamed: "bgImage.png")
+    }
+
+    override func showScore() {
+        levelScore = 0
+        for index in 0..<containers.count {
+            levelScore += containers[index].mySKNode.hitCounter
+            containers[index].label.text = "\(containers[index].mySKNode.hitCounter)"
+        }
+        let levelScoreText: String = GV.language.getText(.TCLevelScore)
+        levelScoreLabel.text = "\(levelScoreText) \(levelScore)"
+        
+    }
+    
+    override     func changeLanguage()->Bool {
+        levelLabel.text = GV.language.getText(TextConstants.TCLevel) + ": \(levelIndex + 1)"
+        gameScoreLabel.text = "\(GV.language.getText(.TCGameScore)) \(gameScore)"
+        spriteCountLabel.text = "\(GV.language.getText(.TCSpriteCount)) \(spriteCount)"
+        targetScoreLabel.text = "\(GV.language.getText(.TCTargetScore)) \(targetScore)"
+        showScore()
+        return true
+    }
+
+    override func spezialPrepareFunc() {
+        let gameScoreText: String = GV.language.getText(.TCGameScore)
+        gameScoreLabel.text = "\(gameScoreText) \(gameScore)"
+        
+        
+        gameScoreLabel.position = CGPointMake(self.position.x + self.size.width * gameScorePosKorr.x, self.position.y + self.size.height * gameScorePosKorr.y)
+        gameScoreLabel.fontColor = SKColor.blackColor()
+        gameScoreLabel.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.Left
+        gameScoreLabel.verticalAlignmentMode = SKLabelVerticalAlignmentMode.Center
+        gameScoreLabel.fontSize = 15;
+        //gameScoreLabel.fontName = "ArielBold"
+        self.addChild(gameScoreLabel)
+        
+        levelScoreLabel.position = CGPointMake(self.position.x + self.size.width * levelScorePosKorr.x, self.position.y + self.size.height * levelScorePosKorr.y)
+        levelScoreLabel.fontColor = SKColor.blackColor()
+        levelScoreLabel.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.Left
+        levelScoreLabel.verticalAlignmentMode = SKLabelVerticalAlignmentMode.Center
+        levelScoreLabel.fontSize = 15;
+        //levelScoreLabel.fontName = "ArielBold"
+        self.addChild(levelScoreLabel)
+        showScore()
+
+        targetScoreLabel.position = CGPointMake(self.position.x + self.size.width * targetPosKorr.x, self.position.y + self.size.height * targetPosKorr.y)
+        targetScoreLabel.fontColor = SKColor.blackColor()
+        targetScoreLabel.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.Right
+        targetScoreLabel.verticalAlignmentMode = SKLabelVerticalAlignmentMode.Center
+        targetScoreLabel.fontSize = 15;
+        targetScore = countContainers * countSpritesProContainer! * targetScoreKorr
+        let targetScoreText: String = GV.language.getText(.TCTargetScore)
+        targetScoreLabel.text = "\(targetScoreText) \(targetScore)"
+        self.addChild(targetScoreLabel)
+
+        spriteCountLabel.position = CGPointMake(self.position.x + self.size.width * spriteCountPosKorr.x, self.position.y + self.size.height * spriteCountPosKorr.y)
+        spriteCountLabel.fontColor = SKColor.blackColor()
+        spriteCountLabel.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.Left
+        spriteCountLabel.verticalAlignmentMode = SKLabelVerticalAlignmentMode.Center
+        spriteCountLabel.fontSize = 15;
+        spriteCount = Int(CGFloat(countContainers * countSpritesProContainer!))
+        let spriteCountText: String = GV.language.getText(.TCSpriteCount)
+        spriteCountLabel.text = "\(spriteCountText) \(spriteCount)"
+        self.addChild(spriteCountLabel)
+        
+        gameScoreLabel.text = "\(gameScoreText) \(gameScore)"
+
     }
     
     override func spriteDidCollideWithMovingSprite(node1:MySKNode, node2:MySKNode) {
@@ -129,6 +204,49 @@ class FlowerGameScene: MyGameScene {
         gameArray[movingSprite.column][movingSprite.row] = false
         checkGameFinished()
     }
+    override func prepareContainers() {
+        
+        colorTab.removeAll(keepCapacity: false)
+        var spriteName = 10000
+        
+        for _ in 0..<countSpritesProContainer! {
+            for containerIndex in 0..<countContainers {
+                let colorTabLine = ColorTabLine(colorIndex: containerIndex, spriteName: "\(spriteName++)", spriteValue: generateValue(containerIndex))
+                colorTab.append(colorTabLine)
+            }
+        }
+        
+        let xDelta = size.width / CGFloat(countContainers)
+        for index in 0..<countContainers {
+            let centerX = (size.width / CGFloat(countContainers)) * CGFloat(index) + xDelta / 2
+            let centerY = size.height * containersPosCorr.y
+            let cont: Container
+            cont = Container(mySKNode: MySKNode(texture: getTexture(index), type: .ContainerType, value: getValueForContainer()), label: SKLabelNode(), countHits: 0)
+            containers.append(cont)
+            containers[index].mySKNode.name = "\(index)"
+            containers[index].mySKNode.position = CGPoint(x: centerX, y: centerY)
+            containers[index].mySKNode.size.width = containerSize.width
+            containers[index].mySKNode.size.height = containerSize.height
+            
+            containers[index].label.text = "0"
+            containers[index].label.fontSize = 20;
+            containers[index].label.fontName = "ArielBold"
+            containers[index].label.position = CGPointMake(CGRectGetMidX(containers[index].mySKNode.frame), CGRectGetMidY(containers[index].mySKNode.frame) * 1.03)
+            containers[index].label.name = "label"
+            containers[index].label.fontColor = SKColor.blackColor()
+            self.addChild(containers[index].label)
+            
+            containers[index].mySKNode.colorIndex = index
+            containers[index].mySKNode.physicsBody = SKPhysicsBody(circleOfRadius: containers[index].mySKNode.size.width / 3) // 1
+            containers[index].mySKNode.physicsBody?.dynamic = true // 2
+            containers[index].mySKNode.physicsBody?.categoryBitMask = PhysicsCategory.Container
+            containers[index].mySKNode.physicsBody?.contactTestBitMask = PhysicsCategory.MovingSprite
+            containers[index].mySKNode.physicsBody?.collisionBitMask = PhysicsCategory.None
+            countColorsProContainer.append(countSpritesProContainer!)
+            addChild(containers[index].mySKNode)
+        }
+    }
+
 
 
 }

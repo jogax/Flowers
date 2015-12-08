@@ -67,7 +67,7 @@ class MySKNode: SKSpriteNode {
             
             minValueLabel.position = self.position - CGPointMake(23, -35)
             minValueLabel.fontSize = 25
-            minValueLabel.text = "\(maxValue)"
+            minValueLabel.text = "\(minValue)"
             minValueLabel.zPosition = 100
         }
         

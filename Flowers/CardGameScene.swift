@@ -12,6 +12,8 @@ import AVFoundation
 class CardGameScene: MyGameScene {
     
     var valueTab = [Int]()
+    let spriteCountPosKorr = CGPointMake(GV.onIpad ? 0.05 : 0.05, GV.onIpad ? 0.95 : 0.95)
+
     override func getTexture(index: Int)->SKTexture {
         return atlas.textureNamed ("card\(index)")
     }
@@ -21,6 +23,7 @@ class CardGameScene: MyGameScene {
         let height: CGFloat = 89.0
         sizeMultiplier = CGSizeMake(multiplier, multiplier * height / width)
     }
+    
     override func setBGImageNode()->SKSpriteNode {
         return SKSpriteNode(imageNamed: "cardBackground.png")
     }
@@ -35,10 +38,22 @@ class CardGameScene: MyGameScene {
     
     override func spezialPrepareFunc() {
         valueTab.removeAll()
+        
+        spriteCountLabel.position = CGPointMake(self.position.x + self.size.width * spriteCountPosKorr.x, self.position.y + self.size.height * spriteCountPosKorr.y)
+        spriteCountLabel.fontColor = SKColor.blackColor()
+        spriteCountLabel.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.Left
+        spriteCountLabel.verticalAlignmentMode = SKLabelVerticalAlignmentMode.Center
+        spriteCountLabel.fontSize = 15;
+        spriteCount = Int(CGFloat(countContainers * countSpritesProContainer!))
+        let spriteCountText: String = GV.language.getText(.TCCardCount)
+        spriteCountLabel.text = "\(spriteCountText) \(spriteCount)"
+        self.addChild(spriteCountLabel)
+        
+
     }
 
     override func getValueForContainer()->Int {
-        return 0
+        return countSpritesProContainer!
     }
 
     override func spriteDidCollideWithContainer(node1:MySKNode, node2:MySKNode) {
@@ -204,4 +219,40 @@ class CardGameScene: MyGameScene {
         return true
 
     }
+    
+    override func prepareContainers() {
+        
+        colorTab.removeAll(keepCapacity: false)
+        var spriteName = 10000
+        
+        for _ in 0..<countSpritesProContainer! {
+            for containerIndex in 0..<countContainers {
+                let colorTabLine = ColorTabLine(colorIndex: containerIndex, spriteName: "\(spriteName++)", spriteValue: generateValue(containerIndex))
+                colorTab.append(colorTabLine)
+            }
+        }
+        
+        let xDelta = size.width / CGFloat(countContainers)
+        for index in 0..<countContainers {
+            let centerX = (size.width / CGFloat(countContainers)) * CGFloat(index) + xDelta / 2
+            let centerY = size.height * containersPosCorr.y
+            let cont: Container
+            cont = Container(mySKNode: MySKNode(texture: getTexture(index), type: .ContainerType, value: getValueForContainer()), label: SKLabelNode(), countHits: 0)
+            containers.append(cont)
+            containers[index].mySKNode.name = "\(index)"
+            containers[index].mySKNode.position = CGPoint(x: centerX, y: centerY)
+            containers[index].mySKNode.size.width = containerSize.width
+            containers[index].mySKNode.size.height = containerSize.height
+            
+            containers[index].mySKNode.colorIndex = index
+            containers[index].mySKNode.physicsBody = SKPhysicsBody(circleOfRadius: containers[index].mySKNode.size.width / 3) // 1
+            containers[index].mySKNode.physicsBody?.dynamic = true // 2
+            containers[index].mySKNode.physicsBody?.categoryBitMask = PhysicsCategory.Container
+            containers[index].mySKNode.physicsBody?.contactTestBitMask = PhysicsCategory.MovingSprite
+            containers[index].mySKNode.physicsBody?.collisionBitMask = PhysicsCategory.None
+            countColorsProContainer.append(countSpritesProContainer!)
+            addChild(containers[index].mySKNode)
+        }
+    }
+
 }

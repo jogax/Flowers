@@ -19,6 +19,7 @@ let ruDictionary: [TextConstants: String] = [
     .TCGameLost3:        "Ты проиграл в 3 раза! Назад к предыдущему уровню!",
     .TCTargetNotReached: "Цель не достигнутa",
     .TCSpriteCount:      "количество цветов:",
+    .TCCardCount:        "количество карт:",
     .TCReturn:           "назад",
     .TCOK:               "OK",
     .TCLevelComplete:    "Уровень завершен",

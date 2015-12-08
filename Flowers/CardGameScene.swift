@@ -23,7 +23,15 @@ class CardGameScene: MyGameScene {
         let height: CGFloat = 89.0
         sizeMultiplier = CGSizeMake(multiplier, multiplier * height / width)
     }
-    
+
+    override func changeLanguage()->Bool {
+        playerLabel.text = GV.language.getText(TextConstants.TCGamer) + ": \(GV.globalParam.aktName)"
+        levelLabel.text = GV.language.getText(TextConstants.TCLevel) + ": \(levelIndex + 1)"
+        spriteCountLabel.text = "\(GV.language.getText(.TCCardCount)) + \(spriteCount)"
+        showTimeLeft()
+        return true
+    }
+
     override func setBGImageNode()->SKSpriteNode {
         return SKSpriteNode(imageNamed: "cardBackground.png")
     }
@@ -38,16 +46,17 @@ class CardGameScene: MyGameScene {
     
     override func spezialPrepareFunc() {
         valueTab.removeAll()
-        
-        spriteCountLabel.position = CGPointMake(self.position.x + self.size.width * spriteCountPosKorr.x, self.position.y + self.size.height * spriteCountPosKorr.y)
-        spriteCountLabel.fontColor = SKColor.blackColor()
-        spriteCountLabel.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.Left
-        spriteCountLabel.verticalAlignmentMode = SKLabelVerticalAlignmentMode.Center
-        spriteCountLabel.fontSize = 15;
         spriteCount = Int(CGFloat(countContainers * countSpritesProContainer!))
-        let spriteCountText: String = GV.language.getText(.TCCardCount)
-        spriteCountLabel.text = "\(spriteCountText) \(spriteCount)"
-        self.addChild(spriteCountLabel)
+        let spriteCountText: String = GV.language.getText(.TCCardCount) + " \(spriteCount)"
+        createLabels(spriteCountLabel, text: spriteCountText, position: CGPointMake(self.position.x + self.size.width * spriteCountPosKorr.x, self.position.y + self.size.height * spriteCountPosKorr.y), horAlignment: .Left)
+//        spriteCountLabel.position = CGPointMake(self.position.x + self.size.width * spriteCountPosKorr.x, self.position.y + self.size.height * spriteCountPosKorr.y)
+//        spriteCountLabel.fontColor = SKColor.blackColor()
+//        spriteCountLabel.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.Left
+//        spriteCountLabel.verticalAlignmentMode = SKLabelVerticalAlignmentMode.Center
+//        spriteCountLabel.fontSize = 15;
+//        spriteCount = Int(CGFloat(countContainers * countSpritesProContainer!))
+//        spriteCountLabel.text = "\(spriteCountText) \(spriteCount)"
+//        self.addChild(spriteCountLabel)
         
 
     }
@@ -172,7 +181,7 @@ class CardGameScene: MyGameScene {
             showScore()
         }
         spriteCount--
-        let spriteCountText: String = GV.language.getText(.TCSpriteCount)
+        let spriteCountText: String = GV.language.getText(.TCCardCount)
         spriteCountLabel.text = "\(spriteCountText) \(spriteCount)"
         checkGameFinished()
     }

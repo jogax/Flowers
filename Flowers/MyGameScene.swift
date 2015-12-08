@@ -202,7 +202,7 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
     var containers = [Container]()
     var colorTab = [ColorTabLine]()
     let containersPosCorr = CGPointMake(GV.onIpad ? 0.98 : 0.98, GV.onIpad ? 0.85 : 0.85)
-    let levelPosKorr = CGPointMake(GV.onIpad ? 0.7 : 0.7, GV.onIpad ? 0.97 : 0.97)
+    var levelPosKorr = CGPointMake(GV.onIpad ? 0.7 : 0.7, GV.onIpad ? 0.97 : 0.97)
     let playerPosKorr = CGPointMake(GV.onIpad ? 0.3 : 0.3, GV.onIpad ? 0.97 : 0.97)
     let countUpPosKorr = CGPointMake(GV.onIpad ? 0.98 : 0.98, GV.onIpad ? 0.95 : 0.94)
     var countColorsProContainer = [Int]()
@@ -318,8 +318,12 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         
         self.addChild(labelBackground)
         
+        if GV.globalParam.aktName != GV.dummyName {
+            createLabels(playerLabel, text: GV.language.getText(TextConstants.TCGamer) + ": \(GV.globalParam.aktName)", position: CGPointMake(self.position.x + self.size.width * playerPosKorr.x, self.position.y + self.size.height * playerPosKorr.y))
+        } else {
+            levelPosKorr.x = 0.5
+        }
         createLabels(levelLabel, text: GV.language.getText(TextConstants.TCLevel) + ": \(levelIndex + 1)", position: CGPointMake(self.position.x + self.size.width * levelPosKorr.x, self.position.y + self.size.height * levelPosKorr.y) )
-        createLabels(playerLabel, text: GV.language.getText(TextConstants.TCLevel) + ": \(levelIndex + 1)", position: CGPointMake(self.position.x + self.size.width * levelPosKorr.x, self.position.y + self.size.height * playerPosKorr.y))
         createLabels(countUpLabel, text: "", position: CGPointMake(self.position.x + self.size.width * countUpPosKorr.x, self.position.y + self.size.height * countUpPosKorr.y), horAlignment: .Right )
         
         showTimeLeft()
@@ -1175,14 +1179,19 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
     func doCountUp() {
         
         timeCount++
-        //countUp = NSTimer.scheduledTimerWithTimeInterval(1.0, target: self, selector: Selector("doCountUp"), userInfo: nil, repeats: false)
-        let countUpText = GV.language.getText(.TCTimeLeft)
+         let countUpText = GV.language.getText(.TCTimeLeft)
         let minutes = Int(timeCount / 60)
         var seconds = "\(Int(timeCount % 60))"
         seconds = Int(seconds) < 10 ? "0\(seconds)" : "\(seconds)"
         countUpLabel.text = "\(countUpText) \(minutes):\(seconds)"
         //let timeInterval = NSDate().timeIntervalSinceDate(startTime!)
         //print ("\(countUpLabel.text), timeCount: \(timeCount), timeInterval: \(timeInterval), startTime: \(startTime)")
+    }
+    
+    func startTimer() {
+        if countUp == nil {
+            countUp = NSTimer.scheduledTimerWithTimeInterval(1.0, target: self, selector: Selector("doCountUp"), userInfo: nil, repeats: true)
+        }
     }
     
     func showTimeLeft() {

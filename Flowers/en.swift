@@ -43,7 +43,7 @@ let enDictionary: [TextConstants: String] = [
     .TCDelete:           "Delete",
     .TCNewName:          "New Name",
     .TCChoose:           "Choose",
-    .TCGamer:            "Gamer: ",
+    .TCGamer:            "Gamer",
     .TCGameModus:        "Gamemodus",
     .TCSoundVolume:      "Sound Volume",
     .TCMusicVolume:      "Musik Volume",

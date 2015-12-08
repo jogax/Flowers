@@ -42,12 +42,14 @@ class FlowerGameScene: MyGameScene {
         
     }
     
-    override     func changeLanguage()->Bool {
+    override func changeLanguage()->Bool {
+        playerLabel.text = GV.language.getText(TextConstants.TCGamer) + ": \(GV.globalParam.aktName)"
         levelLabel.text = GV.language.getText(TextConstants.TCLevel) + ": \(levelIndex + 1)"
         gameScoreLabel.text = "\(GV.language.getText(.TCGameScore)) \(gameScore)"
         spriteCountLabel.text = "\(GV.language.getText(.TCSpriteCount)) \(spriteCount)"
         targetScoreLabel.text = "\(GV.language.getText(.TCTargetScore)) \(targetScore)"
         showScore()
+        showTimeLeft()
         return true
     }
 
@@ -55,15 +57,17 @@ class FlowerGameScene: MyGameScene {
         let gameScoreText: String = GV.language.getText(.TCGameScore)
         gameScoreLabel.text = "\(gameScoreText) \(gameScore)"
         
+        createLabels(gameScoreLabel, text: "", position: CGPointMake(self.position.x + self.size.width * gameScorePosKorr.x, self.position.y + self.size.height * gameScorePosKorr.y), horAlignment: .Left)
         
-        gameScoreLabel.position = CGPointMake(self.position.x + self.size.width * gameScorePosKorr.x, self.position.y + self.size.height * gameScorePosKorr.y)
-        gameScoreLabel.fontColor = SKColor.blackColor()
-        gameScoreLabel.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.Left
-        gameScoreLabel.verticalAlignmentMode = SKLabelVerticalAlignmentMode.Center
-        gameScoreLabel.fontSize = 15;
-        //gameScoreLabel.fontName = "ArielBold"
-        self.addChild(gameScoreLabel)
+//        gameScoreLabel.position = CGPointMake(self.position.x + self.size.width * gameScorePosKorr.x, self.position.y + self.size.height * gameScorePosKorr.y)
+//        gameScoreLabel.fontColor = SKColor.blackColor()
+//        gameScoreLabel.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.Left
+//        gameScoreLabel.verticalAlignmentMode = SKLabelVerticalAlignmentMode.Center
+//        gameScoreLabel.fontSize = 15;
+//        //gameScoreLabel.fontName = "ArielBold"
+//        self.addChild(gameScoreLabel)
         
+        //createLabels(levelScoreLabel, text: <#T##String#>, position: <#T##CGPoint#>, horAlignment: <#T##SKLabelHorizontalAlignmentMode#>)
         levelScoreLabel.position = CGPointMake(self.position.x + self.size.width * levelScorePosKorr.x, self.position.y + self.size.height * levelScorePosKorr.y)
         levelScoreLabel.fontColor = SKColor.blackColor()
         levelScoreLabel.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.Left

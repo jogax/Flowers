@@ -80,6 +80,7 @@ class ViewController: UIViewController, SettingsDelegate {
             startScene()
         } else {
             scene?.playMusic("MyMusic", volume: GV.musicVolume, loops: 0)
+            scene?.startTimer()
         }
     }
 

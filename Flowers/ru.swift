@@ -43,7 +43,7 @@ let ruDictionary: [TextConstants: String] = [
     .TCDelete:           "Удалить",
     .TCNewName:          "Новое имя",
     .TCChoose:           "Выбрать",
-    .TCGamer:            "Игрок: ",
+    .TCGamer:            "Игрок",
     .TCGameModus:        "Тип игры",
     .TCSoundVolume:      "Громкость звука",
     .TCMusicVolume:      "Громкость музыки",

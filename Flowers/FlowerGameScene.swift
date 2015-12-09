@@ -54,51 +54,19 @@ class FlowerGameScene: MyGameScene {
     }
 
     override func spezialPrepareFunc() {
-        let gameScoreText: String = GV.language.getText(.TCGameScore)
-        gameScoreLabel.text = "\(gameScoreText) \(gameScore)"
         
-        createLabels(gameScoreLabel, text: "", position: CGPointMake(self.position.x + self.size.width * gameScorePosKorr.x, self.position.y + self.size.height * gameScorePosKorr.y), horAlignment: .Left)
-        
-//        gameScoreLabel.position = CGPointMake(self.position.x + self.size.width * gameScorePosKorr.x, self.position.y + self.size.height * gameScorePosKorr.y)
-//        gameScoreLabel.fontColor = SKColor.blackColor()
-//        gameScoreLabel.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.Left
-//        gameScoreLabel.verticalAlignmentMode = SKLabelVerticalAlignmentMode.Center
-//        gameScoreLabel.fontSize = 15;
-//        //gameScoreLabel.fontName = "ArielBold"
-//        self.addChild(gameScoreLabel)
-        
-        //createLabels(levelScoreLabel, text: <#T##String#>, position: <#T##CGPoint#>, horAlignment: <#T##SKLabelHorizontalAlignmentMode#>)
-        levelScoreLabel.position = CGPointMake(self.position.x + self.size.width * levelScorePosKorr.x, self.position.y + self.size.height * levelScorePosKorr.y)
-        levelScoreLabel.fontColor = SKColor.blackColor()
-        levelScoreLabel.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.Left
-        levelScoreLabel.verticalAlignmentMode = SKLabelVerticalAlignmentMode.Center
-        levelScoreLabel.fontSize = 15;
-        //levelScoreLabel.fontName = "ArielBold"
-        self.addChild(levelScoreLabel)
-        showScore()
-
-        targetScoreLabel.position = CGPointMake(self.position.x + self.size.width * targetPosKorr.x, self.position.y + self.size.height * targetPosKorr.y)
-        targetScoreLabel.fontColor = SKColor.blackColor()
-        targetScoreLabel.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.Right
-        targetScoreLabel.verticalAlignmentMode = SKLabelVerticalAlignmentMode.Center
-        targetScoreLabel.fontSize = 15;
+        let gameScoreText: String = GV.language.getText(.TCGameScore) + " \(gameScore)"
         targetScore = countContainers * countSpritesProContainer! * targetScoreKorr
-        let targetScoreText: String = GV.language.getText(.TCTargetScore)
-        targetScoreLabel.text = "\(targetScoreText) \(targetScore)"
-        self.addChild(targetScoreLabel)
-
-        spriteCountLabel.position = CGPointMake(self.position.x + self.size.width * spriteCountPosKorr.x, self.position.y + self.size.height * spriteCountPosKorr.y)
-        spriteCountLabel.fontColor = SKColor.blackColor()
-        spriteCountLabel.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.Left
-        spriteCountLabel.verticalAlignmentMode = SKLabelVerticalAlignmentMode.Center
-        spriteCountLabel.fontSize = 15;
+        let targetScoreText: String = GV.language.getText(.TCTargetScore) + " \(targetScore)"
         spriteCount = Int(CGFloat(countContainers * countSpritesProContainer!))
-        let spriteCountText: String = GV.language.getText(.TCSpriteCount)
-        spriteCountLabel.text = "\(spriteCountText) \(spriteCount)"
-        self.addChild(spriteCountLabel)
+        let spriteCountText: String = GV.language.getText(.TCSpriteCount) + " \(spriteCount)"
         
-        gameScoreLabel.text = "\(gameScoreText) \(gameScore)"
+        createLabels(gameScoreLabel, text: gameScoreText, position: CGPointMake(self.position.x + self.size.width * gameScorePosKorr.x, self.position.y + self.size.height * gameScorePosKorr.y), horAlignment: .Left)
+        createLabels(levelScoreLabel, text: "", position: CGPointMake(self.position.x + self.size.width * levelScorePosKorr.x, self.position.y + self.size.height * levelScorePosKorr.y), horAlignment: .Left)
+        createLabels(targetScoreLabel, text: targetScoreText, position: CGPointMake(self.position.x + self.size.width * targetPosKorr.x, self.position.y + self.size.height * targetPosKorr.y), horAlignment: .Right)
+        createLabels(spriteCountLabel, text: spriteCountText, position: CGPointMake(self.position.x + self.size.width * spriteCountPosKorr.x, self.position.y + self.size.height * spriteCountPosKorr.y), horAlignment: .Left)
 
+        showScore()
     }
     
     override func spriteDidCollideWithMovingSprite(node1:MySKNode, node2:MySKNode) {

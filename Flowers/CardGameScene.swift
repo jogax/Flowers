@@ -23,6 +23,12 @@ class CardGameScene: MyGameScene {
         let height: CGFloat = 89.0
         sizeMultiplier = CGSizeMake(multiplier, multiplier * height / width)
     }
+    
+    override func updateSpriteCount(adder: Int) {
+        spriteCount += adder
+        let spriteCountText: String = GV.language.getText(.TCCardCount)
+        spriteCountLabel.text = "\(spriteCountText) \(spriteCount)"
+    }
 
     override func changeLanguage()->Bool {
         playerLabel.text = GV.language.getText(TextConstants.TCGamer) + ": \(GV.globalParam.aktName)"
@@ -49,16 +55,6 @@ class CardGameScene: MyGameScene {
         spriteCount = Int(CGFloat(countContainers * countSpritesProContainer!))
         let spriteCountText: String = GV.language.getText(.TCCardCount) + " \(spriteCount)"
         createLabels(spriteCountLabel, text: spriteCountText, position: CGPointMake(self.position.x + self.size.width * spriteCountPosKorr.x, self.position.y + self.size.height * spriteCountPosKorr.y), horAlignment: .Left)
-//        spriteCountLabel.position = CGPointMake(self.position.x + self.size.width * spriteCountPosKorr.x, self.position.y + self.size.height * spriteCountPosKorr.y)
-//        spriteCountLabel.fontColor = SKColor.blackColor()
-//        spriteCountLabel.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.Left
-//        spriteCountLabel.verticalAlignmentMode = SKLabelVerticalAlignmentMode.Center
-//        spriteCountLabel.fontSize = 15;
-//        spriteCount = Int(CGFloat(countContainers * countSpritesProContainer!))
-//        spriteCountLabel.text = "\(spriteCountText) \(spriteCount)"
-//        self.addChild(spriteCountLabel)
-        
-
     }
 
     override func getValueForContainer()->Int {
@@ -100,9 +96,10 @@ class CardGameScene: MyGameScene {
         
         countMovingSprites = 0
         
-        spriteCount--
-        let spriteCountText: String = GV.language.getText(.TCSpriteCount)
-        spriteCountLabel.text = "\(spriteCountText) \(spriteCount)"
+        updateSpriteCount(-1)
+//        spriteCount--
+//        let spriteCountText: String = GV.language.getText(.TCSpriteCount)
+//        spriteCountLabel.text = "\(spriteCountText) \(spriteCount)"
         
         collisionActive = false
         movingSprite.removeFromParent()
@@ -142,7 +139,9 @@ class CardGameScene: MyGameScene {
             gameArray[movingSprite.column][movingSprite.row] = false
             movingSprite.removeFromParent()
             countMovingSprites = 0
-        } else {
+            updateSpriteCount(-1)
+//            spriteCount--
+       } else {
             push(sprite, status: .FallingSprite)
             push(movingSprite, status: .FallingMovingSprite)
 //            pull()
@@ -176,13 +175,14 @@ class CardGameScene: MyGameScene {
             sprite.runAction(SKAction.sequence([actionMove2, actionMoveDone]), completion: {self.countMovingSprites--})
             gameArray[movingSprite.column][movingSprite.row] = false
             gameArray[sprite.column][sprite.row] = false
-            spriteCount--
+            updateSpriteCount(-2)
+//            spriteCount--
+//            spriteCount--
             playSound("Drop", volume: GV.soundVolume)
             showScore()
         }
-        spriteCount--
-        let spriteCountText: String = GV.language.getText(.TCCardCount)
-        spriteCountLabel.text = "\(spriteCountText) \(spriteCount)"
+//        let spriteCountText: String = GV.language.getText(.TCCardCount)
+//        spriteCountLabel.text = "\(spriteCountText) \(spriteCount)"
         checkGameFinished()
     }
 
@@ -246,7 +246,8 @@ class CardGameScene: MyGameScene {
             let centerX = (size.width / CGFloat(countContainers)) * CGFloat(index) + xDelta / 2
             let centerY = size.height * containersPosCorr.y
             let cont: Container
-            cont = Container(mySKNode: MySKNode(texture: getTexture(index), type: .ContainerType, value: getValueForContainer()), label: SKLabelNode(), countHits: 0)
+//            cont = Container(mySKNode: MySKNode(texture: getTexture(index), type: .ContainerType, value: getValueForContainer()), label: SKLabelNode(), countHits: 0)
+            cont = Container(mySKNode: MySKNode(texture: getTexture(index), type: .ContainerType, value: getValueForContainer()))
             containers.append(cont)
             containers[index].mySKNode.name = "\(index)"
             containers[index].mySKNode.position = CGPoint(x: centerX, y: centerY)
@@ -261,6 +262,7 @@ class CardGameScene: MyGameScene {
             containers[index].mySKNode.physicsBody?.collisionBitMask = PhysicsCategory.None
             countColorsProContainer.append(countSpritesProContainer!)
             addChild(containers[index].mySKNode)
+            containers[index].mySKNode.reload()
         }
     }
 

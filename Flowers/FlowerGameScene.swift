@@ -22,6 +22,13 @@ class FlowerGameScene: MyGameScene {
     override func getTexture(index: Int)->SKTexture {
         return atlas.textureNamed ("sprite\(index)")
     }
+    
+    override func updateSpriteCount(adder: Int) {
+        spriteCount += adder
+        let spriteCountText: String = GV.language.getText(.TCSpriteCount)
+        spriteCountLabel.text = "\(spriteCountText) \(spriteCount)"
+    }
+
     override func makeSpezialThings() {
         let width:CGFloat = 1.0
         let height: CGFloat = 1.0
@@ -35,7 +42,7 @@ class FlowerGameScene: MyGameScene {
         levelScore = 0
         for index in 0..<containers.count {
             levelScore += containers[index].mySKNode.hitCounter
-            containers[index].label.text = "\(containers[index].mySKNode.hitCounter)"
+//            containers[index].label.text = "\(containers[index].mySKNode.hitCounter)"
         }
         let levelScoreText: String = GV.language.getText(.TCLevelScore)
         levelScoreLabel.text = "\(levelScoreText) \(levelScore)"
@@ -95,6 +102,7 @@ class FlowerGameScene: MyGameScene {
             gameArray[movingSprite.column][movingSprite.row] = false
             movingSprite.removeFromParent()
             countMovingSprites = 0
+            updateSpriteCount(-1)
         } else {
             push(sprite, status: .FallingSprite)
             push(movingSprite, status: .FallingMovingSprite)
@@ -128,13 +136,14 @@ class FlowerGameScene: MyGameScene {
             sprite.runAction(SKAction.sequence([actionMove2, actionMoveDone]), completion: {self.countMovingSprites--})
             gameArray[movingSprite.column][movingSprite.row] = false
             gameArray[sprite.column][sprite.row] = false
-            spriteCount--
+            updateSpriteCount(-2)
+//            spriteCount--
             playSound("Drop", volume: GV.soundVolume)
             showScore()
         }
-        spriteCount--
-        let spriteCountText: String = GV.language.getText(.TCSpriteCount)
-        spriteCountLabel.text = "\(spriteCountText) \(spriteCount)"
+//        spriteCount--
+//        let spriteCountText: String = GV.language.getText(.TCSpriteCount)
+//        spriteCountLabel.text = "\(spriteCountText) \(spriteCount)"
         checkGameFinished()
     }
 
@@ -167,9 +176,11 @@ class FlowerGameScene: MyGameScene {
         
         countMovingSprites = 0
         
-        spriteCount--
-        let spriteCountText: String = GV.language.getText(.TCSpriteCount)
-        spriteCountLabel.text = "\(spriteCountText) \(spriteCount)"
+        updateSpriteCount(-1)
+        
+//        spriteCount--
+//        let spriteCountText: String = GV.language.getText(.TCSpriteCount)
+//        spriteCountLabel.text = "\(spriteCountText) \(spriteCount)"
         
         collisionActive = false
         movingSprite.removeFromParent()
@@ -193,20 +204,21 @@ class FlowerGameScene: MyGameScene {
             let centerX = (size.width / CGFloat(countContainers)) * CGFloat(index) + xDelta / 2
             let centerY = size.height * containersPosCorr.y
             let cont: Container
-            cont = Container(mySKNode: MySKNode(texture: getTexture(index), type: .ContainerType, value: getValueForContainer()), label: SKLabelNode(), countHits: 0)
+            //cont = Container(mySKNode: MySKNode(texture: getTexture(index), type: .ContainerType, value: getValueForContainer()), label: SKLabelNode(), countHits: 0)
+            cont = Container(mySKNode: MySKNode(texture: getTexture(index), type: .ContainerType, value: getValueForContainer()))
             containers.append(cont)
             containers[index].mySKNode.name = "\(index)"
             containers[index].mySKNode.position = CGPoint(x: centerX, y: centerY)
             containers[index].mySKNode.size.width = containerSize.width
             containers[index].mySKNode.size.height = containerSize.height
             
-            containers[index].label.text = "0"
-            containers[index].label.fontSize = 20;
-            containers[index].label.fontName = "ArielBold"
-            containers[index].label.position = CGPointMake(CGRectGetMidX(containers[index].mySKNode.frame), CGRectGetMidY(containers[index].mySKNode.frame) * 1.03)
-            containers[index].label.name = "label"
-            containers[index].label.fontColor = SKColor.blackColor()
-            self.addChild(containers[index].label)
+//            containers[index].label.text = "0"
+//            containers[index].label.fontSize = 20;
+//            containers[index].label.fontName = "ArielBold"
+//            containers[index].label.position = CGPointMake(CGRectGetMidX(containers[index].mySKNode.frame), CGRectGetMidY(containers[index].mySKNode.frame) * 1.03)
+//            containers[index].label.name = "label"
+//            containers[index].label.fontColor = SKColor.blackColor()
+//            self.addChild(containers[index].label)
             
             containers[index].mySKNode.colorIndex = index
             containers[index].mySKNode.physicsBody = SKPhysicsBody(circleOfRadius: containers[index].mySKNode.size.width / 3) // 1

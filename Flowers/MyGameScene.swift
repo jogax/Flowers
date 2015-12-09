@@ -80,8 +80,8 @@ struct MyNodeTypes {
 
 struct Container {
     let mySKNode: MySKNode
-    var label: SKLabelNode
-    var countHits: Int
+//    var label: SKLabelNode
+//    var countHits: Int
 }
 
 enum SpriteStatus: Int, CustomStringConvertible {
@@ -310,12 +310,13 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             gameArray.append(Array(count: countRows, repeatedValue:false))
         }
         
-        prepareContainers()
         
         labelBackground.color = UIColor(red: 1, green: 1, blue: 1, alpha: 0.5)
         labelBackground.size = CGSizeMake(self.size.width, self.size.height / 5)
         labelBackground.position = CGPointMake(self.size.width / 2, self.position.y + self.size.height)
-        
+
+        prepareContainers()
+
         self.addChild(labelBackground)
         
         if GV.globalParam.aktName != GV.dummyName {
@@ -1184,8 +1185,6 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         var seconds = "\(Int(timeCount % 60))"
         seconds = Int(seconds) < 10 ? "0\(seconds)" : "\(seconds)"
         countUpLabel.text = "\(countUpText) \(minutes):\(seconds)"
-        //let timeInterval = NSDate().timeIntervalSinceDate(startTime!)
-        //print ("\(countUpLabel.text), timeCount: \(timeCount), timeInterval: \(timeInterval), startTime: \(startTime)")
     }
     
     func startTimer() {
@@ -1210,9 +1209,6 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         savedSprite.maxValue = sprite.maxValue
         savedSprite.column = sprite.column
         savedSprite.row = sprite.row
-//        if savedSprite.status != .Added {
-//                        print("push -> status: \(savedSprite.status), name: \(savedSprite.name), sPos: \(savedSprite.startPosition), ePos: \(savedSprite.endPosition)" )
-//        }
         stack.push(savedSprite)
     }
     
@@ -1255,9 +1251,10 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
                     gameArray[savedSpriteInCycle.column][savedSpriteInCycle.row] = true
                     addPhysicsBody(sprite)
                     self.addChild(sprite)
-                    spriteCount++
-                    let spriteCountText: String = GV.language.getText(.TCSpriteCount)
-                    spriteCountLabel.text = "\(spriteCountText) \(spriteCount)"
+                    updateSpriteCount(1)
+//                    spriteCount++
+//                    let spriteCountText: String = GV.language.getText(.TCSpriteCount)
+//                    spriteCountLabel.text = "\(spriteCountText) \(spriteCount)"
                     sprite.reload()
                     
                 case .Unification:
@@ -1337,6 +1334,10 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
     
     
     // FUNCTIONS FOR OVERRIDE
+    
+    func updateSpriteCount(adder: Int) {
+        
+    }
     
     func getTexture(index: Int)->SKTexture {
         return atlas.textureNamed ("sprite\(index)")

@@ -46,7 +46,7 @@ class MySKNode: SKSpriteNode {
         case .ContainerType:
             hitCounter = 0
         case .ButtonType:
-            hitCounter = 3
+            hitCounter = 0
         case .SpriteType:
             hitCounter = 1
         }
@@ -61,14 +61,23 @@ class MySKNode: SKSpriteNode {
             hitLabel.zPosition = 100
             //print("\(hitLabel.text)")
         } else {
+            
             hitLabel.position = CGPointMake(self.position.x, self.position.y + self.size.width * 0.08)
             hitLabel.fontSize = 15;
             hitLabel.text = "\(hitCounter)"
             
-            minValueLabel.position = self.position - CGPointMake(23, -35)
             minValueLabel.fontSize = 25
+            maxValueLabel.fontSize = 25
             minValueLabel.text = "\(minValue)"
             minValueLabel.zPosition = 100
+            
+            var positionOffset = CGPointMake(self.size.width * 0.05, -self.size.height * 0.06)
+            if type == .SpriteType {
+                positionOffset = CGPointMake(self.size.width * 0.035, -self.size.height * 0.04)
+                minValueLabel.fontSize = 20
+                maxValueLabel.fontSize = 20
+            }
+            minValueLabel.position = self.position - positionOffset //CGPointMake(23, -35)
         }
         
         hitLabel.fontName = "ArielBold"
@@ -81,7 +90,6 @@ class MySKNode: SKSpriteNode {
         maxValueLabel.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.Left
         maxValueLabel.verticalAlignmentMode = SKLabelVerticalAlignmentMode.Top
         maxValueLabel.userInteractionEnabled = false
-        maxValueLabel.fontSize = 25
 
         minValueLabel.fontName = "ArielBold"
         minValueLabel.fontColor = SKColor.blackColor()
@@ -91,12 +99,13 @@ class MySKNode: SKSpriteNode {
 
 
         
-        if type == .SpriteType || type == .ButtonType {
-            if isCard {
-                self.addChild(minValueLabel)
-            } else {
-                self.addChild(hitLabel)
+        if isCard {
+            if type == .ContainerType && minValue == maxValue {
+                self.alpha = 0.5
             }
+            self.addChild(minValueLabel)
+        } else {
+            self.addChild(hitLabel)
         }
 
     }
@@ -106,25 +115,35 @@ class MySKNode: SKSpriteNode {
             minValueLabel.text = "\(minValue)"
             maxValueLabel.text = "\(maxValue)"
             if minValue != maxValue {
+                self.alpha = 1.0
+            }
+            let positionOffset = CGPointMake(self.size.width * -0.45, self.size.height * 0.45)
+            let BGPicturePosition = CGPointMake(-self.size.width * 0.08, self.size.height * 0.30)
+            let bgPictureName = "BGPicture"
+            if minValue != maxValue {
                 if !BGPictureAdded {
-                    self.addChild(BGPicture)
+                    if self.childNodeWithName(bgPictureName) == nil {
+                        self.addChild(BGPicture)
+                        BGPicture.addChild(maxValueLabel)
+                        BGPicture.name = bgPictureName
+                    }
                     BGPicture.texture = self.texture
                     BGPictureAdded = true
-                    BGPicture.position = CGPointMake(-3, 25)
+                    BGPicture.position = BGPicturePosition // CGPointMake(-3, 25)
                     BGPicture.size = size
                     BGPicture.zPosition = self.zPosition - 1
-                    //print("vor addMaxValueLabel")
-                    BGPicture.addChild(maxValueLabel)
-                    //print("nach addMaxValueLabel")
                     BGPicture.userInteractionEnabled = false
-                    maxValueLabel.position = CGPointMake(-20, 35)
+                    maxValueLabel.position = positionOffset //CGPointMake(-20, 35)
                     maxValueLabel.zPosition = self.zPosition + 1
                 }
             } else {
-                if BGPictureAdded {
+                if BGPictureAdded || self.childNodeWithName(bgPictureName) != nil {
                     maxValueLabel.removeFromParent()
                     BGPicture.removeFromParent()
                     BGPictureAdded = false
+                    if type == .ContainerType {
+                        self.alpha = 0.5
+                    }
                 }
             }
         } else {

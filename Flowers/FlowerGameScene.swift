@@ -22,6 +22,13 @@ class FlowerGameScene: MyGameScene {
     override func getTexture(index: Int)->SKTexture {
         return atlas.textureNamed ("sprite\(index)")
     }
+    
+    override func updateSpriteCount(adder: Int) {
+        spriteCount += adder
+        let spriteCountText: String = GV.language.getText(.TCSpriteCount)
+        spriteCountLabel.text = "\(spriteCountText) \(spriteCount)"
+    }
+
     override func makeSpezialThings() {
         let width:CGFloat = 1.0
         let height: CGFloat = 1.0
@@ -35,7 +42,7 @@ class FlowerGameScene: MyGameScene {
         levelScore = 0
         for index in 0..<containers.count {
             levelScore += containers[index].mySKNode.hitCounter
-            containers[index].label.text = "\(containers[index].mySKNode.hitCounter)"
+//            containers[index].label.text = "\(containers[index].mySKNode.hitCounter)"
         }
         let levelScoreText: String = GV.language.getText(.TCLevelScore)
         levelScoreLabel.text = "\(levelScoreText) \(levelScore)"
@@ -95,6 +102,7 @@ class FlowerGameScene: MyGameScene {
             gameArray[movingSprite.column][movingSprite.row] = false
             movingSprite.removeFromParent()
             countMovingSprites = 0
+            updateSpriteCount(-1)
         } else {
             push(sprite, status: .FallingSprite)
             push(movingSprite, status: .FallingMovingSprite)
@@ -128,13 +136,14 @@ class FlowerGameScene: MyGameScene {
             sprite.runAction(SKAction.sequence([actionMove2, actionMoveDone]), completion: {self.countMovingSprites--})
             gameArray[movingSprite.column][movingSprite.row] = false
             gameArray[sprite.column][sprite.row] = false
-            spriteCount--
+            updateSpriteCount(-2)
+//            spriteCount--
             playSound("Drop", volume: GV.soundVolume)
             showScore()
         }
-        spriteCount--
-        let spriteCountText: String = GV.language.getText(.TCSpriteCount)
-        spriteCountLabel.text = "\(spriteCountText) \(spriteCount)"
+//        spriteCount--
+//        let spriteCountText: String = GV.language.getText(.TCSpriteCount)
+//        spriteCountLabel.text = "\(spriteCountText) \(spriteCount)"
         checkGameFinished()
     }
 
@@ -157,19 +166,24 @@ class FlowerGameScene: MyGameScene {
             } else {
                 container.hitCounter += movingSprite.hitCounter
             }
+            container.hitLabel.text = "\(container.hitCounter)"
             showScore()
             playSound("Container", volume: GV.soundVolume)
         } else {
             container.hitCounter -= movingSprite.hitCounter
             showScore()
             playSound("Funk_Bot", volume: GV.soundVolume)
+            container.hitLabel.text = "\(container.hitCounter)"
+
         }
         
         countMovingSprites = 0
         
-        spriteCount--
-        let spriteCountText: String = GV.language.getText(.TCSpriteCount)
-        spriteCountLabel.text = "\(spriteCountText) \(spriteCount)"
+        updateSpriteCount(-1)
+        
+//        spriteCount--
+//        let spriteCountText: String = GV.language.getText(.TCSpriteCount)
+//        spriteCountLabel.text = "\(spriteCountText) \(spriteCount)"
         
         collisionActive = false
         movingSprite.removeFromParent()
@@ -193,20 +207,21 @@ class FlowerGameScene: MyGameScene {
             let centerX = (size.width / CGFloat(countContainers)) * CGFloat(index) + xDelta / 2
             let centerY = size.height * containersPosCorr.y
             let cont: Container
-            cont = Container(mySKNode: MySKNode(texture: getTexture(index), type: .ContainerType, value: getValueForContainer()), label: SKLabelNode(), countHits: 0)
+            //cont = Container(mySKNode: MySKNode(texture: getTexture(index), type: .ContainerType, value: getValueForContainer()), label: SKLabelNode(), countHits: 0)
+            cont = Container(mySKNode: MySKNode(texture: getTexture(index), type: .ContainerType, value: getValueForContainer()))
             containers.append(cont)
             containers[index].mySKNode.name = "\(index)"
             containers[index].mySKNode.position = CGPoint(x: centerX, y: centerY)
             containers[index].mySKNode.size.width = containerSize.width
             containers[index].mySKNode.size.height = containerSize.height
             
-            containers[index].label.text = "0"
-            containers[index].label.fontSize = 20;
-            containers[index].label.fontName = "ArielBold"
-            containers[index].label.position = CGPointMake(CGRectGetMidX(containers[index].mySKNode.frame), CGRectGetMidY(containers[index].mySKNode.frame) * 1.03)
-            containers[index].label.name = "label"
-            containers[index].label.fontColor = SKColor.blackColor()
-            self.addChild(containers[index].label)
+//            containers[index].label.text = "0"
+//            containers[index].label.fontSize = 20;
+//            containers[index].label.fontName = "ArielBold"
+//            containers[index].label.position = CGPointMake(CGRectGetMidX(containers[index].mySKNode.frame), CGRectGetMidY(containers[index].mySKNode.frame) * 1.03)
+//            containers[index].label.name = "label"
+//            containers[index].label.fontColor = SKColor.blackColor()
+//            self.addChild(containers[index].label)
             
             containers[index].mySKNode.colorIndex = index
             containers[index].mySKNode.physicsBody = SKPhysicsBody(circleOfRadius: containers[index].mySKNode.size.width / 3) // 1
@@ -219,6 +234,107 @@ class FlowerGameScene: MyGameScene {
         }
     }
 
+    override func pull() {
+        let duration = 0.2
+        var actionMoveArray = [SKAction]()
+        if let savedSprite = stack.pull() {
+            var savedSpriteInCycle = savedSprite
+            var run = true
+            var stopSoon = false
+            
+            repeat {
+                
+                switch savedSpriteInCycle.status {
+                case .Added:
+                    if stack.countChangesInStack() > 0 {
+                        let spriteName = savedSpriteInCycle.name
+                        let colorIndex = savedSpriteInCycle.colorIndex
+                        let searchName = "\(spriteName)"
+                        self.childNodeWithName(searchName)!.removeFromParent()
+                        let colorTabLine = ColorTabLine(colorIndex: colorIndex, spriteName: spriteName, spriteValue: savedSpriteInCycle.minValue)
+                        colorTab.append(colorTabLine)
+                        gameArray[savedSpriteInCycle.column][savedSpriteInCycle.row] = false
+                    }
+                case .Removed:
+                    //let spriteTexture = SKTexture(imageNamed: "sprite\(savedSpriteInCycle.colorIndex)")
+                    let spriteTexture = getTexture(savedSpriteInCycle.colorIndex)
+                    let sprite = MySKNode(texture: spriteTexture, type: .SpriteType, value: savedSpriteInCycle.minValue)
+                    sprite.colorIndex = savedSpriteInCycle.colorIndex
+                    sprite.position = savedSpriteInCycle.endPosition
+                    sprite.startPosition = savedSpriteInCycle.startPosition
+                    sprite.size = savedSpriteInCycle.size
+                    sprite.column = savedSpriteInCycle.column
+                    sprite.row = savedSpriteInCycle.row
+                    sprite.hitCounter = savedSpriteInCycle.hitCounter
+                    sprite.name = savedSpriteInCycle.name
+                    gameArray[savedSpriteInCycle.column][savedSpriteInCycle.row] = true
+                    addPhysicsBody(sprite)
+                    self.addChild(sprite)
+                    updateSpriteCount(1)
+                    sprite.reload()
+                    
+                case .Unification:
+                    let sprite = self.childNodeWithName(savedSpriteInCycle.name)! as! MySKNode
+                    sprite.hitCounter = savedSpriteInCycle.hitCounter
+                    sprite.size = savedSpriteInCycle.size
+                    sprite.hitLabel.text = "\(sprite.hitCounter)"
+                    sprite.reload()
+                    
+                case .HitcounterChanged:
+                    let container = containers[savedSpriteInCycle.colorIndex].mySKNode
+                    container.hitCounter = savedSpriteInCycle.hitCounter
+                    container.reload()
+                    showScore()
+                    
+                case .MovingStarted:
+                    let sprite = self.childNodeWithName(savedSpriteInCycle.name)! as! MySKNode
+                    sprite.hitCounter = savedSpriteInCycle.hitCounter
+                    sprite.hitLabel.text = "\(sprite.hitCounter)"
+                    sprite.startPosition = savedSpriteInCycle.startPosition
+                    actionMoveArray.append(SKAction.moveTo(savedSpriteInCycle.endPosition, duration: duration))
+                    sprite.reload()
+                    sprite.runAction(SKAction.sequence(actionMoveArray))
+                    
+                case .FallingMovingSprite:
+                    let sprite = self.childNodeWithName(savedSpriteInCycle.name)! as! MySKNode
+                    sprite.hitCounter = savedSpriteInCycle.hitCounter
+                    containers[savedSpriteInCycle.colorIndex].mySKNode.hitCounter += sprite.hitCounter
+                    actionMoveArray.append(SKAction.moveTo(savedSpriteInCycle.endPosition, duration: duration))
+                    
+                case .FallingSprite:
+                    let sprite = self.childNodeWithName(savedSpriteInCycle.name)! as! MySKNode
+                    sprite.hitCounter = savedSpriteInCycle.hitCounter
+                    sprite.startPosition = savedSpriteInCycle.startPosition
+                    containers[savedSpriteInCycle.colorIndex].mySKNode.hitCounter += sprite.hitCounter
+                    let moveFallingSprite = SKAction.moveTo(savedSpriteInCycle.startPosition, duration: duration)
+                    sprite.runAction(SKAction.sequence([moveFallingSprite]))
+                    
+                case .Mirrored:
+                    //var sprite = self.childNodeWithName(savedSpriteInCycle.name)! as! MySKNode
+                    actionMoveArray.append(SKAction.moveTo(savedSpriteInCycle.endPosition, duration: duration))
+                    
+                    //default: run = false
+                case .Nothing: break
+                }
+                if let savedSprite = stack.pull() {
+                    savedSpriteInCycle = savedSprite
+                    if (savedSpriteInCycle.status == .Added && stack.countChangesInStack() == 0) || stopSoon {
+                        stack.push(savedSpriteInCycle)
+                        run = false
+                    }
+                    if savedSpriteInCycle.status == .MovingStarted {
+                        stopSoon = true
+                    }
+                } else {
+                    run = false
+                }
+            } while run
+            showScore()
+        }
+        
+        
+        
+    }
 
 
 }

@@ -204,16 +204,10 @@ class CardGameScene: MyGameScene {
         if usedCellCount == 0 && containersOK { // Level completed, start a new game
             
             stopTimer()
-//            if countUp != nil {
-//                countUp!.invalidate()
-//                countUp = nil
-//                //playMusic("Winner", volume: GV.soundVolume)
-//            }
             playMusic("Winner", volume: GV.musicVolume, loops: 0)
             let playerName = GV.globalParam.aktName == GV.dummyName ? "!" : " " + GV.globalParam.aktName + "!"
             let alert = UIAlertController(title: GV.language.getText(.TCLevelComplete),
                 message: GV.language.getText(TextConstants.TCCongratulations) + playerName,
-//                message: GV.language.getText(TextConstants.TCCongratulations),
                 preferredStyle: .Alert)
             let cancelAction = UIAlertAction(title: GV.language.getText(.TCReturn), style: .Cancel, handler: nil)
             let againAction = UIAlertAction(title: GV.language.getText(TextConstants.TCNextLevel), style: .Default,

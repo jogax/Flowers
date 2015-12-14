@@ -3,12 +3,19 @@
     <entity name="GlobalParam" representedClassName=".GlobalParam" syncable="YES">
         <attribute name="aktName" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
+    <entity name="SeedData" representedClassName=".SeedData" syncable="YES">
+        <attribute name="gameDifficulty" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
+        <attribute name="gameNumber" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
+        <attribute name="gameType" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
+        <attribute name="seed" optional="YES" attributeType="Transformable" syncable="YES"/>
+    </entity>
     <entity name="SpriteGame" representedClassName=".SpriteGame" syncable="YES">
         <attribute name="allParams" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
     <elements>
-        <element name="GlobalParam" positionX="-414" positionY="-9" width="128" height="58"/>
+        <element name="GlobalParam" positionX="-414" positionY="-9" width="128" height="60"/>
+        <element name="SeedData" positionX="-261" positionY="90" width="128" height="105"/>
         <element name="SpriteGame" positionX="-110" positionY="162" width="128" height="75"/>
     </elements>
 </model>

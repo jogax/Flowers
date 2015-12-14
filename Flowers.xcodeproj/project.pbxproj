@@ -45,6 +45,10 @@
 		201173B91C074D430022AC86 /* CardGameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201173B81C074D430022AC86 /* CardGameScene.swift */; };
 		201375011C11DF0F002AC049 /* cardBackground.png in Resources */ = {isa = PBXBuildFile; fileRef = 201375001C11DF0F002AC049 /* cardBackground.png */; };
 		201728FA1BE3D0C9005F6CA8 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201728F91BE3D0C9005F6CA8 /* SettingsViewController.swift */; };
+		201E203E1C1C631F003DBBD8 /* MyRandom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201E203D1C1C631F003DBBD8 /* MyRandom.swift */; };
+		201E20421C1C7389003DBBD8 /* SeedData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201E20401C1C7389003DBBD8 /* SeedData.swift */; };
+		201E20451C1C8046003DBBD8 /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 201E20441C1C8046003DBBD8 /* CloudKit.framework */; };
+		201E20471C1C80CF003DBBD8 /* CloudData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201E20461C1C80CF003DBBD8 /* CloudData.swift */; };
 		204A8A181BEF93B90061D14F /* LanguageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 204A8A171BEF93B90061D14F /* LanguageViewController.swift */; };
 		205574411BBEB85C00C165A1 /* Go321.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 205574401BBEB85C00C165A1 /* Go321.m4a */; };
 		205574431BBECB6200C165A1 /* NoSound.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 205574421BBECB6200C165A1 /* NoSound.m4a */; };
@@ -124,6 +128,11 @@
 		201173B81C074D430022AC86 /* CardGameScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CardGameScene.swift; sourceTree = "<group>"; };
 		201375001C11DF0F002AC049 /* cardBackground.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = cardBackground.png; sourceTree = "<group>"; };
 		201728F91BE3D0C9005F6CA8 /* SettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
+		201E203D1C1C631F003DBBD8 /* MyRandom.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MyRandom.swift; sourceTree = "<group>"; };
+		201E20401C1C7389003DBBD8 /* SeedData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SeedData.swift; path = ../SeedData.swift; sourceTree = "<group>"; };
+		201E20431C1C8009003DBBD8 /* Flowers.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Flowers.entitlements; sourceTree = "<group>"; };
+		201E20441C1C8046003DBBD8 /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
+		201E20461C1C80CF003DBBD8 /* CloudData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CloudData.swift; path = ../CloudData.swift; sourceTree = "<group>"; };
 		2034B0061BDE796300D296DA /* Flowers.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Flowers.xcdatamodel; sourceTree = "<group>"; };
 		204A8A171BEF93B90061D14F /* LanguageViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LanguageViewController.swift; sourceTree = "<group>"; };
 		205574401BBEB85C00C165A1 /* Go321.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = Go321.m4a; sourceTree = "<group>"; };
@@ -149,6 +158,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				20F7E7101BBB03A200451984 /* SpriteKit.framework in Frameworks */,
+				201E20451C1C8046003DBBD8 /* CloudKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -172,6 +182,7 @@
 		200140D11BAEA96A003E0950 = {
 			isa = PBXGroup;
 			children = (
+				201E20441C1C8046003DBBD8 /* CloudKit.framework */,
 				20F7E70F1BBB03A200451984 /* SpriteKit.framework */,
 				200140DC1BAEA96A003E0950 /* Flowers */,
 				200140F41BAEA96A003E0950 /* FlowersTests */,
@@ -193,6 +204,7 @@
 		200140DC1BAEA96A003E0950 /* Flowers */ = {
 			isa = PBXGroup;
 			children = (
+				201E20431C1C8009003DBBD8 /* Flowers.entitlements */,
 				200BDA061BCFDEE600F72109 /* DrawImages.swift */,
 				20F6D01D1BB43E9100BF7384 /* MyParticle.sks */,
 				200141461BAEDAE5003E0950 /* MySKNode.swift */,
@@ -204,11 +216,14 @@
 				201173B61C074D080022AC86 /* MyGameScene.swift */,
 				2001410E1BAEAA82003E0950 /* FlowerGameScene.swift */,
 				201173B81C074D430022AC86 /* CardGameScene.swift */,
+				201E203D1C1C631F003DBBD8 /* MyRandom.swift */,
 				200141751BAEFB4F003E0950 /* JGXLine.swift */,
 				200141721BAEF900003E0950 /* SpriteGame.swift */,
 				205ADECE1BFF6D9400C9F341 /* GlobalParam.swift */,
+				201E20401C1C7389003DBBD8 /* SeedData.swift */,
 				2001412D1BAEB2DE003E0950 /* MyStructs.swift */,
 				200141771BAEFBCA003E0950 /* DataStore.swift */,
+				201E20461C1C80CF003DBBD8 /* CloudData.swift */,
 				2001412B1BAEB285003E0950 /* LevelsForPlayWithSprites.swift */,
 				200141441BAED8BF003E0950 /* Stack.swift */,
 				200140DD1BAEA96A003E0950 /* AppDelegate.swift */,
@@ -366,6 +381,9 @@
 							com.apple.InAppPurchase = {
 								enabled = 0;
 							};
+							com.apple.iCloud = {
+								enabled = 1;
+							};
 						};
 					};
 					200140F01BAEA96A003E0950 = {
@@ -456,6 +474,7 @@
 				200141451BAED8BF003E0950 /* Stack.swift in Sources */,
 				200141781BAEFBCA003E0950 /* DataStore.swift in Sources */,
 				200141411BAEB9F7003E0950 /* hu.swift in Sources */,
+				201E20471C1C80CF003DBBD8 /* CloudData.swift in Sources */,
 				206BF77C1BF247380009928E /* ChooseNameViewController.swift in Sources */,
 				2001413F1BAEB95B003E0950 /* en.swift in Sources */,
 				201173B91C074D430022AC86 /* CardGameScene.swift in Sources */,
@@ -469,6 +488,8 @@
 				2001416C1BAEF7AA003E0950 /* Flowers.xcdatamodeld in Sources */,
 				200BDA0B1BCFEF5100F72109 /* MySKButton.swift in Sources */,
 				204A8A181BEF93B90061D14F /* LanguageViewController.swift in Sources */,
+				201E203E1C1C631F003DBBD8 /* MyRandom.swift in Sources */,
+				201E20421C1C7389003DBBD8 /* SeedData.swift in Sources */,
 				200141761BAEFB4F003E0950 /* JGXLine.swift in Sources */,
 				200141301BAEB4F6003E0950 /* Language.swift in Sources */,
 				2001410F1BAEAA82003E0950 /* FlowerGameScene.swift in Sources */,
@@ -618,6 +639,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Flowers/Flowers.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = Flowers/Info.plist;
@@ -633,6 +655,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Flowers/Flowers.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = Flowers/Info.plist;

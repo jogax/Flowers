@@ -41,6 +41,7 @@ struct GV {
     static var initName = false
 
     static let dataStore = DataStore()
+    static let cloudStore = CloudData()
 
     static var spriteGameDataArray: [SpriteGameData] = []
     // Constraints
@@ -64,12 +65,10 @@ struct GV {
 //        return GV.spriteGameDataArray[0]
 //    }
     
-    static func random(min: Int, max: Int) -> Int {
-        let randomInt = min + Int(arc4random_uniform(UInt32(max + 1 - min)))
-        return randomInt
-    }
-
-
+//    static func random(min: Int, max: Int) -> Int {
+//        let randomInt = min + Int(arc4random_uniform(UInt32(max + 1 - min)))
+//        return randomInt
+//    }
     
 }
 
@@ -78,6 +77,19 @@ struct GlobalParamData {
     var aktName: String
     init() {
         aktName = GV.dummyName
+    }
+}
+
+struct SeedDataStruct {
+    var gameType: Int64
+    var gameDifficulty: Int64
+    var gameNumber: Int64
+    var seed: NSData
+    init(gameType: Int64, gameDifficulty:Int64, gameNumber: Int64, seed: NSData) {
+        self.gameType = gameType
+        self.gameDifficulty = gameDifficulty
+        self.gameNumber = gameNumber
+        self.seed = seed
     }
 }
 

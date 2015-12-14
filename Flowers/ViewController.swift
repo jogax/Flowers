@@ -21,6 +21,7 @@ class ViewController: UIViewController, SettingsDelegate {
     var scene: MyGameScene?
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         startScene()
         // Do any additional setup after loading the view, typically from a nib.
      }

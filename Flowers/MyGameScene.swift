@@ -7,6 +7,7 @@
 //
 
 import SpriteKit
+import GameKit
 import AVFoundation
 
 func + (left: CGSize, right: CGSize) -> CGSize {
@@ -168,6 +169,8 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         }
     }
     
+    
+    var random: MyRandom?
     // Values from json File
     var params = ""
     var countSpritesProContainer: Int?
@@ -276,6 +279,8 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         playMusic("MyMusic", volume: GV.musicVolume, loops: 0)
         stack = Stack()
         timeCount = 0
+        let seedIndex = SeedIndex(gameType: Int64(GV.spriteGameDataArray[GV.getAktNameIndex()].gameModus), gameDifficulty: 0, gameNumber: Int64(levelIndex))
+        random = MyRandom(seedIndex: seedIndex)
         stopTimer()
 //        if countUp != nil {
 //            countUp!.invalidate()
@@ -520,8 +525,8 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             //let yKorr1: CGFloat = GV.onIpad ? 0.8 : 1.0
             //let yKorr2: CGFloat = GV.onIpad ? 0.8 : 1.0
             
-            let index = GV.random(0, max: positionsTab.count - 1)
-            let (aktColumn, aktRow) = positionsTab[index]
+            let index = random?.getRandomInt(0, max: positionsTab.count - 1)
+            let (aktColumn, aktRow) = positionsTab[index!]
             tableCellSize = spriteTabRect.width / CGFloat(countColumns)
             
             let xPosition = spriteTabRect.origin.x - spriteTabRect.size.width / 2 + CGFloat(aktColumn) * tableCellSize + tableCellSize / 2
@@ -530,7 +535,7 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             sprite.position = CGPoint(x: xPosition, y: yPosition)
             sprite.startPosition = sprite.position
             gameArray[aktColumn][aktRow] = true
-            positionsTab.removeAtIndex(index)
+            positionsTab.removeAtIndex(index!)
             
             sprite.column = aktColumn
             sprite.row = aktRow

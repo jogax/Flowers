@@ -114,8 +114,6 @@ class MySKNode: SKSpriteNode {
         if isCard {
             minValueLabel.text = "\(minValue)"
             maxValueLabel.text = "\(maxValue)"
-            let positionOffset = CGPointMake(self.size.width * -0.45, self.size.height * 0.45)
-            let BGPicturePosition = CGPointMake(-self.size.width * 0.08, self.size.height * 0.30)
             if minValue != maxValue {
                 self.alpha = 1.0
             }

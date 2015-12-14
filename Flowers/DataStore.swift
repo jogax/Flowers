@@ -24,10 +24,13 @@ class DataStore {
     var error: NSError?
     var spriteGameEntity: SpriteGame?
     var globalParamEntity: GlobalParam?
+    var seedDataEntity: SeedData?
+    
     //var appVariables: AppVariables?
     var exists: Bool = true
     var spriteGameDescription:NSEntityDescription?
     var globalParamDescription:NSEntityDescription?
+    var seedDataDescription:NSEntityDescription?
     
     init() {
         
@@ -35,8 +38,60 @@ class DataStore {
         //_ = appDelegate.managedObjectContext
         spriteGameDescription = NSEntityDescription.entityForName("SpriteGame", inManagedObjectContext:managedObjectContext)
         globalParamDescription = NSEntityDescription.entityForName("GlobalParam", inManagedObjectContext:managedObjectContext)
+        seedDataDescription = NSEntityDescription.entityForName("SeedData", inManagedObjectContext:managedObjectContext)
  
     }
+ 
+    func saveSeedDataRecord(seedData: SeedDataStruct) {
+        
+        seedDataEntity = SeedData(entity:seedDataDescription!, insertIntoManagedObjectContext: managedObjectContext)
+        seedDataEntity!.gameDifficulty = NSNumber(longLong: seedData.gameDifficulty)
+        seedDataEntity!.gameNumber = NSNumber(longLong: seedData.gameNumber)
+        seedDataEntity!.seed = seedData.seed
+        
+        do {
+            try self.managedObjectContext.save()
+        } catch {
+            let nserror = error as NSError
+            NSLog("Unresolved error \(nserror), \(nserror.userInfo)")
+            abort()
+        }
+    }
+
+    func readSeedDataRecord(seedIndex: SeedIndex)->(SeedDataStruct, Bool) {
+        let request = NSFetchRequest()
+        var seedDataStruct: SeedDataStruct
+        var exists: Bool
+        request.entity = self.seedDataDescription
+        let p1 = NSPredicate(format: "gameType = %ld", seedIndex.gameType)
+        let p2 = NSPredicate(format: "gameDifficulty = %ld", seedIndex.gameDifficulty)
+        let p3 = NSPredicate(format: "gameNumber = %ld", seedIndex.gameNumber)
+        let predicate = NSCompoundPredicate.init(andPredicateWithSubpredicates: [p1, p2, p3])
+        request.predicate = predicate
+        do {
+            let results = try managedObjectContext.executeFetchRequest(request)
+            if let match = results.first as? NSManagedObject {
+                let gameType = match.valueForKey("gameType") as! NSInteger
+                let gameDifficulty = match.valueForKey("gameDifficulty") as! NSInteger
+                let gameNumber = match.valueForKey("gameNumber") as! NSInteger
+                let seed = match.valueForKey("seed") as! NSData
+                seedDataStruct = SeedDataStruct(gameType: Int64(gameType), gameDifficulty: Int64(gameDifficulty), gameNumber: Int64(gameNumber), seed: seed)
+                exists = true
+            } else {
+                seedDataStruct = SeedDataStruct(gameType: seedIndex.gameType, gameDifficulty: seedIndex.gameDifficulty, gameNumber: seedIndex.gameNumber, seed: NSData())
+                exists = false
+            }
+       } catch {
+            let nserror = error as NSError
+            NSLog("Unresolved error \(nserror), \(nserror.userInfo)")
+            abort()
+        }
+        
+        return (seedDataStruct, exists)
+        
+    }
+
+    
     
     func saveSpriteGameRecord() {
         deleteRecords(spriteGameDescription)
@@ -44,10 +99,6 @@ class DataStore {
         for index in 0..<GV.spriteGameDataArray.count {
             
             spriteGameEntity = SpriteGame(entity:spriteGameDescription!, insertIntoManagedObjectContext: managedObjectContext)
-//            spriteGameEntity!.aktLanguageKey = GV.spriteGameDataArray[index].aktLanguageKey
-//            spriteGameEntity!.showHelpLines = NSNumber(longLong: GV.spriteGameDataArray[index].showHelpLines)
-//            spriteGameEntity!.spriteLevelIndex = NSNumber(longLong: GV.spriteGameDataArray[index].spriteLevelIndex)
-//            spriteGameEntity!.spriteGameScore = NSNumber(longLong: GV.spriteGameDataArray[index].spriteGameScore)
             spriteGameEntity!.name = GV.spriteGameDataArray[index].name
             spriteGameEntity!.allParams = coder(GV.spriteGameDataArray[index])
             

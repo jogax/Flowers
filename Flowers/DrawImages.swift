@@ -15,6 +15,7 @@ class DrawImages {
     var settingsImage = UIImage()
     var backImage = UIImage()
     var undoImage = UIImage()
+    var exchangeImage = UIImage()
     var uhrImage = UIImage()
     
     //let imageColor = GV.khakiColor.CGColor
@@ -26,6 +27,7 @@ class DrawImages {
         self.pfeilrechtsImage = pfeillinksImage.imageRotatedByDegrees(180.0, flip: false)
         self.settingsImage = drawSettings(CGRect(x: 0, y: 0, width: 100, height: 100))
         self.undoImage = drawUndo(CGRect(x: 0, y: 0, width: 100, height: 100))
+        self.exchangeImage = drawExchange(CGRect(x: 0, y: 0, width: 100, height: 100))
         self.backImage = drawBack(CGRect(x: 0, y: 0, width: 100, height: 100))
         //self.uhrImage = drawUhr(CGRect(x: 0, y: 0, width: 300, height: 300))
         
@@ -111,7 +113,7 @@ class DrawImages {
         return image
     }
     
-    func drawUndo(frame: CGRect) -> UIImage {
+    func drawExchange(frame: CGRect) -> UIImage {
         let size = CGSize(width: frame.width, height: frame.height)
         //let endAngle = CGFloat(2*M_PI)
         
@@ -120,15 +122,6 @@ class DrawImages {
         CGContextSetStrokeColorWithColor(ctx, UIColor.blackColor().CGColor)
         
         CGContextBeginPath(ctx)
-        /*
-        CGContextSetLineWidth(ctx, 4.0)
-        let center = CGPoint(x: frame.width / 2, y: frame.height / 2)
-        let radius = frame.width / 2 - 5
-        CGContextAddArc(ctx, center.x, center.y, radius, CGFloat(0), CGFloat(2 * M_PI), 1)
-        CGContextSetFillColorWithColor(ctx, imageColor)
-        CGContextDrawPath(ctx, kCGPathFillStroke)
-        CGContextStrokePath(ctx)
-        */
         CGContextSetLineWidth(ctx, 4.0)
         
         let adder:CGFloat = frame.width / 20
@@ -171,6 +164,70 @@ class DrawImages {
         CGContextMoveToPoint(ctx, p4.x, p4.y)
         CGContextAddLineToPoint(ctx, p6.x, p6.y)
         CGContextStrokePath(ctx)
+        
+        
+        
+        
+        
+        let image = UIGraphicsGetImageFromCurrentImageContext()
+        
+        UIGraphicsEndImageContext()
+        return image
+    }
+    
+    func drawUndo(frame: CGRect) -> UIImage {
+        let size = CGSize(width: frame.width, height: frame.height)
+        //let endAngle = CGFloat(2*M_PI)
+        
+        UIGraphicsBeginImageContextWithOptions(size, opaque, scale)
+        let ctx = UIGraphicsGetCurrentContext()
+        CGContextSetStrokeColorWithColor(ctx, UIColor.blackColor().CGColor)
+        
+        CGContextBeginPath(ctx)
+        CGContextSetLineWidth(ctx, 4.0)
+        
+        let adder:CGFloat = frame.width / 20
+        let r0 = frame.width * 0.4
+        
+        let center1 = CGPoint(x: frame.origin.x + frame.width / 2, y: frame.origin.y + adder + r0 * 1.5)
+//        let center2 = CGPoint(x: frame.origin.x + frame.width / 2, y: frame.origin.y + frame.height - adder - r0 * 1.5)
+        
+        
+        let oneGrad:CGFloat = CGFloat(M_PI) / 180
+        let minAngle1 = 340 * oneGrad
+        let maxAngle1 = 200 * oneGrad
+        //println("1 Grad: \(oneGrad)")
+        
+//        let minAngle2 = 150 * oneGrad
+//        let maxAngle2 = 30 * oneGrad
+        
+        CGContextAddArc(ctx, center1.x, center1.y, r0, minAngle1, maxAngle1, 1)
+        CGContextStrokePath(ctx)
+        
+//        CGContextAddArc(ctx, center2.x, center2.y, r0, minAngle2, maxAngle2, 1)
+//        CGContextStrokePath(ctx)
+        
+        let p1 = pointOfCircle(r0, center: center1, angle: maxAngle1)
+        let p2 = CGPoint(x: p1.x + 10, y: p1.y - 30)
+//        let p3 = CGPoint(x: p1.x + 30, y: p1.y + 10)
+//        let p2 = CGPoint(x: p1.x - 20, y: p1.y - 30)
+        let p3 = CGPoint(x: p1.x + 30, y: p1.y - 10)
+//        let p4 = pointOfCircle(r0, center: center2, angle: minAngle2)
+//        let p5 = CGPoint(x: p4.x + 20, y: p4.y + 30)
+//        let p6 = CGPoint(x: p4.x + 30, y: p4.y + 15)
+        
+        CGContextMoveToPoint(ctx, p1.x, p1.y)
+        CGContextAddLineToPoint(ctx, p2.x, p2.y)
+        CGContextStrokePath(ctx)
+        CGContextMoveToPoint(ctx, p1.x, p1.y)
+        CGContextAddLineToPoint(ctx, p3.x, p3.y)
+        CGContextStrokePath(ctx)
+//        CGContextMoveToPoint(ctx, p4.x, p4.y)
+//        CGContextAddLineToPoint(ctx, p5.x, p5.y)
+//        CGContextStrokePath(ctx)
+//        CGContextMoveToPoint(ctx, p4.x, p4.y)
+//        CGContextAddLineToPoint(ctx, p6.x, p6.y)
+//        CGContextStrokePath(ctx)
         
         
         
@@ -339,6 +396,10 @@ class DrawImages {
     
     func getUndo () -> UIImage {
         return undoImage
+    }
+    
+    func getExchange () -> UIImage {
+        return exchangeImage
     }
     
     func getBack () -> UIImage {

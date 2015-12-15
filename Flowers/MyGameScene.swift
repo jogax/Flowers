@@ -188,6 +188,7 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
     var showFingerNode = false
     var countMovingSprites = 0
     var countCheckCounts = 0
+    var exchangeModus = false
     
     //let timeLimitKorr = 5 // sec for pro Sprite
     var timeCount = 0 // seconds
@@ -222,6 +223,7 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
     var movedFromNode: MySKNode!
     var settingsButton: MySKButton?
     var undoButton: MySKButton?
+    var exchangeButton: MySKButton?
     var previousLevelButton: MySKButton?
     var nextLevelButton: MySKButton?
     var targetScore = 0
@@ -346,7 +348,7 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         bgImage!.zPosition = -15
         self.addChild(bgImage!)
         
-        let buttonSize = myView.frame.width / 12
+        let buttonSize = myView.frame.width / 15
         let buttonYPos = myView.frame.height * 0.05
         let buttonXPosNormalized = myView.frame.width / 10
         let images = DrawImages()
@@ -366,10 +368,10 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         previousLevelButton!.name = "pfeilLinks"
         addChild(previousLevelButton!)
         
-        let nextLevelButtonTexture = SKTexture(image: images.getPfeilrechts())
-        nextLevelButton = MySKButton(texture: nextLevelButtonTexture, frame: CGRectMake(buttonXPosNormalized * 9, buttonYPos, buttonSize, buttonSize))
-        nextLevelButton!.name = "pfeilRechts"
-        addChild(nextLevelButton!)
+        let exchangeButtonTexture = SKTexture(image: images.getExchange())
+        exchangeButton = MySKButton(texture: exchangeButtonTexture, frame: CGRectMake(buttonXPosNormalized * 9, buttonYPos, buttonSize, buttonSize))
+        exchangeButton!.name = "exchange"
+        addChild(exchangeButton!)
         
         
         let sparkles = SKTexture(imageNamed: "bumm") //reusing the bird texture for now
@@ -423,6 +425,10 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
     
     func undoButtonPressed() {
         pull()
+    }
+    
+    func exchangeButtonPressed() {
+        exchangeModus = true
     }
     
     func stopTimer() {
@@ -669,7 +675,7 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             case MyNodeTypes.ButtonNode: aktNode = self.nodeAtPoint(touchLocation) as! MySKNode
             default: aktNode = nil
             }
-            if movedFromNode != aktNode {
+            if movedFromNode != aktNode && !exchangeModus {
                 if movedFromNode.type == .ButtonType {
                     //movedFromNode.texture = atlas.textureNamed("\(movedFromNode.name!)")
                 } else {
@@ -759,8 +765,21 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
                 switch mySKNode.name! {
                 case "settings": settingsButtonPressed()
                 case "undo": undoButtonPressed()
+                case "exchange": exchangeButtonPressed()
                 default: undoButtonPressed()
                 }
+                return
+            }
+            
+            if exchangeModus {
+                if startNode != nil && startNode != aktNode && aktNode is MySKNode {
+                    let actionMove1 = SKAction.moveTo(startNode.position, duration: 1.0)
+                    aktNode!.runAction(SKAction.sequence([actionMove1]))
+                    let actionMove2 = SKAction.moveTo(aktNode!.position, duration: 1.0)
+                    startNode.runAction(SKAction.sequence([actionMove2]))
+                }
+                exchangeModus = false
+                return
             }
             
             

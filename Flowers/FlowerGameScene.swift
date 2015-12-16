@@ -312,7 +312,7 @@ class FlowerGameScene: MyGameScene {
                 case .Mirrored:
                     //var sprite = self.childNodeWithName(savedSpriteInCycle.name)! as! MySKNode
                     actionMoveArray.append(SKAction.moveTo(savedSpriteInCycle.endPosition, duration: duration))
-                    
+                case .Exchanged: _ = 0
                     //default: run = false
                 case .Nothing: break
                 }

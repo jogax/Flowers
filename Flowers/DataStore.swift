@@ -47,6 +47,7 @@ class DataStore {
         seedDataEntity = SeedData(entity:seedDataDescription!, insertIntoManagedObjectContext: managedObjectContext)
         seedDataEntity!.gameDifficulty = NSNumber(longLong: seedData.gameDifficulty)
         seedDataEntity!.gameNumber = NSNumber(longLong: seedData.gameNumber)
+        seedDataEntity!.gameType = NSNumber(longLong: seedData.gameType)
         seedDataEntity!.seed = seedData.seed
         
         do {
@@ -63,9 +64,9 @@ class DataStore {
         var seedDataStruct: SeedDataStruct
         var exists: Bool
         request.entity = self.seedDataDescription
-        let p1 = NSPredicate(format: "gameType = %ld", seedIndex.gameType)
-        let p2 = NSPredicate(format: "gameDifficulty = %ld", seedIndex.gameDifficulty)
-        let p3 = NSPredicate(format: "gameNumber = %ld", seedIndex.gameNumber)
+        let p1 = NSPredicate(format: "gameType = %d", seedIndex.gameType)
+        let p2 = NSPredicate(format: "gameDifficulty = %d", seedIndex.gameDifficulty)
+        let p3 = NSPredicate(format: "gameNumber = %d", seedIndex.gameNumber)
         let predicate = NSCompoundPredicate.init(andPredicateWithSubpredicates: [p1, p2, p3])
         request.predicate = predicate
         do {

@@ -34,6 +34,7 @@ class MyRandom {
         let (seedDataStruct, exists) = GV.dataStore.readSeedDataRecord(seedIndex)
         if exists {
             random = GKARC4RandomSource(seed: seedDataStruct.seed)
+            random.dropValuesWithCount(1024)
         }
         else {
             random = GKARC4RandomSource()

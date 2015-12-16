@@ -86,7 +86,7 @@ struct Container {
 }
 
 enum SpriteStatus: Int, CustomStringConvertible {
-    case Added = 0, MovingStarted, Unification, Mirrored, FallingMovingSprite, FallingSprite, HitcounterChanged, Removed, Nothing
+    case Added = 0, MovingStarted, Unification, Mirrored, FallingMovingSprite, FallingSprite, HitcounterChanged, Removed, Exchanged, Nothing
     
     var statusName: String {
         let statusNames = [
@@ -98,6 +98,7 @@ enum SpriteStatus: Int, CustomStringConvertible {
             "FallingSprite",
             "HitcounterChanged",
             "Removed",
+            "Exchanged",
             "Nothing"
         ]
         
@@ -223,6 +224,7 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
     var movedFromNode: MySKNode!
     var settingsButton: MySKButton?
     var undoButton: MySKButton?
+    var restartButton: MySKButton?
     var exchangeButton: MySKButton?
     var previousLevelButton: MySKButton?
     var nextLevelButton: MySKButton?
@@ -359,9 +361,14 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         addChild(settingsButton!)
         
         let undoTexture = SKTexture(image: images.getUndo())
-        undoButton = MySKButton(texture: undoTexture, frame: CGRectMake(buttonXPosNormalized * 6, buttonYPos, buttonSize, buttonSize))
+        undoButton = MySKButton(texture: undoTexture, frame: CGRectMake(buttonXPosNormalized * 7, buttonYPos, buttonSize, buttonSize))
         undoButton!.name = "undo"
         addChild(undoButton!)
+        
+        let restartTexture = SKTexture(image: images.getRestart())
+        restartButton = MySKButton(texture: restartTexture, frame: CGRectMake(buttonXPosNormalized * 5, buttonYPos, buttonSize, buttonSize))
+        restartButton!.name = "restart"
+        addChild(restartButton!)
         
         let previousLevelButtonTexture = SKTexture(image: images.getPfeillinks())
         previousLevelButton = MySKButton(texture: previousLevelButtonTexture, frame: CGRectMake(buttonXPosNormalized * 1, buttonYPos, buttonSize, buttonSize))
@@ -429,6 +436,10 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
     
     func exchangeButtonPressed() {
         exchangeModus = true
+    }
+    
+    func restartButtonPressed() {
+        newGame(false)
     }
     
     func stopTimer() {
@@ -766,6 +777,7 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
                 case "settings": settingsButtonPressed()
                 case "undo": undoButtonPressed()
                 case "exchange": exchangeButtonPressed()
+                case "restart": restartButtonPressed()
                 default: undoButtonPressed()
                 }
                 return
@@ -773,7 +785,9 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             
             if exchangeModus {
                 if startNode != nil && startNode != aktNode && aktNode is MySKNode {
-                    let actionMove1 = SKAction.moveTo(startNode.position, duration: 1.0)
+//                    push(startNode, status: .MovingStarted)
+                    push(startNode, sprite2: aktNode as! MySKNode)
+                   let actionMove1 = SKAction.moveTo(startNode.position, duration: 1.0)
                     aktNode!.runAction(SKAction.sequence([actionMove1]))
                     let actionMove2 = SKAction.moveTo(aktNode!.position, duration: 1.0)
                     startNode.runAction(SKAction.sequence([actionMove2]))
@@ -1221,7 +1235,13 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
     
     func showTimeLeft() {
     }
+
     
+    func push(sprite1: MySKNode, sprite2: MySKNode) {
+        push(sprite1, status: .Exchanged)
+        push(sprite2, status: .Exchanged)
+    }
+
     func push(sprite: MySKNode, status: SpriteStatus) {
         var savedSprite = SavedSprite()
         savedSprite.name = sprite.name!

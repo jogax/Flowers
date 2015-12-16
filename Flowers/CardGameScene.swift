@@ -354,8 +354,31 @@ class CardGameScene: MyGameScene {
                 case .Mirrored:
                     //var sprite = self.childNodeWithName(savedSpriteInCycle.name)! as! MySKNode
                     actionMoveArray.append(SKAction.moveTo(savedSpriteInCycle.endPosition, duration: duration))
+                case .Exchanged:
+                    let sprite = self.childNodeWithName(savedSpriteInCycle.name)! as! MySKNode
+                    let savedSprite = stack.pull()
+                    let sprite1 = self.childNodeWithName(savedSprite!.name)! as! MySKNode
                     
-                    //default: run = false
+                    sprite.startPosition = savedSpriteInCycle.startPosition
+                    sprite.minValue = savedSpriteInCycle.minValue
+                    sprite.maxValue = savedSpriteInCycle.maxValue
+                    sprite.BGPictureAdded = savedSpriteInCycle.BGPictureAdded
+                    
+                    sprite1.startPosition = savedSprite!.startPosition
+                    sprite1.minValue = savedSprite!.minValue
+                    sprite1.maxValue = savedSprite!.maxValue
+                    sprite1.BGPictureAdded = savedSprite!.BGPictureAdded
+
+                    let action = SKAction.moveTo(sprite.startPosition, duration: 1.0)
+                    let action1 = SKAction.moveTo(sprite1.startPosition, duration: 1.0)
+
+                    sprite.runAction(SKAction.sequence([action]))
+                    sprite1.runAction(SKAction.sequence([action1]))
+                    
+                    sprite.reload()
+                    sprite1.reload()
+                    savedSpriteInCycle = savedSprite!
+                    stopSoon = true
                 case .Nothing: break
                 }
                 if let savedSprite = stack.pull() {

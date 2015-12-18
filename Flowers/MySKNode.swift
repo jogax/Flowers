@@ -21,6 +21,9 @@ class MySKNode: SKSpriteNode {
     var minValue: Int
     var maxValue: Int
     
+    var trembling: CGFloat = 0
+    var origSize = CGSizeMake(0, 0)
+    
     var isCard = false
     
 
@@ -52,7 +55,6 @@ class MySKNode: SKSpriteNode {
         }
 
         super.init(texture: texture, color: UIColor.clearColor(), size: texture.size())
-        
         if type == .ButtonType {
             //hitLabel.position = CGPointMake(self.position.x, self.position.y -  self.size.height * 0.008)
             hitLabel.verticalAlignmentMode = SKLabelVerticalAlignmentMode.Center

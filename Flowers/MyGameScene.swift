@@ -171,6 +171,7 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
     }
     
     
+    var tremblingSprites: [MySKNode] = []
     var random: MyRandom?
     // Values from json File
     var params = ""
@@ -435,6 +436,8 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
     }
     
     func exchangeButtonPressed() {
+        exchangeButton!.origSize = exchangeButton!.size
+        tremblingSprites.append(exchangeButton!)
         exchangeModus = true
     }
     
@@ -627,9 +630,9 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
     
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?)
     {
-        if inFirstGenerateSprites {
-            return
-        }
+//        if inFirstGenerateSprites {
+//            return
+//        }
         //let countTouches = touches.count
         let firstTouch = touches.first
         let touchLocation = firstTouch!.locationInNode(self)
@@ -641,6 +644,10 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         case MyNodeTypes.LabelNode: movedFromNode = self.nodeAtPoint(touchLocation).parent as! MySKNode
         case MyNodeTypes.SpriteNode:
             movedFromNode = self.nodeAtPoint(touchLocation) as! MySKNode
+            if exchangeModus {
+                movedFromNode.origSize = movedFromNode.size
+                tremblingSprites.append(movedFromNode)
+            }
             
             if showFingerNode {
                 let fingerNode = SKSpriteNode(imageNamed: "finger.png")
@@ -785,13 +792,29 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             
             if exchangeModus {
                 if startNode != nil && startNode != aktNode && aktNode is MySKNode {
-//                    push(startNode, status: .MovingStarted)
+                    let column = startNode.column
+                    let row = startNode.row
+                    let startPosition = startNode.startPosition
+                    
                     push(startNode, sprite2: aktNode as! MySKNode)
-                   let actionMove1 = SKAction.moveTo(startNode.position, duration: 1.0)
+                    let actionMove1 = SKAction.moveTo(startNode.position, duration: 1.0)
                     aktNode!.runAction(SKAction.sequence([actionMove1]))
                     let actionMove2 = SKAction.moveTo(aktNode!.position, duration: 1.0)
                     startNode.runAction(SKAction.sequence([actionMove2]))
+                    
+                    startNode.column = (aktNode as! MySKNode).column
+                    startNode.row = (aktNode as! MySKNode).row
+                    startNode.startPosition = (aktNode as! MySKNode).startPosition
+                    
+                    (aktNode as! MySKNode).column = column
+                    (aktNode as! MySKNode).row = row
+                    (aktNode as! MySKNode).startPosition = startPosition
+                    
                 }
+                for index in 0..<tremblingSprites.count {
+                    tremblingSprites[index].size = tremblingSprites[index].origSize
+                }
+                tremblingSprites.removeAll()
                 exchangeModus = false
                 return
             }

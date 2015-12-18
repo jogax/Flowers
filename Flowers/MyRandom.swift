@@ -40,7 +40,7 @@ class MyRandom {
             random = GKARC4RandomSource()
             let seedData = SeedDataStruct(gameType: seedIndex.gameType, gameDifficulty: seedIndex.gameDifficulty, gameNumber: seedIndex.gameNumber, seed: random.seed)
             GV.dataStore.saveSeedDataRecord(seedData)
-            GV.cloudStore.saveRecord(seedData)
+            //GV.cloudStore.saveRecord(seedData)
             random.dropValuesWithCount(1024)
         }
     }

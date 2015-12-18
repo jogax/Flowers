@@ -60,6 +60,21 @@ class CardGameScene: MyGameScene {
     override func getValueForContainer()->Int {
         return countSpritesProContainer! + 1
     }
+    
+    override func update(currentTime: NSTimeInterval) {
+        let adder:CGFloat = 5
+        backgroudScrollUpdate()
+        for index in 0..<tremblingSprites.count {
+            let aktSprite = tremblingSprites[index]
+            switch aktSprite.trembling {
+                case 0: aktSprite.trembling = adder
+                case adder: aktSprite.trembling = -adder
+                case -adder: aktSprite.trembling = adder
+                default: aktSprite.trembling = adder
+            }
+            aktSprite.size = CGSizeMake(aktSprite.origSize.width +  aktSprite.trembling, aktSprite.origSize.height +  aktSprite.trembling)
+        }
+    }
 
     override func spriteDidCollideWithContainer(node1:MySKNode, node2:MySKNode) {
         let movingSprite = node1

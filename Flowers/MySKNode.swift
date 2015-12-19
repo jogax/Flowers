@@ -9,6 +9,10 @@
 enum MySKNodeType: Int {
     case SpriteType = 0, ContainerType, ButtonType
 }
+
+enum TremblingType: Int {
+    case NoTrembling = 0, ChangeSize, ChangePos, ChangeDirection
+}
 let NoValue = -1
 import SpriteKit
 
@@ -20,9 +24,11 @@ class MySKNode: SKSpriteNode {
     var startPosition = CGPointZero
     var minValue: Int
     var maxValue: Int
-    
-    var trembling: CGFloat = 0
+
     var origSize = CGSizeMake(0, 0)
+
+    var trembling: CGFloat = 0
+    var tremblingType: TremblingType = .NoTrembling
     
     var isCard = false
     
@@ -53,6 +59,8 @@ class MySKNode: SKSpriteNode {
         case .SpriteType:
             hitCounter = 1
         }
+        
+        
 
         super.init(texture: texture, color: UIColor.clearColor(), size: texture.size())
         if type == .ButtonType {
@@ -60,7 +68,7 @@ class MySKNode: SKSpriteNode {
             hitLabel.verticalAlignmentMode = SKLabelVerticalAlignmentMode.Center
             hitLabel.fontSize = 20;
             //hitLabel.text = "\(hitCounter)"
-            hitLabel.zPosition = 100
+            hitLabel.zPosition = 1
             //print("\(hitLabel.text)")
         } else {
             
@@ -71,7 +79,7 @@ class MySKNode: SKSpriteNode {
             minValueLabel.fontSize = 25
             maxValueLabel.fontSize = 25
             minValueLabel.text = "\(minValue)"
-            minValueLabel.zPosition = 100
+            minValueLabel.zPosition = 1
             
             var positionOffset = CGPointMake(self.size.width * 0.05, -self.size.height * 0.06)
             if type == .SpriteType {

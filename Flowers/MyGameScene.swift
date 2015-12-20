@@ -245,7 +245,7 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
     var settingsSceneStarted = false
     var settingsDelegate: SettingsDelegate?
     //var settingsNode = SettingsNode()
-    
+    var gameDifficulty: Int = 0
     var spriteTabRect = CGRectZero
     
     //    let deviceIndex = GV.onIpad ? 0 : 1
@@ -436,9 +436,17 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
     }
     
     func exchangeButtonPressed() {
-        exchangeButton!.origSize = exchangeButton!.size
-        tremblingSprites.append(exchangeButton!)
-        exchangeModus = true
+        if !exchangeModus {
+            exchangeButton!.origSize = exchangeButton!.size
+            exchangeButton!.tremblingType = .ChangeSize
+            tremblingSprites.append(exchangeButton!)
+            exchangeModus = true
+        } else {
+            exchangeButton!.size = exchangeButton!.origSize
+            exchangeButton!.tremblingType = .NoTrembling
+            tremblingSprites.removeAll()
+            exchangeModus = false
+        }
     }
     
     func restartButtonPressed() {
@@ -536,10 +544,11 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             let value = colorTab[colorTabIndex].spriteValue
             colorTab.removeAtIndex(colorTabIndex)
             
-            
             let sprite = MySKNode(texture: getTexture(colorIndex), type: .SpriteType, value:value)
-            sprite.size.width = spriteSize.width
-            sprite.size.height = spriteSize.height
+            tableCellSize = spriteTabRect.width / CGFloat(countColumns)
+            
+//            sprite.size.width = spriteSize.width //* spriteSizeMultiplier
+//            sprite.size.height = spriteSize.height ////* spriteSizeMultiplier
             //            let yKorr1: CGFloat = GV.onIpad ? 0.9 : 0.8
             //            let yKorr2: CGFloat = GV.onIpad ? 1.8 : 2.0
             //let yKorr1: CGFloat = GV.onIpad ? 0.8 : 1.0
@@ -547,7 +556,6 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             
             let index = random?.getRandomInt(0, max: positionsTab.count - 1)
             let (aktColumn, aktRow) = positionsTab[index!]
-            tableCellSize = spriteTabRect.width / CGFloat(countColumns)
             
             let xPosition = spriteTabRect.origin.x - spriteTabRect.size.width / 2 + CGFloat(aktColumn) * tableCellSize + tableCellSize / 2
             let yPosition = spriteTabRect.origin.y - spriteTabRect.size.height / 2 + tableCellSize / 2 + CGFloat(aktRow) * tableCellSize
@@ -559,8 +567,10 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             
             sprite.column = aktColumn
             sprite.row = aktRow
-            sprite.name = spriteName
             sprite.colorIndex = colorIndex
+            sprite.name = spriteName
+            
+            sprite.size = CGSizeMake(spriteSize.width, spriteSize.height)
 
             addPhysicsBody(sprite)
             push(sprite, status: .Added)
@@ -646,6 +656,7 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             movedFromNode = self.nodeAtPoint(touchLocation) as! MySKNode
             if exchangeModus {
                 movedFromNode.origSize = movedFromNode.size
+                movedFromNode.tremblingType = .ChangeDirection
                 tremblingSprites.append(movedFromNode)
             }
             
@@ -791,15 +802,18 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             }
             
             if exchangeModus {
-                if startNode != nil && startNode != aktNode && aktNode is MySKNode {
+                let myAktNode = aktNode as! MySKNode
+                if startNode != nil && startNode != myAktNode && myAktNode.type == .SpriteType {
                     let column = startNode.column
                     let row = startNode.row
                     let startPosition = startNode.startPosition
                     
                     push(startNode, sprite2: aktNode as! MySKNode)
+                    startNode.zPosition = 5
+                    myAktNode.zPosition = 4
                     let actionMove1 = SKAction.moveTo(startNode.position, duration: 1.0)
-                    aktNode!.runAction(SKAction.sequence([actionMove1]))
-                    let actionMove2 = SKAction.moveTo(aktNode!.position, duration: 1.0)
+                    myAktNode.runAction(SKAction.sequence([actionMove1]))
+                    let actionMove2 = SKAction.moveTo(myAktNode.position, duration: 1.0)
                     startNode.runAction(SKAction.sequence([actionMove2]))
                     
                     startNode.column = (aktNode as! MySKNode).column
@@ -813,6 +827,9 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
                 }
                 for index in 0..<tremblingSprites.count {
                     tremblingSprites[index].size = tremblingSprites[index].origSize
+                    tremblingSprites[index].tremblingType = .NoTrembling
+                    tremblingSprites[index].zRotation = 0
+                    tremblingSprites[index].zPosition = 0
                 }
                 tremblingSprites.removeAll()
                 exchangeModus = false
@@ -822,6 +839,7 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             
             if startNode.type == .SpriteType && (aktNode == nil || (aktNode as! MySKNode) != movedFromNode) {
                 let sprite = movedFromNode// as! SKSpriteNode
+                
                 
                 sprite!.physicsBody = SKPhysicsBody(circleOfRadius: sprite!.size.width/2)
                 sprite.physicsBody?.dynamic = true

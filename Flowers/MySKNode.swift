@@ -9,20 +9,35 @@
 enum MySKNodeType: Int {
     case SpriteType = 0, ContainerType, ButtonType
 }
+
+enum TremblingType: Int {
+    case NoTrembling = 0, ChangeSize, ChangePos, ChangeDirection
+}
 let NoValue = -1
 import SpriteKit
 
 class MySKNode: SKSpriteNode {
     
+    override var size: CGSize {
+        didSet {
+            if oldValue != CGSizeMake(0,0) && (type == .ContainerType || type == .SpriteType) {
+                minValueLabel.fontSize = size.width * fontSizeMultiplier
+                maxValueLabel.fontSize = size.width * fontSizeMultiplier
+//                print("name: \(name), type: \(type), oldValue: \(oldValue), size: \(size)")
+            }
+        }
+    }
     var column = 0
     var row = 0
     var colorIndex = 0
     var startPosition = CGPointZero
     var minValue: Int
     var maxValue: Int
-    
-    var trembling: CGFloat = 0
+
     var origSize = CGSizeMake(0, 0)
+
+    var trembling: CGFloat = 0
+    var tremblingType: TremblingType = .NoTrembling
     
     var isCard = false
     
@@ -35,6 +50,7 @@ class MySKNode: SKSpriteNode {
     var minValueLabel = SKLabelNode()
     var BGPicture = SKSpriteNode()
     var BGPictureAdded = false
+    let fontSizeMultiplier: CGFloat = 0.35
 
     init(texture: SKTexture, type:MySKNodeType, value: Int) {
         self.type = type
@@ -53,6 +69,8 @@ class MySKNode: SKSpriteNode {
         case .SpriteType:
             hitCounter = 1
         }
+        
+        
 
         super.init(texture: texture, color: UIColor.clearColor(), size: texture.size())
         if type == .ButtonType {
@@ -60,7 +78,7 @@ class MySKNode: SKSpriteNode {
             hitLabel.verticalAlignmentMode = SKLabelVerticalAlignmentMode.Center
             hitLabel.fontSize = 20;
             //hitLabel.text = "\(hitCounter)"
-            hitLabel.zPosition = 100
+            hitLabel.zPosition = 1
             //print("\(hitLabel.text)")
         } else {
             
@@ -68,10 +86,8 @@ class MySKNode: SKSpriteNode {
             hitLabel.fontSize = 15;
             hitLabel.text = "\(hitCounter)"
             
-            minValueLabel.fontSize = 25
-            maxValueLabel.fontSize = 25
             minValueLabel.text = "\(minValue)"
-            minValueLabel.zPosition = 100
+            minValueLabel.zPosition = 1
             
             var positionOffset = CGPointMake(self.size.width * 0.05, -self.size.height * 0.06)
             if type == .SpriteType {
@@ -82,23 +98,10 @@ class MySKNode: SKSpriteNode {
             minValueLabel.position = self.position - positionOffset //CGPointMake(23, -35)
         }
         
-        hitLabel.fontName = "ArielBold"
-        hitLabel.fontColor = SKColor.blackColor()
-        hitLabel.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.Center
-        hitLabel.userInteractionEnabled = false
-
-        maxValueLabel.fontName = "ArielBold"
-        maxValueLabel.fontColor = SKColor.blackColor()
-        maxValueLabel.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.Left
-        maxValueLabel.verticalAlignmentMode = SKLabelVerticalAlignmentMode.Top
-        maxValueLabel.userInteractionEnabled = false
-
-        minValueLabel.fontName = "ArielBold"
-        minValueLabel.fontColor = SKColor.blackColor()
-        minValueLabel.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.Left
-        minValueLabel.verticalAlignmentMode = SKLabelVerticalAlignmentMode.Top
-        minValueLabel.userInteractionEnabled = false
-
+        setLabel(hitLabel, fontSize: 15)
+        setLabel(maxValueLabel, fontSize: size.width * fontSizeMultiplier)
+        setLabel(minValueLabel, fontSize: size.width * fontSizeMultiplier)
+        
 
         
         if isCard {
@@ -110,6 +113,15 @@ class MySKNode: SKSpriteNode {
             self.addChild(hitLabel)
         }
 
+    }
+    
+    func setLabel(label: SKLabelNode, fontSize: CGFloat) {
+        label.fontName = "ArielItalic"
+//        label.fontSize = fontSize
+        label.fontColor = SKColor.blackColor()
+        label.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.Left
+        label.verticalAlignmentMode = SKLabelVerticalAlignmentMode.Top
+        label.userInteractionEnabled = false
     }
     
     func reload() {

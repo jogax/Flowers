@@ -13,6 +13,7 @@ class CardGameScene: MyGameScene {
     
     var valueTab = [Int]()
     let spriteCountPosKorr = CGPointMake(GV.onIpad ? 0.05 : 0.05, GV.onIpad ? 0.95 : 0.95)
+    var lastUpdateSec = 0
 
     override func getTexture(index: Int)->SKTexture {
         return atlas.textureNamed ("card\(index)")
@@ -62,18 +63,27 @@ class CardGameScene: MyGameScene {
     }
     
     override func update(currentTime: NSTimeInterval) {
-        let adder:CGFloat = 5
-        backgroudScrollUpdate()
-        for index in 0..<tremblingSprites.count {
-            let aktSprite = tremblingSprites[index]
-            switch aktSprite.trembling {
-                case 0: aktSprite.trembling = adder
-                case adder: aktSprite.trembling = -adder
-                case -adder: aktSprite.trembling = adder
-                default: aktSprite.trembling = adder
+        let sec10: Int = Int(currentTime * 10) % 2
+        if sec10 != lastUpdateSec && sec10 == 0 {
+            let adder:CGFloat = 5
+            backgroudScrollUpdate()
+            for index in 0..<tremblingSprites.count {
+                let aktSprite = tremblingSprites[index]
+                switch aktSprite.trembling {
+                    case 0: aktSprite.trembling = adder
+                    case adder: aktSprite.trembling = -adder
+                    case -adder: aktSprite.trembling = adder
+                    default: aktSprite.trembling = adder
+                }
+                switch aktSprite.tremblingType {
+                    case .NoTrembling: break
+                    case .ChangeSize:  aktSprite.size = CGSizeMake(aktSprite.origSize.width +  aktSprite.trembling, aktSprite.origSize.height +  aktSprite.trembling)
+                    case .ChangePos: break
+                case .ChangeDirection: aktSprite.zRotation = CGFloat(CGFloat(M_PI)/CGFloat(aktSprite.trembling == 0 ? 16 : aktSprite.trembling * CGFloat(8)))
+                }
             }
-            aktSprite.size = CGSizeMake(aktSprite.origSize.width +  aktSprite.trembling, aktSprite.origSize.height +  aktSprite.trembling)
         }
+        lastUpdateSec = sec10
     }
 
     override func spriteDidCollideWithContainer(node1:MySKNode, node2:MySKNode) {
@@ -270,8 +280,9 @@ class CardGameScene: MyGameScene {
             containers.append(cont)
             containers[index].mySKNode.name = "\(index)"
             containers[index].mySKNode.position = CGPoint(x: centerX, y: centerY)
-            containers[index].mySKNode.size.width = containerSize.width
-            containers[index].mySKNode.size.height = containerSize.height
+            containers[index].mySKNode.size = CGSizeMake(containerSize.width, containerSize.height)
+//            containers[index].mySKNode.size.width = containerSize.width
+//            containers[index].mySKNode.size.height = containerSize.height
             
             containers[index].mySKNode.colorIndex = index
             containers[index].mySKNode.physicsBody = SKPhysicsBody(circleOfRadius: containers[index].mySKNode.size.width / 3) // 1

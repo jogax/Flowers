@@ -17,7 +17,7 @@ class MySKButton: MySKNode {
         self.size = frame.size
         let buttonPicture = MySKNode(texture: texture, type: .ButtonType, value: NoValue)
         buttonPicture.size = size * 0.95
-        buttonPicture.zPosition = 5
+        buttonPicture.zPosition = 1
         buttonPicture.name = buttonName
         addChild(buttonPicture)
         let shadow = MySKNode(texture: texture, type: .ButtonType, value: NoValue)
@@ -27,7 +27,7 @@ class MySKButton: MySKNode {
         shadow.alpha = 0.25
         shadow.size = size
         shadow.anchorPoint = self.anchorPoint + CGPointMake(-0.09, 0.04)
-        shadow.zPosition = 10
+        shadow.zPosition = 2
         shadow.name = buttonName
         addChild(shadow)
     }

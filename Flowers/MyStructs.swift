@@ -109,7 +109,7 @@ struct SpriteGameData {
         showHelpLines = 0
         spriteLevelIndex = 0
         spriteGameScore = 0
-        gameModus = GameModusFlowers
+        gameModus = GameModusCards
         soundVolume = 0.1
         musicVolume = 0.1
     }
@@ -124,10 +124,10 @@ struct LevelParam {
     var countRows: Int
     var minProzent: Int
     var maxProzent: Int
-    var containerSize: Int
-    var spriteSize: Int
+    var containerSize: CGFloat
+    var spriteSize: CGFloat
     var targetScoreKorr: Int
-    var timeLimitKorr: Int
+    //var timeLimitKorr: Int
     
     init()
     {
@@ -140,7 +140,7 @@ struct LevelParam {
         self.containerSize = 0
         self.spriteSize = 0
         self.targetScoreKorr = 0
-        self.timeLimitKorr = 0
+        //self.timeLimitKorr = 0
     }
     
 }

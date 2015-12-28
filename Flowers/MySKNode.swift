@@ -50,9 +50,12 @@ class MySKNode: SKSpriteNode {
     var minValueLabel = SKLabelNode()
     var BGPicture = SKSpriteNode()
     var BGPictureAdded = false
-    let fontSizeMultiplier: CGFloat = 0.35
+    
+    let fontSizeMultiplier: CGFloat = 0.5 * UIDevice.currentDevice().modelSizeConstant
+    
 
     init(texture: SKTexture, type:MySKNodeType, value: Int) {
+        let modelMultiplier = UIDevice.currentDevice().modelSizeConstant
         self.type = type
         self.minValue = value
         self.maxValue = value
@@ -89,9 +92,10 @@ class MySKNode: SKSpriteNode {
             minValueLabel.text = "\(minValue)"
             minValueLabel.zPosition = 1
             
+            
             var positionOffset = CGPointMake(self.size.width * 0.05, -self.size.height * 0.06)
             if type == .SpriteType {
-                positionOffset = CGPointMake(self.size.width * 0.035, -self.size.height * 0.04)
+                positionOffset = CGPointMake(self.size.width * 0.035 * modelMultiplier, -self.size.height * 0.04 * modelMultiplier)
                 minValueLabel.fontSize = 20
                 maxValueLabel.fontSize = 20
             }
@@ -117,7 +121,6 @@ class MySKNode: SKSpriteNode {
     
     func setLabel(label: SKLabelNode, fontSize: CGFloat) {
         label.fontName = "ArielItalic"
-//        label.fontSize = fontSize
         label.fontColor = SKColor.blackColor()
         label.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.Left
         label.verticalAlignmentMode = SKLabelVerticalAlignmentMode.Top
@@ -131,8 +134,9 @@ class MySKNode: SKSpriteNode {
             if minValue != maxValue {
                 self.alpha = 1.0
             }
-            let positionOffset = CGPointMake(self.size.width * -0.45, self.size.height * 0.45)
-            let BGPicturePosition = CGPointMake(-self.size.width * 0.08, self.size.height * 0.30)
+            let modelMultiplier = UIDevice.currentDevice().modelSizeConstant
+            let positionOffset = CGPointMake(self.size.width * -0.45 * modelMultiplier, self.size.height * 0.45 * modelMultiplier)
+            let BGPicturePosition = CGPointMake(-self.size.width * 0.08 * modelMultiplier, self.size.height * 0.40 * modelMultiplier)
             let bgPictureName = "BGPicture"
             if minValue != maxValue {
                 if !BGPictureAdded {

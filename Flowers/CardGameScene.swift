@@ -1,4 +1,4 @@
-//
+
 //  CardGameScene.swift
 //  Flowers
 //
@@ -13,16 +13,32 @@ class CardGameScene: MyGameScene {
     
     var valueTab = [Int]()
     let spriteCountPosKorr = CGPointMake(GV.onIpad ? 0.05 : 0.05, GV.onIpad ? 0.95 : 0.95)
+    var levelsForPlay = LevelsForPlayWithCards()
+
     var lastUpdateSec = 0
 
     override func getTexture(index: Int)->SKTexture {
         return atlas.textureNamed ("card\(index)")
     }
-    override func makeSpezialThings() {
+    override func makeSpezialThings(first: Bool) {
+//            levelIndex = levelsForPlay.getNextLevel()
         let multiplier: CGFloat = 1.5
         let width:CGFloat = 64.0
         let height: CGFloat = 89.0
         sizeMultiplier = CGSizeMake(multiplier, multiplier * height / width)
+        levelsForPlay.setAktLevel(levelIndex)
+    }
+        
+    override func specialPrepareFuncFirst() {
+        countContainers = levelsForPlay.aktLevel.countContainers
+        countSpritesProContainer = levelsForPlay.aktLevel.countSpritesProContainer
+        //targetScoreKorr = levelsForPlay.aktLevel.targetScoreKorr
+        countColumns = levelsForPlay.aktLevel.countColumns
+        countRows = levelsForPlay.aktLevel.countRows
+        minUsedCells = levelsForPlay.aktLevel.minProzent * countColumns * countRows / 100
+        maxUsedCells = levelsForPlay.aktLevel.maxProzent * countColumns * countRows / 100
+        containerSize = CGSizeMake(CGFloat(levelsForPlay.aktLevel.containerSize) * sizeMultiplier.width, CGFloat(levelsForPlay.aktLevel.containerSize) * sizeMultiplier.height)
+        spriteSize = CGSizeMake(CGFloat(levelsForPlay.aktLevel.spriteSize) * sizeMultiplier.width, CGFloat(levelsForPlay.aktLevel.spriteSize) * sizeMultiplier.height )
     }
     
     override func updateSpriteCount(adder: Int) {
@@ -425,6 +441,10 @@ class CardGameScene: MyGameScene {
         
         
         
+    }
+    
+    override func readNextLevel() -> Int {
+        return levelsForPlay.getNextLevel()
     }
 
 }

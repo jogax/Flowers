@@ -203,7 +203,6 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
     var audioPlayer: AVAudioPlayer?
     var soundPlayer: AVAudioPlayer?
     var myView = SKView()
-    var levelsForPlayWithSprites = LevelsForPlayWithSprites()
     var levelIndex = Int(GV.spriteGameDataArray[GV.getAktNameIndex()].spriteLevelIndex)
     var stack:Stack<SavedSprite> = Stack()
     var gameArray = [[Bool]]() // true if Cell used
@@ -269,9 +268,8 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         if !settingsSceneStarted {
             
             myView = view
-            levelsForPlayWithSprites.setAktLevel(levelIndex)
             
-            makeSpezialThings()
+            makeSpezialThings(true)
             prepareNextGame()
             generateSprites(true)
         } else {
@@ -281,6 +279,7 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
     }
     
     func prepareNextGame() {
+        specialPrepareFuncFirst()
         playMusic("MyMusic", volume: GV.musicVolume, loops: 0)
         stack = Stack()
         timeCount = 0
@@ -299,18 +298,18 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         //        self.addChild(buttonField!)
         
         spriteTabRect.origin = CGPointMake(self.frame.midX, self.frame.midY * 0.9)
-        spriteTabRect.size = CGSizeMake(self.frame.size.width * 0.90, self.frame.size.width * 0.90)
-        
-        countContainers = levelsForPlayWithSprites.aktLevel.countContainers
-        countSpritesProContainer = levelsForPlayWithSprites.aktLevel.countSpritesProContainer
-        targetScoreKorr = levelsForPlayWithSprites.aktLevel.targetScoreKorr
-        countColumns = levelsForPlayWithSprites.aktLevel.countColumns
-        countRows = levelsForPlayWithSprites.aktLevel.countRows
-        minUsedCells = levelsForPlayWithSprites.aktLevel.minProzent * countColumns * countRows / 100
-        maxUsedCells = levelsForPlayWithSprites.aktLevel.maxProzent * countColumns * countRows / 100
-        containerSize = CGSizeMake(CGFloat(levelsForPlayWithSprites.aktLevel.containerSize) * sizeMultiplier.width, CGFloat(levelsForPlayWithSprites.aktLevel.containerSize) * sizeMultiplier.height)
-        spriteSize = CGSizeMake(CGFloat(levelsForPlayWithSprites.aktLevel.spriteSize) * sizeMultiplier.width, CGFloat(levelsForPlayWithSprites.aktLevel.spriteSize) * sizeMultiplier.height )
-        
+        spriteTabRect.size = CGSizeMake(self.frame.size.width * 0.80, self.frame.size.width * 0.80)
+/*
+        countContainers = levelsForPlay.aktLevel.countContainers
+        countSpritesProContainer = levelsForPlay.aktLevel.countSpritesProContainer
+        targetScoreKorr = levelsForPlay.aktLevel.targetScoreKorr
+        countColumns = levelsForPlay.aktLevel.countColumns
+        countRows = levelsForPlay.aktLevel.countRows
+        minUsedCells = levelsForPlay.aktLevel.minProzent * countColumns * countRows / 100
+        maxUsedCells = levelsForPlay.aktLevel.maxProzent * countColumns * countRows / 100
+        containerSize = CGSizeMake(CGFloat(levelsForPlay.aktLevel.containerSize) * sizeMultiplier.width, CGFloat(levelsForPlay.aktLevel.containerSize) * sizeMultiplier.height)
+        spriteSize = CGSizeMake(CGFloat(levelsForPlay.aktLevel.spriteSize) * sizeMultiplier.width, CGFloat(levelsForPlay.aktLevel.spriteSize) * sizeMultiplier.height )
+*/        
         //timeLimit = countContainers * countSpritesProContainer! * levelsForPlayWithSprites.aktLevel.timeLimitKorr
         //print("timeLimit: \(timeLimit)")
         
@@ -499,7 +498,8 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         stopped = true
         if next {
             
-            levelIndex = levelsForPlayWithSprites.getNextLevel()
+            
+            levelIndex = readNextLevel()
             gameScore += levelScore
             
             for index in 0..<GV.spriteGameDataArray.count {
@@ -1327,7 +1327,7 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         return atlas.textureNamed ("sprite\(index)")
     }
     
-    func makeSpezialThings() {
+    func makeSpezialThings(first: Bool) {
         
     }
     
@@ -1356,6 +1356,15 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
 
     func prepareContainers() {
     }
+    
+    func readNextLevel()->Int {
+        return 0
+    }
+    
+    func specialPrepareFuncFirst() {
+        
+    }
+    
 }
 
 

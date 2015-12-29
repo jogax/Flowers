@@ -42,6 +42,13 @@ struct GV {
 
     static let dataStore = DataStore()
     static let cloudStore = CloudData()
+    
+    static let deviceType = UIDevice.currentDevice().modelName
+    
+    
+    
+    static let deviceConstants = DeviceConstants(deviceType: UIDevice.currentDevice().modelName)
+
 
     static var spriteGameDataArray: [SpriteGameData] = []
     // Constraints
@@ -112,6 +119,31 @@ struct SpriteGameData {
         gameModus = GameModusCards
         soundVolume = 0.1
         musicVolume = 0.1
+    }
+    
+}
+
+struct DeviceConstants {
+    var fontSizeMultiplier: CGFloat
+    
+    init(deviceType: String) {
+        switch deviceType {
+            case "iPad Air":
+                fontSizeMultiplier = 0.5
+            case "iPad Pro":
+                fontSizeMultiplier = 0.5
+            case "iPhone 4s":
+                fontSizeMultiplier = 0.5
+            case "iPhone 5s":
+                fontSizeMultiplier = 0.5
+            case "iPhone 6":
+                fontSizeMultiplier = 0.5
+            case "iPhone 6 Plus":
+                fontSizeMultiplier = 0.5
+            default:
+                fontSizeMultiplier = 0.5
+        }
+        
     }
     
 }

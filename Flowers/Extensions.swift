@@ -8,9 +8,16 @@
 
 import UIKit
 
-public extension UIDevice {
 
+public extension UIDevice {
+    enum UIDeviceTypes: Int {
+        case NoDevice = 0, IPodTouch5, IPodTouch6, IPhone4, IPhone4s, IPhone5, IPhone5c, IPhone5s, IPhone6, IPhone6Plus, IPhone6s, IPhone6sPlus, IPad2,
+        IPad3, IPad4, IPadAir, IPadAir2, IPadMini, IPadMini2, IPadMini3, IPadMini4, IPadPro, AppleTV, Simulator}
+    
     var modelName: String {
+        let bounds = UIScreen.mainScreen().bounds
+        let width = bounds.width
+        let height = bounds.height
         var systemInfo = utsname()
         uname(&systemInfo)
         let machineMirror = Mirror(reflecting: systemInfo.machine)
@@ -19,34 +26,87 @@ public extension UIDevice {
             return identifier + String(UnicodeScalar(UInt8(value)))
         }
         
+//        switch identifier {
+//        case "iPod5,1":                                 return .IPodTouch5
+//        case "iPod7,1":                                 return .IPodTouch6
+//        case "iPhone3,1", "iPhone3,2", "iPhone3,3":     return .IPhone4
+//        case "iPhone4,1":                               return .IPhone4s
+//        case "iPhone5,1", "iPhone5,2":                  return .IPhone5
+//        case "iPhone5,3", "iPhone5,4":                  return .IPhone5c
+//        case "iPhone6,1", "iPhone6,2":                  return .IPhone5s
+//        case "iPhone7,2":                               return .IPhone6
+//        case "iPhone7,1":                               return .IPhone6Plus
+//        case "iPhone8,1":                               return .IPhone6s
+//        case "iPhone8,2":                               return .IPhone6sPlus
+//        case "iPad2,1", "iPad2,2", "iPad2,3", "iPad2,4":return .IPad2
+//        case "iPad3,1", "iPad3,2", "iPad3,3":           return .IPad3
+//        case "iPad3,4", "iPad3,5", "iPad3,6":           return .IPad4
+//        case "iPad4,1", "iPad4,2", "iPad4,3":           return .IPadAir
+//        case "iPad5,3", "iPad5,4":                      return .IPadAir2
+//        case "iPad2,5", "iPad2,6", "iPad2,7":           return .IPadMini
+//        case "iPad4,4", "iPad4,5", "iPad4,6":           return .IPadMini2
+//        case "iPad4,7", "iPad4,8", "iPad4,9":           return .IPadMini3
+//        case "iPad5,1", "iPad5,2":                      return .IPadMini4
+//        case "iPad6,7", "iPad6,8":                      return .IPadPro
+//        case "AppleTV5,3":                              return .AppleTV
+//        case "i386", "x86_64":
+//            switch (width, height) {
+//                case (320, 480): return .IPhone4s
+//                case (320, 568): return .IPhone5s
+//                case (375, 667): return .IPhone6
+//                case (414, 736): return .IPhone6Plus
+//                case (768, 1024): return .IPadAir2
+//                case (1024, 1366): return .IPadPro
+//                default: return .NoDevice
+//            }
+//            
+//        default:                                        return .NoDevice
+//
+//
         switch identifier {
-        case "iPod5,1":                                 return "iPod Touch 5"
-        case "iPod7,1":                                 return "iPod Touch 6"
-        case "iPhone3,1", "iPhone3,2", "iPhone3,3":     return "iPhone 4"
-        case "iPhone4,1":                               return "iPhone 4s"
-        case "iPhone5,1", "iPhone5,2":                  return "iPhone 5"
-        case "iPhone5,3", "iPhone5,4":                  return "iPhone 5c"
-        case "iPhone6,1", "iPhone6,2":                  return "iPhone 5s"
-        case "iPhone7,2":                               return "iPhone 6"
-        case "iPhone7,1":                               return "iPhone 6 Plus"
-        case "iPhone8,1":                               return "iPhone 6s"
-        case "iPhone8,2":                               return "iPhone 6s Plus"
-        case "iPad2,1", "iPad2,2", "iPad2,3", "iPad2,4":return "iPad 2"
-        case "iPad3,1", "iPad3,2", "iPad3,3":           return "iPad 3"
-        case "iPad3,4", "iPad3,5", "iPad3,6":           return "iPad 4"
-        case "iPad4,1", "iPad4,2", "iPad4,3":           return "iPad Air"
-        case "iPad5,3", "iPad5,4":                      return "iPad Air 2"
-        case "iPad2,5", "iPad2,6", "iPad2,7":           return "iPad Mini"
-        case "iPad4,4", "iPad4,5", "iPad4,6":           return "iPad Mini 2"
-        case "iPad4,7", "iPad4,8", "iPad4,9":           return "iPad Mini 3"
-        case "iPad5,1", "iPad5,2":                      return "iPad Mini 4"
-        case "iPad6,7", "iPad6,8":                      return "iPad Pro"
-        case "AppleTV5,3":                              return "Apple TV"
-        case "i386", "x86_64":                          return "Simulator"
-        default:                                        return identifier
+            case "iPod5,1":                                 return "iPod Touch 5"
+            case "iPod7,1":                                 return "iPod Touch 6"
+            case "iPhone3,1", "iPhone3,2", "iPhone3,3":     return "iPhone 4"
+            case "iPhone4,1":                               return "iPhone 4s"
+            case "iPhone5,1", "iPhone5,2":                  return "iPhone 5"
+            case "iPhone5,3", "iPhone5,4":                  return "iPhone 5c"
+            case "iPhone6,1", "iPhone6,2":                  return "iPhone 5s"
+            case "iPhone7,2":                               return "iPhone 6"
+            case "iPhone7,1":                               return "iPhone 6 Plus"
+            case "iPhone8,1":                               return "iPhone 6s"
+            case "iPhone8,2":                               return "iPhone 6s Plus"
+            case "iPad2,1", "iPad2,2", "iPad2,3", "iPad2,4":return "iPad 2"
+            case "iPad3,1", "iPad3,2", "iPad3,3":           return "iPad 3"
+            case "iPad3,4", "iPad3,5", "iPad3,6":           return "iPad 4"
+            case "iPad4,1", "iPad4,2", "iPad4,3":           return "iPad Air"
+            case "iPad5,3", "iPad5,4":                      return "iPad Air 2"
+            case "iPad2,5", "iPad2,6", "iPad2,7":           return "iPad Mini"
+            case "iPad4,4", "iPad4,5", "iPad4,6":           return "iPad Mini 2"
+            case "iPad4,7", "iPad4,8", "iPad4,9":           return "iPad Mini 3"
+            case "iPad5,1", "iPad5,2":                      return "iPad Mini 4"
+            case "iPad6,7", "iPad6,8":                      return "iPad Pro"
+            case "AppleTV5,3":                              return "Apple TV"
+            case "i386", "x86_64":
+                switch (width, height) {
+                    case (320, 480):                            return "iPhone 4s"
+                    case (320, 568):                            return "iPhone 5s"
+                    case (375, 667):                            return "iPhone 6"
+                    case (414, 736):                            return "iPhone 6 Plus"
+                    case (768, 1024):                           return "iPad Air"
+                    case (1024, 1366):                          return "iPad Pro"
+                    default:                                    return identifier
+                }
+            default:                                        return identifier
         }
+
     }
-    
+        
+//        var modelConstants: [UIDeviceTypes:[ConstantNames: CGFloat]] =
+//        [.IPhone4s: [.ModelSizeConstant:0.5,
+//            .CardTextPos: 0.8]]
+        
+        
+/*
     var modelSizeConstant: CGFloat {
         let bounds = UIScreen.mainScreen().bounds
         let width = bounds.width
@@ -58,9 +118,8 @@ public extension UIDevice {
         let ipadMultiplier: CGFloat = 1.1
         let ipadProMultiplier: CGFloat = 1.2
         switch modelName {
-            case "iPod Touch 5": return 0.5
-            case "iPod Touch 5": return 0.5
-            case "iPod Touch 6": return 0.5
+            case .IPodTouch5: return 0.5
+            case .IPodTouch6: return 0.5
             case "iPhone 4": return 0.5
             case "iPhone 4s": return 0.5
             case "iPhone 5": return 0.5
@@ -93,6 +152,7 @@ public extension UIDevice {
             }
             default: return 0
         }
-    }
-    
+*/
+//    }
+
 }

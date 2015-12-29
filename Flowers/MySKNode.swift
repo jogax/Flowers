@@ -33,6 +33,8 @@ class MySKNode: SKSpriteNode {
     var startPosition = CGPointZero
     var minValue: Int
     var maxValue: Int
+    let device = GV.deviceType
+    let modelConstantLocal = UIDevice.currentDevice().modelName
 
     var origSize = CGSizeMake(0, 0)
 
@@ -51,11 +53,11 @@ class MySKNode: SKSpriteNode {
     var BGPicture = SKSpriteNode()
     var BGPictureAdded = false
     
-    let fontSizeMultiplier: CGFloat = 0.5 * UIDevice.currentDevice().modelSizeConstant
+    let fontSizeMultiplier: CGFloat = GV.deviceConstants.fontSizeMultiplier
     
 
     init(texture: SKTexture, type:MySKNodeType, value: Int) {
-        let modelMultiplier = UIDevice.currentDevice().modelSizeConstant
+        let modelMultiplier: CGFloat = 0.5 //UIDevice.currentDevice().modelSizeConstant
         self.type = type
         self.minValue = value
         self.maxValue = value
@@ -134,7 +136,7 @@ class MySKNode: SKSpriteNode {
             if minValue != maxValue {
                 self.alpha = 1.0
             }
-            let modelMultiplier = UIDevice.currentDevice().modelSizeConstant
+            let modelMultiplier: CGFloat = 0.5 //UIDevice.currentDevice().modelSizeConstant
             let positionOffset = CGPointMake(self.size.width * -0.45 * modelMultiplier, self.size.height * 0.45 * modelMultiplier)
             let BGPicturePosition = CGPointMake(-self.size.width * 0.08 * modelMultiplier, self.size.height * 0.40 * modelMultiplier)
             let bgPictureName = "BGPicture"

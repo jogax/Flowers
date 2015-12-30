@@ -22,7 +22,7 @@ class CardGameScene: MyGameScene {
     }
     override func makeSpezialThings(first: Bool) {
 //            levelIndex = levelsForPlay.getNextLevel()
-        let multiplier: CGFloat = 1.5
+        let multiplier = GV.deviceConstants.sizeMultiplier
         let width:CGFloat = 64.0
         let height: CGFloat = 89.0
         sizeMultiplier = CGSizeMake(multiplier, multiplier * height / width)

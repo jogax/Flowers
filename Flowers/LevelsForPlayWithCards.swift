@@ -56,7 +56,7 @@ class LevelsForPlayWithCards {
     init () {
         level = 0
         
-        let sizeMultiplier: CGFloat = UIDevice.currentDevice().modelSizeConstant //GV.onIpad ? 1.0 : 0.6
+        let sizeMultiplier: CGFloat = 1.0 //UIDevice.currentDevice().modelConstants[GV.deviceType] //GV.onIpad ? 1.0 : 0.6
         for index in 1..<levelContent.count + 1 {
             let paramString = levelContent[index]
             let paramArr = paramString!.componentsSeparatedByString(",")

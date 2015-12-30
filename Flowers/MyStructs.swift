@@ -42,6 +42,13 @@ struct GV {
 
     static let dataStore = DataStore()
     static let cloudStore = CloudData()
+    
+    static let deviceType = UIDevice.currentDevice().modelName
+    
+    
+    
+    static let deviceConstants = DeviceConstants(deviceType: UIDevice.currentDevice().modelName)
+
 
     static var spriteGameDataArray: [SpriteGameData] = []
     // Constraints
@@ -112,6 +119,71 @@ struct SpriteGameData {
         gameModus = GameModusCards
         soundVolume = 0.1
         musicVolume = 0.1
+    }
+    
+}
+
+struct DeviceConstants {
+    var sizeMultiplier: CGFloat
+    var fontSizeMultiplier: CGFloat
+    var offsetXMultiplier: CGFloat
+    var offsetYMultiplier: CGFloat
+    var BGOffsetXMultiplier: CGFloat
+    var BGOffsetYMultiplier: CGFloat
+    
+    init(deviceType: String) {
+        switch deviceType {
+            case "iPad Air":
+                sizeMultiplier = 1.5
+                fontSizeMultiplier = 0.45
+                offsetXMultiplier = 0.04
+                offsetYMultiplier = 0.04
+                BGOffsetXMultiplier = 0.2
+                BGOffsetYMultiplier = 0.4
+            case "iPad Pro":
+                sizeMultiplier = 1.0
+                fontSizeMultiplier = 0.5
+                offsetXMultiplier = 0.07
+                offsetYMultiplier = 0.04
+                BGOffsetXMultiplier = 0.08
+                BGOffsetYMultiplier = 0.08
+            case "iPhone 4s":
+                sizeMultiplier = 1.0
+                fontSizeMultiplier = 0.5
+                offsetXMultiplier = 0.07
+                offsetYMultiplier = 0.04
+                BGOffsetXMultiplier = 0.08
+                BGOffsetYMultiplier = 0.08
+            case "iPhone 5s":
+                sizeMultiplier = 1.0
+                fontSizeMultiplier = 0.5
+                offsetXMultiplier = 0.07
+                offsetYMultiplier = 0.04
+                BGOffsetXMultiplier = 0.08
+                BGOffsetYMultiplier = 0.08
+            case "iPhone 6":
+                sizeMultiplier = 1.0
+                fontSizeMultiplier = 0.5
+                offsetXMultiplier = 0.07
+                offsetYMultiplier = 0.04
+                BGOffsetXMultiplier = 0.08
+                BGOffsetYMultiplier = 0.08
+            case "iPhone 6 Plus":
+                sizeMultiplier = 1.0
+                fontSizeMultiplier = 0.5
+                offsetXMultiplier = 0.07
+                offsetYMultiplier = 0.04
+                BGOffsetXMultiplier = 0.08
+                BGOffsetYMultiplier = 0.08
+           default:
+            sizeMultiplier = 1.0
+                fontSizeMultiplier = 0.5
+                offsetXMultiplier = 0.07
+                offsetYMultiplier = 0.04
+                BGOffsetXMultiplier = 0.08
+                BGOffsetYMultiplier = 0.08
+        }
+        
     }
     
 }

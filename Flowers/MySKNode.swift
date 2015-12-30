@@ -33,6 +33,8 @@ class MySKNode: SKSpriteNode {
     var startPosition = CGPointZero
     var minValue: Int
     var maxValue: Int
+    let device = GV.deviceType
+    let modelConstantLocal = UIDevice.currentDevice().modelName
 
     var origSize = CGSizeMake(0, 0)
 
@@ -51,11 +53,15 @@ class MySKNode: SKSpriteNode {
     var BGPicture = SKSpriteNode()
     var BGPictureAdded = false
     
-    let fontSizeMultiplier: CGFloat = 0.5 * UIDevice.currentDevice().modelSizeConstant
+    let fontSizeMultiplier = GV.deviceConstants.fontSizeMultiplier
+    let offsetXMultiplier = GV.deviceConstants.offsetXMultiplier
+    let offsetYMultiplier = GV.deviceConstants.offsetYMultiplier
+    let BGOffsetXMultiplier = GV.deviceConstants.BGOffsetXMultiplier
+    let BGOffsetYMultiplier = GV.deviceConstants.BGOffsetYMultiplier
     
 
     init(texture: SKTexture, type:MySKNodeType, value: Int) {
-        let modelMultiplier = UIDevice.currentDevice().modelSizeConstant
+        //let modelMultiplier: CGFloat = 0.5 //UIDevice.currentDevice().modelSizeConstant
         self.type = type
         self.minValue = value
         self.maxValue = value
@@ -93,9 +99,9 @@ class MySKNode: SKSpriteNode {
             minValueLabel.zPosition = 1
             
             
-            var positionOffset = CGPointMake(self.size.width * 0.05, -self.size.height * 0.06)
+            var positionOffset = CGPointMake(0,0)
             if type == .SpriteType {
-                positionOffset = CGPointMake(self.size.width * 0.035 * modelMultiplier, -self.size.height * 0.04 * modelMultiplier)
+                positionOffset = CGPointMake(self.size.width * offsetXMultiplier,  -self.size.height * offsetYMultiplier)
                 minValueLabel.fontSize = 20
                 maxValueLabel.fontSize = 20
             }
@@ -134,9 +140,9 @@ class MySKNode: SKSpriteNode {
             if minValue != maxValue {
                 self.alpha = 1.0
             }
-            let modelMultiplier = UIDevice.currentDevice().modelSizeConstant
-            let positionOffset = CGPointMake(self.size.width * -0.45 * modelMultiplier, self.size.height * 0.45 * modelMultiplier)
-            let BGPicturePosition = CGPointMake(-self.size.width * 0.08 * modelMultiplier, self.size.height * 0.40 * modelMultiplier)
+            //let modelMultiplier: CGFloat = 0.5 //UIDevice.currentDevice().modelSizeConstant
+            let positionOffset = CGPointMake(self.size.width * -offsetXMultiplier, self.size.height * offsetYMultiplier)
+            let BGPicturePosition = CGPointMake(self.size.width * -BGOffsetXMultiplier, self.size.height * BGOffsetYMultiplier)
             let bgPictureName = "BGPicture"
             if minValue != maxValue {
                 if !BGPictureAdded {
@@ -151,7 +157,7 @@ class MySKNode: SKSpriteNode {
                     BGPicture.size = size
                     BGPicture.zPosition = self.zPosition - 1
                     BGPicture.userInteractionEnabled = false
-                    maxValueLabel.position = positionOffset //CGPointMake(-20, 35)
+                    maxValueLabel.position = BGPicturePosition + positionOffset //CGPointMake(-20, 35)
                     maxValueLabel.zPosition = self.zPosition + 1
                 }
             } else {

@@ -187,6 +187,9 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
     var minUsedCells = 0
     var maxUsedCells = 0
     
+    let containerSizeOrig: CGFloat = 50
+    let spriteSizeOrig: CGFloat = 35
+    
     var showFingerNode = false
     var countMovingSprites = 0
     var countCheckCounts = 0
@@ -210,7 +213,7 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
     var colorTab = [ColorTabLine]()
     let containersPosCorr = CGPointMake(GV.onIpad ? 0.98 : 0.98, GV.onIpad ? 0.85 : 0.85)
     var levelPosKorr = CGPointMake(GV.onIpad ? 0.7 : 0.7, GV.onIpad ? 0.97 : 0.97)
-    let playerPosKorr = CGPointMake(GV.onIpad ? 0.3 : 0.3, GV.onIpad ? 0.97 : 0.97)
+    let playerPosKorr = CGPointMake(0.3 * GV.deviceConstants.sizeMultiplier, 0.97 * GV.deviceConstants.sizeMultiplier)
     let countUpPosKorr = CGPointMake(GV.onIpad ? 0.98 : 0.98, GV.onIpad ? 0.95 : 0.94)
     var countColorsProContainer = [Int]()
     var labelBackground = SKSpriteNode()
@@ -547,15 +550,8 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             let sprite = MySKNode(texture: getTexture(colorIndex), type: .SpriteType, value:value)
             tableCellSize = spriteTabRect.width / CGFloat(countColumns)
             
-//            sprite.size.width = spriteSize.width //* spriteSizeMultiplier
-//            sprite.size.height = spriteSize.height ////* spriteSizeMultiplier
-            //            let yKorr1: CGFloat = GV.onIpad ? 0.9 : 0.8
-            //            let yKorr2: CGFloat = GV.onIpad ? 1.8 : 2.0
-            //let yKorr1: CGFloat = GV.onIpad ? 0.8 : 1.0
-            //let yKorr2: CGFloat = GV.onIpad ? 0.8 : 1.0
-            
-            let index = random?.getRandomInt(0, max: positionsTab.count - 1)
-            let (aktColumn, aktRow) = positionsTab[index!]
+            let index = random!.getRandomInt(0, max: positionsTab.count - 1)
+            let (aktColumn, aktRow) = positionsTab[index]
             
             let xPosition = spriteTabRect.origin.x - spriteTabRect.size.width / 2 + CGFloat(aktColumn) * tableCellSize + tableCellSize / 2
             let yPosition = spriteTabRect.origin.y - spriteTabRect.size.height / 2 + tableCellSize / 2 + CGFloat(aktRow) * tableCellSize
@@ -563,7 +559,7 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             sprite.position = CGPoint(x: xPosition, y: yPosition)
             sprite.startPosition = sprite.position
             gameArray[aktColumn][aktRow] = true
-            positionsTab.removeAtIndex(index!)
+            positionsTab.removeAtIndex(index)
             
             sprite.column = aktColumn
             sprite.row = aktRow

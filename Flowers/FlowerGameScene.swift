@@ -47,8 +47,8 @@ class FlowerGameScene: MyGameScene {
         countRows = levelsForPlay.aktLevel.countRows
         minUsedCells = levelsForPlay.aktLevel.minProzent * countColumns * countRows / 100
         maxUsedCells = levelsForPlay.aktLevel.maxProzent * countColumns * countRows / 100
-        containerSize = CGSizeMake(CGFloat(levelsForPlay.aktLevel.containerSize) * sizeMultiplier.width, CGFloat(levelsForPlay.aktLevel.containerSize) * sizeMultiplier.height)
-        spriteSize = CGSizeMake(CGFloat(levelsForPlay.aktLevel.spriteSize) * sizeMultiplier.width, CGFloat(levelsForPlay.aktLevel.spriteSize) * sizeMultiplier.height )
+        containerSize = CGSizeMake(CGFloat(containerSizeOrig) * sizeMultiplier.width, CGFloat(containerSizeOrig) * sizeMultiplier.height)
+        spriteSize = CGSizeMake(CGFloat(spriteSizeOrig) * sizeMultiplier.width, CGFloat(spriteSizeOrig) * sizeMultiplier.height )
         
     }
     override func setBGImageNode()->SKSpriteNode {

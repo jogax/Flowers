@@ -23,7 +23,10 @@ class MySKNode: SKSpriteNode {
             if oldValue != CGSizeMake(0,0) && (type == .ContainerType || type == .SpriteType) {
                 minValueLabel.fontSize = size.width * fontSizeMultiplier
                 maxValueLabel.fontSize = size.width * fontSizeMultiplier
-//                print("name: \(name), type: \(type), oldValue: \(oldValue), size: \(size)")
+                let positionOffset = CGPointMake(self.size.width * offsetMultiplier.x,  self.size.height * offsetMultiplier.y)
+                minValueLabel.position = positionOffset
+                maxValueLabel.position = positionOffset
+//              print("name: \(name), type: \(type), size: \(size), self.position: \(position), minValueLabel.position: \(minValueLabel.position)")
             }
         }
     }
@@ -53,11 +56,9 @@ class MySKNode: SKSpriteNode {
     var BGPicture = SKSpriteNode()
     var BGPictureAdded = false
     
-    let fontSizeMultiplier = GV.deviceConstants.fontSizeMultiplier
-    let offsetXMultiplier = GV.deviceConstants.offsetXMultiplier
-    let offsetYMultiplier = GV.deviceConstants.offsetYMultiplier
-    let BGOffsetXMultiplier = GV.deviceConstants.BGOffsetXMultiplier
-    let BGOffsetYMultiplier = GV.deviceConstants.BGOffsetYMultiplier
+    let fontSizeMultiplier: CGFloat = 0.5
+    let offsetMultiplier = CGPointMake(0.1, 0.45)
+    let BGOffsetMultiplier = CGPointMake(-0.15, 0.35)
     
 
     init(texture: SKTexture, type:MySKNodeType, value: Int) {
@@ -83,29 +84,26 @@ class MySKNode: SKSpriteNode {
 
         super.init(texture: texture, color: UIColor.clearColor(), size: texture.size())
         if type == .ButtonType {
-            //hitLabel.position = CGPointMake(self.position.x, self.position.y -  self.size.height * 0.008)
             hitLabel.verticalAlignmentMode = SKLabelVerticalAlignmentMode.Center
             hitLabel.fontSize = 20;
-            //hitLabel.text = "\(hitCounter)"
             hitLabel.zPosition = 1
-            //print("\(hitLabel.text)")
         } else {
             
             hitLabel.position = CGPointMake(self.position.x, self.position.y + self.size.width * 0.08)
             hitLabel.fontSize = 15;
             hitLabel.text = "\(hitCounter)"
             
-            minValueLabel.text = "\(minValue)"
+            minValueLabel.text = "\(minValue < 10 ? " " : "")\(minValue)"
             minValueLabel.zPosition = 1
             
             
-            var positionOffset = CGPointMake(0,0)
-            if type == .SpriteType {
-                positionOffset = CGPointMake(self.size.width * offsetXMultiplier,  -self.size.height * offsetYMultiplier)
-                minValueLabel.fontSize = 20
-                maxValueLabel.fontSize = 20
-            }
-            minValueLabel.position = self.position - positionOffset //CGPointMake(23, -35)
+//            var positionOffset = CGPointMake(0,0)
+//            if type == .SpriteType {
+//                positionOffset = CGPointMake(self.size.width * offsetMultiplier.x,  self.size.height * offsetMultiplier.y)
+//                minValueLabel.fontSize = 20
+//                maxValueLabel.fontSize = 20
+//            }
+//            minValueLabel.position = self.position + positionOffset //CGPointMake(23, -35)
         }
         
         setLabel(hitLabel, fontSize: 15)
@@ -128,21 +126,19 @@ class MySKNode: SKSpriteNode {
     func setLabel(label: SKLabelNode, fontSize: CGFloat) {
         label.fontName = "ArielItalic"
         label.fontColor = SKColor.blackColor()
-        label.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.Left
+        label.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.Right
         label.verticalAlignmentMode = SKLabelVerticalAlignmentMode.Top
         label.userInteractionEnabled = false
     }
     
     func reload() {
         if isCard {
-            minValueLabel.text = "\(minValue)"
-            maxValueLabel.text = "\(maxValue)"
+            minValueLabel.text = "\(minValue < 10 ? " " : "")\(minValue)"
+            maxValueLabel.text = "\(maxValue < 10 ? " " : "")\(maxValue)"
             if minValue != maxValue {
                 self.alpha = 1.0
             }
-            //let modelMultiplier: CGFloat = 0.5 //UIDevice.currentDevice().modelSizeConstant
-            let positionOffset = CGPointMake(self.size.width * -offsetXMultiplier, self.size.height * offsetYMultiplier)
-            let BGPicturePosition = CGPointMake(self.size.width * -BGOffsetXMultiplier, self.size.height * BGOffsetYMultiplier)
+            let BGPicturePosition = CGPointMake(self.size.width * BGOffsetMultiplier.x, self.size.height * BGOffsetMultiplier.y)
             let bgPictureName = "BGPicture"
             if minValue != maxValue {
                 if !BGPictureAdded {
@@ -157,7 +153,7 @@ class MySKNode: SKSpriteNode {
                     BGPicture.size = size
                     BGPicture.zPosition = self.zPosition - 1
                     BGPicture.userInteractionEnabled = false
-                    maxValueLabel.position = BGPicturePosition + positionOffset //CGPointMake(-20, 35)
+                    //maxValueLabel.position = positionOffset //CGPointMake(-20, 35)
                     maxValueLabel.zPosition = self.zPosition + 1
                 }
             } else {

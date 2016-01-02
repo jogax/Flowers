@@ -21,7 +21,6 @@ class CardGameScene: MyGameScene {
         return atlas.textureNamed ("card\(index)")
     }
     override func makeSpezialThings(first: Bool) {
-//            levelIndex = levelsForPlay.getNextLevel()
         let multiplier = GV.deviceConstants.sizeMultiplier
         let width:CGFloat = 64.0
         let height: CGFloat = 89.0
@@ -32,13 +31,12 @@ class CardGameScene: MyGameScene {
     override func specialPrepareFuncFirst() {
         countContainers = levelsForPlay.aktLevel.countContainers
         countSpritesProContainer = levelsForPlay.aktLevel.countSpritesProContainer
-        //targetScoreKorr = levelsForPlay.aktLevel.targetScoreKorr
         countColumns = levelsForPlay.aktLevel.countColumns
         countRows = levelsForPlay.aktLevel.countRows
         minUsedCells = levelsForPlay.aktLevel.minProzent * countColumns * countRows / 100
         maxUsedCells = levelsForPlay.aktLevel.maxProzent * countColumns * countRows / 100
-        containerSize = CGSizeMake(CGFloat(levelsForPlay.aktLevel.containerSize) * sizeMultiplier.width, CGFloat(levelsForPlay.aktLevel.containerSize) * sizeMultiplier.height)
-        spriteSize = CGSizeMake(CGFloat(levelsForPlay.aktLevel.spriteSize) * sizeMultiplier.width, CGFloat(levelsForPlay.aktLevel.spriteSize) * sizeMultiplier.height )
+        containerSize = CGSizeMake(CGFloat(containerSizeOrig) * sizeMultiplier.width, CGFloat(containerSizeOrig) * sizeMultiplier.height)
+        spriteSize = CGSizeMake(CGFloat(spriteSizeOrig) * sizeMultiplier.width, CGFloat(spriteSizeOrig) * sizeMultiplier.height )
     }
     
     override func updateSpriteCount(adder: Int) {

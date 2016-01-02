@@ -125,63 +125,25 @@ struct SpriteGameData {
 
 struct DeviceConstants {
     var sizeMultiplier: CGFloat
-    var fontSizeMultiplier: CGFloat
-    var offsetXMultiplier: CGFloat
-    var offsetYMultiplier: CGFloat
-    var BGOffsetXMultiplier: CGFloat
-    var BGOffsetYMultiplier: CGFloat
     
     init(deviceType: String) {
         switch deviceType {
-            case "iPad Air":
+            case "iPad 2", "iPad 3", "iPad 4", "iPad Air", "iPad Air 2":
                 sizeMultiplier = 1.5
-                fontSizeMultiplier = 0.45
-                offsetXMultiplier = 0.04
-                offsetYMultiplier = 0.04
-                BGOffsetXMultiplier = 0.2
-                BGOffsetYMultiplier = 0.4
+            case "iPad Mini", "iPad Mini 2", "iPad Mini 3", "iPad Mini 4":
+                sizeMultiplier = 1.3
             case "iPad Pro":
-                sizeMultiplier = 1.0
-                fontSizeMultiplier = 0.5
-                offsetXMultiplier = 0.07
-                offsetYMultiplier = 0.04
-                BGOffsetXMultiplier = 0.08
-                BGOffsetYMultiplier = 0.08
-            case "iPhone 4s":
-                sizeMultiplier = 1.0
-                fontSizeMultiplier = 0.5
-                offsetXMultiplier = 0.07
-                offsetYMultiplier = 0.04
-                BGOffsetXMultiplier = 0.08
-                BGOffsetYMultiplier = 0.08
-            case "iPhone 5s":
-                sizeMultiplier = 1.0
-                fontSizeMultiplier = 0.5
-                offsetXMultiplier = 0.07
-                offsetYMultiplier = 0.04
-                BGOffsetXMultiplier = 0.08
-                BGOffsetYMultiplier = 0.08
-            case "iPhone 6":
-                sizeMultiplier = 1.0
-                fontSizeMultiplier = 0.5
-                offsetXMultiplier = 0.07
-                offsetYMultiplier = 0.04
-                BGOffsetXMultiplier = 0.08
-                BGOffsetYMultiplier = 0.08
-            case "iPhone 6 Plus":
-                sizeMultiplier = 1.0
-                fontSizeMultiplier = 0.5
-                offsetXMultiplier = 0.07
-                offsetYMultiplier = 0.04
-                BGOffsetXMultiplier = 0.08
-                BGOffsetYMultiplier = 0.08
+                sizeMultiplier = 2.0
+            case "iPhone 4s", "iPhone 4":
+                sizeMultiplier = 0.7
+            case "iPhone 5s", "iPhone 5", "iPhone 5c":
+                sizeMultiplier = 0.8
+            case "iPhone 6", "iPhone 6s":
+                sizeMultiplier = 0.8
+            case "iPhone 6 Plus", "iPhone 6s Plus":
+                sizeMultiplier = 0.8
            default:
-            sizeMultiplier = 1.0
-                fontSizeMultiplier = 0.5
-                offsetXMultiplier = 0.07
-                offsetYMultiplier = 0.04
-                BGOffsetXMultiplier = 0.08
-                BGOffsetYMultiplier = 0.08
+                sizeMultiplier = 1.0
         }
         
     }
@@ -196,8 +158,8 @@ struct LevelParam {
     var countRows: Int
     var minProzent: Int
     var maxProzent: Int
-    var containerSize: CGFloat
-    var spriteSize: CGFloat
+//    var containerSize: CGFloat
+//    var spriteSize: CGFloat
     var targetScoreKorr: Int
     //var timeLimitKorr: Int
     
@@ -209,8 +171,8 @@ struct LevelParam {
         self.countRows = 0
         self.minProzent = 0
         self.maxProzent = 0
-        self.containerSize = 0
-        self.spriteSize = 0
+//        self.containerSize = 0
+//        self.spriteSize = 0
         self.targetScoreKorr = 0
         //self.timeLimitKorr = 0
     }

@@ -56,8 +56,11 @@ class MySKNode: SKSpriteNode {
     var BGPicture = SKSpriteNode()
     var BGPictureAdded = false
     
-    let fontSizeMultiplier: CGFloat = 0.5
-    let offsetMultiplier = CGPointMake(0.1, 0.45)
+    let cardLib: [Int:String] = [
+        0:"A", 1:"2", 2:"3", 3:"4", 4:"5", 5:"6", 6:"7", 7:"8", 8:"9", 9:"10", 10: "J", 11: "Q", 12: "K"]
+    
+    let fontSizeMultiplier: CGFloat = 0.45
+    let offsetMultiplier = CGPointMake(-0.45, 0.45)
     let BGOffsetMultiplier = CGPointMake(-0.15, 0.35)
     
 
@@ -92,8 +95,11 @@ class MySKNode: SKSpriteNode {
             hitLabel.position = CGPointMake(self.position.x, self.position.y + self.size.width * 0.08)
             hitLabel.fontSize = 15;
             hitLabel.text = "\(hitCounter)"
-            
-            minValueLabel.text = "\(minValue < 10 ? " " : "")\(minValue)"
+            guard let text = cardLib[minValue % 13] else {
+                return
+            }
+            print(minValue, text)
+            setLabelText(minValueLabel, value: minValue)
             minValueLabel.zPosition = 1
             
             
@@ -126,15 +132,15 @@ class MySKNode: SKSpriteNode {
     func setLabel(label: SKLabelNode, fontSize: CGFloat) {
         label.fontName = "ArielItalic"
         label.fontColor = SKColor.blackColor()
-        label.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.Right
+        label.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.Left
         label.verticalAlignmentMode = SKLabelVerticalAlignmentMode.Top
         label.userInteractionEnabled = false
     }
     
     func reload() {
         if isCard {
-            minValueLabel.text = "\(minValue < 10 ? " " : "")\(minValue)"
-            maxValueLabel.text = "\(maxValue < 10 ? " " : "")\(maxValue)"
+            setLabelText(minValueLabel, value: minValue)
+            setLabelText(maxValueLabel, value: maxValue)
             if minValue != maxValue {
                 self.alpha = 1.0
             }
@@ -172,6 +178,15 @@ class MySKNode: SKSpriteNode {
 
     }
 
+    func setLabelText(label: SKLabelNode, value: Int) {
+//        if type != .ContainerType {
+            guard let text = cardLib[value % 13] else {
+                return
+            }
+            label.text = "\(value == 10 ? " " : "")\(text)"
+//        }
+    }
+    
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }

@@ -30,7 +30,7 @@ class LevelsForPlayWithCards {
     var level: Int
     var aktLevel: LevelParam
     let levelChanges = [
-        "10,0,1,0,0,0,0,0,0", //,2",//0",    // 5 times CountSpritesProContainer += 10
+        "10,0,0,0,0,0,0,0,0", //,2",//0",    // 5 times CountSpritesProContainer += 10
         "1,0,1,1,1,0,0,0,0", //,2",//-1",     // 1 time CountColumns += 1, CountRows += 1, TargetScoreCorr += 1
         "10,0,1,0,0,5,0,0,0", //,2",//,0",     // 5 times CountSpritesProContainer += 5, MinProzent += 5, TargetScoreCorr += 1
         "1,0,0,1,1,0,0,0,0", //,1",//,-1",     // 1 time CountColumns += 1, CountRows += 1, TargetScoreCorr += 1
@@ -43,8 +43,8 @@ class LevelsForPlayWithCards {
         "5,0,10,0,0,0,0,0,0", //,0",//,0"     // 5 times CountSpritesProContainer += 10
     ]
     private var levelContent = [
-        1: "-1,4,3,4,4,30,90", //,50,35", //,1",//,20", // first param (levelCount) say, how many levels to make for this Line, if -1, than all levels according levelchanges
-        2: "-1,4,20,5,5,30,90", //,60,35", //,3",//,3",
+        1: "-1,4,13,4,4,30,90", //,50,35", //,1",//,20", // first param (levelCount) say, how many levels to make for this Line, if -1, than all levels according levelchanges
+        2: "-1,4,13,5,5,30,90", //,60,35", //,3",//,3",
         3: "-1,4,20,6,6,30,90", //,50,30", //,3",//,3",
         4: "-1,4,20,7,7,30,90", //,50,30", //,2",//,3",
         5: "-1,4,20,8,8,30,90", //,40,25", //,2",//,3",

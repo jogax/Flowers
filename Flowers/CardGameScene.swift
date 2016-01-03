@@ -18,7 +18,11 @@ class CardGameScene: MyGameScene {
     var lastUpdateSec = 0
 
     override func getTexture(index: Int)->SKTexture {
-        return atlas.textureNamed ("card\(index)")
+        if index == -1 {
+            return atlas.textureNamed("emptycard")
+        } else {
+            return atlas.textureNamed ("card\(index)")
+        }
     }
     override func makeSpezialThings(first: Bool) {
         let multiplier = GV.deviceConstants.sizeMultiplier
@@ -58,7 +62,7 @@ class CardGameScene: MyGameScene {
     }
 
     override func generateValue(colorIndex: Int)->Int {
-        while valueTab.count < colorIndex + 1 {
+        if valueTab.count < colorIndex + 1 {
             valueTab.append(1)
         }
         return valueTab[colorIndex]++
@@ -73,7 +77,7 @@ class CardGameScene: MyGameScene {
     }
 
     override func getValueForContainer()->Int {
-        return countSpritesProContainer! + 1
+        return countSpritesProContainer!// + 1
     }
     
     override func update(currentTime: NSTimeInterval) {
@@ -104,14 +108,26 @@ class CardGameScene: MyGameScene {
         let movingSprite = node1
         let container = node2
         
-        let containerColorIndex = container.colorIndex
+        var containerColorIndex = container.colorIndex
         let movingSpriteColorIndex = movingSprite.colorIndex
+        
+        
+        if container.minValue == container.maxValue && container.maxValue == -1 && movingSprite.maxValue == 12 {
+            containerColorIndex = movingSpriteColorIndex
+            container.colorIndex = containerColorIndex
+            container.texture = getTexture(containerColorIndex)
+            container.minValue = movingSprite.minValue
+            container.maxValue = movingSprite.maxValue
+            container.isCard = true
+            container.reload()
+        }
         
         let OK = movingSpriteColorIndex == containerColorIndex &&
         (
             container.minValue == 0 ||
             movingSprite.maxValue + 1 == container.minValue ||
-            movingSprite.minValue - 1 == container.maxValue
+            movingSprite.minValue - 1 == container.maxValue ||
+            (container.minValue == container.maxValue && container.maxValue == movingSprite.maxValue)
         )
 
         
@@ -132,9 +148,6 @@ class CardGameScene: MyGameScene {
             countMovingSprites = 0
             
             updateSpriteCount(-1)
-            //        spriteCount--
-            //        let spriteCountText: String = GV.language.getText(.TCSpriteCount)
-            //        spriteCountLabel.text = "\(spriteCountText) \(spriteCount)"
             
             collisionActive = false
             //movingSprite.removeFromParent()
@@ -192,45 +205,7 @@ class CardGameScene: MyGameScene {
             push(movingSprite, status: .Removed)
             pull()
             
-//            push(sprite, status: .FallingSprite)
-//            push(movingSprite, status: .FallingMovingSprite)
-//            pull()
-
-//            sprite.zPosition = 0
-//            movingSprite.zPosition = 0
-//            movingSprite.physicsBody?.categoryBitMask = PhysicsCategory.None
-//            let movingSpriteDest = CGPointMake(movingSprite.position.x * 0.5, 0)
-//            
-//            movingSprite.startPosition = movingSprite.position
-//            movingSprite.position = movingSpriteDest
-//            push(movingSprite, status: .Removed)
-//            
-//            countMovingSprites = 2
-//            
-//            let movingSpriteAction = SKAction.moveTo(movingSpriteDest, duration: 1.0)
-//            let actionMoveDone = SKAction.removeFromParent()
-//            
-//            movingSprite.runAction(SKAction.sequence([movingSpriteAction, actionMoveDone]), completion: {self.countMovingSprites--})
-//            
-//            
-//            let spriteDest = CGPointMake(sprite.position.x * 1.5, 0)
-//            sprite.startPosition = sprite.position
-//            sprite.position = spriteDest
-//            push(sprite, status: .Removed)
-//            
-//            
-//            let actionMove2 = SKAction.moveTo(spriteDest, duration: 1.5)
-//            sprite.runAction(SKAction.sequence([actionMove2, actionMoveDone]), completion: {self.countMovingSprites--})
-//            gameArray[movingSprite.column][movingSprite.row] = false
-//            gameArray[sprite.column][sprite.row] = false
-//            updateSpriteCount(-2)
-////            spriteCount--
-////            spriteCount--
-//            playSound("Drop", volume: GV.soundVolume)
-//            showScore()
         }
-//        let spriteCountText: String = GV.language.getText(.TCCardCount)
-//        spriteCountLabel.text = "\(spriteCountText) \(spriteCount)"
         checkGameFinished()
     }
 
@@ -290,7 +265,7 @@ class CardGameScene: MyGameScene {
             let centerY = size.height * containersPosCorr.y
             let cont: Container
 //            cont = Container(mySKNode: MySKNode(texture: getTexture(index), type: .ContainerType, value: getValueForContainer()), label: SKLabelNode(), countHits: 0)
-            cont = Container(mySKNode: MySKNode(texture: getTexture(index), type: .ContainerType, value: getValueForContainer()))
+            cont = Container(mySKNode: MySKNode(texture: getTexture(-1), type: .ContainerType, value: -1)) // getValueForContainer()))
             containers.append(cont)
             containers[index].mySKNode.name = "\(index)"
             containers[index].mySKNode.position = CGPoint(x: centerX, y: centerY)

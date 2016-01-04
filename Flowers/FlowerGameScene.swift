@@ -318,6 +318,9 @@ class FlowerGameScene: MyGameScene {
                     containers[savedSpriteInCycle.colorIndex].mySKNode.hitCounter += sprite.hitCounter
                     actionMoveArray.append(SKAction.moveTo(savedSpriteInCycle.endPosition, duration: duration))
                     
+                case .FirstCardAdded:
+                    break
+                    
                 case .FallingSprite:
                     let sprite = self.childNodeWithName(savedSpriteInCycle.name)! as! MySKNode
                     sprite.hitCounter = savedSpriteInCycle.hitCounter

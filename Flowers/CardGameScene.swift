@@ -18,7 +18,7 @@ class CardGameScene: MyGameScene {
     var lastUpdateSec = 0
 
     override func getTexture(index: Int)->SKTexture {
-        if index == -1 {
+        if index == NoColor {
             return atlas.textureNamed("emptycard")
         } else {
             return atlas.textureNamed ("card\(index)")
@@ -112,19 +112,19 @@ class CardGameScene: MyGameScene {
         let movingSpriteColorIndex = movingSprite.colorIndex
         
         
-        if container.minValue == container.maxValue && container.maxValue == -1 && movingSprite.maxValue == 12 {
+        if container.minValue == container.maxValue && container.maxValue == NoColor && movingSprite.maxValue + 1 == MaxCardValue {
+            push(container, status: .FirstCardAdded)
             containerColorIndex = movingSpriteColorIndex
             container.colorIndex = containerColorIndex
             container.texture = getTexture(containerColorIndex)
-            container.minValue = movingSprite.minValue
-            container.maxValue = movingSprite.maxValue
-            container.isCard = true
-            container.reload()
+//            container.minValue = movingSprite.minValue
+//            container.maxValue = movingSprite.maxValue
+//            container.reload()
         }
         
         let OK = movingSpriteColorIndex == containerColorIndex &&
         (
-            container.minValue == 0 ||
+            container.minValue == NoColor ||
             movingSprite.maxValue + 1 == container.minValue ||
             movingSprite.minValue - 1 == container.maxValue ||
             (container.minValue == container.maxValue && container.maxValue == movingSprite.maxValue)
@@ -140,6 +140,9 @@ class CardGameScene: MyGameScene {
                 container.maxValue = movingSprite.maxValue
             } else {
                 container.minValue = movingSprite.minValue
+                if container.maxValue == NoColor {
+                    container.maxValue = movingSprite.maxValue
+                }
             }
             container.reload()
             //gameArray[movingSprite.column][movingSprite.row] = false
@@ -239,7 +242,7 @@ class CardGameScene: MyGameScene {
 
     func checkContainers()->Bool {
         for index in 0..<containers.count {
-            if containers[index].mySKNode.minValue != 1 && containers[index].mySKNode.maxValue != countSpritesProContainer {
+            if containers[index].mySKNode.minValue != FirstCardValue && containers[index].mySKNode.maxValue % MaxCardValue != LastCardValue {
                 return false
             }
         }
@@ -254,7 +257,7 @@ class CardGameScene: MyGameScene {
         
         for _ in 0..<countSpritesProContainer! {
             for containerIndex in 0..<countContainers {
-                let colorTabLine = ColorTabLine(colorIndex: containerIndex, spriteName: "\(spriteName++)", spriteValue: generateValue(containerIndex))
+                let colorTabLine = ColorTabLine(colorIndex: containerIndex, spriteName: "\(spriteName++)", spriteValue: generateValue(containerIndex) - 1)
                 colorTab.append(colorTabLine)
             }
         }
@@ -265,7 +268,7 @@ class CardGameScene: MyGameScene {
             let centerY = size.height * containersPosCorr.y
             let cont: Container
 //            cont = Container(mySKNode: MySKNode(texture: getTexture(index), type: .ContainerType, value: getValueForContainer()), label: SKLabelNode(), countHits: 0)
-            cont = Container(mySKNode: MySKNode(texture: getTexture(-1), type: .ContainerType, value: -1)) // getValueForContainer()))
+            cont = Container(mySKNode: MySKNode(texture: getTexture(NoColor), type: .ContainerType, value: NoColor)) // getValueForContainer()))
             containers.append(cont)
             containers[index].mySKNode.name = "\(index)"
             containers[index].mySKNode.position = CGPoint(x: centerX, y: centerY)
@@ -273,7 +276,7 @@ class CardGameScene: MyGameScene {
 //            containers[index].mySKNode.size.width = containerSize.width
 //            containers[index].mySKNode.size.height = containerSize.height
             
-            containers[index].mySKNode.colorIndex = index
+            containers[index].mySKNode.colorIndex = NoValue
             containers[index].mySKNode.physicsBody = SKPhysicsBody(circleOfRadius: containers[index].mySKNode.size.width / 3) // 1
             containers[index].mySKNode.physicsBody?.dynamic = true // 2
             containers[index].mySKNode.physicsBody?.categoryBitMask = PhysicsCategory.Container
@@ -310,6 +313,8 @@ class CardGameScene: MyGameScene {
                     //let spriteTexture = SKTexture(imageNamed: "sprite\(savedSpriteInCycle.colorIndex)")
                     let spriteTexture = getTexture(savedSpriteInCycle.colorIndex)
                     let sprite = MySKNode(texture: spriteTexture, type: .SpriteType, value: savedSpriteInCycle.minValue) //NoValue)
+                    
+                    
                     sprite.colorIndex = savedSpriteInCycle.colorIndex
                     sprite.position = savedSpriteInCycle.endPosition
                     sprite.startPosition = savedSpriteInCycle.startPosition
@@ -324,9 +329,6 @@ class CardGameScene: MyGameScene {
                     addPhysicsBody(sprite)
                     self.addChild(sprite)
                     updateSpriteCount(1)
-                    //                    spriteCount++
-                    //                    let spriteCountText: String = GV.language.getText(.TCSpriteCount)
-                    //                    spriteCountLabel.text = "\(spriteCountText) \(spriteCount)"
                     sprite.reload()
                     
                 case .Unification:
@@ -339,12 +341,22 @@ class CardGameScene: MyGameScene {
                     sprite.reload()
                     
                 case .HitcounterChanged:
-                    let container = containers[savedSpriteInCycle.colorIndex].mySKNode
+                    
+                    let container = containers[findIndex(savedSpriteInCycle.colorIndex)].mySKNode
                     container.minValue = savedSpriteInCycle.minValue
                     container.maxValue = savedSpriteInCycle.maxValue
                     container.BGPictureAdded = savedSpriteInCycle.BGPictureAdded
                     container.reload()
                     showScore()
+                    
+                case .FirstCardAdded:
+                    let container = containers[findIndex(savedSpriteInCycle.colorIndex)].mySKNode
+                    container.minValue = savedSpriteInCycle.minValue
+                    container.maxValue = savedSpriteInCycle.maxValue
+                    container.BGPictureAdded = savedSpriteInCycle.BGPictureAdded
+                    container.colorIndex = NoColor
+                    container.reload()
+                    
                     
                 case .MovingStarted:
                     let sprite = self.childNodeWithName(savedSpriteInCycle.name)! as! MySKNode
@@ -414,6 +426,15 @@ class CardGameScene: MyGameScene {
         
         
         
+    }
+    
+    func findIndex(colorIndex: Int)->Int {
+        for index in 0..<countContainers {
+            if containers[index].mySKNode.colorIndex == colorIndex {
+                return index
+            }
+        }
+        return NoColor
     }
     
     override func readNextLevel() -> Int {

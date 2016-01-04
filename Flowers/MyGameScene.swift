@@ -86,7 +86,7 @@ struct Container {
 }
 
 enum SpriteStatus: Int, CustomStringConvertible {
-    case Added = 0, MovingStarted, Unification, Mirrored, FallingMovingSprite, FallingSprite, HitcounterChanged, Removed, Exchanged, Nothing
+    case Added = 0, MovingStarted, Unification, Mirrored, FallingMovingSprite, FallingSprite, HitcounterChanged, FirstCardAdded, Removed, Exchanged, Nothing
     
     var statusName: String {
         let statusNames = [
@@ -289,32 +289,9 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         let seedIndex = SeedIndex(gameType: Int64(GV.spriteGameDataArray[GV.getAktNameIndex()].gameModus), gameDifficulty: 0, gameNumber: Int64(levelIndex))
         random = MyRandom(seedIndex: seedIndex)
         stopTimer()
-//        if countUp != nil {
-//            countUp!.invalidate()
-//            countUp = nil
-//        }
-        
-        //        buttonField = SKSpriteNode(texture: nil)
-        //        //buttonField!.color = SKColor.blueColor()
-        //        buttonField!.position = CGPointMake(self.position.x + self.size.width / 2, self.position.y)
-        //        buttonField!.size = CGSizeMake(self.size.width, self.size.height * 0.2)
-        //        self.addChild(buttonField!)
         
         spriteTabRect.origin = CGPointMake(self.frame.midX, self.frame.midY * 0.9)
         spriteTabRect.size = CGSizeMake(self.frame.size.width * 0.80, self.frame.size.width * 0.80)
-/*
-        countContainers = levelsForPlay.aktLevel.countContainers
-        countSpritesProContainer = levelsForPlay.aktLevel.countSpritesProContainer
-        targetScoreKorr = levelsForPlay.aktLevel.targetScoreKorr
-        countColumns = levelsForPlay.aktLevel.countColumns
-        countRows = levelsForPlay.aktLevel.countRows
-        minUsedCells = levelsForPlay.aktLevel.minProzent * countColumns * countRows / 100
-        maxUsedCells = levelsForPlay.aktLevel.maxProzent * countColumns * countRows / 100
-        containerSize = CGSizeMake(CGFloat(levelsForPlay.aktLevel.containerSize) * sizeMultiplier.width, CGFloat(levelsForPlay.aktLevel.containerSize) * sizeMultiplier.height)
-        spriteSize = CGSizeMake(CGFloat(levelsForPlay.aktLevel.spriteSize) * sizeMultiplier.width, CGFloat(levelsForPlay.aktLevel.spriteSize) * sizeMultiplier.height )
-*/        
-        //timeLimit = countContainers * countSpritesProContainer! * levelsForPlayWithSprites.aktLevel.timeLimitKorr
-        //print("timeLimit: \(timeLimit)")
         
         gameArray.removeAll(keepCapacity: false)
         containers.removeAll(keepCapacity: false)

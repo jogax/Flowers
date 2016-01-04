@@ -14,6 +14,10 @@ enum TremblingType: Int {
     case NoTrembling = 0, ChangeSize, ChangePos, ChangeDirection
 }
 let NoValue = -1
+let NoColor = 1000
+let MaxCardValue = 13
+let LastCardValue = MaxCardValue - 1
+let FirstCardValue = 0
 import SpriteKit
 
 class MySKNode: SKSpriteNode {
@@ -57,7 +61,7 @@ class MySKNode: SKSpriteNode {
     var BGPictureAdded = false
     
     let cardLib: [Int:String] = [
-        0:"A", 1:"2", 2:"3", 3:"4", 4:"5", 5:"6", 6:"7", 7:"8", 8:"9", 9:"10", 10: "J", 11: "Q", 12: "K"]
+        0:"A", 1:"2", 2:"3", 3:"4", 4:"5", 5:"6", 6:"7", 7:"8", 8:"9", 9:"10", 10: "J", 11: "Q", 12: "K", NoColor: ""]
     
     let fontSizeMultiplier: CGFloat = 0.45
     let offsetMultiplier = CGPointMake(-0.45, 0.45)
@@ -95,10 +99,8 @@ class MySKNode: SKSpriteNode {
             hitLabel.position = CGPointMake(self.position.x, self.position.y + self.size.width * 0.08)
             hitLabel.fontSize = 15;
             hitLabel.text = "\(hitCounter)"
-            guard let text = cardLib[minValue % 13] else {
-                return
-            }
-            print(minValue, text)
+            
+            //print(minValue, text)
             setLabelText(minValueLabel, value: minValue)
             minValueLabel.zPosition = 1
             
@@ -119,7 +121,7 @@ class MySKNode: SKSpriteNode {
 
         
         if isCard {
-            if type == .ContainerType && minValue == maxValue {
+            if type == .ContainerType && minValue == NoColor {
                 self.alpha = 0.5
             }
             self.addChild(minValueLabel)
@@ -141,8 +143,10 @@ class MySKNode: SKSpriteNode {
         if isCard {
             setLabelText(minValueLabel, value: minValue)
             setLabelText(maxValueLabel, value: maxValue)
-            if minValue != maxValue {
+            if minValue != NoColor {
                 self.alpha = 1.0
+            } else {
+                self.alpha = 0.5
             }
             let BGPicturePosition = CGPointMake(self.size.width * BGOffsetMultiplier.x, self.size.height * BGOffsetMultiplier.y)
             let bgPictureName = "BGPicture"
@@ -170,6 +174,10 @@ class MySKNode: SKSpriteNode {
                     if type == .ContainerType {
                         self.alpha = 0.5
                     }
+                } else {
+                    if colorIndex == NoColor {
+                        self.texture = atlas.textureNamed("emptycard")
+                    }
                 }
             }
         } else {
@@ -179,12 +187,10 @@ class MySKNode: SKSpriteNode {
     }
 
     func setLabelText(label: SKLabelNode, value: Int) {
-//        if type != .ContainerType {
-            guard let text = cardLib[value % 13] else {
-                return
-            }
-            label.text = "\(value == 10 ? " " : "")\(text)"
-//        }
+        guard let text = cardLib[minValue == NoColor ? NoColor : value % MaxCardValue] else {
+            return
+        }
+        label.text = "\(value == 10 ? " " : "")\(text)"
     }
     
     required init?(coder aDecoder: NSCoder) {

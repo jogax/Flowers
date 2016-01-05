@@ -128,20 +128,20 @@ struct DeviceConstants {
     
     init(deviceType: String) {
         switch deviceType {
+        case "iPad Pro":
+            sizeMultiplier = 2.2
             case "iPad 2", "iPad 3", "iPad 4", "iPad Air", "iPad Air 2":
-                sizeMultiplier = 1.5
+                sizeMultiplier = 1.8
             case "iPad Mini", "iPad Mini 2", "iPad Mini 3", "iPad Mini 4":
                 sizeMultiplier = 1.3
-            case "iPad Pro":
-                sizeMultiplier = 2.0
-            case "iPhone 4s", "iPhone 4":
-                sizeMultiplier = 0.7
+            case "iPhone 6 Plus", "iPhone 6s Plus":
+                sizeMultiplier = 1.0
+            case "iPhone 6", "iPhone 6s":
+                sizeMultiplier = 0.9
             case "iPhone 5s", "iPhone 5", "iPhone 5c":
                 sizeMultiplier = 0.8
-            case "iPhone 6", "iPhone 6s":
-                sizeMultiplier = 0.8
-            case "iPhone 6 Plus", "iPhone 6s Plus":
-                sizeMultiplier = 0.8
+            case "iPhone 4s", "iPhone 4":
+                sizeMultiplier = 0.7
            default:
                 sizeMultiplier = 1.0
         }
@@ -158,10 +158,7 @@ struct LevelParam {
     var countRows: Int
     var minProzent: Int
     var maxProzent: Int
-//    var containerSize: CGFloat
-//    var spriteSize: CGFloat
     var targetScoreKorr: Int
-    //var timeLimitKorr: Int
     
     init()
     {

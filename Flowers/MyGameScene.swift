@@ -186,6 +186,7 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
     var spriteSize:CGSize = CGSizeMake(0, 0)
     var minUsedCells = 0
     var maxUsedCells = 0
+    var gameNumber = 0
     
     let containerSizeOrig: CGFloat = 50
     let spriteSizeOrig: CGFloat = 35
@@ -286,10 +287,10 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         playMusic("MyMusic", volume: GV.musicVolume, loops: 0)
         stack = Stack()
         timeCount = 0
-        let seedIndex = SeedIndex(gameType: Int64(GV.spriteGameDataArray[GV.getAktNameIndex()].gameModus), gameDifficulty: 0, gameNumber: Int64(levelIndex))
+        gameNumber = Int(arc4random_uniform(99999))
+        let seedIndex = SeedIndex(gameType: Int64(GV.spriteGameDataArray[GV.getAktNameIndex()].gameModus), gameDifficulty: 0, gameNumber: Int64(gameNumber))
         random = MyRandom(seedIndex: seedIndex)
         stopTimer()
-        
         spriteTabRect.origin = CGPointMake(self.frame.midX, self.frame.midY * 0.9)
         spriteTabRect.size = CGSizeMake(self.frame.size.width * 0.80, self.frame.size.width * 0.80)
         
@@ -479,7 +480,7 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         if next {
             
             
-            levelIndex = readNextLevel()
+            //levelIndex = readNextLevel()
             gameScore += levelScore
             
             for index in 0..<GV.spriteGameDataArray.count {

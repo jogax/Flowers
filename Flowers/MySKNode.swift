@@ -63,9 +63,9 @@ class MySKNode: SKSpriteNode {
     let cardLib: [Int:String] = [
         0:"A", 1:"2", 2:"3", 3:"4", 4:"5", 5:"6", 6:"7", 7:"8", 8:"9", 9:"10", 10: "J", 11: "Q", 12: "K", NoColor: ""]
     
-    let fontSizeMultiplier: CGFloat = 0.45
-    let offsetMultiplier = CGPointMake(-0.45, 0.45)
-    let BGOffsetMultiplier = CGPointMake(-0.15, 0.35)
+    let fontSizeMultiplier: CGFloat = 0.35
+    let offsetMultiplier = CGPointMake(-0.48, 0.48)
+    let BGOffsetMultiplier = CGPointMake(-0.10, 0.25)
     
 
     init(texture: SKTexture, type:MySKNodeType, value: Int) {

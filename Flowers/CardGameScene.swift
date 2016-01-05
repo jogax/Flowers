@@ -112,7 +112,7 @@ class CardGameScene: MyGameScene {
         let movingSpriteColorIndex = movingSprite.colorIndex
         
         
-        if container.minValue == container.maxValue && container.maxValue == NoColor && movingSprite.maxValue + 1 == MaxCardValue {
+        if container.minValue == container.maxValue && container.maxValue == NoColor && movingSprite.maxValue % MaxCardValue == LastCardValue {
             push(container, status: .FirstCardAdded)
             containerColorIndex = movingSpriteColorIndex
             container.colorIndex = containerColorIndex
@@ -235,16 +235,17 @@ class CardGameScene: MyGameScene {
             alert.addAction(againAction)
             parentViewController!.presentViewController(alert, animated: true, completion: nil)
         }
-        if usedCellCount < minUsedCells {
+        if usedCellCount <= minUsedCells {
             generateSprites(false)  // Nachgenerierung
         }
     }
 
     func checkContainers()->Bool {
         for index in 0..<containers.count {
-            if containers[index].mySKNode.minValue != FirstCardValue && containers[index].mySKNode.maxValue % MaxCardValue != LastCardValue {
+            if containers[index].mySKNode.minValue != FirstCardValue || containers[index].mySKNode.maxValue % MaxCardValue != LastCardValue {
                 return false
             }
+            
         }
         return true
 

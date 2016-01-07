@@ -26,7 +26,6 @@ enum TextConstants: Int {
     TCOK,
     TCLevelComplete,
     TCNoMessage,
-    TCNextLevel,
     TCGameAgain,
     TCTimeout,
     TCGameOver,
@@ -50,7 +49,11 @@ enum TextConstants: Int {
     TCSoundVolume,
     TCMusicVolume,
     TCStandardGame,
-    TCCardGame
+    TCCardGame,
+    TCPreviousLevel,
+    TCNextLevel,
+    TCNewGame,
+    TCRestart
 
 }
 

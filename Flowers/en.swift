@@ -24,8 +24,6 @@ let enDictionary: [TextConstants: String] = [
     .TCOK:               "OK",
     .TCLevelComplete:    "Level complete",
     .TCNoMessage:        "no Message",
-    .TCNextLevel:        "next level",
-    .TCGameAgain:        "restart",
     .TCTimeout:          "timeout",
     .TCGameOver:         "Game Over",
     .TCCongratulations:  "Congratulations",
@@ -49,4 +47,8 @@ let enDictionary: [TextConstants: String] = [
     .TCMusicVolume:      "Musik Volume",
     .TCStandardGame:     "Game with Flowers",
     .TCCardGame:         "Game with Cards",
+    .TCPreviousLevel:    "Previous Level",
+    .TCNextLevel:        "next level",
+    .TCNewGame:          "New Game",
+    .TCGameAgain:        "Restart Game",
 ]

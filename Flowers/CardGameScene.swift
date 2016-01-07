@@ -14,6 +14,8 @@ class CardGameScene: MyGameScene {
     var valueTab = [Int]()
     let spriteCountPosKorr = CGPointMake(GV.onIpad ? 0.05 : 0.05, GV.onIpad ? 0.95 : 0.95)
     var levelsForPlay = LevelsForPlayWithCards()
+    let nextLevel = true
+    let previousLevel = false
 
     var lastUpdateSec = 0
 
@@ -226,17 +228,42 @@ class CardGameScene: MyGameScene {
             let alert = UIAlertController(title: GV.language.getText(.TCLevelComplete),
                 message: GV.language.getText(TextConstants.TCCongratulations) + playerName,
                 preferredStyle: .Alert)
-            let cancelAction = UIAlertAction(title: GV.language.getText(.TCReturn), style: .Cancel, handler: nil)
-            let againAction = UIAlertAction(title: GV.language.getText(TextConstants.TCNextLevel), style: .Default,
+            let againAction = UIAlertAction(title: GV.language.getText(.TCGameAgain), style: .Default,
+                handler: {(paramAction:UIAlertAction!) in
+                    self.newGame(false)
+            })
+            alert.addAction(againAction)
+            let newGameAction = UIAlertAction(title: GV.language.getText(TextConstants.TCNewGame), style: .Default,
                 handler: {(paramAction:UIAlertAction!) in
                     self.newGame(true)
             })
-            alert.addAction(cancelAction)
-            alert.addAction(againAction)
+            alert.addAction(newGameAction)
+            if levelIndex > 0 {
+                let easierAction = UIAlertAction(title: GV.language.getText(.TCPreviousLevel), style: .Default,
+                    handler: {(paramAction:UIAlertAction!) in
+                        self.setLevel(self.previousLevel)
+                        self.newGame(true)
+                })
+                alert.addAction(easierAction)
+            }
+            let complexerAction = UIAlertAction(title: GV.language.getText(TextConstants.TCNextLevel), style: .Default,
+                handler: {(paramAction:UIAlertAction!) in
+                    self.setLevel(self.nextLevel)
+                    self.newGame(true)
+            })
+            alert.addAction(complexerAction)
             parentViewController!.presentViewController(alert, animated: true, completion: nil)
         }
         if usedCellCount <= minUsedCells {
             generateSprites(false)  // Nachgenerierung
+        }
+    }
+    
+    func setLevel(next: Bool) {
+        if next {
+            levelIndex = levelsForPlay.getNextLevel()
+        } else {
+            levelIndex = levelsForPlay.getPrevLevel()
         }
     }
 

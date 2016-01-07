@@ -24,8 +24,6 @@ let huDictionary: [TextConstants: String] = [
     .TCOK:               "OK",
     .TCLevelComplete:    "Szint befejezve",
     .TCNoMessage:        "nem létező üzenet",
-    .TCNextLevel:        "következő szint",
-    .TCGameAgain:        "újra játszom",
     .TCTimeout:          "Lejárt az időd",
     .TCGameOver:         "Vesztettél",
     .TCCongratulations:  "Gratulálok",
@@ -49,4 +47,8 @@ let huDictionary: [TextConstants: String] = [
     .TCMusicVolume:      "Zene hangerő",
     .TCStandardGame:     "Játék virágokkal",
     .TCCardGame:         "Kártyajáték",
+    .TCPreviousLevel:    "Előző szint",
+    .TCNextLevel:        "Következő szint",
+    .TCNewGame:          "Új játék",
+    .TCGameAgain:        "Újra játszom",
 ]

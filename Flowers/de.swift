@@ -24,8 +24,6 @@ let deDictionary: [TextConstants: String] = [
     .TCOK:               "OK",
     .TCLevelComplete:    "Level beendet",
     .TCNoMessage:        "keine Meldung",
-    .TCNextLevel:        "Nächste Stufe",
-    .TCGameAgain:        "Restart",
     .TCTimeout:          "Timeout",
     .TCGameOver:         "Spiel vorbei",
     .TCCongratulations:  "Herzliches Glückwunsch",
@@ -49,6 +47,10 @@ let deDictionary: [TextConstants: String] = [
     .TCMusicVolume:      "Musik Lautstärke",
     .TCStandardGame:     "Spiel mit Blumen",
     .TCCardGame:         "Spiel mit Karten",
+    .TCPreviousLevel:    "Vorherige Stufe",
+    .TCNextLevel:        "Nächste Stufe",
+    .TCNewGame:          "Neues Spiel",
+    .TCGameAgain:        "Spiel wiederholen",
 
 ]
 

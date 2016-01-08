@@ -158,6 +158,7 @@ struct LevelParam {
     var countRows: Int
     var minProzent: Int
     var maxProzent: Int
+    var spriteSize: Int
     var targetScoreKorr: Int
     
     init()
@@ -169,7 +170,7 @@ struct LevelParam {
         self.minProzent = 0
         self.maxProzent = 0
 //        self.containerSize = 0
-//        self.spriteSize = 0
+        self.spriteSize = 0
         self.targetScoreKorr = 0
         //self.timeLimitKorr = 0
     }

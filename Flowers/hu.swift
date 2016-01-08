@@ -51,4 +51,5 @@ let huDictionary: [TextConstants: String] = [
     .TCNextLevel:        "Következő szint",
     .TCNewGame:          "Új játék",
     .TCGameAgain:        "Újra játszom",
+    .TCChooseGame:       "Válassz:",
 ]

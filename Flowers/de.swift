@@ -51,7 +51,7 @@ let deDictionary: [TextConstants: String] = [
     .TCNextLevel:        "Nächste Stufe",
     .TCNewGame:          "Neues Spiel",
     .TCGameAgain:        "Spiel wiederholen",
-
+    .TCChooseGame:       "Bitte wählen Sie:",
 ]
 
 

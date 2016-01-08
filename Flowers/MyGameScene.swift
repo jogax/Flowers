@@ -274,7 +274,7 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             myView = view
             
             makeSpezialThings(true)
-            prepareNextGame()
+            prepareNextGame(true)
             generateSprites(true)
         } else {
             playMusic("MyMusic", volume: GV.musicVolume, loops: 0)
@@ -282,16 +282,18 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         }
     }
     
-    func prepareNextGame() {
+    func prepareNextGame(newGame: Bool) {
         specialPrepareFuncFirst()
         playMusic("MyMusic", volume: GV.musicVolume, loops: 0)
         stack = Stack()
         timeCount = 0
-        gameNumber = Int(arc4random_uniform(99999))
+        if newGame {
+            gameNumber = Int(arc4random_uniform(999999))
+        }
         let seedIndex = SeedIndex(gameType: Int64(GV.spriteGameDataArray[GV.getAktNameIndex()].gameModus), gameDifficulty: 0, gameNumber: Int64(gameNumber))
         random = MyRandom(seedIndex: seedIndex)
         stopTimer()
-        spriteTabRect.origin = CGPointMake(self.frame.midX, self.frame.midY * 0.9)
+        spriteTabRect.origin = CGPointMake(self.frame.midX, self.frame.midY * 1.0)
         spriteTabRect.size = CGSizeMake(self.frame.size.width * 0.80, self.frame.size.width * 0.80)
         
         gameArray.removeAll(keepCapacity: false)
@@ -440,7 +442,9 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         }
     }
     
-    
+    func getNextPlayArt(congratulations: Bool)->UIAlertController {
+        return UIAlertController()
+    }
     
     func analyzeNode (node: AnyObject) -> UInt32 {
         let testNode = node as! SKNode
@@ -503,7 +507,7 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         
         stopTimer()
         
-        prepareNextGame()
+        prepareNextGame(next)
         generateSprites(true)
     }
     

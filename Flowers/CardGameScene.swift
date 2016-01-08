@@ -42,7 +42,7 @@ class CardGameScene: MyGameScene {
         minUsedCells = levelsForPlay.aktLevel.minProzent * countColumns * countRows / 100
         maxUsedCells = levelsForPlay.aktLevel.maxProzent * countColumns * countRows / 100
         containerSize = CGSizeMake(CGFloat(containerSizeOrig) * sizeMultiplier.width, CGFloat(containerSizeOrig) * sizeMultiplier.height)
-        spriteSize = CGSizeMake(CGFloat(spriteSizeOrig) * sizeMultiplier.width, CGFloat(spriteSizeOrig) * sizeMultiplier.height )
+        spriteSize = CGSizeMake(CGFloat(levelsForPlay.aktLevel.spriteSize) * sizeMultiplier.width, CGFloat(levelsForPlay.aktLevel.spriteSize) * sizeMultiplier.height )
     }
     
     override func updateSpriteCount(adder: Int) {
@@ -224,39 +224,55 @@ class CardGameScene: MyGameScene {
             
             stopTimer()
             playMusic("Winner", volume: GV.musicVolume, loops: 0)
-            let playerName = GV.globalParam.aktName == GV.dummyName ? "!" : " " + GV.globalParam.aktName + "!"
-            let alert = UIAlertController(title: GV.language.getText(.TCLevelComplete),
-                message: GV.language.getText(TextConstants.TCCongratulations) + playerName,
-                preferredStyle: .Alert)
-            let againAction = UIAlertAction(title: GV.language.getText(.TCGameAgain), style: .Default,
-                handler: {(paramAction:UIAlertAction!) in
-                    self.newGame(false)
-            })
-            alert.addAction(againAction)
-            let newGameAction = UIAlertAction(title: GV.language.getText(TextConstants.TCNewGame), style: .Default,
-                handler: {(paramAction:UIAlertAction!) in
-                    self.newGame(true)
-            })
-            alert.addAction(newGameAction)
-            if levelIndex > 0 {
-                let easierAction = UIAlertAction(title: GV.language.getText(.TCPreviousLevel), style: .Default,
-                    handler: {(paramAction:UIAlertAction!) in
-                        self.setLevel(self.previousLevel)
-                        self.newGame(true)
-                })
-                alert.addAction(easierAction)
-            }
-            let complexerAction = UIAlertAction(title: GV.language.getText(TextConstants.TCNextLevel), style: .Default,
-                handler: {(paramAction:UIAlertAction!) in
-                    self.setLevel(self.nextLevel)
-                    self.newGame(true)
-            })
-            alert.addAction(complexerAction)
+            
+            let alert = getNextPlayArt(true)
             parentViewController!.presentViewController(alert, animated: true, completion: nil)
         }
         if usedCellCount <= minUsedCells {
             generateSprites(false)  // Nachgenerierung
         }
+    }
+    
+    override func restartButtonPressed() {
+        let alert = getNextPlayArt(false)
+        parentViewController!.presentViewController(alert, animated: true, completion: nil)
+    }
+    
+    override func getNextPlayArt(congratulations: Bool)->UIAlertController {
+        let playerName = GV.globalParam.aktName == GV.dummyName ? "!" : " " + GV.globalParam.aktName + "!"
+//        var title = GV.language.getText(.TCChooseGame)
+//        var message = GV.language.getText(TextConstants.TCCongratulations) + playerName
+//        if congratulations {
+//            title = GV.language.getText(.TCLevelComplete)
+//        }
+        let alert = UIAlertController(title: congratulations ? GV.language.getText(.TCLevelComplete) : GV.language.getText(.TCChooseGame),
+            message: congratulations ? GV.language.getText(TextConstants.TCCongratulations) + playerName : "",
+            preferredStyle: .Alert)
+        let againAction = UIAlertAction(title: GV.language.getText(.TCGameAgain), style: .Default,
+            handler: {(paramAction:UIAlertAction!) in
+                self.newGame(false)
+        })
+        alert.addAction(againAction)
+        let newGameAction = UIAlertAction(title: GV.language.getText(TextConstants.TCNewGame), style: .Default,
+            handler: {(paramAction:UIAlertAction!) in
+                self.newGame(true)
+        })
+        alert.addAction(newGameAction)
+        if levelIndex > 0 {
+            let easierAction = UIAlertAction(title: GV.language.getText(.TCPreviousLevel), style: .Default,
+                handler: {(paramAction:UIAlertAction!) in
+                    self.setLevel(self.previousLevel)
+                    self.newGame(true)
+            })
+            alert.addAction(easierAction)
+        }
+        let complexerAction = UIAlertAction(title: GV.language.getText(TextConstants.TCNextLevel), style: .Default,
+            handler: {(paramAction:UIAlertAction!) in
+                self.setLevel(self.nextLevel)
+                self.newGame(true)
+        })
+        alert.addAction(complexerAction)
+        return alert
     }
     
     func setLevel(next: Bool) {

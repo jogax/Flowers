@@ -13,15 +13,12 @@ class LevelsForPlayWithCards {
 
     /*
     enum LevelParamsType: Int {
-        case LevelCount = 0,
-        CountContainers = 1,
-        CountSpritesProContainer = 2,
-        CountColumns = 3,
-        CountRows = 4,
-        MinProzent = 5,
-        MaxProzent = 6,
-        ContainerSize = 7,
-        SpriteSize = 8,
+        CountPackages = 0,
+        CountColumns = 1,
+        CountRows = 2,
+        MinProzent = 3,
+        MaxProzent = 4,
+        SpriteSize = 5,
         //TargetScoreKorr = 9//,
         //TimeLimitKorr = 10
     }
@@ -33,20 +30,21 @@ class LevelsForPlayWithCards {
         "1,0,0,0,0,0,0,0,0", //,2",//0",    // 5 times CountSpritesProContainer += 10
     ]
     private var levelContent = [
-        1: "13,4,4,0,100,40", //,50,35", //,1",//,20",
-        2: "13,5,5,0,100,37", //,60,35", //,3",//,3",
-        3: "13,6,6,0,100,32", //,50,30", //,3",//,3",
-        4: "13,7,7,30,80,31", //,50,30", //,2",//,3",
-        5: "13,8,8,0,100,28", //,40,25", //,2",//,3",
-        6: "13,9,9,0,100,25", //,40,25", //,2",//,3",
-        7: "13,10,10,0,100,22", //,40,25", //,2",//,3"
-        8: "26,4,4,0,100,40", //,50,35", //,1",//,20",
-        9: "26,5,5,0,100,37", //,60,35", //,3",//,3",
-        10: "26,6,6,0,100,32", //,50,30", //,3",//,3",
-        11: "26,7,7,0,100,31", //,50,30", //,2",//,3",
-        12: "26,8,8,0,100,28", //,40,25", //,2",//,3",
-        13: "26,9,9,0,100,25", //,40,25", //,2",//,3",
-        14: "26,10,10,0,100,22", //,40,25", //,2",//,3"
+        1: "1,4,4,30,70,40", //,50,35", //,1",//,20",
+        2: "1,5,5,30,70,37", //,60,35", //,3",//,3",
+        3: "1,6,6,30,70,32", //,50,30", //,3",//,3",
+        4: "1,7,7,30,70,31", //,50,30", //,2",//,3",
+        5: "1,8,8,30,70,28", //,40,25", //,2",//,3",
+        6: "1,9,9,30,70,25", //,40,25", //,2",//,3",
+        7: "1,10,10,30,70,22", //,40,25", //,2",//,3"
+        8: "2,11,11,30,70,19", //,40,25", //,2",//,3"
+        9: "2,4,4,0,70,40", //,50,35", //,1",//,20",
+        10: "2,5,5,0,70,37", //,60,35", //,3",//,3",
+        11: "2,6,6,0,70,32", //,50,30", //,3",//,3",
+        12: "2,7,7,0,70,31", //,50,30", //,2",//,3",
+        13: "2,8,8,0,70,28", //,40,25", //,2",//,3",
+        14: "2,9,9,0,70,25", //,40,25", //,2",//,3",
+        15: "2,10,10,0,70,22", //,40,25", //,2",//,3"
     ]
     var levelParam = [LevelParam]()
     
@@ -59,7 +57,7 @@ class LevelsForPlayWithCards {
             let paramArr = paramString!.componentsSeparatedByString(",")
             var aktLevelParam: LevelParam = LevelParam()
             aktLevelParam.countContainers = 4
-            aktLevelParam.countSpritesProContainer = Int(paramArr[0])!
+            aktLevelParam.countPackages = Int(paramArr[0])!
             aktLevelParam.countColumns = Int(paramArr[1])!
             aktLevelParam.countRows = Int(paramArr[2])!
             aktLevelParam.minProzent = Int(paramArr[3])!

@@ -43,13 +43,13 @@
 		200BDA0B1BCFEF5100F72109 /* MySKButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 200BDA0A1BCFEF5100F72109 /* MySKButton.swift */; };
 		201173B71C074D080022AC86 /* MyGameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201173B61C074D080022AC86 /* MyGameScene.swift */; };
 		201173B91C074D430022AC86 /* CardGameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201173B81C074D430022AC86 /* CardGameScene.swift */; };
-		201375011C11DF0F002AC049 /* cardBackground.png in Resources */ = {isa = PBXBuildFile; fileRef = 201375001C11DF0F002AC049 /* cardBackground.png */; };
 		201728FA1BE3D0C9005F6CA8 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201728F91BE3D0C9005F6CA8 /* SettingsViewController.swift */; };
 		201C52401C314CF9001B04AB /* LevelsForPlayWithCards.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201C523F1C314CF9001B04AB /* LevelsForPlayWithCards.swift */; };
 		201C52421C316801001B04AB /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201C52411C316801001B04AB /* Extensions.swift */; };
 		201E203E1C1C631F003DBBD8 /* MyRandom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201E203D1C1C631F003DBBD8 /* MyRandom.swift */; };
 		201E20421C1C7389003DBBD8 /* SeedData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201E20401C1C7389003DBBD8 /* SeedData.swift */; };
 		201E20471C1C80CF003DBBD8 /* CloudData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201E20461C1C80CF003DBBD8 /* CloudData.swift */; };
+		2024A8C51C427C420001CA95 /* cardBackground.png in Resources */ = {isa = PBXBuildFile; fileRef = 2024A8C41C427C420001CA95 /* cardBackground.png */; };
 		204A8A181BEF93B90061D14F /* LanguageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 204A8A171BEF93B90061D14F /* LanguageViewController.swift */; };
 		205574411BBEB85C00C165A1 /* Go321.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 205574401BBEB85C00C165A1 /* Go321.m4a */; };
 		205574431BBECB6200C165A1 /* NoSound.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 205574421BBECB6200C165A1 /* NoSound.m4a */; };
@@ -127,7 +127,6 @@
 		200BDA0A1BCFEF5100F72109 /* MySKButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MySKButton.swift; sourceTree = "<group>"; };
 		201173B61C074D080022AC86 /* MyGameScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MyGameScene.swift; sourceTree = "<group>"; };
 		201173B81C074D430022AC86 /* CardGameScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CardGameScene.swift; sourceTree = "<group>"; };
-		201375001C11DF0F002AC049 /* cardBackground.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = cardBackground.png; sourceTree = "<group>"; };
 		201728F91BE3D0C9005F6CA8 /* SettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		201C523F1C314CF9001B04AB /* LevelsForPlayWithCards.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LevelsForPlayWithCards.swift; sourceTree = "<group>"; };
 		201C52411C316801001B04AB /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
@@ -135,6 +134,7 @@
 		201E20401C1C7389003DBBD8 /* SeedData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SeedData.swift; path = ../SeedData.swift; sourceTree = "<group>"; };
 		201E20431C1C8009003DBBD8 /* Flowers.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Flowers.entitlements; sourceTree = "<group>"; };
 		201E20461C1C80CF003DBBD8 /* CloudData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CloudData.swift; path = ../CloudData.swift; sourceTree = "<group>"; };
+		2024A8C41C427C420001CA95 /* cardBackground.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = cardBackground.png; sourceTree = "<group>"; };
 		2034B0061BDE796300D296DA /* Flowers.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Flowers.xcdatamodel; sourceTree = "<group>"; };
 		204A8A171BEF93B90061D14F /* LanguageViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LanguageViewController.swift; sourceTree = "<group>"; };
 		205574401BBEB85C00C165A1 /* Go321.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = Go321.m4a; sourceTree = "<group>"; };
@@ -296,7 +296,7 @@
 			isa = PBXGroup;
 			children = (
 				20FC65E11BBC12A100775322 /* Holz.png */,
-				201375001C11DF0F002AC049 /* cardBackground.png */,
+				2024A8C41C427C420001CA95 /* cardBackground.png */,
 				20FC65E41BBC12A100775322 /* spark.png */,
 				20FC65DB1BBC127800775322 /* bumm.png */,
 				20FC65DC1BBC127800775322 /* finger.png */,
@@ -423,6 +423,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2024A8C51C427C420001CA95 /* cardBackground.png in Resources */,
 				20FC65DE1BBC127800775322 /* bumm.png in Resources */,
 				20FC65E01BBC127800775322 /* frozen.png in Resources */,
 				200141231BAEB1F6003E0950 /* Drop.m4a in Resources */,
@@ -432,7 +433,6 @@
 				200140EB1BAEA96A003E0950 /* LaunchScreen.storyboard in Resources */,
 				200141281BAEB1F6003E0950 /* Sprite1.m4a in Resources */,
 				200141261BAEB1F6003E0950 /* Mirror.m4a in Resources */,
-				201375011C11DF0F002AC049 /* cardBackground.png in Resources */,
 				2001412A1BAEB1F6003E0950 /* Winner.m4a in Resources */,
 				20FC65E51BBC12A100775322 /* Holz.png in Resources */,
 				200141221BAEB1F6003E0950 /* Do_2.m4a in Resources */,

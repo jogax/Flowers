@@ -10,12 +10,27 @@ import SpriteKit
 import AVFoundation
 
 class CardGameScene: MyGameScene {
+
+    struct GenerateCard {
+        var cardValue: Int
+        var packageNr: Int
+        var used: Bool
+        init() {
+            cardValue = 0
+            packageNr = 0
+            used      = false
+        }
+    }
     
+    var lastCollisionsTime = NSDate()
+    var cardArray: [[GenerateCard]] = []
     var valueTab = [Int]()
     let spriteCountPosKorr = CGPointMake(GV.onIpad ? 0.05 : 0.05, GV.onIpad ? 0.95 : 0.95)
     var levelsForPlay = LevelsForPlayWithCards()
+    var countPackages = 0
     let nextLevel = true
     let previousLevel = false
+    var colorChainEnabled = [true, true, true, true]
 
     var lastUpdateSec = 0
 
@@ -36,13 +51,25 @@ class CardGameScene: MyGameScene {
         
     override func specialPrepareFuncFirst() {
         countContainers = levelsForPlay.aktLevel.countContainers
-        countSpritesProContainer = levelsForPlay.aktLevel.countSpritesProContainer
+        countPackages = levelsForPlay.aktLevel.countPackages
+        countSpritesProContainer = MaxCardValue //levelsForPlay.aktLevel.countSpritesProContainer
         countColumns = levelsForPlay.aktLevel.countColumns
         countRows = levelsForPlay.aktLevel.countRows
         minUsedCells = levelsForPlay.aktLevel.minProzent * countColumns * countRows / 100
         maxUsedCells = levelsForPlay.aktLevel.maxProzent * countColumns * countRows / 100
         containerSize = CGSizeMake(CGFloat(containerSizeOrig) * sizeMultiplier.width, CGFloat(containerSizeOrig) * sizeMultiplier.height)
         spriteSize = CGSizeMake(CGFloat(levelsForPlay.aktLevel.spriteSize) * sizeMultiplier.width, CGFloat(levelsForPlay.aktLevel.spriteSize) * sizeMultiplier.height )
+        for _ in 0..<countContainers {
+            var hilfsArray: [GenerateCard] = []
+            for cardIndex in 0..<countSpritesProContainer! * countPackages {
+                var card = GenerateCard()
+                card.cardValue = cardIndex % countSpritesProContainer!
+                card.packageNr = cardIndex / countSpritesProContainer!
+                
+                hilfsArray.append(card)
+            }
+            cardArray.append(hilfsArray)
+        }
     }
     
     override func updateSpriteCount(adder: Int) {
@@ -81,12 +108,62 @@ class CardGameScene: MyGameScene {
     override func getValueForContainer()->Int {
         return countSpritesProContainer!// + 1
     }
-    
+ 
+    override func generateSprites(first: Bool) {
+        var positionsTab = [(Int, Int)]() // all available Positions
+        for column in 0..<countColumns {
+            for row in 0..<countRows {
+                if !gameArray[column][row] {
+                    let appendValue = (column, row)
+                    positionsTab.append(appendValue)
+                }
+            }
+        }
+        
+        while colorTab.count > 0 && checkGameArray() < maxUsedCells {
+            let colorTabIndex = colorTab.count - 1 //GV.random(0, max: colorTab.count - 1)
+            let colorIndex = colorTab[colorTabIndex].colorIndex
+            let spriteName = colorTab[colorTabIndex].spriteName
+            let value = colorTab[colorTabIndex].spriteValue
+            colorTab.removeAtIndex(colorTabIndex)
+            
+            let sprite = MySKNode(texture: getTexture(colorIndex), type: .SpriteType, value:value)
+            tableCellSize = spriteTabRect.width / CGFloat(countColumns)
+            
+            let index = random!.getRandomInt(0, max: positionsTab.count - 1)
+            let (aktColumn, aktRow) = positionsTab[index]
+            
+            let xPosition = spriteTabRect.origin.x - spriteTabRect.size.width / 2 + CGFloat(aktColumn) * tableCellSize + tableCellSize / 2
+            let yPosition = spriteTabRect.origin.y - spriteTabRect.size.height / 2 + tableCellSize / 2 + CGFloat(aktRow) * tableCellSize
+            
+            sprite.position = CGPoint(x: xPosition, y: yPosition)
+            sprite.startPosition = sprite.position
+            gameArray[aktColumn][aktRow] = true
+            positionsTab.removeAtIndex(index)
+            
+            sprite.column = aktColumn
+            sprite.row = aktRow
+            sprite.colorIndex = colorIndex
+            sprite.name = spriteName
+            
+            sprite.size = CGSizeMake(spriteSize.width, spriteSize.height)
+            
+            addPhysicsBody(sprite)
+            push(sprite, status: .Added)
+            addChild(sprite)
+        }
+        if first {
+            countUp = NSTimer.scheduledTimerWithTimeInterval(1.0, target: self, selector: Selector("doCountUp"), userInfo: nil, repeats: true)
+        }
+        
+        stopped = false
+    }
+
     override func update(currentTime: NSTimeInterval) {
         let sec10: Int = Int(currentTime * 10) % 2
         if sec10 != lastUpdateSec && sec10 == 0 {
             let adder:CGFloat = 5
-            backgroudScrollUpdate()
+//            backgroudScrollUpdate()
             for index in 0..<tremblingSprites.count {
                 let aktSprite = tremblingSprites[index]
                 switch aktSprite.trembling {
@@ -129,14 +206,21 @@ class CardGameScene: MyGameScene {
             container.minValue == NoColor ||
             movingSprite.maxValue + 1 == container.minValue ||
             movingSprite.minValue - 1 == container.maxValue ||
-            (container.minValue == container.maxValue && container.maxValue == movingSprite.maxValue)
+            (container.minValue == container.maxValue && container.maxValue == movingSprite.maxValue) ||
+            (movingSprite.maxValue == LastCardValue && container.minValue == FirstCardValue && colorChainEnabled[containerColorIndex]) ||
+            (movingSprite.minValue == FirstCardValue && container.maxValue == LastCardValue && colorChainEnabled[containerColorIndex])
+
         )
 
         
         
         //print("spriteName: \(containerColorIndex), containerName: \(spriteColorIndex)")
         if OK  {
-            push(container, status: .HitcounterChanged)
+            if  (movingSprite.maxValue == LastCardValue && container.minValue == FirstCardValue) ||
+                (movingSprite.minValue == FirstCardValue && container.maxValue == LastCardValue) {
+                    colorChainEnabled[containerColorIndex] = false
+            }
+           push(container, status: .HitcounterChanged)
             push(movingSprite, status: .Removed)
             if container.maxValue < movingSprite.minValue {
                 container.maxValue = movingSprite.maxValue
@@ -169,6 +253,13 @@ class CardGameScene: MyGameScene {
      }
 
     override func spriteDidCollideWithMovingSprite(node1:MySKNode, node2:MySKNode) {
+        let collisionsTime = NSDate()
+        let timeInterval: Double = collisionsTime.timeIntervalSinceDate(lastCollisionsTime); // <<<<< Difference in seconds (double)
+
+        if timeInterval < 1 {
+            return
+        }
+        lastCollisionsTime = collisionsTime
         let movingSprite = node1
         let sprite = node2
         let movingSpriteColorIndex = movingSprite.colorIndex
@@ -180,10 +271,16 @@ class CardGameScene: MyGameScene {
         let OK = movingSpriteColorIndex == spriteColorIndex &&
         (
             movingSprite.maxValue + 1 == sprite.minValue ||
-            movingSprite.minValue - 1 == sprite.maxValue
+            movingSprite.minValue - 1 == sprite.maxValue ||
+            (movingSprite.maxValue == LastCardValue && sprite.minValue == FirstCardValue && colorChainEnabled[spriteColorIndex]) ||
+            (movingSprite.minValue == FirstCardValue && sprite.maxValue == LastCardValue && colorChainEnabled[spriteColorIndex])
         )
         if OK {
-            
+            if  (movingSprite.maxValue == LastCardValue && sprite.minValue == FirstCardValue) ||
+                (movingSprite.minValue == FirstCardValue && sprite.maxValue == LastCardValue) {
+                colorChainEnabled[spriteColorIndex] = false
+            }
+
             
             push(sprite, status: .Unification)
             push(movingSprite, status: .Removed)
@@ -272,6 +369,14 @@ class CardGameScene: MyGameScene {
                 self.newGame(true)
         })
         alert.addAction(complexerAction)
+        if !congratulations {
+            let cancelAction = UIAlertAction(title: GV.language.getText(TextConstants.TCCancel), style: .Default,
+                handler: {(paramAction:UIAlertAction!) in
+//                    self.setLevel(self.nextLevel)
+//                    self.newGame(true)
+            })
+            alert.addAction(cancelAction)
+        }
         return alert
     }
     
@@ -299,9 +404,10 @@ class CardGameScene: MyGameScene {
         colorTab.removeAll(keepCapacity: false)
         var spriteName = 10000
         
-        for _ in 0..<countSpritesProContainer! {
+        for cardIndex in 0..<countSpritesProContainer! * countPackages {
             for containerIndex in 0..<countContainers {
-                let colorTabLine = ColorTabLine(colorIndex: containerIndex, spriteName: "\(spriteName++)", spriteValue: generateValue(containerIndex) - 1)
+                let colorTabLine = ColorTabLine(colorIndex: containerIndex, spriteName: "\(spriteName++)",
+                    spriteValue: cardArray[containerIndex][cardIndex % MaxCardValue].cardValue) //generateValue(containerIndex) - 1)
                 colorTab.append(colorTabLine)
             }
         }

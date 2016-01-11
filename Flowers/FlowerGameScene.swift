@@ -31,6 +31,56 @@ class FlowerGameScene: MyGameScene {
         spriteCountLabel.text = "\(spriteCountText) \(spriteCount)"
     }
 
+    override func generateSprites(first: Bool) {
+        var positionsTab = [(Int, Int)]() // all available Positions
+        for column in 0..<countColumns {
+            for row in 0..<countRows {
+                if !gameArray[column][row] {
+                    let appendValue = (column, row)
+                    positionsTab.append(appendValue)
+                }
+            }
+        }
+        
+        while colorTab.count > 0 && checkGameArray() < maxUsedCells {
+            let colorTabIndex = colorTab.count - 1 //GV.random(0, max: colorTab.count - 1)
+            let colorIndex = colorTab[colorTabIndex].colorIndex
+            let spriteName = colorTab[colorTabIndex].spriteName
+            let value = colorTab[colorTabIndex].spriteValue
+            colorTab.removeAtIndex(colorTabIndex)
+            
+            let sprite = MySKNode(texture: getTexture(colorIndex), type: .SpriteType, value:value)
+            tableCellSize = spriteTabRect.width / CGFloat(countColumns)
+            
+            let index = random!.getRandomInt(0, max: positionsTab.count - 1)
+            let (aktColumn, aktRow) = positionsTab[index]
+            
+            let xPosition = spriteTabRect.origin.x - spriteTabRect.size.width / 2 + CGFloat(aktColumn) * tableCellSize + tableCellSize / 2
+            let yPosition = spriteTabRect.origin.y - spriteTabRect.size.height / 2 + tableCellSize / 2 + CGFloat(aktRow) * tableCellSize
+            
+            sprite.position = CGPoint(x: xPosition, y: yPosition)
+            sprite.startPosition = sprite.position
+            gameArray[aktColumn][aktRow] = true
+            positionsTab.removeAtIndex(index)
+            
+            sprite.column = aktColumn
+            sprite.row = aktRow
+            sprite.colorIndex = colorIndex
+            sprite.name = spriteName
+            
+            sprite.size = CGSizeMake(spriteSize.width, spriteSize.height)
+            
+            addPhysicsBody(sprite)
+            push(sprite, status: .Added)
+            addChild(sprite)
+        }
+        if first {
+            countUp = NSTimer.scheduledTimerWithTimeInterval(1.0, target: self, selector: Selector("doCountUp"), userInfo: nil, repeats: true)
+        }
+        
+        stopped = false
+    }
+
     override func makeSpezialThings(first: Bool) {
         if !first {
             levelIndex = levelsForPlay.getNextLevel()

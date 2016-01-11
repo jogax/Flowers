@@ -153,6 +153,7 @@ struct DeviceConstants {
 struct LevelParam {
     
     var countContainers: Int
+    var countPackages: Int
     var countSpritesProContainer: Int
     var countColumns: Int
     var countRows: Int
@@ -164,6 +165,7 @@ struct LevelParam {
     init()
     {
         self.countContainers = 0
+        self.countPackages = 1
         self.countSpritesProContainer = 0
         self.countColumns = 0
         self.countRows = 0

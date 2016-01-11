@@ -255,12 +255,12 @@ class DrawImages {
         let adder:CGFloat = frame.width / 20
         let r0 = frame.width * 0.4
         
-        let center1 = CGPoint(x: frame.origin.x + frame.width / 2, y: frame.origin.y + adder + r0 * 1.5)
+        let center1 = CGPoint(x: frame.origin.x + frame.width / 2, y: frame.origin.y + adder + r0 * 1.0)
         //        let center2 = CGPoint(x: frame.origin.x + frame.width / 2, y: frame.origin.y + frame.height - adder - r0 * 1.5)
         
         
         let oneGrad:CGFloat = CGFloat(M_PI) / 180
-        let minAngle1 = 340 * oneGrad
+        let minAngle1 = 430 * oneGrad
         let maxAngle1 = 90 * oneGrad
         //println("1 Grad: \(oneGrad)")
         
@@ -274,10 +274,10 @@ class DrawImages {
         //        CGContextStrokePath(ctx)
         
         let p1 = pointOfCircle(r0, center: center1, angle: maxAngle1)
-        let p2 = CGPoint(x: p1.x + 10, y: p1.y - 30)
+        let p2 = CGPoint(x: p1.x - 20, y: p1.y - 20)
         //        let p3 = CGPoint(x: p1.x + 30, y: p1.y + 10)
         //        let p2 = CGPoint(x: p1.x - 20, y: p1.y - 30)
-        let p3 = CGPoint(x: p1.x + 30, y: p1.y - 10)
+        let p3 = CGPoint(x: p1.x - 30, y: p1.y + 10)
         //        let p4 = pointOfCircle(r0, center: center2, angle: minAngle2)
         //        let p5 = CGPoint(x: p4.x + 20, y: p4.y + 30)
         //        let p6 = CGPoint(x: p4.x + 30, y: p4.y + 15)

@@ -230,7 +230,7 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
     var undoButton: MySKButton?
     var restartButton: MySKButton?
     var exchangeButton: MySKButton?
-    var previousLevelButton: MySKButton?
+    var cardPackageButton: MySKButton?
     var nextLevelButton: MySKButton?
     var targetScore = 0
     var spriteCount = 0
@@ -262,6 +262,11 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
     
     var spriteGameLastPosition = CGPointZero
     
+    var buttonSize = CGFloat(0)
+    var buttonYPos = CGFloat(0)
+    var buttonXPosNormalized = CGFloat(0)
+    let images = DrawImages()
+    
     
     
     let scoreAddCorrected = [1:1, 2:2, 3:3, 4:4, 5:5, 6:7, 7:8, 8:10, 9:11, 10:13, 11:14, 12:16,13:17,14:19, 15:20, 16:22, 17:23, 18:24, 19:25, 20:27, 21:28, 22:30, 23:31, 24:33, 25:34, 26:36, 27:37, 28:39, 29:40, 30:42, 31:43, 32:45, 33:46, 34:47, 35:48, 36:50, 37:51, 38:53, 39:54, 40:54, 41:53, 42:53, 43:52, 44:52, 45:51, 46:51, 47:51, 48:50, 49:50, 50:50, 51:51, 52:52, 53:53, 54:54, 55:55, 56:56, 57:57, 58:58, 59:59, 60:60, 61:61, 62:62, 63:63, 64:64, 65:65, 66:66, 67:67, 68:68, 69:69, 70:70, 71:71, 72:72, 73:73, 74:74, 75:75, 76:76, 77:77, 78:78, 79:79, 80:80, 81:81, 82:82, 83:83, 84:84, 85:85, 86:86, 87:87, 88:88, 89:89, 90:90, 91:91, 92:92, 93:93, 94:94, 95:95, 96:96, 97:97, 98:98, 99:99, 100:100]
@@ -272,6 +277,10 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         if !settingsSceneStarted {
             
             myView = view
+            
+            buttonSize = myView.frame.width / 15
+            buttonYPos = myView.frame.height * 0.05
+            buttonXPosNormalized = myView.frame.width / 10
             
             makeSpezialThings(true)
             prepareNextGame(true)
@@ -293,7 +302,7 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         let seedIndex = SeedIndex(gameType: Int64(GV.spriteGameDataArray[GV.getAktNameIndex()].gameModus), gameDifficulty: 0, gameNumber: Int64(gameNumber))
         random = MyRandom(seedIndex: seedIndex)
         stopTimer()
-        spriteTabRect.origin = CGPointMake(self.frame.midX, self.frame.midY * 0.9)
+        spriteTabRect.origin = CGPointMake(self.frame.midX, self.frame.midY * 0.85)
         spriteTabRect.size = CGSizeMake(self.frame.size.width * 0.80, self.frame.size.width * 0.80)
         
         gameArray.removeAll(keepCapacity: false)
@@ -333,30 +342,25 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         bgImage!.zPosition = -15
         self.addChild(bgImage!)
         
-        let buttonSize = myView.frame.width / 15
-        let buttonYPos = myView.frame.height * 0.05
-        let buttonXPosNormalized = myView.frame.width / 10
-        let images = DrawImages()
-        
         let settingsTexture = SKTexture(image: images.getSettings())
-        settingsButton = MySKButton(texture: settingsTexture, frame: CGRectMake(buttonXPosNormalized * 3, buttonYPos, buttonSize, buttonSize))
+        settingsButton = MySKButton(texture: settingsTexture, frame: CGRectMake(buttonXPosNormalized * 1, buttonYPos, buttonSize, buttonSize))
         settingsButton!.name = "settings"
         addChild(settingsButton!)
         
-        let undoTexture = SKTexture(image: images.getUndo())
-        undoButton = MySKButton(texture: undoTexture, frame: CGRectMake(buttonXPosNormalized * 7, buttonYPos, buttonSize, buttonSize))
-        undoButton!.name = "undo"
-        addChild(undoButton!)
-        
         let restartTexture = SKTexture(image: images.getRestart())
-        restartButton = MySKButton(texture: restartTexture, frame: CGRectMake(buttonXPosNormalized * 5, buttonYPos, buttonSize, buttonSize))
+        restartButton = MySKButton(texture: restartTexture, frame: CGRectMake(buttonXPosNormalized * 2.5, buttonYPos, buttonSize, buttonSize))
         restartButton!.name = "restart"
         addChild(restartButton!)
         
-        let previousLevelButtonTexture = SKTexture(image: images.getPfeillinks())
-        previousLevelButton = MySKButton(texture: previousLevelButtonTexture, frame: CGRectMake(buttonXPosNormalized * 1, buttonYPos, buttonSize, buttonSize))
-        previousLevelButton!.name = "pfeilLinks"
-        addChild(previousLevelButton!)
+//        let cardPackageButtonTexture = SKTexture(image: images.getPfeillinks())
+//        cardPackageButton = MySKButton(texture: cardPackageButtonTexture, frame: CGRectMake(buttonXPosNormalized * 5, buttonYPos, buttonSize, buttonSize))
+//        cardPackageButton!.name = "pfeilLinks"
+//        addChild(cardPackageButton!)
+//        
+        let undoTexture = SKTexture(image: images.getUndo())
+        undoButton = MySKButton(texture: undoTexture, frame: CGRectMake(buttonXPosNormalized * 7.5, buttonYPos, buttonSize, buttonSize))
+        undoButton!.name = "undo"
+        addChild(undoButton!)
         
         let exchangeButtonTexture = SKTexture(image: images.getExchange())
         exchangeButton = MySKButton(texture: exchangeButtonTexture, frame: CGRectMake(buttonXPosNormalized * 9, buttonYPos, buttonSize, buttonSize))
@@ -433,6 +437,10 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
     
     func restartButtonPressed() {
         newGame(false)
+    }
+    
+    func unknownButtonPressed(buttonName: String) {
+        
     }
     
     func stopTimer() {
@@ -727,7 +735,7 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
                 case "undo": undoButtonPressed()
                 case "exchange": exchangeButtonPressed()
                 case "restart": restartButtonPressed()
-                default: undoButtonPressed()
+                default: unknownButtonPressed(mySKNode.name!)
                 }
                 return
             }

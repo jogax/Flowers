@@ -165,6 +165,7 @@ class MySKNode: SKSpriteNode {
                     BGPicture.userInteractionEnabled = false
                     //maxValueLabel.position = positionOffset //CGPointMake(-20, 35)
                     maxValueLabel.zPosition = self.zPosition + 1
+                    //minValueLabel.zPosition = maxValueLabel.zPosition + 1
                 }
             } else {
                 if BGPictureAdded || self.childNodeWithName(bgPictureName) != nil {

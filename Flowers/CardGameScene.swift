@@ -30,8 +30,6 @@ class CardGameScene: MyGameScene {
     var countPackages = 0
     let nextLevel = true
     let previousLevel = false
-    var colorChainEnabled = [true, true, true, true]
-
     var lastUpdateSec = 0
 
     override func getTexture(index: Int)->SKTexture {
@@ -50,6 +48,11 @@ class CardGameScene: MyGameScene {
     }
         
     override func specialPrepareFuncFirst() {
+        let cardPackageButtonTexture = SKTexture(image: images.getCardPackage())
+        cardPackageButton = MySKButton(texture: cardPackageButtonTexture, frame: CGRectMake(buttonXPosNormalized * 4.0, buttonYPos, buttonSize, buttonSize), makePicture: false)
+        cardPackageButton!.name = "cardPackege"
+        addChild(cardPackageButton!)
+        
         countContainers = levelsForPlay.aktLevel.countContainers
         countPackages = levelsForPlay.aktLevel.countPackages
         countSpritesProContainer = MaxCardValue //levelsForPlay.aktLevel.countSpritesProContainer
@@ -59,7 +62,7 @@ class CardGameScene: MyGameScene {
         maxUsedCells = levelsForPlay.aktLevel.maxProzent * countColumns * countRows / 100
         containerSize = CGSizeMake(CGFloat(containerSizeOrig) * sizeMultiplier.width, CGFloat(containerSizeOrig) * sizeMultiplier.height)
         spriteSize = CGSizeMake(CGFloat(levelsForPlay.aktLevel.spriteSize) * sizeMultiplier.width, CGFloat(levelsForPlay.aktLevel.spriteSize) * sizeMultiplier.height )
-        for _ in 0..<countContainers {
+         for _ in 0..<countContainers {
             var hilfsArray: [GenerateCard] = []
             for cardIndex in 0..<countSpritesProContainer! * countPackages {
                 var card = GenerateCard()
@@ -121,7 +124,7 @@ class CardGameScene: MyGameScene {
         }
         
         while colorTab.count > 0 && checkGameArray() < maxUsedCells {
-            let colorTabIndex = colorTab.count - 1 //GV.random(0, max: colorTab.count - 1)
+            let colorTabIndex = random!.getRandomInt(0, max: colorTab.count - 1)//colorTab.count - 1 //
             let colorIndex = colorTab[colorTabIndex].colorIndex
             let spriteName = colorTab[colorTabIndex].spriteName
             let value = colorTab[colorTabIndex].spriteValue
@@ -134,7 +137,7 @@ class CardGameScene: MyGameScene {
             let (aktColumn, aktRow) = positionsTab[index]
             
             let xPosition = spriteTabRect.origin.x - spriteTabRect.size.width / 2 + CGFloat(aktColumn) * tableCellSize + tableCellSize / 2
-            let yPosition = spriteTabRect.origin.y - spriteTabRect.size.height / 2 + tableCellSize / 2 + CGFloat(aktRow) * tableCellSize
+            let yPosition = spriteTabRect.origin.y - spriteTabRect.size.height / 2 + tableCellSize * 1.05 / 2 + CGFloat(aktRow) * tableCellSize * 1.05
             
             sprite.position = CGPoint(x: xPosition, y: yPosition)
             sprite.startPosition = sprite.position
@@ -157,6 +160,12 @@ class CardGameScene: MyGameScene {
         }
         
         stopped = false
+    }
+    
+    override func unknownButtonPressed(buttonName: String) {
+        if buttonName == "cardPackege" {
+            _ = 0
+        }
     }
 
     override func update(currentTime: NSTimeInterval) {
@@ -191,14 +200,19 @@ class CardGameScene: MyGameScene {
         let movingSpriteColorIndex = movingSprite.colorIndex
         
         
-        if container.minValue == container.maxValue && container.maxValue == NoColor && movingSprite.maxValue % MaxCardValue == LastCardValue {
-            push(container, status: .FirstCardAdded)
-            containerColorIndex = movingSpriteColorIndex
-            container.colorIndex = containerColorIndex
-            container.texture = getTexture(containerColorIndex)
-//            container.minValue = movingSprite.minValue
-//            container.maxValue = movingSprite.maxValue
-//            container.reload()
+        if container.minValue == container.maxValue && container.maxValue == NoColor && movingSprite.maxValue == LastCardValue {
+            var containerNotFound = true
+            for index in 0..<countContainers {
+                if containers[index].mySKNode.colorIndex == movingSpriteColorIndex {
+                    containerNotFound = false
+                }
+            }
+            if containerNotFound {
+                push(container, status: .FirstCardAdded)
+                containerColorIndex = movingSpriteColorIndex
+                container.colorIndex = containerColorIndex
+                container.texture = getTexture(containerColorIndex)
+            }
         }
         
         let OK = movingSpriteColorIndex == containerColorIndex &&
@@ -206,21 +220,13 @@ class CardGameScene: MyGameScene {
             container.minValue == NoColor ||
             movingSprite.maxValue + 1 == container.minValue ||
             movingSprite.minValue - 1 == container.maxValue ||
-            (container.minValue == container.maxValue && container.maxValue == movingSprite.maxValue) ||
-            (movingSprite.maxValue == LastCardValue && container.minValue == FirstCardValue && colorChainEnabled[containerColorIndex]) ||
-            (movingSprite.minValue == FirstCardValue && container.maxValue == LastCardValue && colorChainEnabled[containerColorIndex])
-
-        )
+            (container.maxValue == LastCardValue && container.minValue == FirstCardValue && movingSprite.maxValue == LastCardValue)         )
 
         
         
         //print("spriteName: \(containerColorIndex), containerName: \(spriteColorIndex)")
         if OK  {
-            if  (movingSprite.maxValue == LastCardValue && container.minValue == FirstCardValue) ||
-                (movingSprite.minValue == FirstCardValue && container.maxValue == LastCardValue) {
-                    colorChainEnabled[containerColorIndex] = false
-            }
-           push(container, status: .HitcounterChanged)
+            push(container, status: .HitcounterChanged)
             push(movingSprite, status: .Removed)
             if container.maxValue < movingSprite.minValue {
                 container.maxValue = movingSprite.maxValue
@@ -271,17 +277,9 @@ class CardGameScene: MyGameScene {
         let OK = movingSpriteColorIndex == spriteColorIndex &&
         (
             movingSprite.maxValue + 1 == sprite.minValue ||
-            movingSprite.minValue - 1 == sprite.maxValue ||
-            (movingSprite.maxValue == LastCardValue && sprite.minValue == FirstCardValue && colorChainEnabled[spriteColorIndex]) ||
-            (movingSprite.minValue == FirstCardValue && sprite.maxValue == LastCardValue && colorChainEnabled[spriteColorIndex])
+            movingSprite.minValue - 1 == sprite.maxValue //||
         )
         if OK {
-            if  (movingSprite.maxValue == LastCardValue && sprite.minValue == FirstCardValue) ||
-                (movingSprite.minValue == FirstCardValue && sprite.maxValue == LastCardValue) {
-                colorChainEnabled[spriteColorIndex] = false
-            }
-
-            
             push(sprite, status: .Unification)
             push(movingSprite, status: .Removed)
             

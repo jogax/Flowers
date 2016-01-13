@@ -48,8 +48,9 @@ class CardGameScene: MyGameScene {
     }
         
     override func specialPrepareFuncFirst() {
+        let cardSize = CGSizeMake(buttonSize * sizeMultiplier.width * 0.6, buttonSize * sizeMultiplier.height * 0.6)
         let cardPackageButtonTexture = SKTexture(image: images.getCardPackage())
-        cardPackageButton = MySKButton(texture: cardPackageButtonTexture, frame: CGRectMake(buttonXPosNormalized * 4.0, buttonYPos, buttonSize, buttonSize), makePicture: false)
+        cardPackageButton = MySKButton(texture: cardPackageButtonTexture, frame: CGRectMake(buttonXPosNormalized * 4.0, buttonYPos, cardSize.width, cardSize.height), makePicture: false)
         cardPackageButton!.name = "cardPackege"
         addChild(cardPackageButton!)
         

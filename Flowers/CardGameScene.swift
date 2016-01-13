@@ -57,7 +57,8 @@ class CardGameScene: MyGameScene {
         cardPackageButton!.name = "cardPackege"
         addChild(cardPackageButton!)
         
-        cardPlaceButton = MySKButton(texture: cardPackageButtonTexture, frame: CGRectMake(buttonXPosNormalized * 5.5, buttonYPos, cardSize.width, cardSize.height), makePicture: false)
+        let cardPlaceTexture = SKTexture(imageNamed: "emptycard")
+        cardPlaceButton = MySKButton(texture: cardPlaceTexture, frame: CGRectMake(buttonXPosNormalized * 5.0, buttonYPos, cardSize.width, cardSize.height), makePicture: false)
         cardPlaceButton!.name = "cardPlace"
         addChild(cardPlaceButton!)
         

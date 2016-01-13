@@ -22,9 +22,12 @@ class CardGameScene: MyGameScene {
         }
     }
     
+    var cardPackageButton: MySKButton?
+    var cardPlaceButton: MySKButton?
+    
     var lastCollisionsTime = NSDate()
     var cardArray: [[GenerateCard]] = []
-    var valueTab = [Int]()
+//    var valueTab = [Int]()
     let spriteCountPosKorr = CGPointMake(GV.onIpad ? 0.05 : 0.05, GV.onIpad ? 0.95 : 0.95)
     var levelsForPlay = LevelsForPlayWithCards()
     var countPackages = 0
@@ -53,6 +56,10 @@ class CardGameScene: MyGameScene {
         cardPackageButton = MySKButton(texture: cardPackageButtonTexture, frame: CGRectMake(buttonXPosNormalized * 4.0, buttonYPos, cardSize.width, cardSize.height), makePicture: false)
         cardPackageButton!.name = "cardPackege"
         addChild(cardPackageButton!)
+        
+        cardPlaceButton = MySKButton(texture: cardPackageButtonTexture, frame: CGRectMake(buttonXPosNormalized * 5.5, buttonYPos, cardSize.width, cardSize.height), makePicture: false)
+        cardPlaceButton!.name = "cardPlace"
+        addChild(cardPlaceButton!)
         
         countContainers = levelsForPlay.aktLevel.countContainers
         countPackages = levelsForPlay.aktLevel.countPackages
@@ -94,16 +101,16 @@ class CardGameScene: MyGameScene {
         return SKSpriteNode(imageNamed: "cardBackground.png")
     }
 
-    override func generateValue(colorIndex: Int)->Int {
-        if valueTab.count < colorIndex + 1 {
-            valueTab.append(1)
-        }
-        return valueTab[colorIndex]++
-            
-    }
+//    override func generateValue(colorIndex: Int)->Int {
+//        if valueTab.count < colorIndex + 1 {
+//            valueTab.append(1)
+//        }
+//        return valueTab[colorIndex]++
+//            
+//    }
     
     override func spezialPrepareFunc() {
-        valueTab.removeAll()
+//        valueTab.removeAll()
         spriteCount = Int(CGFloat(countContainers * countSpritesProContainer!))
         let spriteCountText: String = GV.language.getText(.TCCardCount) + " \(spriteCount)"
         createLabels(spriteCountLabel, text: spriteCountText, position: CGPointMake(self.position.x + self.size.width * spriteCountPosKorr.x, self.position.y + self.size.height * spriteCountPosKorr.y), horAlignment: .Left)
@@ -113,6 +120,20 @@ class CardGameScene: MyGameScene {
         return countSpritesProContainer!// + 1
     }
  
+    func createSpriteStack() {
+        stack.removeAll(.MySKNodeType)
+        while colorTab.count > 0 && checkGameArray() < maxUsedCells {
+            let colorTabIndex = random!.getRandomInt(0, max: colorTab.count - 1)//colorTab.count - 1 //
+            let colorIndex = colorTab[colorTabIndex].colorIndex
+            let spriteName = colorTab[colorTabIndex].spriteName
+            let value = colorTab[colorTabIndex].spriteValue
+            colorTab.removeAtIndex(colorTabIndex)
+            let sprite = MySKNode(texture: getTexture(colorIndex), type: .SpriteType, value:value)
+            sprite.name = spriteName
+            stack.push(sprite)
+        }
+    }
+
     override func generateSprites(first: Bool) {
         var positionsTab = [(Int, Int)]() // all available Positions
         for column in 0..<countColumns {
@@ -124,14 +145,15 @@ class CardGameScene: MyGameScene {
             }
         }
         
-        while colorTab.count > 0 && checkGameArray() < maxUsedCells {
-            let colorTabIndex = random!.getRandomInt(0, max: colorTab.count - 1)//colorTab.count - 1 //
-            let colorIndex = colorTab[colorTabIndex].colorIndex
-            let spriteName = colorTab[colorTabIndex].spriteName
-            let value = colorTab[colorTabIndex].spriteValue
-            colorTab.removeAtIndex(colorTabIndex)
-            
-            let sprite = MySKNode(texture: getTexture(colorIndex), type: .SpriteType, value:value)
+        while stack.count(.MySKNodeType) > 0 && checkGameArray() < maxUsedCells {
+//            let colorTabIndex = random!.getRandomInt(0, max: colorTab.count - 1)//colorTab.count - 1 //
+//            let colorIndex = colorTab[colorTabIndex].colorIndex
+//            let spriteName = colorTab[colorTabIndex].spriteName
+//            let value = colorTab[colorTabIndex].spriteValue
+//            colorTab.removeAtIndex(colorTabIndex)
+//            
+//            let sprite = MySKNode(texture: getTexture(colorIndex), type: .SpriteType, value:value)
+            let sprite: MySKNode = stack.pull()!
             tableCellSize = spriteTabRect.width / CGFloat(countColumns)
             
             let index = random!.getRandomInt(0, max: positionsTab.count - 1)
@@ -147,8 +169,8 @@ class CardGameScene: MyGameScene {
             
             sprite.column = aktColumn
             sprite.row = aktRow
-            sprite.colorIndex = colorIndex
-            sprite.name = spriteName
+//            sprite.colorIndex = colorIndex
+//            sprite.name = spriteName
             
             sprite.size = CGSizeMake(spriteSize.width, spriteSize.height)
             
@@ -163,7 +185,7 @@ class CardGameScene: MyGameScene {
         stopped = false
     }
     
-    override func unknownButtonPressed(buttonName: String) {
+    override func specialButtonPressed(buttonName: String) {
         if buttonName == "cardPackege" {
             _ = 0
         }
@@ -411,6 +433,9 @@ class CardGameScene: MyGameScene {
             }
         }
         
+        createSpriteStack()
+
+        
         let xDelta = size.width / CGFloat(countContainers)
         for index in 0..<countContainers {
             let centerX = (size.width / CGFloat(countContainers)) * CGFloat(index) + xDelta / 2
@@ -436,11 +461,14 @@ class CardGameScene: MyGameScene {
             containers[index].mySKNode.reload()
         }
     }
+    
+    
+
 
     override func pull() {
         let duration = 0.2
         var actionMoveArray = [SKAction]()
-        if let savedSprite = stack.pull() {
+        if let savedSprite:SavedSprite  = stack.pull() {
             var savedSpriteInCycle = savedSprite
             var run = true
             var stopSoon = false
@@ -532,18 +560,18 @@ class CardGameScene: MyGameScene {
                     actionMoveArray.append(SKAction.moveTo(savedSpriteInCycle.endPosition, duration: duration))
                 case .Exchanged:
                     let sprite = self.childNodeWithName(savedSpriteInCycle.name)! as! MySKNode
-                    let savedSprite = stack.pull()
-                    let sprite1 = self.childNodeWithName(savedSprite!.name)! as! MySKNode
+                    let savedSprite:SavedSprite = stack.pull()!
+                    let sprite1 = self.childNodeWithName(savedSprite.name) as! MySKNode
                     
                     sprite.startPosition = savedSpriteInCycle.startPosition
                     sprite.minValue = savedSpriteInCycle.minValue
                     sprite.maxValue = savedSpriteInCycle.maxValue
                     sprite.BGPictureAdded = savedSpriteInCycle.BGPictureAdded
                     
-                    sprite1.startPosition = savedSprite!.startPosition
-                    sprite1.minValue = savedSprite!.minValue
-                    sprite1.maxValue = savedSprite!.maxValue
-                    sprite1.BGPictureAdded = savedSprite!.BGPictureAdded
+                    sprite1.startPosition = savedSprite.startPosition
+                    sprite1.minValue = savedSprite.minValue
+                    sprite1.maxValue = savedSprite.maxValue
+                    sprite1.BGPictureAdded = savedSprite.BGPictureAdded
 
                     let action = SKAction.moveTo(sprite.startPosition, duration: 1.0)
                     let action1 = SKAction.moveTo(sprite1.startPosition, duration: 1.0)
@@ -553,11 +581,11 @@ class CardGameScene: MyGameScene {
                     
                     sprite.reload()
                     sprite1.reload()
-                    savedSpriteInCycle = savedSprite!
+                    savedSpriteInCycle = savedSprite
                     stopSoon = true
                 case .Nothing: break
                 }
-                if let savedSprite = stack.pull() {
+                if let savedSprite:SavedSprite = stack.pull() {
                     savedSpriteInCycle = savedSprite
                     if (savedSpriteInCycle.status == .Added && stack.countChangesInStack() == 0) || stopSoon {
                         stack.push(savedSpriteInCycle)

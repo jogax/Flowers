@@ -230,7 +230,6 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
     var undoButton: MySKButton?
     var restartButton: MySKButton?
     var exchangeButton: MySKButton?
-    var cardPackageButton: MySKButton?
     var nextLevelButton: MySKButton?
     var targetScore = 0
     var spriteCount = 0
@@ -439,7 +438,7 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         newGame(false)
     }
     
-    func unknownButtonPressed(buttonName: String) {
+    func specialButtonPressed(buttonName: String) {
         
     }
     
@@ -735,7 +734,7 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
                 case "undo": undoButtonPressed()
                 case "exchange": exchangeButtonPressed()
                 case "restart": restartButtonPressed()
-                default: unknownButtonPressed(mySKNode.name!)
+                default: specialButtonPressed(mySKNode.name!)
                 }
                 return
             }

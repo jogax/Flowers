@@ -304,7 +304,7 @@ class FlowerGameScene: MyGameScene {
     override func pull() {
         let duration = 0.2
         var actionMoveArray = [SKAction]()
-        if let savedSprite = stack.pull() {
+        if let savedSprite:SavedSprite = stack.pull() {
             var savedSpriteInCycle = savedSprite
             var run = true
             var stopSoon = false
@@ -386,7 +386,7 @@ class FlowerGameScene: MyGameScene {
                     //default: run = false
                 case .Nothing: break
                 }
-                if let savedSprite = stack.pull() {
+                if let savedSprite:SavedSprite = stack.pull() {
                     savedSpriteInCycle = savedSprite
                     if (savedSpriteInCycle.status == .Added && stack.countChangesInStack() == 0) || stopSoon {
                         stack.push(savedSpriteInCycle)

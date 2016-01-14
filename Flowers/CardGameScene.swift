@@ -22,9 +22,15 @@ class CardGameScene: MyGameScene {
         }
     }
     
+    var cardStack:Stack<MySKNode> = Stack()
+    var showCardStack:Stack<MySKNode> = Stack()
+    
     var cardPackageButton: MySKButton?
     var cardPlaceButton: MySKButton?
+    var cardPlaceButtonAddedToParent = false
     
+    var showCard: MySKNode?
+
     var lastCollisionsTime = NSDate()
     var cardArray: [[GenerateCard]] = []
 //    var valueTab = [Int]()
@@ -61,6 +67,7 @@ class CardGameScene: MyGameScene {
         cardPlaceButton = MySKButton(texture: cardPlaceTexture, frame: CGRectMake(buttonXPosNormalized * 5.0, buttonYPos, cardSize.width, cardSize.height), makePicture: false)
         cardPlaceButton!.name = "cardPlace"
         addChild(cardPlaceButton!)
+        cardPlaceButtonAddedToParent = true
         
         countContainers = levelsForPlay.aktLevel.countContainers
         countPackages = levelsForPlay.aktLevel.countPackages
@@ -122,7 +129,8 @@ class CardGameScene: MyGameScene {
     }
  
     func createSpriteStack() {
-        stack.removeAll(.MySKNodeType)
+        cardStack.removeAll(.MySKNodeType)
+        showCardStack.removeAll(.MySKNodeType)
         while colorTab.count > 0 && checkGameArray() < maxUsedCells {
             let colorTabIndex = random!.getRandomInt(0, max: colorTab.count - 1)//colorTab.count - 1 //
             let colorIndex = colorTab[colorTabIndex].colorIndex
@@ -131,7 +139,10 @@ class CardGameScene: MyGameScene {
             colorTab.removeAtIndex(colorTabIndex)
             let sprite = MySKNode(texture: getTexture(colorIndex), type: .SpriteType, value:value)
             sprite.name = spriteName
-            stack.push(sprite)
+            sprite.colorIndex = colorIndex
+//            sprite.row = NoValue
+//            sprite.column = NoValue
+            cardStack.push(sprite)
         }
     }
 
@@ -146,7 +157,7 @@ class CardGameScene: MyGameScene {
             }
         }
         
-        while stack.count(.MySKNodeType) > 0 && checkGameArray() < maxUsedCells {
+        while cardStack.count(.MySKNodeType) > 0 && checkGameArray() < maxUsedCells {
 //            let colorTabIndex = random!.getRandomInt(0, max: colorTab.count - 1)//colorTab.count - 1 //
 //            let colorIndex = colorTab[colorTabIndex].colorIndex
 //            let spriteName = colorTab[colorTabIndex].spriteName
@@ -154,7 +165,7 @@ class CardGameScene: MyGameScene {
 //            colorTab.removeAtIndex(colorTabIndex)
 //            
 //            let sprite = MySKNode(texture: getTexture(colorIndex), type: .SpriteType, value:value)
-            let sprite: MySKNode = stack.pull()!
+            let sprite: MySKNode = cardStack.pull()!
             tableCellSize = spriteTabRect.width / CGFloat(countColumns)
             
             let index = random!.getRandomInt(0, max: positionsTab.count - 1)
@@ -179,6 +190,15 @@ class CardGameScene: MyGameScene {
             push(sprite, status: .Added)
             addChild(sprite)
         }
+        
+        for column in 0..<countColumns {
+            for row in 0..<countRows {
+                if !gameArray[column][row] {
+                    makeEmptyCard(column, row: row)
+                }
+            }
+        }
+        
         if first {
             countUp = NSTimer.scheduledTimerWithTimeInterval(1.0, target: self, selector: Selector("doCountUp"), userInfo: nil, repeats: true)
         }
@@ -186,9 +206,32 @@ class CardGameScene: MyGameScene {
         stopped = false
     }
     
+    override func makeEmptyCard(column:Int, row: Int) {
+        let xPosition = spriteTabRect.origin.x - spriteTabRect.size.width / 2 + CGFloat(column) * tableCellSize + tableCellSize / 2
+        let yPosition = spriteTabRect.origin.y - spriteTabRect.size.height / 2 + tableCellSize * 1.05 / 2 + CGFloat(row) * tableCellSize * 1.05
+        let emptySprite = MySKNode(texture: getTexture(NoColor), type: .EmptyCardType, value: NoColor)
+        emptySprite.position = CGPoint(x: xPosition, y: yPosition)
+        emptySprite.size = CGSizeMake(spriteSize.width, spriteSize.height)
+        emptySprite.name = "emptySprite-\(column)-\(row)"
+        addChild(emptySprite)
+
+    }
+    
     override func specialButtonPressed(buttonName: String) {
         if buttonName == "cardPackege" {
-            _ = 0
+            if cardStack.count(.MySKNodeType) > 0 {
+                if showCard != nil {
+                    showCardStack.push(showCard!)
+                    showCard?.removeFromParent()
+                }
+                showCard = cardStack.pull()!
+                showCard!.position = (cardPlaceButton?.position)!
+                showCard!.size = (cardPlaceButton?.size)!
+                showCard!.type = .ShowCardType
+                cardPlaceButton?.removeFromParent()
+                cardPlaceButtonAddedToParent = false
+                addChild(showCard!)
+            }
         }
     }
 
@@ -544,6 +587,11 @@ class CardGameScene: MyGameScene {
                     sprite.BGPictureAdded = savedSpriteInCycle.BGPictureAdded
                     actionMoveArray.append(SKAction.moveTo(savedSpriteInCycle.endPosition, duration: duration))
                     sprite.runAction(SKAction.sequence(actionMoveArray))
+                    let column = sprite.column
+                    let row = sprite.row
+                    if self.childNodeWithName("emptySprite-\(column)-\(row)") != nil {
+                        self.childNodeWithName("emptySprite-\(column)-\(row)")!.removeFromParent()
+                    }
                     sprite.reload()
                     
                 case .FallingMovingSprite:
@@ -618,5 +666,275 @@ class CardGameScene: MyGameScene {
     override func readNextLevel() -> Int {
         return levelsForPlay.getNextLevel()
     }
+    
+    override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?) {
+        //        if inFirstGenerateSprites {
+        //            return
+        //        }
+        if movedFromNode != nil {
+            while self.childNodeWithName("myLine") != nil {
+                self.childNodeWithName("myLine")!.removeFromParent()
+            }
+            while self.childNodeWithName("nodeOnTheWall") != nil {
+                self.childNodeWithName("nodeOnTheWall")!.removeFromParent()
+            }
+            //let countTouches = touches.count
+            let firstTouch = touches.first
+            let touchLocation = firstTouch!.locationInNode(self)
+            let testNode = self.nodeAtPoint(touchLocation)
+            let aktNodeType = analyzeNode(testNode)
+            var aktNode: SKNode? = movedFromNode
+            switch aktNodeType {
+                case MyNodeTypes.LabelNode: aktNode = self.nodeAtPoint(touchLocation).parent as! MySKNode
+                case MyNodeTypes.SpriteNode: aktNode = self.nodeAtPoint(touchLocation) as! MySKNode
+                case MyNodeTypes.ButtonNode: aktNode = self.nodeAtPoint(touchLocation) as! MySKNode
+                default: aktNode = nil
+            }
+            if movedFromNode != aktNode && !exchangeModus {
+                if movedFromNode.type == .ButtonType {
+                    //movedFromNode.texture = atlas.textureNamed("\(movedFromNode.name!)")
+                } else if movedFromNode.type == .ShowCardType {
+                    movedFromNode.position = touchLocation
+                } else if movedFromNode.type == .EmptyCardType {
+                    
+                } else {
+                    let line = JGXLine(fromPoint: movedFromNode.position, toPoint: touchLocation, inFrame: self.frame, lineSize: movedFromNode.size.width)
+                    let pointOnTheWall = line.line.toPoint
+                    makeHelpLine(movedFromNode.position, toPoint: pointOnTheWall, lineWidth: movedFromNode.size.width, numberOfLine: 1)
+                    
+                    
+                    if GV.showHelpLines > 1 {
+                        let mirroredLine1 = line.createMirroredLine()
+                        makeHelpLine(mirroredLine1.line.fromPoint, toPoint: mirroredLine1.line.toPoint, lineWidth: movedFromNode.size.width, numberOfLine: 2)
+                        
+                        if GV.showHelpLines > 2 {
+                            let mirroredLine2 = mirroredLine1.createMirroredLine()
+                            makeHelpLine(mirroredLine2.line.fromPoint, toPoint: mirroredLine2.line.toPoint, lineWidth: movedFromNode.size.width, numberOfLine: 3)
+                            
+                            if GV.showHelpLines > 3 {
+                                let mirroredLine3 = mirroredLine2.createMirroredLine()
+                                makeHelpLine(mirroredLine3.line.fromPoint, toPoint: mirroredLine3.line.toPoint, lineWidth: movedFromNode.size.width, numberOfLine: 4)
+                            }
+                        }
+                    }
+                }
+            }
+            
+            if showFingerNode {
+                
+                if let fingerNode = self.childNodeWithName("finger")! as? SKSpriteNode {
+                    fingerNode.position = touchLocation
+                }
+                
+            }
+        }
+    }
+
+    override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
+        while self.childNodeWithName("myLine") != nil {
+            self.childNodeWithName("myLine")!.removeFromParent()
+        }
+        while self.childNodeWithName("nodeOnTheWall") != nil {
+            self.childNodeWithName("nodeOnTheWall")!.removeFromParent()
+        }
+        let firstTouch = touches.first
+        let touchLocation = firstTouch!.locationInNode(self)
+        let testNode = self.nodeAtPoint(touchLocation)
+        
+        let aktNodeType = analyzeNode(testNode)
+        //        if self.inFirstGenerateSprites {
+        //            switch aktNodeType {
+        //            case MyNodeTypes.LabelNode, MyNodeTypes.SpriteNode: showNextSprite(touchLocation)
+        //            default: return
+        //            }
+        //            return
+        //        }
+        if movedFromNode != nil && !stopped {
+            //let countTouches = touches.count
+            var aktNode: SKNode? = nil
+            
+            let startNode = movedFromNode
+            
+            switch aktNodeType {
+            case MyNodeTypes.LabelNode: aktNode = self.nodeAtPoint(touchLocation).parent as! MySKNode
+            case MyNodeTypes.SpriteNode: aktNode = self.nodeAtPoint(touchLocation) as! MySKNode
+            case MyNodeTypes.ButtonNode:
+                //(testNode as! MySKNode).texture = SKTexture(imageNamed: "\(testNode.name!)")
+                //(testNode as! MySKNode).texture = atlas.textureNamed("\(testNode.name!)")
+                aktNode = self.nodeAtPoint(touchLocation) as! MySKNode
+            default: aktNode = nil
+            }
+            
+            if showFingerNode {
+                
+                if let fingerNode = self.childNodeWithName("finger")! as? SKSpriteNode {
+                    fingerNode.removeFromParent()
+                }
+                
+            }
+            if aktNode != nil && (aktNode as! MySKNode).type == .ButtonType && startNode.type == .ButtonType  {
+                //            if aktNode != nil && mySKNode.type == .ButtonType && startNode.type == .ButtonType  {
+                var mySKNode = aktNode as! MySKNode
+                
+                //                var name = (aktNode as! MySKNode).parent!.name
+                if mySKNode.name == buttonName {
+                    mySKNode = (mySKNode.parent) as! MySKNode
+                }
+                //switch (aktNode as! MySKNode).name! {
+                switch mySKNode.name! {
+                case "settings": settingsButtonPressed()
+                case "undo": undoButtonPressed()
+                case "exchange": exchangeButtonPressed()
+                case "restart": restartButtonPressed()
+                default: specialButtonPressed(mySKNode.name!)
+                }
+                return
+            }
+            
+            if exchangeModus {
+                let myAktNode = aktNode as! MySKNode
+                if startNode != nil && startNode != myAktNode && myAktNode.type == .SpriteType {
+                    let column = startNode.column
+                    let row = startNode.row
+                    let startPosition = startNode.startPosition
+                    
+                    push(startNode, sprite2: aktNode as! MySKNode)
+                    startNode.zPosition = 5
+                    myAktNode.zPosition = 4
+                    let actionMove1 = SKAction.moveTo(startNode.position, duration: 1.0)
+                    myAktNode.runAction(SKAction.sequence([actionMove1]))
+                    let actionMove2 = SKAction.moveTo(myAktNode.position, duration: 1.0)
+                    startNode.runAction(SKAction.sequence([actionMove2]))
+                    
+                    startNode.column = (aktNode as! MySKNode).column
+                    startNode.row = (aktNode as! MySKNode).row
+                    startNode.startPosition = (aktNode as! MySKNode).startPosition
+                    
+                    (aktNode as! MySKNode).column = column
+                    (aktNode as! MySKNode).row = row
+                    (aktNode as! MySKNode).startPosition = startPosition
+                    
+                }
+                for index in 0..<tremblingSprites.count {
+                    tremblingSprites[index].size = tremblingSprites[index].origSize
+                    tremblingSprites[index].tremblingType = .NoTrembling
+                    tremblingSprites[index].zRotation = 0
+                    tremblingSprites[index].zPosition = 0
+                }
+                tremblingSprites.removeAll()
+                exchangeModus = false
+                return
+            }
+            
+            
+            if startNode.type == .SpriteType && (aktNode == nil || (aktNode as! MySKNode) != movedFromNode) {
+                let sprite = movedFromNode// as! SKSpriteNode
+                
+                
+                sprite!.physicsBody = SKPhysicsBody(circleOfRadius: sprite!.size.width/2)
+                sprite.physicsBody?.dynamic = true
+                sprite.physicsBody?.categoryBitMask = PhysicsCategory.MovingSprite
+                sprite.physicsBody?.contactTestBitMask = PhysicsCategory.Sprite | PhysicsCategory.Container //| PhysicsCategory.WallAround
+                sprite.physicsBody?.collisionBitMask = PhysicsCategory.None
+                //sprite.physicsBody?.velocity=CGVectorMake(200, 200)
+                
+                sprite.physicsBody?.usesPreciseCollisionDetection = true
+                /*
+                let offset = touchLocation - movedFromNode.position
+                
+                let direction = offset.normalized()
+                
+                // 7 - Make it shoot far enough to be guaranteed off screen
+                let shootAmount = direction * 1000
+                
+                // 8 - Add the shoot amount to the current position
+                let realDest = shootAmount + movedFromNode.position
+                */
+                push(sprite, status: .MovingStarted)
+                
+                // 9 - Create the actions
+                let line = JGXLine(fromPoint: movedFromNode.position, toPoint: touchLocation, inFrame: self.frame, lineSize: movedFromNode.size.width)
+                let pointOnTheWall = line.line.toPoint
+                
+                let mirroredLine1 = line.createMirroredLine()
+                let pointOnTheWall1 = mirroredLine1.line.toPoint
+                
+                let mirroredLine2 = mirroredLine1.createMirroredLine()
+                let pointOnTheWall2 = mirroredLine2.line.toPoint
+                
+                let mirroredLine3 = mirroredLine2.createMirroredLine()
+                let pointOnTheWall3 = mirroredLine3.line.toPoint
+                
+                let countAndPushAction = SKAction.runBlock({
+                    self.push(sprite, status: .Mirrored)
+                    sprite.hitCounter *= 2
+                    sprite.hitLabel.text = "\(sprite.hitCounter)"
+                })
+                
+                
+                
+                let actionMove = SKAction.moveTo(pointOnTheWall, duration: line.duration)
+                
+                let actionEmpty = SKAction.runBlock({
+                    self.makeEmptyCard(sprite.column, row: sprite.row)
+                })
+                
+                let actionMove1 = SKAction.moveTo(pointOnTheWall1, duration: mirroredLine1.duration)
+                
+                let actionMove2 = SKAction.moveTo(pointOnTheWall2, duration: mirroredLine2.duration)
+                
+                let actionMove3 = SKAction.moveTo(pointOnTheWall3, duration: mirroredLine3.duration)
+                
+                
+                //                let waitSparkAction = SKAction.runBlock({
+                //                    sprite.hidden = true
+                //                    sleep(0)
+                //                    sprite.removeFromParent()
+                //                })
+                //
+                let actionMoveStopped =  SKAction.runBlock({
+                    self.push(sprite, status: .Removed)
+                    sprite.hidden = true
+                    self.gameArray[sprite.column][sprite.row] = false
+                    //sprite.size = CGSizeMake(sprite.size.width / 3, sprite.size.height / 3)
+                    sprite.colorBlendFactor = 4
+                    self.playSound("Drop", volume: GV.soundVolume)
+                    sprite.removeFromParent()
+                    //                    let sparkEmitter = SKEmitterNode(fileNamed: "MyParticle.sks")
+                    //                    sparkEmitter?.position = sprite.position
+                    //                    sparkEmitter?.zPosition = 1
+                    //                    sparkEmitter?.particleLifetime = 1
+                    //                    let emitterDuration = CGFloat(sparkEmitter!.numParticlesToEmit) * sparkEmitter!.particleLifetime
+                    //
+                    //                    let wait = SKAction.waitForDuration(NSTimeInterval(emitterDuration))
+                    //
+                    //                    let remove = SKAction.runBlock({sparkEmitter!.removeFromParent()/*; print("Emitter removed")*/})
+                    //                    sparkEmitter!.runAction(SKAction.sequence([wait, remove]))
+                    //                    self.addChild(sparkEmitter!)
+                    self.pull()
+                    self.userInteractionEnabled = true
+                    
+                    
+                })
+                
+                
+                
+                
+                //let actionMoveDone = SKAction.removeFromParent()
+                collisionActive = true
+                lastMirrored = ""
+                
+                self.userInteractionEnabled = false  // userInteraction forbidden!
+                countMovingSprites = 1
+                self.waitForSKActionEnded = NSTimer.scheduledTimerWithTimeInterval(0.1, target: self, selector: Selector("checkCountMovingSprites"), userInfo: nil, repeats: false) // start timer for check
+                
+                movedFromNode.runAction(SKAction.sequence([actionEmpty, actionMove, countAndPushAction, actionMove1, countAndPushAction, actionMove2, countAndPushAction, actionMove3, actionMoveStopped//,
+                    /*waitSparkAction*/]))
+                //actionMoveDone]))
+            }
+            
+        }
+    }
+
 
 }

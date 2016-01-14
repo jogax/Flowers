@@ -7,7 +7,7 @@
 //
 
 enum MySKNodeType: Int {
-    case SpriteType = 0, ContainerType, ButtonType
+    case SpriteType = 0, ContainerType, ButtonType, EmptyCardType, ShowCardType
 }
 
 enum TremblingType: Int {
@@ -24,7 +24,7 @@ class MySKNode: SKSpriteNode {
     
     override var size: CGSize {
         didSet {
-            if oldValue != CGSizeMake(0,0) && (type == .ContainerType || type == .SpriteType) {
+            if oldValue != CGSizeMake(0,0) && (type != .ButtonType) {
                 minValueLabel.fontSize = size.width * fontSizeMultiplier
                 maxValueLabel.fontSize = size.width * fontSizeMultiplier
                 let positionOffset = CGPointMake(self.size.width * offsetMultiplier.x,  self.size.height * offsetMultiplier.y)
@@ -53,7 +53,7 @@ class MySKNode: SKSpriteNode {
 
     var hitCounter: Int = 0
 
-    let type: MySKNodeType
+    var type: MySKNodeType
     var hitLabel = SKLabelNode()
     var maxValueLabel = SKLabelNode()
     var minValueLabel = SKLabelNode()
@@ -79,7 +79,7 @@ class MySKNode: SKSpriteNode {
         }
         
         switch type {
-        case .ContainerType:
+        case .ContainerType, .EmptyCardType, .ShowCardType:
             hitCounter = 0
         case .ButtonType:
             hitCounter = 0
@@ -121,8 +121,12 @@ class MySKNode: SKSpriteNode {
 
         
         if isCard {
-            if type == .ContainerType && minValue == NoColor {
-                self.alpha = 0.5
+            if minValue == NoColor {
+                switch type {
+                    case .ContainerType: alpha = 0.5
+                    case .EmptyCardType: alpha = 0.1
+                default: alpha = 1.0
+                }
             }
             self.addChild(minValueLabel)
         } else {
@@ -146,7 +150,11 @@ class MySKNode: SKSpriteNode {
             if minValue != NoColor {
                 self.alpha = 1.0
             } else {
-                self.alpha = 0.5
+                switch type {
+                    case .ContainerType: alpha = 0.5
+                    case .EmptyCardType: alpha = 0.1
+                    default: alpha = 1.0
+                }
             }
             let BGPicturePosition = CGPointMake(self.size.width * BGOffsetMultiplier.x, self.size.height * BGOffsetMultiplier.y)
             let bgPictureName = "BGPicture"

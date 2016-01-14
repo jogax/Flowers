@@ -367,17 +367,17 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         addChild(exchangeButton!)
         
         
-        let sparkles = SKTexture(imageNamed: "bumm") //reusing the bird texture for now
-        let burstEmitter = SKEmitterNode()
-        burstEmitter.particleTexture = sparkles
-        burstEmitter.particleSize = CGSizeMake(5, 5)
-        burstEmitter.position = CGPointMake(0, 0)
-        burstEmitter.particleBirthRate = 20
-        burstEmitter.numParticlesToEmit = 1000;
-        burstEmitter.particleLifetime = 3.0
-        burstEmitter.particleSpeed = 10.0
-        burstEmitter.xAcceleration = 100
-        burstEmitter.yAcceleration = 50
+//        let sparkles = SKTexture(imageNamed: "bumm") //reusing the bird texture for now
+//        let burstEmitter = SKEmitterNode()
+//        burstEmitter.particleTexture = sparkles
+//        burstEmitter.particleSize = CGSizeMake(5, 5)
+//        burstEmitter.position = CGPointMake(0, 0)
+//        burstEmitter.particleBirthRate = 20
+//        burstEmitter.numParticlesToEmit = 1000;
+//        burstEmitter.particleLifetime = 3.0
+//        burstEmitter.particleSpeed = 10.0
+//        burstEmitter.xAcceleration = 100
+//        burstEmitter.yAcceleration = 50
         //timer.addChild(burstEmitter)
         
         
@@ -471,7 +471,7 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             var mySKNode: MySKNode = (testNode as! MySKNode)
             switch mySKNode.type {
             case .ContainerType: return MyNodeTypes.ContainerNode
-            case .SpriteType: return MyNodeTypes.SpriteNode
+            case .SpriteType, .EmptyCardType, .ShowCardType: return MyNodeTypes.SpriteNode
             case .ButtonType:
                 if mySKNode.name == buttonName {
                     mySKNode = mySKNode.parent as! MySKNode
@@ -823,6 +823,10 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
                 
                 let actionMove = SKAction.moveTo(pointOnTheWall, duration: line.duration)
                 
+                let actionEmpty = SKAction.runBlock({
+                    self.makeEmptyCard(sprite.column, row: sprite.row)
+                })
+                
                 let actionMove1 = SKAction.moveTo(pointOnTheWall1, duration: mirroredLine1.duration)
                 
                 let actionMove2 = SKAction.moveTo(pointOnTheWall2, duration: mirroredLine2.duration)
@@ -830,12 +834,12 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
                 let actionMove3 = SKAction.moveTo(pointOnTheWall3, duration: mirroredLine3.duration)
                 
                 
-                let waitSparkAction = SKAction.runBlock({
-                    sprite.hidden = true
-                    sleep(0)
-                    sprite.removeFromParent()
-                })
-                
+//                let waitSparkAction = SKAction.runBlock({
+//                    sprite.hidden = true
+//                    sleep(0)
+//                    sprite.removeFromParent()
+//                })
+//                
                 let actionMoveStopped =  SKAction.runBlock({
                     self.push(sprite, status: .Removed)
                     sprite.hidden = true
@@ -843,17 +847,19 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
                     //sprite.size = CGSizeMake(sprite.size.width / 3, sprite.size.height / 3)
                     sprite.colorBlendFactor = 4
                     self.playSound("Drop", volume: GV.soundVolume)
-                    let sparkEmitter = SKEmitterNode(fileNamed: "MyParticle.sks")
-                    sparkEmitter?.position = sprite.position
-                    sparkEmitter?.zPosition = 1
-                    sparkEmitter?.particleLifetime = 1
-                    let emitterDuration = CGFloat(sparkEmitter!.numParticlesToEmit) * sparkEmitter!.particleLifetime
-                    
-                    let wait = SKAction.waitForDuration(NSTimeInterval(emitterDuration))
-                    
-                    let remove = SKAction.runBlock({sparkEmitter!.removeFromParent()/*; print("Emitter removed")*/})
-                    sparkEmitter!.runAction(SKAction.sequence([wait, remove]))
-                    self.addChild(sparkEmitter!)
+                    sprite.removeFromParent()
+//                    let sparkEmitter = SKEmitterNode(fileNamed: "MyParticle.sks")
+//                    sparkEmitter?.position = sprite.position
+//                    sparkEmitter?.zPosition = 1
+//                    sparkEmitter?.particleLifetime = 1
+//                    let emitterDuration = CGFloat(sparkEmitter!.numParticlesToEmit) * sparkEmitter!.particleLifetime
+//                    
+//                    let wait = SKAction.waitForDuration(NSTimeInterval(emitterDuration))
+//                    
+//                    let remove = SKAction.runBlock({sparkEmitter!.removeFromParent()/*; print("Emitter removed")*/})
+//                    sparkEmitter!.runAction(SKAction.sequence([wait, remove]))
+//                    self.addChild(sparkEmitter!)
+                    self.pull()
                     self.userInteractionEnabled = true
                     
                     
@@ -870,14 +876,16 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
                 countMovingSprites = 1
                 self.waitForSKActionEnded = NSTimer.scheduledTimerWithTimeInterval(0.1, target: self, selector: Selector("checkCountMovingSprites"), userInfo: nil, repeats: false) // start timer for check
                 
-                movedFromNode.runAction(SKAction.sequence([actionMove, countAndPushAction, actionMove1, countAndPushAction, actionMove2, countAndPushAction, actionMove3, actionMoveStopped,
-                    waitSparkAction]))
+                movedFromNode.runAction(SKAction.sequence([actionEmpty, actionMove, countAndPushAction, actionMove1, countAndPushAction, actionMove2, countAndPushAction, actionMove3, actionMoveStopped//,
+                    /*waitSparkAction*/]))
                 //actionMoveDone]))
             }
             
         }
     }
     
+    func makeEmptyCard(column:Int, row: Int) {
+    }
     
     func makeHelpLine(fromPoint: CGPoint, toPoint: CGPoint, lineWidth: CGFloat, numberOfLine: Int) {
         if GV.showHelpLines >= numberOfLine {
@@ -904,12 +912,13 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             
             
             self.addChild(myLine)
-            let texture = numberOfLine < maxHelpLinesCount ? movedFromNode.texture! : SKTexture(imageNamed: "bumm")
+//            let texture = numberOfLine < maxHelpLinesCount ? movedFromNode.texture! : SKTexture(imageNamed: "bumm")
+            let texture = movedFromNode.texture!
             let nodeOnTheWall = MySKNode(texture: texture, type: .SpriteType, value: NoValue)
             nodeOnTheWall.name = "nodeOnTheWall"
             nodeOnTheWall.position = toPoint
             nodeOnTheWall.size = movedFromNode.size
-            self.addChild(nodeOnTheWall)
+//            self.addChild(nodeOnTheWall)
             
         }
     }

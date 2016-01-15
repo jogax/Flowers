@@ -125,7 +125,7 @@ class MySKNode: SKSpriteNode {
                 switch type {
                     case .ContainerType: alpha = 0.5
                     case .EmptyCardType: alpha = 0.1
-                default: alpha = 1.0
+                    default: alpha = 1.0
                 }
             }
             self.addChild(minValueLabel)

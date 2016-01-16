@@ -115,6 +115,7 @@ enum SpriteStatus: Int, CustomStringConvertible {
 
 struct SavedSprite {
     var status: SpriteStatus = .Added
+    var type: MySKNodeType = .SpriteType
     var name: String = ""
 //    var type: MySKNodeType
     var startPosition: CGPoint = CGPointMake(0, 0)
@@ -1030,6 +1031,7 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
 
     func push(sprite: MySKNode, status: SpriteStatus) {
         var savedSprite = SavedSprite()
+        savedSprite.type = sprite.type
         savedSprite.name = sprite.name!
         savedSprite.status = status
         savedSprite.startPosition = sprite.startPosition

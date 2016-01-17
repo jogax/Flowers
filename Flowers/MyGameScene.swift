@@ -269,6 +269,8 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
     var buttonXPosNormalized = CGFloat(0)
     let images = DrawImages()
     
+    var tap: UITapGestureRecognizer?
+    
     
     
     let scoreAddCorrected = [1:1, 2:2, 3:3, 4:4, 5:5, 6:7, 7:8, 8:10, 9:11, 10:13, 11:14, 12:16,13:17,14:19, 15:20, 16:22, 17:23, 18:24, 19:25, 20:27, 21:28, 22:30, 23:31, 24:33, 25:34, 26:36, 27:37, 28:39, 29:40, 30:42, 31:43, 32:45, 33:46, 34:47, 35:48, 36:50, 37:51, 38:53, 39:54, 40:54, 41:53, 42:53, 43:52, 44:52, 45:51, 46:51, 47:51, 48:50, 49:50, 50:50, 51:51, 52:52, 53:53, 54:54, 55:55, 56:56, 57:57, 58:58, 59:59, 60:60, 61:61, 62:62, 63:63, 64:64, 65:65, 66:66, 67:67, 68:68, 69:69, 70:70, 71:71, 72:72, 73:73, 74:74, 75:75, 76:76, 77:77, 78:78, 79:79, 80:80, 81:81, 82:82, 83:83, 84:84, 85:85, 86:86, 87:87, 88:88, 89:89, 90:90, 91:91, 92:92, 93:93, 94:94, 95:95, 96:96, 97:97, 98:98, 99:99, 100:100]
@@ -277,11 +279,15 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
     override func didMoveToView(view: SKView) {
         
         if !settingsSceneStarted {
-            
+
+            tap = UITapGestureRecognizer(target: self, action: "doubleTapped")
+            tap!.numberOfTapsRequired = 2
+            view.addGestureRecognizer(tap!)
+
             myView = view
             
             buttonSize = myView.frame.width / 15
-            buttonYPos = myView.frame.height * 0.05
+            buttonYPos = myView.frame.height * 0.07
             buttonXPosNormalized = myView.frame.width / 10
             
             spriteTabRect.origin = CGPointMake(self.frame.midX, self.frame.midY * 0.85)
@@ -294,6 +300,9 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             playMusic("MyMusic", volume: GV.musicVolume, loops: 0)
             
         }
+    }
+    
+    func doubleTapped() {
     }
     
     func prepareNextGame(newGame: Bool) {
@@ -361,14 +370,14 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
 //        addChild(cardPackageButton!)
 //        
         let undoTexture = SKTexture(image: images.getUndo())
-        undoButton = MySKButton(texture: undoTexture, frame: CGRectMake(buttonXPosNormalized * 7.5, buttonYPos, buttonSize, buttonSize))
+        undoButton = MySKButton(texture: undoTexture, frame: CGRectMake(buttonXPosNormalized * 8.0, buttonYPos, buttonSize, buttonSize))
         undoButton!.name = "undo"
         addChild(undoButton!)
         
-        let exchangeButtonTexture = SKTexture(image: images.getExchange())
-        exchangeButton = MySKButton(texture: exchangeButtonTexture, frame: CGRectMake(buttonXPosNormalized * 9, buttonYPos, buttonSize, buttonSize))
-        exchangeButton!.name = "exchange"
-        addChild(exchangeButton!)
+//        let exchangeButtonTexture = SKTexture(image: images.getExchange())
+//        exchangeButton = MySKButton(texture: exchangeButtonTexture, frame: CGRectMake(buttonXPosNormalized * 9, buttonYPos, buttonSize, buttonSize))
+//        exchangeButton!.name = "exchange"
+//        addChild(exchangeButton!)
         
         
 //        let sparkles = SKTexture(imageNamed: "bumm") //reusing the bird texture for now
@@ -596,11 +605,11 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         case MyNodeTypes.LabelNode: movedFromNode = self.nodeAtPoint(touchLocation).parent as! MySKNode
         case MyNodeTypes.SpriteNode:
             movedFromNode = self.nodeAtPoint(touchLocation) as! MySKNode
-            if exchangeModus {
-                movedFromNode.origSize = movedFromNode.size
-                movedFromNode.tremblingType = .ChangeDirection
-                tremblingSprites.append(movedFromNode)
-            }
+//            if exchangeModus {
+//                movedFromNode.origSize = movedFromNode.size
+//                movedFromNode.tremblingType = .ChangeDirection
+//                tremblingSprites.append(movedFromNode)
+//            }
             
             if showFingerNode {
                 let fingerNode = SKSpriteNode(imageNamed: "finger.png")

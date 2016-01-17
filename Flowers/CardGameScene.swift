@@ -30,6 +30,7 @@ class CardGameScene: MyGameScene {
     var cardPackageButton: MySKButton?
     var cardPlaceButton: MySKButton?
     var cardPlaceButtonAddedToParent = false
+    var cardToChange: MySKNode?
     
     var showCard: MySKNode?
 
@@ -836,41 +837,47 @@ class CardGameScene: MyGameScene {
                 }
                 return
             }
-            
             if exchangeModus {
-                let myAktNode = aktNode!
-                if startNode != nil && startNode != myAktNode && myAktNode.type == .SpriteType {
-                    let column = startNode.column
-                    let row = startNode.row
-                    let startPosition = startNode.startPosition
-                    
-                    push(startNode, sprite2: aktNode!)
-                    startNode.zPosition = 5
-                    myAktNode.zPosition = 4
-                    let actionMove1 = SKAction.moveTo(startNode.position, duration: 1.0)
-                    myAktNode.runAction(SKAction.sequence([actionMove1]))
-                    let actionMove2 = SKAction.moveTo(myAktNode.position, duration: 1.0)
-                    startNode.runAction(SKAction.sequence([actionMove2]))
-                    
-                    startNode.column = aktNode!.column
-                    startNode.row = aktNode!.row
-                    startNode.startPosition = aktNode!.startPosition
-                    
-                    aktNode!.column = column
-                    aktNode!.row = row
-                    aktNode!.startPosition = startPosition
-                    
-                }
+                exchangeModus = false
                 for index in 0..<tremblingSprites.count {
                     tremblingSprites[index].size = tremblingSprites[index].origSize
-                    tremblingSprites[index].tremblingType = .NoTrembling
-                    tremblingSprites[index].zRotation = 0
-                    tremblingSprites[index].zPosition = 0
                 }
                 tremblingSprites.removeAll()
-                exchangeModus = false
-                return
             }
+//            if exchangeModus {
+//                let myAktNode = aktNode!
+//                if startNode != nil && startNode != myAktNode && myAktNode.type == .SpriteType {
+//                    let column = startNode.column
+//                    let row = startNode.row
+//                    let startPosition = startNode.startPosition
+//                    
+//                    push(startNode, sprite2: aktNode!)
+//                    startNode.zPosition = 5
+//                    myAktNode.zPosition = 4
+//                    let actionMove1 = SKAction.moveTo(startNode.position, duration: 1.0)
+//                    myAktNode.runAction(SKAction.sequence([actionMove1]))
+//                    let actionMove2 = SKAction.moveTo(myAktNode.position, duration: 1.0)
+//                    startNode.runAction(SKAction.sequence([actionMove2]))
+//                    
+//                    startNode.column = aktNode!.column
+//                    startNode.row = aktNode!.row
+//                    startNode.startPosition = aktNode!.startPosition
+//                    
+//                    aktNode!.column = column
+//                    aktNode!.row = row
+//                    aktNode!.startPosition = startPosition
+//                    
+//                }
+//                for index in 0..<tremblingSprites.count {
+//                    tremblingSprites[index].size = tremblingSprites[index].origSize
+//                    tremblingSprites[index].tremblingType = .NoTrembling
+//                    tremblingSprites[index].zRotation = 0
+//                    tremblingSprites[index].zPosition = 0
+//                }
+//                tremblingSprites.removeAll()
+//                exchangeModus = false
+//                return
+//            }
             
             
             if startNode.type == .SpriteType && (aktNode == nil || aktNode! != movedFromNode) {
@@ -1032,6 +1039,36 @@ class CardGameScene: MyGameScene {
         } else {
             addChild(cardPlaceButton!)
             cardPlaceButtonAddedToParent = true
+        }
+    }
+
+    override func doubleTapped() {
+        let location = tap!.locationInView(self.view)
+        let realLocation = CGPointMake(location.x, self.view!.frame.size.height - location.y)
+        let nodes = nodesAtPoint(realLocation)
+        for index in 0..<nodes.count {
+            if nodes[index] is MySKNode {
+                let aktSprite = nodes[index] as! MySKNode
+                if aktSprite.type == .SpriteType {
+                    if exchangeModus {
+                        push(aktSprite, status: .Exchanged)
+                        push(cardToChange!, status: .Exchanged)
+                        exchangeModus = false
+                        let actionMove = SKAction.moveTo(aktSprite.position, duration: 0.5)
+                        cardToChange!.runAction(actionMove)
+                        let actionMove1 = SKAction.moveTo(cardToChange!.position, duration: 0.5)
+                        aktSprite.runAction(actionMove1)
+                        tremblingSprites.removeAll()
+                        cardToChange = nil
+                    } else {
+                        exchangeModus = true
+                        aktSprite.origSize = aktSprite.size
+                        tremblingSprites.append(aktSprite)
+                        aktSprite.tremblingType = .ChangeSize
+                        cardToChange = aktSprite
+                    }
+                }
+            }
         }
     }
 

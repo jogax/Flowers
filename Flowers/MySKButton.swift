@@ -40,6 +40,10 @@ class MySKButton: MySKNode {
             shadow.name = buttonName
             addChild(shadow)
         }
+    
+    func changeButtonPicture(texture: SKTexture) {
+        (self.childNodeWithName(buttonName)! as! MySKNode).texture = texture
+    }
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")

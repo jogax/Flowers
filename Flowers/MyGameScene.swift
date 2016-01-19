@@ -191,6 +191,8 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
     var maxUsedCells = 0
     var gameNumber = 0
     
+    var touchesBeganAt: NSDate?
+    
     let containerSizeOrig: CGFloat = 50
     let spriteSizeOrig: CGFloat = 35
     
@@ -280,9 +282,9 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         
         if !settingsSceneStarted {
 
-            tap = UITapGestureRecognizer(target: self, action: "doubleTapped")
-            tap!.numberOfTapsRequired = 2
-            view.addGestureRecognizer(tap!)
+//            tap = UITapGestureRecognizer(target: self, action: "doubleTapped")
+//            tap!.numberOfTapsRequired = 1
+//            view.addGestureRecognizer(tap!)
 
             myView = view
             
@@ -595,6 +597,8 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
 //            return
 //        }
         //let countTouches = touches.count
+        
+        touchesBeganAt = NSDate()
         let firstTouch = touches.first
         let touchLocation = firstTouch!.locationInNode(self)
         

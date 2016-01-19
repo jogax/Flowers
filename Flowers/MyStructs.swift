@@ -135,7 +135,7 @@ struct DeviceConstants {
             case "iPad Mini", "iPad Mini 2", "iPad Mini 3", "iPad Mini 4":
                 sizeMultiplier = 1.3
             case "iPhone 6 Plus", "iPhone 6s Plus":
-                sizeMultiplier = 1.0
+                sizeMultiplier = 1.2
             case "iPhone 6", "iPhone 6s":
                 sizeMultiplier = 0.9
             case "iPhone 5s", "iPhone 5", "iPhone 5c":

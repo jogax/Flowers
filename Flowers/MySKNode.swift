@@ -30,6 +30,9 @@ class MySKNode: SKSpriteNode {
                 let positionOffset = CGPointMake(self.size.width * offsetMultiplier.x,  self.size.height * offsetMultiplier.y)
                 minValueLabel.position = positionOffset
                 maxValueLabel.position = positionOffset
+                if BGPictureAdded {
+                    BGPicture.size = size
+                }
 //              print("name: \(name), type: \(type), size: \(size), self.position: \(position), minValueLabel.position: \(minValueLabel.position)")
             }
         }
@@ -164,6 +167,7 @@ class MySKNode: SKSpriteNode {
                         self.addChild(BGPicture)
                         BGPicture.addChild(maxValueLabel)
                         BGPicture.name = bgPictureName
+                        BGPicture.alpha = 1.0
                     }
                     BGPicture.texture = self.texture
                     BGPictureAdded = true
@@ -180,7 +184,7 @@ class MySKNode: SKSpriteNode {
                     maxValueLabel.removeFromParent()
                     BGPicture.removeFromParent()
                     BGPictureAdded = false
-                    if type == .ContainerType {
+                    if type == .ContainerType && minValue == NoValue {
                         self.alpha = 0.5
                     }
                 } else {

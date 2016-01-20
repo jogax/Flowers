@@ -125,25 +125,43 @@ struct SpriteGameData {
 
 struct DeviceConstants {
     var sizeMultiplier: CGFloat
+    var buttonSizeMultiplier: CGFloat
+    var cardPositionMultiplier: CGFloat
     
     init(deviceType: String) {
         switch deviceType {
-        case "iPad Pro":
-            sizeMultiplier = 2.2
+            case "iPad Pro":
+                sizeMultiplier = 2.2
+                buttonSizeMultiplier = 0.9
+                cardPositionMultiplier = 1.0
             case "iPad 2", "iPad 3", "iPad 4", "iPad Air", "iPad Air 2":
-                sizeMultiplier = 1.8
+                sizeMultiplier = 1.6
+                buttonSizeMultiplier = 1.2
+                cardPositionMultiplier = 1.0
             case "iPad Mini", "iPad Mini 2", "iPad Mini 3", "iPad Mini 4":
                 sizeMultiplier = 1.3
+                buttonSizeMultiplier = 1.3
+                cardPositionMultiplier = 1.5
             case "iPhone 6 Plus", "iPhone 6s Plus":
                 sizeMultiplier = 1.2
+                buttonSizeMultiplier = 1.8
+                cardPositionMultiplier = 1.4
             case "iPhone 6", "iPhone 6s":
-                sizeMultiplier = 0.9
+                sizeMultiplier = 1.0
+                buttonSizeMultiplier = 2.0
+                cardPositionMultiplier = 1.4
             case "iPhone 5s", "iPhone 5", "iPhone 5c":
                 sizeMultiplier = 0.8
+                buttonSizeMultiplier = 2.1
+                cardPositionMultiplier = 1.3
             case "iPhone 4s", "iPhone 4":
-                sizeMultiplier = 0.7
+                sizeMultiplier = 0.8
+                buttonSizeMultiplier = 2.0
+                cardPositionMultiplier = 1.1
            default:
                 sizeMultiplier = 1.0
+                buttonSizeMultiplier = 1.0
+                cardPositionMultiplier = 1.0
         }
         
     }

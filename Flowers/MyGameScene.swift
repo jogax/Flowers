@@ -86,7 +86,7 @@ struct Container {
 }
 
 enum SpriteStatus: Int, CustomStringConvertible {
-    case Added = 0, AddedFromCardStack, AddedFromShowCard, MovingStarted, Unification, Mirrored, FallingMovingSprite, FallingSprite, HitcounterChanged, FirstCardAdded, Removed, Exchanged, Nothing
+    case Added = 0, AddedFromCardStack, AddedFromShowCard, MovingStarted, Unification, Mirrored, FallingMovingSprite, FallingSprite, HitcounterChanged, FirstCardAdded, Removed, Exchanged, StopCycle, Nothing
     
     var statusName: String {
         let statusNames = [
@@ -185,6 +185,7 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
     var targetScoreKorr: Int = 0
     var tableCellSize: CGFloat = 0
     var sizeMultiplier: CGSize = CGSizeMake(1, 1)
+    var buttonSizeMultiplier: CGSize = CGSizeMake(1, 1)
     var containerSize:CGSize = CGSizeMake(0, 0)
     var spriteSize:CGSize = CGSizeMake(0, 0)
     var minUsedCells = 0
@@ -288,14 +289,16 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
 
             myView = view
             
-            buttonSize = myView.frame.width / 15
-            buttonYPos = myView.frame.height * 0.07
-            buttonXPosNormalized = myView.frame.width / 10
             
             spriteTabRect.origin = CGPointMake(self.frame.midX, self.frame.midY * 0.85)
-            spriteTabRect.size = CGSizeMake(self.frame.size.width * 0.80, self.frame.size.width * 0.80)
+            spriteTabRect.size = CGSizeMake(self.frame.size.width * 0.80, self.frame.size.height * 0.80)
             
             makeSpezialThings(true)
+            
+            buttonSize = (myView.frame.width / 15) * buttonSizeMultiplier.width
+            buttonYPos = myView.frame.height * 0.07
+            buttonXPosNormalized = myView.frame.width / 10
+
             prepareNextGame(true)
             generateSprites(true)
         } else {
@@ -328,13 +331,13 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         }
         
         
-        labelBackground.color = UIColor(red: 1, green: 1, blue: 1, alpha: 0.5)
-        labelBackground.size = CGSizeMake(self.size.width, self.size.height / 5)
-        labelBackground.position = CGPointMake(self.size.width / 2, self.position.y + self.size.height)
+//        labelBackground.color = UIColor(red: 1, green: 1, blue: 1, alpha: 0.5)
+//        labelBackground.size = CGSizeMake(self.size.width, self.size.height / 5)
+//        labelBackground.position = CGPointMake(self.size.width / 2, self.position.y + self.size.height)
 
         prepareContainers()
 
-        self.addChild(labelBackground)
+//        self.addChild(labelBackground)
         
         if GV.globalParam.aktName != GV.dummyName {
             createLabels(playerLabel, text: GV.language.getText(TextConstants.TCGamer) + "\(GV.globalParam.aktName)", position: CGPointMake(self.position.x + self.size.width * playerPosKorr.x, self.position.y + self.size.height * playerPosKorr.y))
@@ -362,38 +365,15 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         addChild(settingsButton!)
         
         let restartTexture = SKTexture(image: images.getRestart())
-        restartButton = MySKButton(texture: restartTexture, frame: CGRectMake(buttonXPosNormalized * 2.5, buttonYPos, buttonSize, buttonSize))
+        restartButton = MySKButton(texture: restartTexture, frame: CGRectMake(buttonXPosNormalized * 3.0, buttonYPos, buttonSize, buttonSize))
         restartButton!.name = "restart"
         addChild(restartButton!)
         
-//        let cardPackageButtonTexture = SKTexture(image: images.getPfeillinks())
-//        cardPackageButton = MySKButton(texture: cardPackageButtonTexture, frame: CGRectMake(buttonXPosNormalized * 5, buttonYPos, buttonSize, buttonSize))
-//        cardPackageButton!.name = "pfeilLinks"
-//        addChild(cardPackageButton!)
-//        
         let undoTexture = SKTexture(image: images.getUndo())
-        undoButton = MySKButton(texture: undoTexture, frame: CGRectMake(buttonXPosNormalized * 8.0, buttonYPos, buttonSize, buttonSize))
+        undoButton = MySKButton(texture: undoTexture, frame: CGRectMake(buttonXPosNormalized * 9.0, buttonYPos, buttonSize, buttonSize))
         undoButton!.name = "undo"
         addChild(undoButton!)
         
-//        let exchangeButtonTexture = SKTexture(image: images.getExchange())
-//        exchangeButton = MySKButton(texture: exchangeButtonTexture, frame: CGRectMake(buttonXPosNormalized * 9, buttonYPos, buttonSize, buttonSize))
-//        exchangeButton!.name = "exchange"
-//        addChild(exchangeButton!)
-        
-        
-//        let sparkles = SKTexture(imageNamed: "bumm") //reusing the bird texture for now
-//        let burstEmitter = SKEmitterNode()
-//        burstEmitter.particleTexture = sparkles
-//        burstEmitter.particleSize = CGSizeMake(5, 5)
-//        burstEmitter.position = CGPointMake(0, 0)
-//        burstEmitter.particleBirthRate = 20
-//        burstEmitter.numParticlesToEmit = 1000;
-//        burstEmitter.particleLifetime = 3.0
-//        burstEmitter.particleSpeed = 10.0
-//        burstEmitter.xAcceleration = 100
-//        burstEmitter.yAcceleration = 50
-        //timer.addChild(burstEmitter)
         
         
         backgroundColor = UIColor.whiteColor() //SKColor.whiteColor()
@@ -435,19 +415,19 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         pull()
     }
     
-    func exchangeButtonPressed() {
-        if !exchangeModus {
-            exchangeButton!.origSize = exchangeButton!.size
-            exchangeButton!.tremblingType = .ChangeSize
-            tremblingSprites.append(exchangeButton!)
-            exchangeModus = true
-        } else {
-            exchangeButton!.size = exchangeButton!.origSize
-            exchangeButton!.tremblingType = .NoTrembling
-            tremblingSprites.removeAll()
-            exchangeModus = false
-        }
-    }
+//    func exchangeButtonPressed() {
+//        if !exchangeModus {
+//            exchangeButton!.origSize = exchangeButton!.size
+//            exchangeButton!.tremblingType = .ChangeSize
+//            tremblingSprites.append(exchangeButton!)
+//            exchangeModus = true
+//        } else {
+//            exchangeButton!.size = exchangeButton!.origSize
+//            exchangeButton!.tremblingType = .NoTrembling
+//            tremblingSprites.removeAll()
+//            exchangeModus = false
+//        }
+//    }
     
     func restartButtonPressed() {
         newGame(false)
@@ -614,7 +594,6 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
 //                movedFromNode.tremblingType = .ChangeDirection
 //                tremblingSprites.append(movedFromNode)
 //            }
-            
             if showFingerNode {
                 let fingerNode = SKSpriteNode(imageNamed: "finger.png")
                 fingerNode.name = "finger"
@@ -627,12 +606,15 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             movedFromNode = nil
             
         case MyNodeTypes.ButtonNode:
-            movedFromNode = self.nodeAtPoint(touchLocation) as! MySKNode
+            movedFromNode = (self.nodeAtPoint(touchLocation) as! MySKNode).parent as! MySKNode
             //let textureName = "\(testNode.name!)Pressed"
             //let textureSelected = SKTexture(imageNamed: textureName)
             //(testNode as! MySKNode).texture = textureSelected
             //(testNode as! MySKNode).texture = atlas.textureNamed("\(testNode.name!)Pressed")
         default: movedFromNode = nil
+        }
+        if movedFromNode != nil {
+            movedFromNode.zPosition = 50
         }
     }
     

@@ -56,6 +56,15 @@ class Stack<T> {
         }
     }
     
+    func last() -> MySKNode? {
+        if spriteStack.count > 0 {
+            let value = spriteStack.last
+            return value!
+        } else {
+            return nil
+        }
+    }
+    
     func countChangesInStack() -> Int {
         var counter = 0
         for index in 0..<savedSpriteStack.count {

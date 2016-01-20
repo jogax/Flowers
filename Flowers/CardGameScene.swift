@@ -33,6 +33,8 @@ class CardGameScene: MyGameScene {
     var cardToChange: MySKNode?
     
     var showCard: MySKNode?
+    var showCardFromStack: MySKNode?
+    var showCardFromStackAddedToParent = false
 
     var lastCollisionsTime = NSDate()
     var cardArray: [[GenerateCard]] = []
@@ -54,24 +56,28 @@ class CardGameScene: MyGameScene {
         }
     }
     override func makeSpezialThings(first: Bool) {
-        let multiplier = GV.deviceConstants.sizeMultiplier
+//        let multiplier = GV.deviceConstants.sizeMultiplier
         let width:CGFloat = 64.0
         let height: CGFloat = 89.0
-        sizeMultiplier = CGSizeMake(multiplier, multiplier * height / width)
+        sizeMultiplier = CGSizeMake(GV.deviceConstants.sizeMultiplier, GV.deviceConstants.sizeMultiplier * height / width)
+        buttonSizeMultiplier = CGSizeMake(GV.deviceConstants.buttonSizeMultiplier, GV.deviceConstants.buttonSizeMultiplier * height / width)
         levelsForPlay.setAktLevel(levelIndex)
     }
         
     override func specialPrepareFuncFirst() {
         let cardSize = CGSizeMake(buttonSize * sizeMultiplier.width * 0.8, buttonSize * sizeMultiplier.height * 0.8)
         let cardPackageButtonTexture = SKTexture(image: images.getCardPackage())
-        cardPackege = MySKButton(texture: cardPackageButtonTexture, frame: CGRectMake(buttonXPosNormalized * 4.0, buttonYPos, cardSize.width, cardSize.height), makePicture: false)
+        cardPackege = MySKButton(texture: cardPackageButtonTexture, frame: CGRectMake(buttonXPosNormalized * 5.0, buttonYPos, cardSize.width, cardSize.height), makePicture: false)
         cardPackege!.name = "cardPackege"
         addChild(cardPackege!)
         
+        showCardFromStack = nil
+        
         let cardPlaceTexture = SKTexture(imageNamed: "emptycard")
-        cardPlaceButton = MySKButton(texture: cardPlaceTexture, frame: CGRectMake(buttonXPosNormalized * 5.0, buttonYPos, cardSize.width, cardSize.height), makePicture: false)
+        cardPlaceButton = MySKButton(texture: cardPlaceTexture, frame: CGRectMake(buttonXPosNormalized * 7.0, buttonYPos, cardSize.width, cardSize.height), makePicture: false)
         cardPlaceButton!.name = "cardPlace"
         addChild(cardPlaceButton!)
+        cardPlaceButton!.alpha = 0.3
         cardPlaceButtonAddedToParent = true
         
         countContainers = levelsForPlay.aktLevel.countContainers
@@ -183,9 +189,9 @@ class CardGameScene: MyGameScene {
             let index = random!.getRandomInt(0, max: positionsTab.count - 1)
             let (aktColumn, aktRow) = positionsTab[index]
             
-            let xPosition = spriteTabRect.origin.x - spriteTabRect.size.width / 2 + CGFloat(aktColumn) * tableCellSize + tableCellSize / 2
-            let yPosition = spriteTabRect.origin.y - spriteTabRect.size.height / 2 + tableCellSize * 1.05 / 2 + CGFloat(aktRow) * tableCellSize * 1.05
-            let zielPosition = CGPoint(x: xPosition, y: yPosition)
+//            let xPosition = spriteTabRect.origin.x - spriteTabRect.size.width / 2 + CGFloat(aktColumn) * tableCellSize + tableCellSize / 2
+//            let yPosition = spriteTabRect.origin.y - spriteTabRect.size.height / 2 + tableCellSize * 1.10 / 2 + CGFloat(aktRow) * tableCellSize * 1.10
+            let zielPosition = calculateOfCardPosition(aktColumn, row: aktRow)
             sprite.position = cardPackege!.position
             sprite.startPosition = zielPosition
             gameArray[aktColumn][aktRow] = true
@@ -209,6 +215,7 @@ class CardGameScene: MyGameScene {
             sprite.runAction(SKAction.sequence([actionMove, actionHideEmptyCard]))
             if cardStack.count(.MySKNodeType) == 0 {
                 cardPackege!.changeButtonPicture(SKTexture(imageNamed: "emptycard"))
+                cardPackege!.alpha = 0.3
             }
 
         }
@@ -218,6 +225,14 @@ class CardGameScene: MyGameScene {
         }
         
         stopped = false
+    }
+    
+    func calculateOfCardPosition(column: Int, row: Int) -> CGPoint {
+        let cardPositionMultiplier = GV.deviceConstants.cardPositionMultiplier
+        return CGPointMake(
+            spriteTabRect.origin.x - spriteTabRect.size.width / 2 + CGFloat(column) * tableCellSize + tableCellSize / 2,
+            spriteTabRect.origin.y - spriteTabRect.size.height / 3.0 + tableCellSize * cardPositionMultiplier / 2 + CGFloat(row) * tableCellSize * cardPositionMultiplier
+        )
     }
     
     func deleteEmptySprite(column: Int, row: Int) {
@@ -232,10 +247,10 @@ class CardGameScene: MyGameScene {
     override func makeEmptyCard(column:Int, row: Int) {
         let searchName = "\(emptySpriteTxt)-\(column)-\(row)"
         if self.childNodeWithName(searchName) == nil {
-            let xPosition = spriteTabRect.origin.x - spriteTabRect.size.width / 2 + CGFloat(column) * tableCellSize + tableCellSize / 2
-            let yPosition = spriteTabRect.origin.y - spriteTabRect.size.height / 2 + tableCellSize * 1.05 / 2 + CGFloat(row) * tableCellSize * 1.05
+//            let xPosition = spriteTabRect.origin.x - spriteTabRect.size.width / 2 + CGFloat(column) * tableCellSize + tableCellSize / 2
+//            let yPosition = spriteTabRect.origin.y - spriteTabRect.size.height / 2 + tableCellSize * 1.10 / 2 + CGFloat(row) * tableCellSize * 1.10
             let emptySprite = MySKNode(texture: getTexture(NoColor), type: .EmptyCardType, value: NoColor)
-            emptySprite.position = CGPoint(x: xPosition, y: yPosition)
+            emptySprite.position = calculateOfCardPosition(column, row: row)
             emptySprite.size = CGSizeMake(spriteSize.width, spriteSize.height)
             emptySprite.name = "\(emptySpriteTxt)-\(column)-\(row)"
             emptySprite.column = column
@@ -260,6 +275,7 @@ class CardGameScene: MyGameScene {
                 addChild(showCard!)
                 if cardStack.count(.MySKNodeType) == 0 {
                     cardPackege!.changeButtonPicture(SKTexture(imageNamed: "emptycard"))
+                    cardPackege!.alpha = 0.3
                 }
             }
         }
@@ -696,11 +712,12 @@ class CardGameScene: MyGameScene {
                     sprite1.reload()
                     savedSpriteInCycle = savedSprite
                     stopSoon = true
+                case .StopCycle: break
                 case .Nothing: break
                 }
                 if let savedSprite:SavedSprite = stack.pull() {
                     savedSpriteInCycle = savedSprite
-                    if ((savedSpriteInCycle.status == .AddedFromCardStack || savedSpriteInCycle.status == .AddedFromShowCard) && stack.countChangesInStack() == 0) || stopSoon {
+                    if ((savedSpriteInCycle.status == .AddedFromCardStack || savedSpriteInCycle.status == .AddedFromShowCard) && stack.countChangesInStack() == 0) || stopSoon  || savedSpriteInCycle.status == .StopCycle {
                         stack.push(savedSpriteInCycle)
                         run = false
                     }
@@ -756,6 +773,18 @@ class CardGameScene: MyGameScene {
             }
             if movedFromNode.type == .ShowCardType {
                 movedFromNode.position = touchLocation
+                if showCardStack.count(.MySKNodeType) > 0 {
+                    if !showCardFromStackAddedToParent {
+                        showCardFromStackAddedToParent = true
+                        showCardFromStack = showCardStack.last()
+                        showCardFromStack!.position = cardPlaceButton!.position
+                        showCardFromStack!.size = cardPlaceButton!.size
+                        addChild(showCardFromStack!)
+                    }
+                } else if !cardPlaceButtonAddedToParent {
+                    cardPlaceButtonAddedToParent = true
+                    addChild(cardPlaceButton!)
+                }
             } else if movedFromNode != aktNode && !exchangeModus {
                 if movedFromNode.type == .ButtonType {
                     //movedFromNode.texture = atlas.textureNamed("\(movedFromNode.name!)")
@@ -819,6 +848,7 @@ class CardGameScene: MyGameScene {
             //let countTouches = touches.count
             var aktNode: MySKNode?
             
+            movedFromNode.zPosition = 0
             let startNode = movedFromNode
             
             switch aktNodeType {
@@ -827,7 +857,7 @@ class CardGameScene: MyGameScene {
             case MyNodeTypes.ButtonNode:
                 //(testNode as! MySKNode).texture = SKTexture(imageNamed: "\(testNode.name!)")
                 //(testNode as! MySKNode).texture = atlas.textureNamed("\(testNode.name!)")
-                aktNode = self.nodeAtPoint(touchLocation) as? MySKNode
+                aktNode = (self.nodeAtPoint(touchLocation) as! MySKNode).parent as? MySKNode
             default: aktNode = nil
             }
             
@@ -838,7 +868,7 @@ class CardGameScene: MyGameScene {
                 }
                 
             }
-            if aktNode != nil && aktNode!.type == .ButtonType && startNode.type == .ButtonType  {
+            if aktNode != nil && aktNode!.type == .ButtonType && startNode.type == .ButtonType && aktNode!.name == movedFromNode.name {
                 //            if aktNode != nil && mySKNode.type == .ButtonType && startNode.type == .ButtonType  {
                 var mySKNode = aktNode!
                 
@@ -848,11 +878,10 @@ class CardGameScene: MyGameScene {
                 }
                 //switch (aktNode as! MySKNode).name! {
                 switch mySKNode.name! {
-                case "settings": settingsButtonPressed()
-                case "undo": undoButtonPressed()
-                case "exchange": exchangeButtonPressed()
-                case "restart": restartButtonPressed()
-                default: specialButtonPressed(mySKNode.name!)
+                    case "settings": settingsButtonPressed()
+                    case "undo": undoButtonPressed()
+                    case "restart": restartButtonPressed()
+                    default: specialButtonPressed(mySKNode.name!)
                 }
                 return
             }
@@ -860,7 +889,7 @@ class CardGameScene: MyGameScene {
             let touchesEndedAt = NSDate()
             
             let downTime = touchesEndedAt.timeIntervalSinceDate(touchesBeganAt!)
-            if downTime < 0.3 {
+            if downTime < 0.1 && aktNode == movedFromNode {
                 tapLocation = touchLocation
                 doubleTapped()
                 return
@@ -873,41 +902,6 @@ class CardGameScene: MyGameScene {
                 }
                 tremblingSprites.removeAll()
             }
-//            if exchangeModus {
-//                let myAktNode = aktNode!
-//                if startNode != nil && startNode != myAktNode && myAktNode.type == .SpriteType {
-//                    let column = startNode.column
-//                    let row = startNode.row
-//                    let startPosition = startNode.startPosition
-//                    
-//                    push(startNode, sprite2: aktNode!)
-//                    startNode.zPosition = 5
-//                    myAktNode.zPosition = 4
-//                    let actionMove1 = SKAction.moveTo(startNode.position, duration: 1.0)
-//                    myAktNode.runAction(SKAction.sequence([actionMove1]))
-//                    let actionMove2 = SKAction.moveTo(myAktNode.position, duration: 1.0)
-//                    startNode.runAction(SKAction.sequence([actionMove2]))
-//                    
-//                    startNode.column = aktNode!.column
-//                    startNode.row = aktNode!.row
-//                    startNode.startPosition = aktNode!.startPosition
-//                    
-//                    aktNode!.column = column
-//                    aktNode!.row = row
-//                    aktNode!.startPosition = startPosition
-//                    
-//                }
-//                for index in 0..<tremblingSprites.count {
-//                    tremblingSprites[index].size = tremblingSprites[index].origSize
-//                    tremblingSprites[index].tremblingType = .NoTrembling
-//                    tremblingSprites[index].zRotation = 0
-//                    tremblingSprites[index].zPosition = 0
-//                }
-//                tremblingSprites.removeAll()
-//                exchangeModus = false
-//                return
-//            }
-            
             
             if startNode.type == .SpriteType && (aktNode == nil || aktNode! != movedFromNode) {
                 let sprite = movedFromNode// as! SKSpriteNode
@@ -921,17 +915,6 @@ class CardGameScene: MyGameScene {
                 //sprite.physicsBody?.velocity=CGVectorMake(200, 200)
                 
                 sprite.physicsBody?.usesPreciseCollisionDetection = true
-                /*
-                let offset = touchLocation - movedFromNode.position
-                
-                let direction = offset.normalized()
-                
-                // 7 - Make it shoot far enough to be guaranteed off screen
-                let shootAmount = direction * 1000
-                
-                // 8 - Add the shoot amount to the current position
-                let realDest = shootAmount + movedFromNode.position
-                */
                 push(sprite, status: .MovingStarted)
                 
                 // 9 - Create the actions
@@ -1022,6 +1005,7 @@ class CardGameScene: MyGameScene {
                    if nodes[index] is MySKNode && foundedCard!.type == .EmptyCardType {
                         startNode.column = foundedCard!.column
                         startNode.row = foundedCard!.row
+                        push(startNode, status: .StopCycle)
                         push(startNode, status: .AddedFromShowCard)
                         startNode.size = foundedCard!.size
                         startNode.position = foundedCard!.position
@@ -1035,6 +1019,7 @@ class CardGameScene: MyGameScene {
                     } else if nodes[index] is MySKNode && foundedCard!.type == .SpriteType && startNode.colorIndex == foundedCard!.colorIndex &&
                         (foundedCard!.maxValue + 1 == startNode.minValue ||
                          foundedCard!.minValue - 1 == startNode.maxValue) {
+                            push(startNode, status: .StopCycle)
                             push(foundedCard!, status: .Unification)
                             push(startNode, status: .AddedFromShowCard)
                             
@@ -1053,7 +1038,12 @@ class CardGameScene: MyGameScene {
                 }
                 if !founded {
                     let actionMove = SKAction.moveTo(cardPlaceButton!.position, duration: 0.5)
-                    startNode.runAction(actionMove)
+                    let actionDropShowCardFromStack = SKAction.runBlock({
+                        self.removeShowCardFromStack()
+                        startNode.zPosition = 0
+                    })
+                    startNode.zPosition = 50
+                    startNode.runAction(SKAction.sequence([actionMove, actionDropShowCardFromStack]))
                 }
             }
             
@@ -1063,11 +1053,24 @@ class CardGameScene: MyGameScene {
     func pullShowCard() {
         showCard = nil
         if showCardStack.count(.MySKNodeType) > 0 {
+            removeShowCardFromStack()
             showCard = showCardStack.pull()
             self.addChild(showCard!)
-        } else {
+        } else if !cardPlaceButtonAddedToParent {
             addChild(cardPlaceButton!)
             cardPlaceButtonAddedToParent = true
+        }
+    }
+    
+    func removeShowCardFromStack() {
+        if showCardFromStackAddedToParent {
+            showCardFromStack!.removeFromParent()
+            showCardFromStack = nil
+            showCardFromStackAddedToParent = false
+        }
+        if cardPlaceButtonAddedToParent {
+            cardPlaceButton!.removeFromParent()
+            cardPlaceButtonAddedToParent = false
         }
     }
 

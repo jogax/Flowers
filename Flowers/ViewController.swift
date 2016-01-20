@@ -14,7 +14,7 @@ let DegreesToRadians = Pi / 180
 let RadiansToDegrees = 180 / Pi
 
 
-class ViewController: UIViewController, SettingsDelegate {
+class ViewController: UIViewController, SettingsDelegate, UIApplicationDelegate {
     var aktName = ""
     var aktModus = GameModusFlowers
     var skView: SKView?
@@ -25,6 +25,11 @@ class ViewController: UIViewController, SettingsDelegate {
         startScene()
         // Do any additional setup after loading the view, typically from a nib.
      }
+    
+    func applicationWillEnterForeground(application: UIApplication) {
+        _ = 0
+    }
+    
     
     func startScene() {
         skView = self.view as? SKView

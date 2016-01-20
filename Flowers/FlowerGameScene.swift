@@ -466,7 +466,7 @@ class FlowerGameScene: MyGameScene {
                 switch mySKNode.name! {
                 case "settings": settingsButtonPressed()
                 case "undo": undoButtonPressed()
-                case "exchange": exchangeButtonPressed()
+//                case "exchange": exchangeButtonPressed()
                 case "restart": restartButtonPressed()
                 default: specialButtonPressed(mySKNode.name!)
                 }

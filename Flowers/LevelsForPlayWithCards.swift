@@ -68,7 +68,7 @@ class LevelsForPlayWithCards {
     }
     
     func getNextLevel() -> Int {
-        if level > levelParam.count {
+        if level < levelParam.count {
             level++
         }
         aktLevel = levelParam[level]

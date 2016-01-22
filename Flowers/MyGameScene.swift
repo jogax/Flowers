@@ -437,6 +437,9 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         
     }
     
+    
+
+    
     func stopTimer() {
         if countUp != nil {
             countUp?.invalidate()
@@ -707,11 +710,11 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             
             self.addChild(myLine)
 //            let texture = numberOfLine < maxHelpLinesCount ? movedFromNode.texture! : SKTexture(imageNamed: "bumm")
-            let texture = movedFromNode.texture!
-            let nodeOnTheWall = MySKNode(texture: texture, type: .SpriteType, value: NoValue)
-            nodeOnTheWall.name = "nodeOnTheWall"
-            nodeOnTheWall.position = toPoint
-            nodeOnTheWall.size = movedFromNode.size
+//            let texture = movedFromNode.texture!
+//            let nodeOnTheWall = MySKNode(texture: texture, type: .SpriteType, value: NoValue)
+//            nodeOnTheWall.name = "nodeOnTheWall"
+//            nodeOnTheWall.position = toPoint
+//            nodeOnTheWall.size = movedFromNode.size
 //            self.addChild(nodeOnTheWall)
             
         }

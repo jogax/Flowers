@@ -22,6 +22,15 @@ class CardGameScene: MyGameScene {
         }
     }
     
+    struct GameArrayPositions {
+        var position: CGPoint
+        init() {
+            self.position = CGPointMake(0, 0)
+        }
+    }
+    
+
+    
     let emptySpriteTxt = "emptySprite"
     
     var cardStack:Stack<MySKNode> = Stack()
@@ -45,6 +54,8 @@ class CardGameScene: MyGameScene {
     let nextLevel = true
     let previousLevel = false
     var lastUpdateSec = 0
+    var gameArrayPositions = [[GameArrayPositions]]()
+    
     
     var tapLocation: CGPoint?
 
@@ -89,7 +100,19 @@ class CardGameScene: MyGameScene {
         maxUsedCells = levelsForPlay.aktLevel.maxProzent * countColumns * countRows / 100
         containerSize = CGSizeMake(CGFloat(containerSizeOrig) * sizeMultiplier.width, CGFloat(containerSizeOrig) * sizeMultiplier.height)
         spriteSize = CGSizeMake(CGFloat(levelsForPlay.aktLevel.spriteSize) * sizeMultiplier.width, CGFloat(levelsForPlay.aktLevel.spriteSize) * sizeMultiplier.height )
-         for _ in 0..<countContainers {
+        gameArrayPositions.removeAll(keepCapacity: false)
+        tableCellSize = spriteTabRect.width / CGFloat(countColumns)
+        
+        for _ in 0..<countColumns {
+            gameArrayPositions.append(Array(count: countRows, repeatedValue:GameArrayPositions()))
+        }
+        
+        for column in 0..<countColumns {
+            for row in 0..<countRows {
+                gameArrayPositions[column][row].position = calculateOfCardPosition(column, row: row)
+            }
+        }
+        for _ in 0..<countContainers {
             var hilfsArray: [GenerateCard] = []
             for cardIndex in 0..<countSpritesProContainer! * countPackages {
                 var card = GenerateCard()
@@ -227,14 +250,6 @@ class CardGameScene: MyGameScene {
         stopped = false
     }
     
-    func calculateOfCardPosition(column: Int, row: Int) -> CGPoint {
-        let cardPositionMultiplier = GV.deviceConstants.cardPositionMultiplier
-        return CGPointMake(
-            spriteTabRect.origin.x - spriteTabRect.size.width / 2 + CGFloat(column) * tableCellSize + tableCellSize / 2,
-            spriteTabRect.origin.y - spriteTabRect.size.height / 3.0 + tableCellSize * cardPositionMultiplier / 2 + CGFloat(row) * tableCellSize * cardPositionMultiplier
-        )
-    }
-    
     func deleteEmptySprite(column: Int, row: Int) {
         let searchName = "\(emptySpriteTxt)-\(column)-\(row)"
         if self.childNodeWithName(searchName) != nil {
@@ -258,7 +273,16 @@ class CardGameScene: MyGameScene {
             addChild(emptySprite)
         }
     }
+
+    func calculateOfCardPosition(column: Int, row: Int) -> CGPoint {
+        let cardPositionMultiplier = GV.deviceConstants.cardPositionMultiplier
+        return CGPointMake(
+            spriteTabRect.origin.x - spriteTabRect.size.width / 2 + CGFloat(column) * tableCellSize + tableCellSize / 2,
+            spriteTabRect.origin.y - spriteTabRect.size.height / 3.0 + tableCellSize * cardPositionMultiplier / 2 + CGFloat(row) * tableCellSize * cardPositionMultiplier
+        )
+    }
     
+
     override func specialButtonPressed(buttonName: String) {
         if buttonName == "cardPackege" {
             if cardStack.count(.MySKNodeType) > 0 {
@@ -474,12 +498,14 @@ class CardGameScene: MyGameScene {
             })
             alert.addAction(easierAction)
         }
-        let complexerAction = UIAlertAction(title: GV.language.getText(TextConstants.TCNextLevel), style: .Default,
-            handler: {(paramAction:UIAlertAction!) in
-                self.setLevel(self.nextLevel)
-                self.newGame(true)
-        })
-        alert.addAction(complexerAction)
+        if levelIndex < levelsForPlay.levelParam.count - 1 {
+            let complexerAction = UIAlertAction(title: GV.language.getText(TextConstants.TCNextLevel), style: .Default,
+                handler: {(paramAction:UIAlertAction!) in
+                    self.setLevel(self.nextLevel)
+                    self.newGame(true)
+            })
+            alert.addAction(complexerAction)
+        }
         if !congratulations {
             let cancelAction = UIAlertAction(title: GV.language.getText(TextConstants.TCCancel), style: .Default,
                 handler: {(paramAction:UIAlertAction!) in
@@ -511,7 +537,6 @@ class CardGameScene: MyGameScene {
     }
     
     override func prepareContainers() {
-        tableCellSize = spriteTabRect.width / CGFloat(countColumns)
        
         colorTab.removeAll(keepCapacity: false)
         var spriteName = 10000
@@ -822,6 +847,75 @@ class CardGameScene: MyGameScene {
             }
         }
     }
+    
+    override func makeHelpLine(fromPoint: CGPoint, toPoint: CGPoint, lineWidth: CGFloat, numberOfLine: Int) {
+
+//        let offset = toPoint - fromPoint
+//        let direction = offset.normalized()
+//        let shootAmount = direction * 1200
+//        let realDest = shootAmount + fromPoint
+        
+        let closestPoint = findClosestPoint(fromPoint, P2: toPoint)
+        
+        let pathToDraw:CGMutablePathRef = CGPathCreateMutable()
+        let myLine:SKShapeNode = SKShapeNode(path:pathToDraw)
+        myLine.lineWidth = lineWidth
+        
+        myLine.name = "myLine"
+        CGPathMoveToPoint(pathToDraw, nil, fromPoint.x, fromPoint.y)
+//        CGPathAddLineToPoint(pathToDraw, nil, realDest.x, realDest.y)
+        CGPathAddLineToPoint(pathToDraw, nil, toPoint.x, toPoint.y)
+        
+        myLine.path = pathToDraw
+    
+        myLine.strokeColor = SKColor(red: 1.0, green: 0, blue: 0, alpha: 0.15) // GV.colorSets[GV.colorSetIndex][colorIndex + 1]
+        
+        
+        self.addChild(myLine)
+        
+    }
+    
+    func findClosestPoint(P1: CGPoint, P2: CGPoint) -> CGPoint {
+        
+        struct Founded {
+            var column: Int
+            var row: Int
+            var point: CGPoint
+            var distance: CGFloat
+            var distToPoint: CGFloat
+            init() {
+                distance = 10000
+                distToPoint = 10000
+                column = 0
+                row = 0
+                point = CGPointZero
+                
+            }
+        }
+        let offset = P1 - P2
+        var founded = Founded()
+        
+        for column in 0..<countColumns {
+            for row in 0..<countRows {
+                let P0 = gameArrayPositions[column][row].position
+                let dist = ((offset.y) * P0.x - (offset.x) * P0.y + P2.x * P1.y + P2.y * P1.x) / offset.length()
+                let distToP1 = (P1 - P0).length()
+                if dist < founded.distance  && distToP1 < founded.distToPoint {
+                    founded.distance = dist
+                    founded.distToPoint = distToP1
+                    founded.point = P0
+                    founded.column = column
+                    founded.row = row
+                    print(founded)
+                }
+            }
+        }
+        print(founded)
+        // distance = ((offset.y) * x0 - (offset.x1) * y0 + x2 * y1 + y2 * x1) / offset.length()
+        return founded.point
+        
+    }
+
 
     override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
         

@@ -156,7 +156,16 @@ let atlas = SKTextureAtlas(named: "sprites")
 }
 
 class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
-    
+
+    struct GameArrayPositions {
+        var used: Bool
+        var position: CGPoint
+        init() {
+            self.used = false
+            self.position = CGPointMake(0, 0)
+        }
+    }
+
     struct ColorTabLine {
         var colorIndex: Int
         var spriteName: String
@@ -215,7 +224,8 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
     var myView = SKView()
     var levelIndex = Int(GV.spriteGameDataArray[GV.getAktNameIndex()].spriteLevelIndex)
     var stack:Stack<SavedSprite> = Stack()
-    var gameArray = [[Bool]]() // true if Cell used
+    //var gameArray = [[Bool]]() // true if Cell used
+    var gameArray = [[GameArrayPositions]]()
     var containers = [Container]()
     var colorTab = [ColorTabLine]()
     let containersPosCorr = CGPointMake(GV.onIpad ? 0.98 : 0.98, GV.onIpad ? 0.85 : 0.85)
@@ -326,9 +336,20 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         containers.removeAll(keepCapacity: false)
         //undoCount = 3
         
-        for _ in 0..<countRows {
-            gameArray.append(Array(count: countRows, repeatedValue:false))
+//        for _ in 0..<countRows {
+//            gameArray.append(Array(count: countRows, repeatedValue:false))
+//        }
+        
+        for _ in 0..<countColumns {
+            gameArray.append(Array(count: countRows, repeatedValue:GameArrayPositions()))
         }
+        
+        for column in 0..<countColumns {
+            for row in 0..<countRows {
+                gameArray[column][row].position = calculateOfSpritePosition(column, row: row)
+            }
+        }
+
         
         
 //        labelBackground.color = UIColor(red: 1, green: 1, blue: 1, alpha: 0.5)
@@ -446,6 +467,17 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             countUp = nil
         }
     }
+    
+    func calculateOfSpritePosition(column: Int, row: Int) -> CGPoint {
+        let cardPositionMultiplier = GV.deviceConstants.cardPositionMultiplier
+        return CGPointMake(
+            spriteTabRect.origin.x - spriteTabRect.size.width / 2 + CGFloat(column) * tableCellSize + tableCellSize / 2,
+            spriteTabRect.origin.y - spriteTabRect.size.height / 3.0 + tableCellSize * cardPositionMultiplier / 2 + CGFloat(row) * tableCellSize * cardPositionMultiplier
+        )
+    }
+    
+    
+
     
     func getNextPlayArt(congratulations: Bool)->UIAlertController {
         return UIAlertController()
@@ -648,22 +680,23 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
                 if movedFromNode.type == .ButtonType {
                     //movedFromNode.texture = atlas.textureNamed("\(movedFromNode.name!)")
                 } else {
+                    var founded = false
                     let line = JGXLine(fromPoint: movedFromNode.position, toPoint: touchLocation, inFrame: self.frame, lineSize: movedFromNode.size.width)
                     let pointOnTheWall = line.line.toPoint
-                    makeHelpLine(movedFromNode.position, toPoint: pointOnTheWall, lineWidth: movedFromNode.size.width, numberOfLine: 1)
+                    founded = makeHelpLine(movedFromNode.position, toPoint: pointOnTheWall, lineWidth: movedFromNode.size.width, numberOfLine: 1)
                     
                     
-                    if GV.showHelpLines > 1 {
+                    if !founded && GV.showHelpLines > 1 {
                         let mirroredLine1 = line.createMirroredLine()
-                        makeHelpLine(mirroredLine1.line.fromPoint, toPoint: mirroredLine1.line.toPoint, lineWidth: movedFromNode.size.width, numberOfLine: 2)
+                        founded = makeHelpLine(mirroredLine1.line.fromPoint, toPoint: mirroredLine1.line.toPoint, lineWidth: movedFromNode.size.width, numberOfLine: 2)
                         
-                        if GV.showHelpLines > 2 {
+                        if !founded && GV.showHelpLines > 2 {
                             let mirroredLine2 = mirroredLine1.createMirroredLine()
-                            makeHelpLine(mirroredLine2.line.fromPoint, toPoint: mirroredLine2.line.toPoint, lineWidth: movedFromNode.size.width, numberOfLine: 3)
+                            founded = makeHelpLine(mirroredLine2.line.fromPoint, toPoint: mirroredLine2.line.toPoint, lineWidth: movedFromNode.size.width, numberOfLine: 3)
                             
-                            if GV.showHelpLines > 3 {
+                            if !founded && GV.showHelpLines > 3 {
                                 let mirroredLine3 = mirroredLine2.createMirroredLine()
-                                makeHelpLine(mirroredLine3.line.fromPoint, toPoint: mirroredLine3.line.toPoint, lineWidth: movedFromNode.size.width, numberOfLine: 4)
+                                founded = makeHelpLine(mirroredLine3.line.fromPoint, toPoint: mirroredLine3.line.toPoint, lineWidth: movedFromNode.size.width, numberOfLine: 4)
                             }
                         }
                     }
@@ -684,7 +717,7 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
     func makeEmptyCard(column:Int, row: Int) {
     }
     
-    func makeHelpLine(fromPoint: CGPoint, toPoint: CGPoint, lineWidth: CGFloat, numberOfLine: Int) {
+    func makeHelpLine(fromPoint: CGPoint, toPoint: CGPoint, lineWidth: CGFloat, numberOfLine: Int)->Bool {
         if GV.showHelpLines >= numberOfLine {
             //print("makeHelpLine: fromPoint: \(fromPoint), toPoint: \(toPoint)")
             let offset = toPoint - fromPoint
@@ -716,8 +749,8 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
 //            nodeOnTheWall.position = toPoint
 //            nodeOnTheWall.size = movedFromNode.size
 //            self.addChild(nodeOnTheWall)
-            
         }
+        return false
     }
     
 //    func showNextSprite(touchLocation:  CGPoint) {
@@ -940,7 +973,7 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         var usedCellCount = 0
         for column in 0..<countColumns {
             for row in 0..<countRows {
-                if gameArray[column][row] {
+                if gameArray[column][row].used {
                     usedCellCount++
                 }
             }

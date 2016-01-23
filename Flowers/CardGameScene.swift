@@ -22,10 +22,23 @@ class CardGameScene: MyGameScene {
         }
     }
     
-    struct GameArrayPositions {
-        var position: CGPoint
+    struct Founded {
+        let maxDistance: CGFloat = 100000.0
+        var column: Int
+        var row: Int
+        var distanceToP1: CGFloat
+        var distanceToP0: CGFloat
+        init(column: Int, row: Int, distanceToP1: CGFloat, distanceToP0: CGFloat) {
+            self.distanceToP1 = distanceToP1
+            self.distanceToP0 = distanceToP0
+            self.column = column
+            self.row = row
+        }
         init() {
-            self.position = CGPointMake(0, 0)
+            self.distanceToP1 = maxDistance
+            self.distanceToP0 = maxDistance
+            self.column = 0
+            self.row = 0
         }
     }
     
@@ -54,7 +67,7 @@ class CardGameScene: MyGameScene {
     let nextLevel = true
     let previousLevel = false
     var lastUpdateSec = 0
-    var gameArrayPositions = [[GameArrayPositions]]()
+    //var gameArrayPositions = [[GameArrayPositions]]()
     
     
     var tapLocation: CGPoint?
@@ -100,18 +113,9 @@ class CardGameScene: MyGameScene {
         maxUsedCells = levelsForPlay.aktLevel.maxProzent * countColumns * countRows / 100
         containerSize = CGSizeMake(CGFloat(containerSizeOrig) * sizeMultiplier.width, CGFloat(containerSizeOrig) * sizeMultiplier.height)
         spriteSize = CGSizeMake(CGFloat(levelsForPlay.aktLevel.spriteSize) * sizeMultiplier.width, CGFloat(levelsForPlay.aktLevel.spriteSize) * sizeMultiplier.height )
-        gameArrayPositions.removeAll(keepCapacity: false)
+        //gameArrayPositions.removeAll(keepCapacity: false)
         tableCellSize = spriteTabRect.width / CGFloat(countColumns)
         
-        for _ in 0..<countColumns {
-            gameArrayPositions.append(Array(count: countRows, repeatedValue:GameArrayPositions()))
-        }
-        
-        for column in 0..<countColumns {
-            for row in 0..<countRows {
-                gameArrayPositions[column][row].position = calculateOfCardPosition(column, row: row)
-            }
-        }
         for _ in 0..<countContainers {
             var hilfsArray: [GenerateCard] = []
             for cardIndex in 0..<countSpritesProContainer! * countPackages {
@@ -192,7 +196,7 @@ class CardGameScene: MyGameScene {
         var positionsTab = [(Int, Int)]() // all available Positions
         for column in 0..<countColumns {
             for row in 0..<countRows {
-                if !gameArray[column][row] {
+                if !gameArray[column][row].used {
                     let appendValue = (column, row)
                     positionsTab.append(appendValue)
                 }
@@ -214,10 +218,10 @@ class CardGameScene: MyGameScene {
             
 //            let xPosition = spriteTabRect.origin.x - spriteTabRect.size.width / 2 + CGFloat(aktColumn) * tableCellSize + tableCellSize / 2
 //            let yPosition = spriteTabRect.origin.y - spriteTabRect.size.height / 2 + tableCellSize * 1.10 / 2 + CGFloat(aktRow) * tableCellSize * 1.10
-            let zielPosition = calculateOfCardPosition(aktColumn, row: aktRow)
+            let zielPosition = gameArray[aktColumn][aktRow].position
             sprite.position = cardPackege!.position
             sprite.startPosition = zielPosition
-            gameArray[aktColumn][aktRow] = true
+            gameArray[aktColumn][aktRow].used = true
             positionsTab.removeAtIndex(index)
             
             sprite.column = aktColumn
@@ -265,7 +269,7 @@ class CardGameScene: MyGameScene {
 //            let xPosition = spriteTabRect.origin.x - spriteTabRect.size.width / 2 + CGFloat(column) * tableCellSize + tableCellSize / 2
 //            let yPosition = spriteTabRect.origin.y - spriteTabRect.size.height / 2 + tableCellSize * 1.10 / 2 + CGFloat(row) * tableCellSize * 1.10
             let emptySprite = MySKNode(texture: getTexture(NoColor), type: .EmptyCardType, value: NoColor)
-            emptySprite.position = calculateOfCardPosition(column, row: row)
+            emptySprite.position = gameArray[column][row].position
             emptySprite.size = CGSizeMake(spriteSize.width, spriteSize.height)
             emptySprite.name = "\(emptySpriteTxt)-\(column)-\(row)"
             emptySprite.column = column
@@ -273,15 +277,6 @@ class CardGameScene: MyGameScene {
             addChild(emptySprite)
         }
     }
-
-    func calculateOfCardPosition(column: Int, row: Int) -> CGPoint {
-        let cardPositionMultiplier = GV.deviceConstants.cardPositionMultiplier
-        return CGPointMake(
-            spriteTabRect.origin.x - spriteTabRect.size.width / 2 + CGFloat(column) * tableCellSize + tableCellSize / 2,
-            spriteTabRect.origin.y - spriteTabRect.size.height / 3.0 + tableCellSize * cardPositionMultiplier / 2 + CGFloat(row) * tableCellSize * cardPositionMultiplier
-        )
-    }
-    
 
     override func specialButtonPressed(buttonName: String) {
         if buttonName == "cardPackege" {
@@ -383,7 +378,7 @@ class CardGameScene: MyGameScene {
             
             collisionActive = false
             //movingSprite.removeFromParent()
-            gameArray[movingSprite.column][movingSprite.row] = false
+            gameArray[movingSprite.column][movingSprite.row].used = false
             checkGameFinished()
         } else {
             updateSpriteCount(-1)
@@ -429,7 +424,7 @@ class CardGameScene: MyGameScene {
             
             playSound("Sprite1", volume: GV.soundVolume)
             
-            gameArray[movingSprite.column][movingSprite.row] = false
+            gameArray[movingSprite.column][movingSprite.row].used = false
             movingSprite.removeFromParent()
             countMovingSprites = 0
             updateSpriteCount(-1)
@@ -604,7 +599,7 @@ class CardGameScene: MyGameScene {
                         self.childNodeWithName(searchName)!.removeFromParent()
 //                        let colorTabLine = ColorTabLine(colorIndex: colorIndex, spriteName: spriteName, spriteValue: savedSpriteInCycle.minValue)
 //                        colorTab.append(colorTabLine)
-                        gameArray[savedSpriteInCycle.column][savedSpriteInCycle.row] = false
+                        gameArray[savedSpriteInCycle.column][savedSpriteInCycle.row].used = false
                     }
                 case .AddedFromShowCard:
                     if cardPlaceButtonAddedToParent {
@@ -624,7 +619,7 @@ class CardGameScene: MyGameScene {
                     showCard!.type = .ShowCardType
                     self.childNodeWithName(searchName)!.removeFromParent()
                     self.addChild(showCard!)
-                    gameArray[savedSpriteInCycle.column][savedSpriteInCycle.row] = false
+                    gameArray[savedSpriteInCycle.column][savedSpriteInCycle.row].used = false
                     makeEmptyCard(savedSpriteInCycle.column, row: savedSpriteInCycle.row)
                     let actionMove = SKAction.moveTo(cardPlaceButton!.position, duration: 0.5)
                     showCard!.runAction(actionMove)
@@ -645,7 +640,7 @@ class CardGameScene: MyGameScene {
                     sprite.maxValue = savedSpriteInCycle.maxValue
                     sprite.BGPictureAdded = savedSpriteInCycle.BGPictureAdded
                     sprite.name = savedSpriteInCycle.name
-                    gameArray[savedSpriteInCycle.column][savedSpriteInCycle.row] = true
+                    gameArray[savedSpriteInCycle.column][savedSpriteInCycle.row].used = true
                     addPhysicsBody(sprite)
                     self.addChild(sprite)
                     updateSpriteCount(1)
@@ -816,22 +811,23 @@ class CardGameScene: MyGameScene {
                 } else if movedFromNode.type == .EmptyCardType {
                     
                 } else {
+                    var founded = false
                     let line = JGXLine(fromPoint: movedFromNode.position, toPoint: touchLocation, inFrame: self.frame, lineSize: movedFromNode.size.width)
                     let pointOnTheWall = line.line.toPoint
-                    makeHelpLine(movedFromNode.position, toPoint: pointOnTheWall, lineWidth: movedFromNode.size.width, numberOfLine: 1)
+                    founded = makeHelpLine(movedFromNode.position, toPoint: pointOnTheWall, lineWidth: movedFromNode.size.width, numberOfLine: 1)
                     
                     
-                    if GV.showHelpLines > 1 {
+                    if !founded && GV.showHelpLines > 1 {
                         let mirroredLine1 = line.createMirroredLine()
-                        makeHelpLine(mirroredLine1.line.fromPoint, toPoint: mirroredLine1.line.toPoint, lineWidth: movedFromNode.size.width, numberOfLine: 2)
+                        founded = makeHelpLine(mirroredLine1.line.fromPoint, toPoint: mirroredLine1.line.toPoint, lineWidth: movedFromNode.size.width, numberOfLine: 2)
                         
-                        if GV.showHelpLines > 2 {
+                        if !founded && GV.showHelpLines > 2 {
                             let mirroredLine2 = mirroredLine1.createMirroredLine()
-                            makeHelpLine(mirroredLine2.line.fromPoint, toPoint: mirroredLine2.line.toPoint, lineWidth: movedFromNode.size.width, numberOfLine: 3)
+                            founded = makeHelpLine(mirroredLine2.line.fromPoint, toPoint: mirroredLine2.line.toPoint, lineWidth: movedFromNode.size.width, numberOfLine: 3)
                             
-                            if GV.showHelpLines > 3 {
+                            if !founded && GV.showHelpLines > 3 {
                                 let mirroredLine3 = mirroredLine2.createMirroredLine()
-                                makeHelpLine(mirroredLine3.line.fromPoint, toPoint: mirroredLine3.line.toPoint, lineWidth: movedFromNode.size.width, numberOfLine: 4)
+                                founded = makeHelpLine(mirroredLine3.line.fromPoint, toPoint: mirroredLine3.line.toPoint, lineWidth: movedFromNode.size.width, numberOfLine: 4)
                             }
                         }
                     }
@@ -848,18 +844,23 @@ class CardGameScene: MyGameScene {
         }
     }
     
-    override func makeHelpLine(fromPoint: CGPoint, toPoint: CGPoint, lineWidth: CGFloat, numberOfLine: Int) {
+    override func makeHelpLine(fromPoint: CGPoint, toPoint: CGPoint, lineWidth: CGFloat, numberOfLine: Int)->Bool {
 
 //        let offset = toPoint - fromPoint
 //        let direction = offset.normalized()
 //        let shootAmount = direction * 1200
 //        let realDest = shootAmount + fromPoint
+        var toPoint = toPoint
+        var pointFounded = false
+        if let closestPoint = findClosestPoint(fromPoint, P2: toPoint, lineWidth: lineWidth) {
+            toPoint = gameArray[closestPoint.column][closestPoint.row].position
+            pointFounded = true
+        }
         
-        let closestPoint = findClosestPoint(fromPoint, P2: toPoint)
         
         let pathToDraw:CGMutablePathRef = CGPathCreateMutable()
         let myLine:SKShapeNode = SKShapeNode(path:pathToDraw)
-        myLine.lineWidth = lineWidth
+        myLine.lineWidth = lineWidth / 5
         
         myLine.name = "myLine"
         CGPathMoveToPoint(pathToDraw, nil, fromPoint.x, fromPoint.y)
@@ -868,52 +869,74 @@ class CardGameScene: MyGameScene {
         
         myLine.path = pathToDraw
     
-        myLine.strokeColor = SKColor(red: 1.0, green: 0, blue: 0, alpha: 0.15) // GV.colorSets[GV.colorSetIndex][colorIndex + 1]
+        myLine.strokeColor = SKColor(red: 1.0, green: 0, blue: 0, alpha: 0.5) // GV.colorSets[GV.colorSetIndex][colorIndex + 1]
         
         
         self.addChild(myLine)
+        return pointFounded
         
     }
     
-    func findClosestPoint(P1: CGPoint, P2: CGPoint) -> CGPoint {
+    func findClosestPoint(P1: CGPoint, P2: CGPoint, lineWidth: CGFloat) -> Founded? {
         
-        struct Founded {
-            var column: Int
-            var row: Int
-            var point: CGPoint
-            var distance: CGFloat
-            var distToPoint: CGFloat
-            init() {
-                distance = 10000
-                distToPoint = 10000
-                column = 0
-                row = 0
-                point = CGPointZero
-                
-            }
-        }
-        let offset = P1 - P2
+/*
+        Ax+By=C  - Equation of a line
+        Line is given with 2 Points (x1, y1) and (x2, y2)
+        A = y2-y1
+        B = x1-x2
+        C = A*x1+B*y1
+*/
+        //let offset = P1 - P2
         var founded = Founded()
         
         for column in 0..<countColumns {
             for row in 0..<countRows {
-                let P0 = gameArrayPositions[column][row].position
-                let dist = ((offset.y) * P0.x - (offset.x) * P0.y + P2.x * P1.y + P2.y * P1.x) / offset.length()
-                let distToP1 = (P1 - P0).length()
-                if dist < founded.distance  && distToP1 < founded.distToPoint {
-                    founded.distance = dist
-                    founded.distToPoint = distToP1
-                    founded.point = P0
-                    founded.column = column
-                    founded.row = row
-                    print(founded)
+                if gameArray[column][row].used {
+                    let P0 = gameArray[column][row].position
+                    if (P0 - P1).length() > lineWidth { // check all others but not me!!!
+                        print (P1, "\n", P2, "\n", P0)
+                        let intersectionPoint = findIntersectionPoint(P1, b:P2, c:P0)
+                        
+                        let distanceToP0 = (intersectionPoint - P0).length()
+                        let distanceToP1 = (intersectionPoint - P1).length()
+                        
+    //                    print(distanceToP0, " ", distanceToP1)
+                        
+                        if distanceToP0 < lineWidth {
+                            if founded.distanceToP1 > distanceToP1 {
+                                founded.column = column
+                                founded.row = row
+                                founded.distanceToP1 = distanceToP1
+                                founded.distanceToP0 = distanceToP0
+                            }
+                        }
+                        print(column, row, founded)
+                    }
                 }
             }
         }
         print(founded)
-        // distance = ((offset.y) * x0 - (offset.x1) * y0 + x2 * y1 + y2 * x1) / offset.length()
-        return founded.point
-        
+        if founded.distanceToP1 != founded.maxDistance {
+            return founded
+        } else {
+            return nil
+        }
+    }
+    
+    func findIntersectionPoint(a:CGPoint, b:CGPoint, c:CGPoint) ->CGPoint {
+        let x1=a.x
+        let y1=a.y
+        let x2=b.x
+        let y2=b.y
+        let x3=c.x
+        let y3=c.y
+        let px = x2-x1
+        let py = y2-y1
+        let dAB = px*px + py*py
+        let u = ((x3 - x1) * px + (y3 - y1) * py) / dAB
+        let x = x1 + u * px
+        let y = y1 + u * py
+        return CGPointMake(x, y)
     }
 
 
@@ -1054,7 +1077,7 @@ class CardGameScene: MyGameScene {
                 let actionMoveStopped =  SKAction.runBlock({
                     self.push(sprite, status: .Removed)
                     sprite.hidden = true
-                    self.gameArray[sprite.column][sprite.row] = false
+                    self.gameArray[sprite.column][sprite.row].used = false
                     //sprite.size = CGSizeMake(sprite.size.width / 3, sprite.size.height / 3)
                     sprite.colorBlendFactor = 4
                     self.playSound("Drop", volume: GV.soundVolume)
@@ -1104,7 +1127,7 @@ class CardGameScene: MyGameScene {
                         startNode.size = foundedCard!.size
                         startNode.position = foundedCard!.position
                         startNode.type = .SpriteType
-                        gameArray[startNode.column][startNode.row] = true
+                        gameArray[startNode.column][startNode.row].used = true
                         addPhysicsBody(startNode)
                         foundedCard!.removeFromParent()
                         founded = true

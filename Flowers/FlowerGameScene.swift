@@ -35,7 +35,7 @@ class FlowerGameScene: MyGameScene {
         var positionsTab = [(Int, Int)]() // all available Positions
         for column in 0..<countColumns {
             for row in 0..<countRows {
-                if !gameArray[column][row] {
+                if !gameArray[column][row].used {
                     let appendValue = (column, row)
                     positionsTab.append(appendValue)
                 }
@@ -60,7 +60,7 @@ class FlowerGameScene: MyGameScene {
             
             sprite.position = CGPoint(x: xPosition, y: yPosition)
             sprite.startPosition = sprite.position
-            gameArray[aktColumn][aktRow] = true
+            gameArray[aktColumn][aktRow].used = true
             positionsTab.removeAtIndex(index)
             
             sprite.column = aktColumn
@@ -166,7 +166,7 @@ class FlowerGameScene: MyGameScene {
             //            sprite.size.height = aktSize
             playSound("Sprite1", volume: GV.soundVolume)
             
-            gameArray[movingSprite.column][movingSprite.row] = false
+            gameArray[movingSprite.column][movingSprite.row].used = false
             movingSprite.removeFromParent()
             countMovingSprites = 0
             updateSpriteCount(-1)
@@ -201,8 +201,8 @@ class FlowerGameScene: MyGameScene {
             
             let actionMove2 = SKAction.moveTo(spriteDest, duration: 1.5)
             sprite.runAction(SKAction.sequence([actionMove2, actionMoveDone]), completion: {self.countMovingSprites--})
-            gameArray[movingSprite.column][movingSprite.row] = false
-            gameArray[sprite.column][sprite.row] = false
+            gameArray[movingSprite.column][movingSprite.row].used = false
+            gameArray[sprite.column][sprite.row].used = false
             updateSpriteCount(-2)
 //            spriteCount--
             playSound("Drop", volume: GV.soundVolume)
@@ -254,7 +254,7 @@ class FlowerGameScene: MyGameScene {
         
         collisionActive = false
         movingSprite.removeFromParent()
-        gameArray[movingSprite.column][movingSprite.row] = false
+        gameArray[movingSprite.column][movingSprite.row].used = false
         checkGameFinished()
     }
     override func prepareContainers() {
@@ -320,7 +320,7 @@ class FlowerGameScene: MyGameScene {
                         self.childNodeWithName(searchName)!.removeFromParent()
                         let colorTabLine = ColorTabLine(colorIndex: colorIndex, spriteName: spriteName, spriteValue: savedSpriteInCycle.minValue)
                         colorTab.append(colorTabLine)
-                        gameArray[savedSpriteInCycle.column][savedSpriteInCycle.row] = false
+                        gameArray[savedSpriteInCycle.column][savedSpriteInCycle.row].used = false
                     }
                 case .Removed:
                     //let spriteTexture = SKTexture(imageNamed: "sprite\(savedSpriteInCycle.colorIndex)")
@@ -334,7 +334,7 @@ class FlowerGameScene: MyGameScene {
                     sprite.row = savedSpriteInCycle.row
                     sprite.hitCounter = savedSpriteInCycle.hitCounter
                     sprite.name = savedSpriteInCycle.name
-                    gameArray[savedSpriteInCycle.column][savedSpriteInCycle.row] = true
+                    gameArray[savedSpriteInCycle.column][savedSpriteInCycle.row].used = true
                     addPhysicsBody(sprite)
                     self.addChild(sprite)
                     updateSpriteCount(1)
@@ -577,7 +577,7 @@ class FlowerGameScene: MyGameScene {
                 let actionMoveStopped =  SKAction.runBlock({
                     self.push(sprite, status: .Removed)
                     sprite.hidden = true
-                    self.gameArray[sprite.column][sprite.row] = false
+                    self.gameArray[sprite.column][sprite.row].used = false
                     //sprite.size = CGSizeMake(sprite.size.width / 3, sprite.size.height / 3)
                     sprite.colorBlendFactor = 4
                     self.playSound("Drop", volume: GV.soundVolume)

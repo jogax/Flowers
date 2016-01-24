@@ -24,21 +24,27 @@ class CardGameScene: MyGameScene {
     
     struct Founded {
         let maxDistance: CGFloat = 100000.0
+        var point: CGPoint
         var column: Int
         var row: Int
+        var foundContainer: Bool
         var distanceToP1: CGFloat
         var distanceToP0: CGFloat
-        init(column: Int, row: Int, distanceToP1: CGFloat, distanceToP0: CGFloat) {
+        init(column: Int, row: Int, foundContainer: Bool, point: CGPoint, distanceToP1: CGFloat, distanceToP0: CGFloat) {
             self.distanceToP1 = distanceToP1
             self.distanceToP0 = distanceToP0
             self.column = column
             self.row = row
+            self.foundContainer = foundContainer
+            self.point = point
         }
         init() {
             self.distanceToP1 = maxDistance
             self.distanceToP0 = maxDistance
+            self.point = CGPointMake(0, 0)
             self.column = 0
             self.row = 0
+            self.foundContainer = false
         }
     }
     
@@ -67,6 +73,7 @@ class CardGameScene: MyGameScene {
     let nextLevel = true
     let previousLevel = false
     var lastUpdateSec = 0
+    var lastClosestPoint: Founded?
     //var gameArrayPositions = [[GameArrayPositions]]()
     
     
@@ -317,7 +324,12 @@ class CardGameScene: MyGameScene {
                     case .NoTrembling: break
                     case .ChangeSize:  aktSprite.size = CGSizeMake(aktSprite.origSize.width +  aktSprite.trembling, aktSprite.origSize.height +  aktSprite.trembling)
                     case .ChangePos: break
-                case .ChangeDirection: aktSprite.zRotation = CGFloat(CGFloat(M_PI)/CGFloat(aktSprite.trembling == 0 ? 16 : aktSprite.trembling * CGFloat(8)))
+                    case .ChangeDirection: aktSprite.zRotation = CGFloat(CGFloat(M_PI)/CGFloat(aktSprite.trembling == 0 ? 16 : aktSprite.trembling * CGFloat(8)))
+                    case .ChangeSizeOnce:
+                        if aktSprite.size == aktSprite.origSize {
+                            aktSprite.size.width += adder
+                            aktSprite.size.height += adder
+                        }
                 }
             }
         }
@@ -846,14 +858,39 @@ class CardGameScene: MyGameScene {
     
     override func makeHelpLine(fromPoint: CGPoint, toPoint: CGPoint, lineWidth: CGFloat, numberOfLine: Int)->Bool {
 
-//        let offset = toPoint - fromPoint
-//        let direction = offset.normalized()
-//        let shootAmount = direction * 1200
-//        let realDest = shootAmount + fromPoint
         var toPoint = toPoint
         var pointFounded = false
         if let closestPoint = findClosestPoint(fromPoint, P2: toPoint, lineWidth: lineWidth) {
-            toPoint = gameArray[closestPoint.column][closestPoint.row].position
+            toPoint = closestPoint.point //gameArray[closestPoint.column][closestPoint.row].position
+            var tremblingCardPosition = CGPointZero
+            if lastClosestPoint != nil && lastClosestPoint!.point != closestPoint.point {
+                if lastClosestPoint!.foundContainer {
+                   tremblingCardPosition = containers[lastClosestPoint!.column].mySKNode.position
+                } else {
+                   tremblingCardPosition = gameArray[lastClosestPoint!.column][lastClosestPoint!.row].position
+                }
+                let nodes = nodesAtPoint(tremblingCardPosition)
+                for index in 0..<nodes.count {
+                    if nodes[index] is MySKNode {
+                        (nodes[index] as! MySKNode).tremblingType = .NoTrembling
+                        tremblingSprites.removeAll()
+                    }
+                }
+            }
+            if closestPoint.foundContainer {
+                tremblingCardPosition = containers[closestPoint.column].mySKNode.position
+            } else {
+                tremblingCardPosition = gameArray[closestPoint.column][closestPoint.row].position
+            }
+            let nodes = nodesAtPoint(tremblingCardPosition)
+            for index in 0..<nodes.count {
+                if nodes[index] is MySKNode {
+                    tremblingSprites.append(nodes[index] as! MySKNode)
+                    (nodes[index] as! MySKNode).tremblingType = .ChangeSize
+                }
+            }
+            lastClosestPoint = closestPoint
+
             pointFounded = true
         }
         
@@ -870,6 +907,7 @@ class CardGameScene: MyGameScene {
         myLine.path = pathToDraw
     
         myLine.strokeColor = SKColor(red: 1.0, green: 0, blue: 0, alpha: 0.5) // GV.colorSets[GV.colorSetIndex][colorIndex + 1]
+        myLine.zPosition = 10
         
         
         self.addChild(myLine)
@@ -894,28 +932,50 @@ class CardGameScene: MyGameScene {
                 if gameArray[column][row].used {
                     let P0 = gameArray[column][row].position
                     if (P0 - P1).length() > lineWidth { // check all others but not me!!!
-                        print (P1, "\n", P2, "\n", P0)
                         let intersectionPoint = findIntersectionPoint(P1, b:P2, c:P0)
                         
                         let distanceToP0 = (intersectionPoint - P0).length()
                         let distanceToP1 = (intersectionPoint - P1).length()
+                        let distanceToP2 = (intersectionPoint - P2).length()
+                        let lengthOfLineSegment = (P1 - P2).length()
                         
-    //                    print(distanceToP0, " ", distanceToP1)
-                        
-                        if distanceToP0 < lineWidth {
+                        if distanceToP0 < lineWidth && distanceToP2 < lengthOfLineSegment {
                             if founded.distanceToP1 > distanceToP1 {
-                                founded.column = column
-                                founded.row = row
+                                founded.point = intersectionPoint
                                 founded.distanceToP1 = distanceToP1
                                 founded.distanceToP0 = distanceToP0
+                                founded.column = column
+                                founded.row = row
+                                founded.foundContainer = false
                             }
                         }
-                        print(column, row, founded)
                     }
                 }
             }
         }
-        print(founded)
+        
+        for index in 0..<countContainers {
+            let P0 = containers[index].mySKNode.position
+            if (P0 - P1).length() > lineWidth { // check all others but not me!!!
+                let intersectionPoint = findIntersectionPoint(P1, b:P2, c:P0)
+                
+                let distanceToP0 = (intersectionPoint - P0).length()
+                let distanceToP1 = (intersectionPoint - P1).length()
+                let distanceToP2 = (intersectionPoint - P2).length()
+                let lengthOfLineSegment = (P1 - P2).length()
+                
+                if distanceToP0 < lineWidth && distanceToP2 < lengthOfLineSegment {
+                    if founded.distanceToP1 > distanceToP1 {
+                        founded.point = intersectionPoint
+                        founded.distanceToP1 = distanceToP1
+                        founded.distanceToP0 = distanceToP0
+                        founded.column = index
+                        founded.foundContainer = true
+                    }
+                }
+            }
+
+        }
         if founded.distanceToP1 != founded.maxDistance {
             return founded
         } else {
@@ -942,6 +1002,15 @@ class CardGameScene: MyGameScene {
 
     override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
         
+        if lastClosestPoint != nil {
+            let nodes = nodesAtPoint(gameArray[lastClosestPoint!.column][lastClosestPoint!.row].position)
+            for index in 0..<nodes.count {
+                if nodes[index] is MySKNode {
+                    (nodes[index] as! MySKNode).tremblingType = .NoTrembling
+                    tremblingSprites.removeAll()
+                }
+            }
+        }
         let firstTouch = touches.first
         let touchLocation = firstTouch!.locationInNode(self)
         
@@ -1223,7 +1292,7 @@ class CardGameScene: MyGameScene {
                         cardToChange!.startPosition = startPosition
                         //
                         for index in 0..<tremblingSprites.count {
-                            tremblingSprites[index].size = tremblingSprites[index].origSize
+                            //tremblingSprites[index].size = tremblingSprites[index].origSize
                             tremblingSprites[index].tremblingType = .NoTrembling
                             tremblingSprites[index].zRotation = 0
                             tremblingSprites[index].zPosition = 0
@@ -1232,7 +1301,7 @@ class CardGameScene: MyGameScene {
                         cardToChange = nil
                     } else {
                         exchangeModus = true
-                        aktSprite.origSize = aktSprite.size
+                        //aktSprite.origSize = aktSprite.size
                         tremblingSprites.append(aktSprite)
                         aktSprite.tremblingType = .ChangeSize
                         cardToChange = aktSprite

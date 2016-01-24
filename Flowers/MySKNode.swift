@@ -11,7 +11,7 @@ enum MySKNodeType: Int {
 }
 
 enum TremblingType: Int {
-    case NoTrembling = 0, ChangeSize, ChangePos, ChangeDirection
+    case NoTrembling = 0, ChangeSize, ChangeSizeOnce, ChangePos, ChangeDirection
 }
 let NoValue = -1
 let NoColor = 1000
@@ -49,7 +49,17 @@ class MySKNode: SKSpriteNode {
     var origSize = CGSizeMake(0, 0)
 
     var trembling: CGFloat = 0
-    var tremblingType: TremblingType = .NoTrembling
+    var tremblingType: TremblingType = .NoTrembling {
+        didSet {
+            if oldValue != tremblingType {
+                if tremblingType == .NoTrembling {
+                    self.size = self.origSize
+                } else {
+                    self.origSize = self.size
+                }
+            }
+        }
+    }
     
     var isCard = false
     

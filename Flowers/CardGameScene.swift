@@ -697,7 +697,6 @@ class CardGameScene: MyGameScene {
                             self.childNodeWithName("\(self.emptySpriteTxt)-\(sprite.column)-\(sprite.row)")!.removeFromParent()
                         }
                     }))
-                    sprite.zPosition = 50
                     sprite.runAction(SKAction.sequence(actionMoveArray))
 //                    let column = sprite.column
 //                    let row = sprite.row
@@ -915,7 +914,7 @@ class CardGameScene: MyGameScene {
         myLine.path = pathToDraw
     
         myLine.strokeColor = SKColor(red: 1.0, green: 0, blue: 0, alpha: 0.5) // GV.colorSets[GV.colorSetIndex][colorIndex + 1]
-        myLine.zPosition = 50
+        myLine.zPosition = 10
         
         
         self.addChild(myLine)

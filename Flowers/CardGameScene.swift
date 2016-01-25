@@ -817,6 +817,11 @@ class CardGameScene: MyGameScene {
                     cardPlaceButtonAddedToParent = true
                     addChild(cardPlaceButton!)
                 }
+            }  else if movedFromNode == aktNode && tremblingSprites.count > 0 { // stop trembling
+                for index in 0..<tremblingSprites.count {
+                    tremblingSprites[index].tremblingType = .NoTrembling
+                }
+                tremblingSprites.removeAll()
             } else if movedFromNode != aktNode && !exchangeModus {
                 if movedFromNode.type == .ButtonType {
                     //movedFromNode.texture = atlas.textureNamed("\(movedFromNode.name!)")
@@ -860,10 +865,10 @@ class CardGameScene: MyGameScene {
 
         var toPoint = toPoint
         var pointFounded = false
-        if let closestPoint = findClosestPoint(fromPoint, P2: toPoint, lineWidth: lineWidth) {
+        if let closestPoint = findClosestPoint(fromPoint, P2: toPoint, lineWidth: lineWidth, movedFrom: movedFromNode) {
             toPoint = closestPoint.point //gameArray[closestPoint.column][closestPoint.row].position
             var tremblingCardPosition = CGPointZero
-            if lastClosestPoint != nil && lastClosestPoint!.point != closestPoint.point {
+            if lastClosestPoint != nil && ((lastClosestPoint!.column != closestPoint.column) ||  (lastClosestPoint!.row != closestPoint.row)) {
                 if lastClosestPoint!.foundContainer {
                    tremblingCardPosition = containers[lastClosestPoint!.column].mySKNode.position
                 } else {
@@ -876,21 +881,23 @@ class CardGameScene: MyGameScene {
                         tremblingSprites.removeAll()
                     }
                 }
+                lastClosestPoint = nil
             }
-            if closestPoint.foundContainer {
-                tremblingCardPosition = containers[closestPoint.column].mySKNode.position
-            } else {
-                tremblingCardPosition = gameArray[closestPoint.column][closestPoint.row].position
-            }
-            let nodes = nodesAtPoint(tremblingCardPosition)
-            for index in 0..<nodes.count {
-                if nodes[index] is MySKNode {
-                    tremblingSprites.append(nodes[index] as! MySKNode)
-                    (nodes[index] as! MySKNode).tremblingType = .ChangeSize
+            if lastClosestPoint == nil {
+                if closestPoint.foundContainer {
+                    tremblingCardPosition = containers[closestPoint.column].mySKNode.position
+                } else {
+                    tremblingCardPosition = gameArray[closestPoint.column][closestPoint.row].position
                 }
+                let nodes = nodesAtPoint(tremblingCardPosition)
+                for index in 0..<nodes.count {
+                    if nodes[index] is MySKNode {
+                        tremblingSprites.append(nodes[index] as! MySKNode)
+                        (nodes[index] as! MySKNode).tremblingType = .ChangeSize
+                    }
+                }
+                lastClosestPoint = closestPoint
             }
-            lastClosestPoint = closestPoint
-
             pointFounded = true
         }
         
@@ -915,7 +922,7 @@ class CardGameScene: MyGameScene {
         
     }
     
-    func findClosestPoint(P1: CGPoint, P2: CGPoint, lineWidth: CGFloat) -> Founded? {
+    func findClosestPoint(P1: CGPoint, P2: CGPoint, lineWidth: CGFloat, movedFrom: MySKNode?) -> Founded? {
         
 /*
         Ax+By=C  - Equation of a line
@@ -931,7 +938,8 @@ class CardGameScene: MyGameScene {
             for row in 0..<countRows {
                 if gameArray[column][row].used {
                     let P0 = gameArray[column][row].position
-                    if (P0 - P1).length() > lineWidth { // check all others but not me!!!
+//                    if (P0 - P1).length() > lineWidth { // check all others but not me!!!
+                    if !(movedFrom!.column == column && movedFrom!.row == row) {
                         let intersectionPoint = findIntersectionPoint(P1, b:P2, c:P0)
                         
                         let distanceToP0 = (intersectionPoint - P0).length()

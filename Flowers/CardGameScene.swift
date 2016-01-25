@@ -697,7 +697,7 @@ class CardGameScene: MyGameScene {
                             self.childNodeWithName("\(self.emptySpriteTxt)-\(sprite.column)-\(sprite.row)")!.removeFromParent()
                         }
                     }))
-
+                    sprite.zPosition = 50
                     sprite.runAction(SKAction.sequence(actionMoveArray))
 //                    let column = sprite.column
 //                    let row = sprite.row
@@ -822,6 +822,7 @@ class CardGameScene: MyGameScene {
                     tremblingSprites[index].tremblingType = .NoTrembling
                 }
                 tremblingSprites.removeAll()
+                lastClosestPoint = nil
             } else if movedFromNode != aktNode && !exchangeModus {
                 if movedFromNode.type == .ButtonType {
                     //movedFromNode.texture = atlas.textureNamed("\(movedFromNode.name!)")
@@ -914,7 +915,7 @@ class CardGameScene: MyGameScene {
         myLine.path = pathToDraw
     
         myLine.strokeColor = SKColor(red: 1.0, green: 0, blue: 0, alpha: 0.5) // GV.colorSets[GV.colorSetIndex][colorIndex + 1]
-        myLine.zPosition = 10
+        myLine.zPosition = 50
         
         
         self.addChild(myLine)
@@ -1083,7 +1084,7 @@ class CardGameScene: MyGameScene {
             let touchesEndedAt = NSDate()
             
             let downTime = touchesEndedAt.timeIntervalSinceDate(touchesBeganAt!)
-            if downTime < 0.1 && aktNode == movedFromNode {
+            if downTime < 0.3 && aktNode == movedFromNode {
                 tapLocation = touchLocation
                 doubleTapped()
                 return
@@ -1092,7 +1093,7 @@ class CardGameScene: MyGameScene {
             if exchangeModus {
                 exchangeModus = false
                 for index in 0..<tremblingSprites.count {
-                    tremblingSprites[index].size = tremblingSprites[index].origSize
+                    tremblingSprites[index].tremblingType = .NoTrembling
                 }
                 tremblingSprites.removeAll()
             }
@@ -1100,8 +1101,8 @@ class CardGameScene: MyGameScene {
             if startNode.type == .SpriteType && (aktNode == nil || aktNode! != movedFromNode) {
                 let sprite = movedFromNode// as! SKSpriteNode
                 
-                
-                sprite!.physicsBody = SKPhysicsBody(circleOfRadius: sprite!.size.width/2)
+                sprite.zPosition = 50
+                sprite.physicsBody = SKPhysicsBody(circleOfRadius: sprite!.size.width/2)
                 sprite.physicsBody?.dynamic = true
                 sprite.physicsBody?.categoryBitMask = PhysicsCategory.MovingSprite
                 sprite.physicsBody?.contactTestBitMask = PhysicsCategory.Sprite | PhysicsCategory.Container //| PhysicsCategory.WallAround
@@ -1145,12 +1146,6 @@ class CardGameScene: MyGameScene {
                 let actionMove3 = SKAction.moveTo(pointOnTheWall3, duration: mirroredLine3.duration)
                 
                 
-                //                let waitSparkAction = SKAction.runBlock({
-                //                    sprite.hidden = true
-                //                    sleep(0)
-                //                    sprite.removeFromParent()
-                //                })
-                //
                 let actionMoveStopped =  SKAction.runBlock({
                     self.push(sprite, status: .Removed)
                     sprite.hidden = true
@@ -1159,17 +1154,6 @@ class CardGameScene: MyGameScene {
                     sprite.colorBlendFactor = 4
                     self.playSound("Drop", volume: GV.soundVolume)
                     sprite.removeFromParent()
-                    //                    let sparkEmitter = SKEmitterNode(fileNamed: "MyParticle.sks")
-                    //                    sparkEmitter?.position = sprite.position
-                    //                    sparkEmitter?.zPosition = 1
-                    //                    sparkEmitter?.particleLifetime = 1
-                    //                    let emitterDuration = CGFloat(sparkEmitter!.numParticlesToEmit) * sparkEmitter!.particleLifetime
-                    //
-                    //                    let wait = SKAction.waitForDuration(NSTimeInterval(emitterDuration))
-                    //
-                    //                    let remove = SKAction.runBlock({sparkEmitter!.removeFromParent()/*; print("Emitter removed")*/})
-                    //                    sparkEmitter!.runAction(SKAction.sequence([wait, remove]))
-                    //                    self.addChild(sparkEmitter!)
                     self.pull()
                     self.userInteractionEnabled = true
                     

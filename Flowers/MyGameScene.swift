@@ -634,6 +634,7 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
                 fingerNode.name = "finger"
                 fingerNode.position = touchLocation
                 fingerNode.size = CGSizeMake(25,25)
+                fingerNode.zPosition = 50
                 addChild(fingerNode)
             }
             

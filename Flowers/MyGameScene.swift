@@ -160,9 +160,15 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
     struct GameArrayPositions {
         var used: Bool
         var position: CGPoint
+        var colorIndex: Int
+        var minValue: Int
+        var maxValue: Int
         init() {
             self.used = false
             self.position = CGPointMake(0, 0)
+            self.colorIndex = NoColor
+            self.minValue = NoValue
+            self.maxValue = NoValue
         }
     }
 
@@ -386,7 +392,7 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         addChild(settingsButton!)
         
         let restartTexture = SKTexture(image: images.getRestart())
-        restartButton = MySKButton(texture: restartTexture, frame: CGRectMake(buttonXPosNormalized * 3.0, buttonYPos, buttonSize, buttonSize))
+        restartButton = MySKButton(texture: restartTexture, frame: CGRectMake(buttonXPosNormalized * 2.5, buttonYPos, buttonSize, buttonSize))
         restartButton!.name = "restart"
         addChild(restartButton!)
         

@@ -57,6 +57,8 @@ class CardGameScene: MyGameScene {
     
     var cardPackege: MySKButton?
     var cardPlaceButton: MySKButton?
+    var tippsButton: MySKButton?
+    
     var cardPlaceButtonAddedToParent = false
     var cardToChange: MySKNode?
     
@@ -98,19 +100,25 @@ class CardGameScene: MyGameScene {
     override func specialPrepareFuncFirst() {
         let cardSize = CGSizeMake(buttonSize * sizeMultiplier.width * 0.8, buttonSize * sizeMultiplier.height * 0.8)
         let cardPackageButtonTexture = SKTexture(image: images.getCardPackage())
-        cardPackege = MySKButton(texture: cardPackageButtonTexture, frame: CGRectMake(buttonXPosNormalized * 5.0, buttonYPos, cardSize.width, cardSize.height), makePicture: false)
+        cardPackege = MySKButton(texture: cardPackageButtonTexture, frame: CGRectMake(buttonXPosNormalized * 4.0, buttonYPos, cardSize.width, cardSize.height), makePicture: false)
         cardPackege!.name = "cardPackege"
         addChild(cardPackege!)
         
         showCardFromStack = nil
         
         let cardPlaceTexture = SKTexture(imageNamed: "emptycard")
-        cardPlaceButton = MySKButton(texture: cardPlaceTexture, frame: CGRectMake(buttonXPosNormalized * 7.0, buttonYPos, cardSize.width, cardSize.height), makePicture: false)
+        cardPlaceButton = MySKButton(texture: cardPlaceTexture, frame: CGRectMake(buttonXPosNormalized * 6.0, buttonYPos, cardSize.width, cardSize.height), makePicture: false)
         cardPlaceButton!.name = "cardPlace"
         addChild(cardPlaceButton!)
         cardPlaceButton!.alpha = 0.3
         cardPlaceButtonAddedToParent = true
         
+        let tippsTexture = SKTexture(image: images.getTipp())
+        tippsButton = MySKButton(texture: tippsTexture, frame: CGRectMake(buttonXPosNormalized * 7.5, buttonYPos, buttonSize, buttonSize))
+        tippsButton!.name = "tipps"
+        addChild(tippsButton!)
+        
+
         countContainers = levelsForPlay.aktLevel.countContainers
         countPackages = levelsForPlay.aktLevel.countPackages
         countSpritesProContainer = MaxCardValue //levelsForPlay.aktLevel.countSpritesProContainer
@@ -229,6 +237,10 @@ class CardGameScene: MyGameScene {
             sprite.position = cardPackege!.position
             sprite.startPosition = zielPosition
             gameArray[aktColumn][aktRow].used = true
+            gameArray[aktColumn][aktRow].colorIndex = sprite.colorIndex
+            gameArray[aktColumn][aktRow].minValue = sprite.minValue
+            gameArray[aktColumn][aktRow].maxValue = sprite.maxValue
+
             positionsTab.removeAtIndex(index)
             
             sprite.column = aktColumn
@@ -305,6 +317,28 @@ class CardGameScene: MyGameScene {
                 }
             }
         }
+        if buttonName == "tipps" {
+            createTipps()
+        }
+    }
+    
+    func createTipps() {
+        var indexArray = [(Int, Int)]()
+        for column in 0..<countColumns {
+            for row in 0..<countRows {
+                if gameArray[column][row].used {
+                    indexArray.append((column, row))
+                }
+            }
+        }
+        
+        let randomIndex = random!.getRandomInt(0, max: indexArray.count - 1)
+        
+        let (firstCardColumn, firstCardRow) = indexArray[randomIndex]
+        let firstCardColorIndex = gameArray[firstCardColumn][firstCardRow].colorIndex
+        let firstCardMinValue = gameArray[firstCardColumn][firstCardRow].minValue
+        let firstCardMaxValue = gameArray[firstCardColumn][firstCardRow].maxValue
+        
     }
 
     override func update(currentTime: NSTimeInterval) {
@@ -437,6 +471,8 @@ class CardGameScene: MyGameScene {
             playSound("Sprite1", volume: GV.soundVolume)
             
             gameArray[movingSprite.column][movingSprite.row].used = false
+            gameArray[sprite.column][sprite.row].minValue = sprite.minValue
+            gameArray[sprite.column][sprite.row].maxValue = sprite.maxValue
             movingSprite.removeFromParent()
             countMovingSprites = 0
             updateSpriteCount(-1)
@@ -652,7 +688,12 @@ class CardGameScene: MyGameScene {
                     sprite.maxValue = savedSpriteInCycle.maxValue
                     sprite.BGPictureAdded = savedSpriteInCycle.BGPictureAdded
                     sprite.name = savedSpriteInCycle.name
-                    gameArray[savedSpriteInCycle.column][savedSpriteInCycle.row].used = true
+ 
+                    gameArray[sprite.column][sprite.row].colorIndex = sprite.colorIndex
+                    gameArray[sprite.column][sprite.row].minValue = sprite.minValue
+                    gameArray[sprite.column][sprite.row].maxValue = sprite.maxValue
+                    
+                    gameArray[sprite.column][sprite.row].used = true
                     addPhysicsBody(sprite)
                     self.addChild(sprite)
                     updateSpriteCount(1)
@@ -690,6 +731,11 @@ class CardGameScene: MyGameScene {
                     sprite.startPosition = savedSpriteInCycle.startPosition
                     sprite.minValue = savedSpriteInCycle.minValue
                     sprite.maxValue = savedSpriteInCycle.maxValue
+
+                    gameArray[sprite.column][sprite.row].colorIndex = sprite.colorIndex
+                    gameArray[sprite.column][sprite.row].minValue = sprite.minValue
+                    gameArray[sprite.column][sprite.row].maxValue = sprite.maxValue
+                    
                     sprite.BGPictureAdded = savedSpriteInCycle.BGPictureAdded
                     actionMoveArray.append(SKAction.moveTo(savedSpriteInCycle.endPosition, duration: duration))
                     actionMoveArray.append(SKAction.runBlock({
@@ -736,6 +782,14 @@ class CardGameScene: MyGameScene {
                     let action = SKAction.moveTo(sprite.startPosition, duration: 1.0)
                     let action1 = SKAction.moveTo(sprite1.startPosition, duration: 1.0)
 
+                    gameArray[sprite.column][sprite.row].colorIndex = sprite.colorIndex
+                    gameArray[sprite.column][sprite.row].minValue = sprite.minValue
+                    gameArray[sprite.column][sprite.row].maxValue = sprite.maxValue
+                    
+                    gameArray[sprite1.column][sprite1.row].colorIndex = sprite1.colorIndex
+                    gameArray[sprite1.column][sprite1.row].minValue = sprite1.minValue
+                    gameArray[sprite1.column][sprite1.row].maxValue = sprite1.maxValue
+                    
                     sprite.runAction(SKAction.sequence([action]))
                     sprite1.runAction(SKAction.sequence([action1]))
                     
@@ -915,7 +969,7 @@ class CardGameScene: MyGameScene {
     
         myLine.strokeColor = SKColor(red: 1.0, green: 0, blue: 0, alpha: 0.5) // GV.colorSets[GV.colorSetIndex][colorIndex + 1]
         myLine.zPosition = 10
-        
+        myLine.lineCap = .Round
         
         self.addChild(myLine)
         return pointFounded

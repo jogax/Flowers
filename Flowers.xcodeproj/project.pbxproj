@@ -60,11 +60,9 @@
 		20FC65BE1BBBC82000775322 /* sprites.atlas in Resources */ = {isa = PBXBuildFile; fileRef = 20FC65BD1BBBC82000775322 /* sprites.atlas */; };
 		20FC65D91BBC123300775322 /* background.png in Resources */ = {isa = PBXBuildFile; fileRef = 20FC65D71BBC123300775322 /* background.png */; };
 		20FC65DA1BBC123300775322 /* bgImage.png in Resources */ = {isa = PBXBuildFile; fileRef = 20FC65D81BBC123300775322 /* bgImage.png */; };
-		20FC65DE1BBC127800775322 /* bumm.png in Resources */ = {isa = PBXBuildFile; fileRef = 20FC65DB1BBC127800775322 /* bumm.png */; };
 		20FC65DF1BBC127800775322 /* finger.png in Resources */ = {isa = PBXBuildFile; fileRef = 20FC65DC1BBC127800775322 /* finger.png */; };
 		20FC65E01BBC127800775322 /* frozen.png in Resources */ = {isa = PBXBuildFile; fileRef = 20FC65DD1BBC127800775322 /* frozen.png */; };
 		20FC65E51BBC12A100775322 /* Holz.png in Resources */ = {isa = PBXBuildFile; fileRef = 20FC65E11BBC12A100775322 /* Holz.png */; };
-		20FC65E81BBC12A100775322 /* spark.png in Resources */ = {isa = PBXBuildFile; fileRef = 20FC65E41BBC12A100775322 /* spark.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -147,11 +145,9 @@
 		20FC65D11BBC0FD400775322 /* aquarium.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = aquarium.png; path = ../../JFlowers/JFlowers/aquarium.png; sourceTree = "<group>"; };
 		20FC65D71BBC123300775322 /* background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = background.png; sourceTree = "<group>"; };
 		20FC65D81BBC123300775322 /* bgImage.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bgImage.png; sourceTree = "<group>"; };
-		20FC65DB1BBC127800775322 /* bumm.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bumm.png; sourceTree = "<group>"; };
 		20FC65DC1BBC127800775322 /* finger.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = finger.png; sourceTree = "<group>"; };
 		20FC65DD1BBC127800775322 /* frozen.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = frozen.png; sourceTree = "<group>"; };
 		20FC65E11BBC12A100775322 /* Holz.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Holz.png; sourceTree = "<group>"; };
-		20FC65E41BBC12A100775322 /* spark.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = spark.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -297,8 +293,6 @@
 			children = (
 				20FC65E11BBC12A100775322 /* Holz.png */,
 				2024A8C41C427C420001CA95 /* cardBackground.png */,
-				20FC65E41BBC12A100775322 /* spark.png */,
-				20FC65DB1BBC127800775322 /* bumm.png */,
 				20FC65DC1BBC127800775322 /* finger.png */,
 				20FC65DD1BBC127800775322 /* frozen.png */,
 				20FC65D71BBC123300775322 /* background.png */,
@@ -424,7 +418,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				2024A8C51C427C420001CA95 /* cardBackground.png in Resources */,
-				20FC65DE1BBC127800775322 /* bumm.png in Resources */,
 				20FC65E01BBC127800775322 /* frozen.png in Resources */,
 				200141231BAEB1F6003E0950 /* Drop.m4a in Resources */,
 				20FC65D91BBC123300775322 /* background.png in Resources */,
@@ -440,7 +433,6 @@
 				205574411BBEB85C00C165A1 /* Go321.m4a in Resources */,
 				20FC65BE1BBBC82000775322 /* sprites.atlas in Resources */,
 				200140E81BAEA96A003E0950 /* Assets.xcassets in Resources */,
-				20FC65E81BBC12A100775322 /* spark.png in Resources */,
 				200140E31BAEA96A003E0950 /* Main.storyboard in Resources */,
 				200141271BAEB1F6003E0950 /* MyMusic.m4a in Resources */,
 				200141291BAEB1F6003E0950 /* Timeout.m4a in Resources */,

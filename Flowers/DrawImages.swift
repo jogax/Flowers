@@ -19,6 +19,7 @@ class DrawImages {
     var exchangeImage = UIImage()
     var uhrImage = UIImage()
     var cardPackage = UIImage()
+    var tippImage = UIImage()
     
     //let imageColor = GV.khakiColor.CGColor
     let opaque = false
@@ -33,6 +34,7 @@ class DrawImages {
         self.exchangeImage = drawExchange(CGRect(x: 0, y: 0, width: 100, height: 100))
         self.backImage = drawBack(CGRect(x: 0, y: 0, width: 100, height: 100))
         self.cardPackage = drawCardPackage(CGRect(x: 0, y: 0, width: 100, height: 100))
+        self.tippImage = drawTipps(CGRect(x: 0, y: 0, width: 100, height: 100))
         
     }
     
@@ -348,6 +350,113 @@ class DrawImages {
         return image
     }
     
+    func drawTipps(frame: CGRect) -> UIImage {
+        let size = CGSize(width: frame.width, height: frame.height)
+        //let endAngle = CGFloat(2*M_PI)
+        
+        UIGraphicsBeginImageContextWithOptions(size, opaque, scale)
+        let ctx = UIGraphicsGetCurrentContext()
+        CGContextSetStrokeColorWithColor(ctx, UIColor.blackColor().CGColor)
+        
+        CGContextBeginPath(ctx)
+        CGContextSetLineWidth(ctx, 4.0)
+        
+        let adder:CGFloat = frame.width * 0.05
+        let r0 = frame.width * 0.25
+        
+        let center1 = CGPoint(x: frame.origin.x + frame.width / 2, y: frame.origin.y + adder + r0 * 1.8)
+        //        let center2 = CGPoint(x: frame.origin.x + frame.width / 2, y: frame.origin.y + frame.height - adder - r0 * 1.5)
+        
+        
+        let oneGrad:CGFloat = CGFloat(M_PI) / 180
+        let minAngle1 = 410 * oneGrad
+        let maxAngle1 = 130 * oneGrad
+        let blitzAngle1 = 200 * oneGrad
+        let blitzAngle2 = 230 * oneGrad
+        let blitzAngle3 = 270 * oneGrad
+        let blitzAngle4 = 310 * oneGrad
+        let blitzAngle5 = 340 * oneGrad
+        //println("1 Grad: \(oneGrad)")
+        
+        //        let minAngle2 = 150 * oneGrad
+        //        let maxAngle2 = 30 * oneGrad
+        
+        CGContextAddArc(ctx, center1.x, center1.y, r0, minAngle1, maxAngle1, 1)
+        CGContextStrokePath(ctx)
+        
+        //        CGContextAddArc(ctx, center2.x, center2.y, r0, minAngle2, maxAngle2, 1)
+        //        CGContextStrokePath(ctx)
+        
+        let endPoint = pointOfCircle(r0, center: center1, angle: minAngle1)
+        let p1 = pointOfCircle(r0, center: center1, angle: maxAngle1)
+        let p2 = CGPoint(x: p1.x, y: p1.y + 4 * adder)
+        let p3 = CGPoint(x: endPoint.x, y: p2.y)
+        let p4 = CGPoint(x: p3.x, y: endPoint.y)
+        let p5 = CGPoint(x: p1.x, y: p1.y + 1.3 * adder)
+        let p6 = CGPoint(x: p3.x, y: p5.y)
+        let p7 = CGPoint(x: p1.x, y: p1.y + 2.6 * adder)
+        let p8 = CGPoint(x: p3.x, y: p7.y)
+        
+        let blitzStartAdder = adder * 1
+        let blitzEndAdder = adder * 4
+        
+        let blitzStartPoint1 = pointOfCircle(r0 + blitzStartAdder, center: center1, angle: blitzAngle1)
+        let blitzEndPoint1 = pointOfCircle(r0 + blitzEndAdder, center: center1, angle: blitzAngle1)
+        let blitzStartPoint2 = pointOfCircle(r0 + blitzStartAdder, center: center1, angle: blitzAngle2)
+        let blitzEndPoint2 = pointOfCircle(r0 + blitzEndAdder, center: center1, angle: blitzAngle2)
+        let blitzStartPoint3 = pointOfCircle(r0 + blitzStartAdder, center: center1, angle: blitzAngle3)
+        let blitzEndPoint3 = pointOfCircle(r0 + blitzEndAdder, center: center1, angle: blitzAngle3)
+        let blitzStartPoint4 = pointOfCircle(r0 + blitzStartAdder, center: center1, angle: blitzAngle4)
+        let blitzEndPoint4 = pointOfCircle(r0 + blitzEndAdder, center: center1, angle: blitzAngle4)
+        let blitzStartPoint5 = pointOfCircle(r0 + blitzStartAdder, center: center1, angle: blitzAngle5)
+        let blitzEndPoint5 = pointOfCircle(r0 + blitzEndAdder, center: center1, angle: blitzAngle5)
+
+        
+        
+        CGContextMoveToPoint(ctx, p1.x, p1.y)
+        CGContextAddLineToPoint(ctx, p2.x, p2.y)
+        CGContextAddLineToPoint(ctx, p3.x, p3.y)
+        CGContextAddLineToPoint(ctx, p4.x, p4.y)
+        CGContextStrokePath(ctx)
+
+        CGContextSetLineWidth(ctx, 2.0)
+        CGContextMoveToPoint(ctx, p5.x, p5.y)
+        CGContextAddLineToPoint(ctx, p6.x, p6.y)
+        CGContextStrokePath(ctx)
+        
+        CGContextMoveToPoint(ctx, p7.x, p7.y)
+        CGContextAddLineToPoint(ctx, p8.x, p8.y)
+        CGContextStrokePath(ctx)
+        
+        CGContextMoveToPoint(ctx, blitzStartPoint1.x, blitzStartPoint1.y)
+        CGContextAddLineToPoint(ctx, blitzEndPoint1.x, blitzEndPoint1.y)
+        CGContextStrokePath(ctx)
+
+        CGContextMoveToPoint(ctx, blitzStartPoint2.x, blitzStartPoint2.y)
+        CGContextAddLineToPoint(ctx, blitzEndPoint2.x, blitzEndPoint2.y)
+        CGContextStrokePath(ctx)
+        
+        CGContextMoveToPoint(ctx, blitzStartPoint3.x, blitzStartPoint3.y)
+        CGContextAddLineToPoint(ctx, blitzEndPoint3.x, blitzEndPoint3.y)
+        CGContextStrokePath(ctx)
+        
+        CGContextMoveToPoint(ctx, blitzStartPoint4.x, blitzStartPoint4.y)
+        CGContextAddLineToPoint(ctx, blitzEndPoint4.x, blitzEndPoint4.y)
+        CGContextStrokePath(ctx)
+        
+        CGContextMoveToPoint(ctx, blitzStartPoint5.x, blitzStartPoint5.y)
+        CGContextAddLineToPoint(ctx, blitzEndPoint5.x, blitzEndPoint5.y)
+        CGContextStrokePath(ctx)
+        
+        CGContextAddArc(ctx, center1.x, center1.y, r0, maxAngle1, minAngle1, 1)
+        CGContextStrokePath(ctx)
+
+        let image = UIGraphicsGetImageFromCurrentImageContext()
+        
+        UIGraphicsEndImageContext()
+        return image
+    }
+    
     func drawSettings(frame: CGRect) -> UIImage {
         let size = CGSize(width: frame.width, height: frame.height)
         let endAngle = CGFloat(2*M_PI)
@@ -451,6 +560,10 @@ class DrawImages {
         return cardPackage
     }
 
+    func getTipp () -> UIImage {
+        return tippImage
+    }
+    
     func pointOfCircle(radius: CGFloat, center: CGPoint, angle: CGFloat) -> CGPoint {
         let pointOfCircle = CGPoint (x: center.x + radius * cos(angle), y: center.y + radius * sin(angle))
         return pointOfCircle

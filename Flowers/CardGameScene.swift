@@ -332,13 +332,35 @@ class CardGameScene: MyGameScene {
             }
         }
         
-        let randomIndex = random!.getRandomInt(0, max: indexArray.count - 1)
+        while indexArray.count > 1 {
         
-        let (firstCardColumn, firstCardRow) = indexArray[randomIndex]
-        let firstCardColorIndex = gameArray[firstCardColumn][firstCardRow].colorIndex
-        let firstCardMinValue = gameArray[firstCardColumn][firstCardRow].minValue
-        let firstCardMaxValue = gameArray[firstCardColumn][firstCardRow].maxValue
-        
+            let randomIndex = random!.getRandomInt(0, max: indexArray.count - 1)
+            
+            let (firstCardColumn, firstCardRow) = indexArray[randomIndex]
+            indexArray.removeAtIndex(randomIndex)
+            
+            let firstCardColorIndex = gameArray[firstCardColumn][firstCardRow].colorIndex
+            let firstCardMinValue = gameArray[firstCardColumn][firstCardRow].minValue
+            let firstCardMaxValue = gameArray[firstCardColumn][firstCardRow].maxValue
+     
+            for column in 0..<countColumns {
+                for row in 0..<countRows {
+                    if gameArray[column][row].colorIndex == firstCardColorIndex &&
+                        (gameArray[column][row].minValue == firstCardMaxValue - 1 ||
+                         gameArray[column][row].maxValue == firstCardMinValue + 1) {
+                            if checkPathToFoundedCard(firstCardColumn, row1:  firstCardRow, column2: column, row2: row) {
+                                print("path gefunden!")
+                            }
+                    }
+                }
+            }
+        }
+    }
+
+    
+    func checkPathToFoundedCard(column1: Int, row1: Int, column2: Int, row2: Int) -> Bool {
+        print("(", column1, row1, ")", gameArray[column1][row1].minValue, gameArray[column1][row1].maxValue, "(", column2, row2, ")", gameArray[column2][row2].minValue, gameArray[column2][row2].maxValue)
+        return false
     }
 
     override func update(currentTime: NSTimeInterval) {

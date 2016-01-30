@@ -161,12 +161,14 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         var used: Bool
         var position: CGPoint
         var colorIndex: Int
+        var name: String
         var minValue: Int
         var maxValue: Int
         init() {
             self.used = false
             self.position = CGPointMake(0, 0)
             self.colorIndex = NoColor
+            self.name = ""
             self.minValue = NoValue
             self.maxValue = NoValue
         }
@@ -185,6 +187,32 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             self.colorIndex = colorIndex
             self.spriteName = spriteName
             self.spriteValue = spriteValue
+        }
+    }
+    
+    struct Founded {
+        let maxDistance: CGFloat = 100000.0
+        var point: CGPoint
+        var column: Int
+        var row: Int
+        var foundContainer: Bool
+        var distanceToP1: CGFloat
+        var distanceToP0: CGFloat
+        init(column: Int, row: Int, foundContainer: Bool, point: CGPoint, distanceToP1: CGFloat, distanceToP0: CGFloat) {
+            self.distanceToP1 = distanceToP1
+            self.distanceToP0 = distanceToP0
+            self.column = column
+            self.row = row
+            self.foundContainer = foundContainer
+            self.point = point
+        }
+        init() {
+            self.distanceToP1 = maxDistance
+            self.distanceToP0 = maxDistance
+            self.point = CGPointMake(0, 0)
+            self.column = 0
+            self.row = 0
+            self.foundContainer = false
         }
     }
     
@@ -234,6 +262,7 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
     var gameArray = [[GameArrayPositions]]()
     var containers = [Container]()
     var colorTab = [ColorTabLine]()
+    var tippArray = [[SKShapeNode]]()
     let containersPosCorr = CGPointMake(GV.onIpad ? 0.98 : 0.98, GV.onIpad ? 0.85 : 0.85)
     var levelPosKorr = CGPointMake(GV.onIpad ? 0.7 : 0.7, GV.onIpad ? 0.97 : 0.97)
     let playerPosKorr = CGPointMake(0.3 * GV.deviceConstants.sizeMultiplier, 0.97 * GV.deviceConstants.sizeMultiplier)
@@ -677,6 +706,9 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             let testNode = self.nodeAtPoint(touchLocation)
             let aktNodeType = analyzeNode(testNode)
             var aktNode: SKNode? = movedFromNode
+            var linesArray = [SKShapeNode]()
+            var showLine = SKShapeNode()
+            var foundedPoint: Founded?
             switch aktNodeType {
             case MyNodeTypes.LabelNode: aktNode = self.nodeAtPoint(touchLocation).parent as! MySKNode
             case MyNodeTypes.SpriteNode: aktNode = self.nodeAtPoint(touchLocation) as! MySKNode
@@ -690,20 +722,20 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
                     var founded = false
                     let line = JGXLine(fromPoint: movedFromNode.position, toPoint: touchLocation, inFrame: self.frame, lineSize: movedFromNode.size.width)
                     let pointOnTheWall = line.line.toPoint
-                    founded = makeHelpLine(movedFromNode.position, toPoint: pointOnTheWall, lineWidth: movedFromNode.size.width, numberOfLine: 1)
+                    (founded, showLine, foundedPoint) = makeHelpLine(movedFromNode, fromPoint: movedFromNode.position, toPoint: pointOnTheWall, lineWidth: movedFromNode.size.width, showLines: true)
                     
                     
                     if !founded && GV.showHelpLines > 1 {
                         let mirroredLine1 = line.createMirroredLine()
-                        founded = makeHelpLine(mirroredLine1.line.fromPoint, toPoint: mirroredLine1.line.toPoint, lineWidth: movedFromNode.size.width, numberOfLine: 2)
+                        (founded, showLine, foundedPoint) = makeHelpLine(movedFromNode, fromPoint: mirroredLine1.line.fromPoint, toPoint: mirroredLine1.line.toPoint, lineWidth: movedFromNode.size.width, showLines: true)
                         
                         if !founded && GV.showHelpLines > 2 {
                             let mirroredLine2 = mirroredLine1.createMirroredLine()
-                            founded = makeHelpLine(mirroredLine2.line.fromPoint, toPoint: mirroredLine2.line.toPoint, lineWidth: movedFromNode.size.width, numberOfLine: 3)
+                            (founded, showLine, foundedPoint) = makeHelpLine(movedFromNode, fromPoint: mirroredLine2.line.fromPoint, toPoint: mirroredLine2.line.toPoint, lineWidth: movedFromNode.size.width, showLines: true)
                             
                             if !founded && GV.showHelpLines > 3 {
                                 let mirroredLine3 = mirroredLine2.createMirroredLine()
-                                founded = makeHelpLine(mirroredLine3.line.fromPoint, toPoint: mirroredLine3.line.toPoint, lineWidth: movedFromNode.size.width, numberOfLine: 4)
+                                (founded, showLine, foundedPoint) = makeHelpLine(movedFromNode, fromPoint: mirroredLine3.line.fromPoint, toPoint: mirroredLine3.line.toPoint, lineWidth: movedFromNode.size.width, showLines: true)
                             }
                         }
                     }
@@ -724,31 +756,31 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
     func makeEmptyCard(column:Int, row: Int) {
     }
     
-    func makeHelpLine(fromPoint: CGPoint, toPoint: CGPoint, lineWidth: CGFloat, numberOfLine: Int)->Bool {
-        if GV.showHelpLines >= numberOfLine {
+    func makeHelpLine(fromMyNode: MySKNode, fromPoint: CGPoint, toPoint: CGPoint, lineWidth: CGFloat, showLines: Bool)->(pointFounded:Bool, line: SKShapeNode, foundedPoint: Founded?) {
+//        if GV.showHelpLines >= numberOfLine {
             //print("makeHelpLine: fromPoint: \(fromPoint), toPoint: \(toPoint)")
-            let offset = toPoint - fromPoint
-            let direction = offset.normalized()
-            let shootAmount = direction * 1200
-            let realDest = shootAmount + fromPoint
-            
-            let pathToDraw:CGMutablePathRef = CGPathCreateMutable()
-            let myLine:SKShapeNode = SKShapeNode(path:pathToDraw)
-            myLine.lineWidth = lineWidth
-            
-            myLine.name = "myLine"
-            CGPathMoveToPoint(pathToDraw, nil, fromPoint.x, fromPoint.y)
-            CGPathAddLineToPoint(pathToDraw, nil, realDest.x, realDest.y)
-            
-            myLine.path = pathToDraw
-            //let name = fromPoint.name!
-            //let colorIndex = name.toInt()! - 100
-            //let colorIndex = fromPoint.colorIndex
-            
-            myLine.strokeColor = SKColor(red: 1.0, green: 0, blue: 0, alpha: 0.15) // GV.colorSets[GV.colorSetIndex][colorIndex + 1]
-            
-            
-            self.addChild(myLine)
+        let offset = toPoint - fromPoint
+        let direction = offset.normalized()
+        let shootAmount = direction * 1200
+        let realDest = shootAmount + fromPoint
+        
+        let pathToDraw:CGMutablePathRef = CGPathCreateMutable()
+        let myLine:SKShapeNode = SKShapeNode(path:pathToDraw)
+        myLine.lineWidth = lineWidth
+        
+        myLine.name = "myLine"
+        CGPathMoveToPoint(pathToDraw, nil, fromPoint.x, fromPoint.y)
+        CGPathAddLineToPoint(pathToDraw, nil, realDest.x, realDest.y)
+        
+        myLine.path = pathToDraw
+        //let name = fromPoint.name!
+        //let colorIndex = name.toInt()! - 100
+        //let colorIndex = fromPoint.colorIndex
+        
+        myLine.strokeColor = SKColor(red: 1.0, green: 0, blue: 0, alpha: 0.15) // GV.colorSets[GV.colorSetIndex][colorIndex + 1]
+        
+        
+        self.addChild(myLine)
 //            let texture = numberOfLine < maxHelpLinesCount ? movedFromNode.texture! : SKTexture(imageNamed: "bumm")
 //            let texture = movedFromNode.texture!
 //            let nodeOnTheWall = MySKNode(texture: texture, type: .SpriteType, value: NoValue)
@@ -756,8 +788,8 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
 //            nodeOnTheWall.position = toPoint
 //            nodeOnTheWall.size = movedFromNode.size
 //            self.addChild(nodeOnTheWall)
-        }
-        return false
+//        }
+        return (false, myLine, Founded())
     }
     
 //    func showNextSprite(touchLocation:  CGPoint) {

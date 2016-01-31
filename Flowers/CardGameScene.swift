@@ -49,7 +49,9 @@ class CardGameScene: MyGameScene {
     let nextLevel = true
     let previousLevel = false
     var lastUpdateSec = 0
-    var lastClosestPoint: Founded?
+    var lastNextPoint: Founded?
+    var generatingTipps = false
+    var tippIndex = 0
     //var gameArrayPositions = [[GameArrayPositions]]()
     
     
@@ -230,10 +232,10 @@ class CardGameScene: MyGameScene {
         }
         
         dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0)) { //(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0)) {
+            self.generatingTipps = true
             self.createTipps()
-            let x = 0
             dispatch_async(dispatch_get_main_queue(), {
-                print("This is run on the main queue, after the previous code in outer block")
+                self.generatingTipps = false
             })
         }
         
@@ -291,13 +293,16 @@ class CardGameScene: MyGameScene {
     
     func getTipps() {
         if tippArray.count > 0 {
-            let a = 0
+            for index in 0..<tippArray[tippIndex].count {
+                self.addChild(tippArray[tippIndex][index])
+            }
+            tippIndex = ++tippIndex % tippArray.count
         }
         
     }
     
     func createTipps() {
-//        var indexArray = [(Int, Int)]()
+        tippArray.removeAll()
         var pairsToCheck = [(card1:(column:Int,row:Int), card2:(column:Int,row:Int))]()
         for column1 in 0..<countColumns {
             for row1 in 0..<countRows {
@@ -323,11 +328,12 @@ class CardGameScene: MyGameScene {
                 }
             }
         }
-        sleep(5)
-        print(pairsToCheck)
+ //       sleep(5)
         for ind in 0..<pairsToCheck.count {
+            print(pairsToCheck[ind])
             checkPathToFoundedCards(pairsToCheck[ind])
         }
+        print(tippArray.count)
      }
 
     
@@ -335,30 +341,33 @@ class CardGameScene: MyGameScene {
         let oneGrad:CGFloat = CGFloat(M_PI) / 180
         var targetPoint = CGPointZero
         let startPoint = gameArray[index.card1.column][index.card1.row].position
-        let name = gameArray[index.card1.column][index.card1.row].name
+//        let name = gameArray[index.card1.column][index.card1.row].name
         if index.card2.row == NoValue {
             targetPoint = containers[index.card2.column].mySKNode.position
         } else {
             targetPoint = gameArray[index.card2.column][index.card2.row].position
         }
         let startAngle = calculateAngle(startPoint, point2: targetPoint).angleRadian
-        let stopAngle = startAngle + CGFloat(M_2_PI) // + 360°
-        let startNode = self.childNodeWithName(name)! as! MySKNode
-
+        let stopAngle = startAngle + CGFloat(M_PI) * 2 // + 360°
+//        let startNode = self.childNodeWithName(name)! as! MySKNode
+        var founded = false
         var angle = startAngle
-        while angle <= stopAngle {
+        while angle <= stopAngle && !founded {
             let toPoint = pointOfCircle(1.0, center: startPoint, angle: angle)
-            let (foundedPoint, myLines) = createHelpLines(startNode, toPoint: toPoint, inFrame: self.frame, lineSize: spriteSize.width, showLines: false)
+            let (foundedPoint, myLines) = createHelpLines(index.card1, toPoint: toPoint, inFrame: self.frame, lineSize: spriteSize.width, showLines: false)
             if foundedPoint != nil {
+//                print(angle, foundedPoint!.column, foundedPoint!.row)
                 if foundedPoint!.foundContainer { // container gefunden
-                    let a = 0
-                } else {
-                    let gameArrayCell = gameArray[(foundedPoint?.column)!][(foundedPoint?.row)!]
-                    if startNode.colorIndex == gameArrayCell.colorIndex &&
-                    (startNode.minValue == gameArrayCell.maxValue + 1 ||
-                        startNode.maxValue == gameArrayCell.minValue - 1) {
-                        print(foundedPoint?.column, foundedPoint?.row)
+                    if foundedPoint!.column == index.card2.column  {
+//                        print(foundedPoint?.column, foundedPoint?.row)
                         tippArray.append(myLines)
+                        founded = true
+                    }
+                } else {
+                    if foundedPoint!.column == index.card2.column && foundedPoint!.row == index.card2.row {
+//                        print(foundedPoint?.column, foundedPoint?.row, myLines.count)
+                        tippArray.append(myLines)
+                        founded = true
                     }
                 }
             }
@@ -369,7 +378,7 @@ class CardGameScene: MyGameScene {
     
     func calculateAngle(point1: CGPoint, point2: CGPoint) -> (angleRadian:CGFloat, angleDegree: CGFloat) {
         //        let pointOfCircle = CGPoint (x: center.x + radius * cos(angle), y: center.y + radius * sin(angle))
-        let offset = point1 - point2
+        let offset = point2 - point1
         let length = offset.length()
         let sinAlpha = offset.y / length
         let angleRadian = asin(sinAlpha);
@@ -933,14 +942,14 @@ class CardGameScene: MyGameScene {
                     tremblingSprites[index].tremblingType = .NoTrembling
                 }
                 tremblingSprites.removeAll()
-                lastClosestPoint = nil
+                lastNextPoint = nil
             } else if movedFromNode != aktNode && !exchangeModus {
                 if movedFromNode.type == .ButtonType {
                     //movedFromNode.texture = atlas.textureNamed("\(movedFromNode.name!)")
                 } else if movedFromNode.type == .EmptyCardType {
                     
                 } else {
-                    createHelpLines(movedFromNode, toPoint: touchLocation, inFrame: self.frame, lineSize: movedFromNode.size.width, showLines: true)
+                    createHelpLines((movedFromNode.column, movedFromNode.row), toPoint: touchLocation, inFrame: self.frame, lineSize: movedFromNode.size.width, showLines: true)
                 }
             }
             
@@ -954,33 +963,34 @@ class CardGameScene: MyGameScene {
         }
     }
     
-    func createHelpLines(fromMyNode: MySKNode, toPoint: CGPoint, inFrame: CGRect, lineSize: CGFloat, showLines: Bool)->(foundedPoint: Founded?, [SKShapeNode]) {
+    func createHelpLines(movedFrom: (column: Int, row: Int), toPoint: CGPoint, inFrame: CGRect, lineSize: CGFloat, showLines: Bool)->(foundedPoint: Founded?, [SKShapeNode]) {
         var linesArray = [SKShapeNode]()
         var foundedPoint: Founded?
         var founded = false
         var myLine = SKShapeNode()
-        let line = JGXLine(fromPoint: fromMyNode.position, toPoint: toPoint, inFrame: inFrame, lineSize: lineSize)
+        let fromPosition = gameArray[movedFrom.column][movedFrom.row].position
+        let line = JGXLine(fromPoint: fromPosition, toPoint: toPoint, inFrame: inFrame, lineSize: lineSize)
         let pointOnTheWall = line.line.toPoint
-        (founded, myLine, foundedPoint) = makeHelpLine(fromMyNode, fromPoint: fromMyNode.position, toPoint: pointOnTheWall, lineWidth: lineSize, showLines: showLines)
+        (founded, myLine, foundedPoint) = makeHelpLine(movedFrom, fromPoint: fromPosition, toPoint: pointOnTheWall, lineWidth: lineSize, showLines: showLines)
         linesArray.append(myLine)
         if showLines {self.addChild(myLine)}
         
         if !founded {
             let mirroredLine1 = line.createMirroredLine()
-            (founded, myLine, foundedPoint) = makeHelpLine(fromMyNode, fromPoint: mirroredLine1.line.fromPoint, toPoint: mirroredLine1.line.toPoint, lineWidth: lineSize, showLines: showLines)
+            (founded, myLine, foundedPoint) = makeHelpLine((movedFrom.column, movedFrom.row), fromPoint: mirroredLine1.line.fromPoint, toPoint: mirroredLine1.line.toPoint, lineWidth: lineSize, showLines: showLines)
             
             linesArray.append(myLine)
             if showLines {self.addChild(myLine)}
             
             if !founded && GV.showHelpLines > 2 {
                 let mirroredLine2 = mirroredLine1.createMirroredLine()
-                (founded, myLine, foundedPoint) = makeHelpLine(fromMyNode, fromPoint: mirroredLine2.line.fromPoint, toPoint: mirroredLine2.line.toPoint, lineWidth: lineSize, showLines: showLines)
+                (founded, myLine, foundedPoint) = makeHelpLine(movedFrom, fromPoint: mirroredLine2.line.fromPoint, toPoint: mirroredLine2.line.toPoint, lineWidth: lineSize, showLines: showLines)
                 linesArray.append(myLine)
                 if showLines {self.addChild(myLine)}
                 
                 if !founded && GV.showHelpLines > 3 {
                     let mirroredLine3 = mirroredLine2.createMirroredLine()
-                    (founded, myLine, foundedPoint) = makeHelpLine(fromMyNode, fromPoint: mirroredLine3.line.fromPoint, toPoint: mirroredLine3.line.toPoint, lineWidth: lineSize, showLines: showLines)
+                    (founded, myLine, foundedPoint) = makeHelpLine(movedFrom, fromPoint: mirroredLine3.line.fromPoint, toPoint: mirroredLine3.line.toPoint, lineWidth: lineSize, showLines: showLines)
                     linesArray.append(myLine)
                     if showLines {self.addChild(myLine)}
                 }
@@ -989,14 +999,14 @@ class CardGameScene: MyGameScene {
         return (foundedPoint, linesArray)
     }
     
-    override func makeHelpLine(fromMyNode: MySKNode, fromPoint: CGPoint, toPoint: CGPoint, lineWidth: CGFloat, showLines: Bool)->(pointFounded:Bool, line: SKShapeNode, closestPoint: Founded?) {
+    override func makeHelpLine(movedFrom: (column: Int, row: Int), fromPoint: CGPoint, toPoint: CGPoint, lineWidth: CGFloat, showLines: Bool)->(pointFounded:Bool, line: SKShapeNode, closestPoint: Founded?) {
         var foundedPoint = Founded()
         var toPoint = toPoint
         var pointFounded = false
-        if let closestPoint = findClosestPoint(fromPoint, P2: toPoint, lineWidth: lineWidth, movedFrom: fromMyNode) {
-            toPoint = closestPoint.point //gameArray[closestPoint.column][closestPoint.row].position
-            if showLines {makeTrembling(closestPoint)}
-            foundedPoint = closestPoint
+        if let nextCard = findNextPoint(fromPoint, P2: toPoint, lineWidth: lineWidth, movedFrom: movedFrom) {
+            toPoint = nextCard.point //gameArray[closestPoint.column][closestPoint.row].position
+            if showLines {makeTrembling(nextCard)}
+            foundedPoint = nextCard
             pointFounded = true
         }
         
@@ -1021,13 +1031,13 @@ class CardGameScene: MyGameScene {
         
     }
     
-    func makeTrembling(closestPoint: Founded) {
+    func makeTrembling(nextPoint: Founded) {
         var tremblingCardPosition = CGPointZero
-        if lastClosestPoint != nil && ((lastClosestPoint!.column != closestPoint.column) ||  (lastClosestPoint!.row != closestPoint.row)) {
-            if lastClosestPoint!.foundContainer {
-                tremblingCardPosition = containers[lastClosestPoint!.column].mySKNode.position
+        if lastNextPoint != nil && ((lastNextPoint!.column != nextPoint.column) ||  (lastNextPoint!.row != nextPoint.row)) {
+            if lastNextPoint!.foundContainer {
+                tremblingCardPosition = containers[lastNextPoint!.column].mySKNode.position
             } else {
-                tremblingCardPosition = gameArray[lastClosestPoint!.column][lastClosestPoint!.row].position
+                tremblingCardPosition = gameArray[lastNextPoint!.column][lastNextPoint!.row].position
             }
             let nodes = nodesAtPoint(tremblingCardPosition)
             for index in 0..<nodes.count {
@@ -1036,13 +1046,13 @@ class CardGameScene: MyGameScene {
                     tremblingSprites.removeAll()
                 }
             }
-            lastClosestPoint = nil
+            lastNextPoint = nil
         }
-        if lastClosestPoint == nil {
-            if closestPoint.foundContainer {
-                tremblingCardPosition = containers[closestPoint.column].mySKNode.position
+        if lastNextPoint == nil {
+            if nextPoint.foundContainer {
+                tremblingCardPosition = containers[nextPoint.column].mySKNode.position
             } else {
-                tremblingCardPosition = gameArray[closestPoint.column][closestPoint.row].position
+                tremblingCardPosition = gameArray[nextPoint.column][nextPoint.row].position
             }
             let nodes = nodesAtPoint(tremblingCardPosition)
             for index in 0..<nodes.count {
@@ -1051,12 +1061,12 @@ class CardGameScene: MyGameScene {
                     (nodes[index] as! MySKNode).tremblingType = .ChangeSize
                 }
             }
-            lastClosestPoint = closestPoint
+            lastNextPoint = nextPoint
         }
 
     }
     
-    func findClosestPoint(P1: CGPoint, P2: CGPoint, lineWidth: CGFloat, movedFrom: MySKNode?) -> Founded? {
+    func findNextPoint(P1: CGPoint, P2: CGPoint, lineWidth: CGFloat, movedFrom: (column: Int, row: Int)) -> Founded? {
         
 /*
         Ax+By=C  - Equation of a line
@@ -1073,7 +1083,7 @@ class CardGameScene: MyGameScene {
                 if gameArray[column][row].used {
                     let P0 = gameArray[column][row].position
 //                    if (P0 - P1).length() > lineWidth { // check all others but not me!!!
-                    if !(movedFrom!.column == column && movedFrom!.row == row) {
+                    if !(movedFrom.column == column && movedFrom.row == row) {
                         let intersectionPoint = findIntersectionPoint(P1, b:P2, c:P0)
                         
                         let distanceToP0 = (intersectionPoint - P0).length()
@@ -1127,15 +1137,15 @@ class CardGameScene: MyGameScene {
     }
     
     func findIntersectionPoint(a:CGPoint, b:CGPoint, c:CGPoint) ->CGPoint {
-        let x1=a.x
-        let y1=a.y
-        let x2=b.x
-        let y2=b.y
-        let x3=c.x
-        let y3=c.y
+        let x1 = a.x
+        let y1 = a.y
+        let x2 = b.x
+        let y2 = b.y
+        let x3 = c.x
+        let y3 = c.y
         let px = x2-x1
         let py = y2-y1
-        let dAB = px*px + py*py
+        let dAB = px * px + py * py
         let u = ((x3 - x1) * px + (y3 - y1) * py) / dAB
         let x = x1 + u * px
         let y = y1 + u * py
@@ -1145,8 +1155,8 @@ class CardGameScene: MyGameScene {
 
     override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
         
-        if lastClosestPoint != nil {
-            let nodes = nodesAtPoint(gameArray[lastClosestPoint!.column][lastClosestPoint!.row].position)
+        if lastNextPoint != nil {
+            let nodes = nodesAtPoint(gameArray[lastNextPoint!.column][lastNextPoint!.row].position)
             for index in 0..<nodes.count {
                 if nodes[index] is MySKNode {
                     (nodes[index] as! MySKNode).tremblingType = .NoTrembling

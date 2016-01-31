@@ -722,20 +722,20 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
                     var founded = false
                     let line = JGXLine(fromPoint: movedFromNode.position, toPoint: touchLocation, inFrame: self.frame, lineSize: movedFromNode.size.width)
                     let pointOnTheWall = line.line.toPoint
-                    (founded, showLine, foundedPoint) = makeHelpLine(movedFromNode, fromPoint: movedFromNode.position, toPoint: pointOnTheWall, lineWidth: movedFromNode.size.width, showLines: true)
+                    (founded, showLine, foundedPoint) = makeHelpLine((movedFromNode.column, movedFromNode.row), fromPoint: movedFromNode.position, toPoint: pointOnTheWall, lineWidth: movedFromNode.size.width, showLines: true)
                     
                     
                     if !founded && GV.showHelpLines > 1 {
                         let mirroredLine1 = line.createMirroredLine()
-                        (founded, showLine, foundedPoint) = makeHelpLine(movedFromNode, fromPoint: mirroredLine1.line.fromPoint, toPoint: mirroredLine1.line.toPoint, lineWidth: movedFromNode.size.width, showLines: true)
+                        (founded, showLine, foundedPoint) = makeHelpLine((movedFromNode.column, movedFromNode.row), fromPoint: mirroredLine1.line.fromPoint, toPoint: mirroredLine1.line.toPoint, lineWidth: movedFromNode.size.width, showLines: true)
                         
                         if !founded && GV.showHelpLines > 2 {
                             let mirroredLine2 = mirroredLine1.createMirroredLine()
-                            (founded, showLine, foundedPoint) = makeHelpLine(movedFromNode, fromPoint: mirroredLine2.line.fromPoint, toPoint: mirroredLine2.line.toPoint, lineWidth: movedFromNode.size.width, showLines: true)
+                            (founded, showLine, foundedPoint) = makeHelpLine((movedFromNode.column, movedFromNode.row), fromPoint: mirroredLine2.line.fromPoint, toPoint: mirroredLine2.line.toPoint, lineWidth: movedFromNode.size.width, showLines: true)
                             
                             if !founded && GV.showHelpLines > 3 {
                                 let mirroredLine3 = mirroredLine2.createMirroredLine()
-                                (founded, showLine, foundedPoint) = makeHelpLine(movedFromNode, fromPoint: mirroredLine3.line.fromPoint, toPoint: mirroredLine3.line.toPoint, lineWidth: movedFromNode.size.width, showLines: true)
+                                (founded, showLine, foundedPoint) = makeHelpLine((movedFromNode.column, movedFromNode.row), fromPoint: mirroredLine3.line.fromPoint, toPoint: mirroredLine3.line.toPoint, lineWidth: movedFromNode.size.width, showLines: true)
                             }
                         }
                     }
@@ -756,7 +756,7 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
     func makeEmptyCard(column:Int, row: Int) {
     }
     
-    func makeHelpLine(fromMyNode: MySKNode, fromPoint: CGPoint, toPoint: CGPoint, lineWidth: CGFloat, showLines: Bool)->(pointFounded:Bool, line: SKShapeNode, foundedPoint: Founded?) {
+    func makeHelpLine(movedFrom: (column: Int, row: Int), fromPoint: CGPoint, toPoint: CGPoint, lineWidth: CGFloat, showLines: Bool)->(pointFounded:Bool, line: SKShapeNode, foundedPoint: Founded?) {
 //        if GV.showHelpLines >= numberOfLine {
             //print("makeHelpLine: fromPoint: \(fromPoint), toPoint: \(toPoint)")
         let offset = toPoint - fromPoint

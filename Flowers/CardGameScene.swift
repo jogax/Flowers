@@ -1039,7 +1039,7 @@ class CardGameScene: MyGameScene {
         
         let pathToDraw:CGMutablePathRef = CGPathCreateMutable()
         let myLine:SKShapeNode = SKShapeNode(path:pathToDraw)
-        myLine.lineWidth = lineWidth / 10
+        myLine.lineWidth = lineWidth / 15
         
         myLine.name = "myLine"
         CGPathMoveToPoint(pathToDraw, nil, fromPoint.x, fromPoint.y)
@@ -1047,21 +1047,33 @@ class CardGameScene: MyGameScene {
         CGPathAddLineToPoint(pathToDraw, nil, toPoint.x, toPoint.y)
         
         if pointFounded {
+            
             let offset = toPoint - fromPoint
-            let angleOfLine = asin(offset.y / offset.length())
-            let p1 = pointOfCircle(20.0, center: toPoint, angle: angleOfLine - (150 * oneGrad))
-
+            var angleR:CGFloat = 0.0
+        
+            if offset.x > 0 {
+                angleR = asin(offset.y / offset.length())
+            } else {
+                if offset.y > 0 {
+                    angleR = acos(offset.x / offset.length())
+                } else {
+                    angleR = -acos(offset.x / offset.length())
+                    
+                }
+            }
+            let angleD = angleR / oneGrad
+            let p1 = pointOfCircle(20.0, center: toPoint, angle: angleR - (150 * oneGrad))
+            let p2 = pointOfCircle(20.0, center: toPoint, angle: angleR + (150 * oneGrad))
+            print ("Angle Degree:", angleD, "p1:", p1, "p2:", p2, offset.x, offset.y)
+ 
             CGPathAddLineToPoint(pathToDraw, nil, p1.x, p1.y)
             CGPathMoveToPoint(pathToDraw, nil, toPoint.x, toPoint.y)
-            
-            let p2 = pointOfCircle(20.0, center: toPoint, angle: angleOfLine + (150 * oneGrad))
-            
             CGPathAddLineToPoint(pathToDraw, nil, p2.x, p2.y)
             
         }
         myLine.path = pathToDraw
     
-        myLine.strokeColor = SKColor(red: 1.0, green: 0, blue: 0, alpha: 0.5) // GV.colorSets[GV.colorSetIndex][colorIndex + 1]
+        myLine.strokeColor = SKColor(red: 1.0, green: 0, blue: 0, alpha: 1.0) // GV.colorSets[GV.colorSetIndex][colorIndex + 1]
         myLine.zPosition = 10
         myLine.lineCap = .Round
         

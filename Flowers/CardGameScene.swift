@@ -338,7 +338,10 @@ class CardGameScene: MyGameScene {
                             if gameArray[column2][row2].colorIndex == gameArray[column1][row1].colorIndex &&
                                 (gameArray[column2][row2].minValue == gameArray[column1][row1].maxValue - 1 ||
                                     gameArray[column2][row2].maxValue == gameArray[column1][row1].minValue + 1) {
-                                        pairsToCheck.append(((column1,row1),(column2, row2)))
+                                        if !findPair(pairsToCheck, column1: column1,row1: row1,column2: column2, row2: row2) {
+                                            pairsToCheck.append(((column1,row1),(column2, row2)))
+                                            pairsToCheck.append(((column2,row2),(column1, row1)))
+                                        }
                             }
                         }
                     }
@@ -361,11 +364,22 @@ class CardGameScene: MyGameScene {
         }
         print(tippArray.count)
      }
+    
+    func findPair(pairsToCheck:[(card1:(column:Int,row:Int), card2:(column:Int,row:Int))], column1:Int, row1:Int, column2:Int, row2:Int)->Bool {
+        for index in 0..<pairsToCheck.count {
+            let aktPairToCheck = pairsToCheck[index]
+            if aktPairToCheck.card1.column == column1 && aktPairToCheck.card1.row == row1 && aktPairToCheck.card2.column == column2 && aktPairToCheck.card2.row == row2 {
+                return true
+            }
+        }
+        return false
+    }
 
     
     func checkPathToFoundedCards(index:(card1:(column:Int, row:Int), card2:(column:Int, row: Int))) {
         var targetPoint = CGPointZero
-        let startPoint = gameArray[index.card1.column][index.card1.row].position
+        var myTippArray = [(from:(column: Int, row:Int), to:(column:Int, row:Int), lines:[SKShapeNode])]()
+       let startPoint = gameArray[index.card1.column][index.card1.row].position
 //        let name = gameArray[index.card1.column][index.card1.row].name
         if index.card2.row == NoValue {
             targetPoint = containers[index.card2.column].mySKNode.position
@@ -384,18 +398,25 @@ class CardGameScene: MyGameScene {
 //                print(angle, foundedPoint!.column, foundedPoint!.row)
                 if foundedPoint!.foundContainer && index.card2.row == NoValue { // container gefunden
                     if foundedPoint!.column == index.card2.column  {
-                        tippArray.append((from:(column:index.card1.column, row:index.card1.row), to:(column:index.card2.column, row:index.card2.row),lines:myLines))
-                        founded = true
+                        myTippArray.append((from:(column:index.card1.column, row:index.card1.row), to:(column:index.card2.column, row:index.card2.row),lines:myLines))
+                        //founded = true
                     }
                 } else {
                     if foundedPoint!.column == index.card2.column && foundedPoint!.row == index.card2.row {
 //                        print(foundedPoint?.column, foundedPoint?.row, myLines.count)
-                        tippArray.append((from:(column:index.card1.column, row:index.card1.row), to:(column:index.card2.column, row:index.card2.row),lines:myLines))
-                        founded = true
+                        myTippArray.append((from:(column:index.card1.column, row:index.card1.row), to:(column:index.card2.column, row:index.card2.row),lines:myLines))
+                        //founded = true
                     }
                 }
+            } else {
+                let stop = true
+                let a = stop
             }
             angle += oneGrad
+        }
+        print(myTippArray.count)
+        for index in 0..<myTippArray.count {
+            tippArray.append(myTippArray[index])
         }
      }
     
@@ -597,6 +618,7 @@ class CardGameScene: MyGameScene {
         if usedCellCount <= minUsedCells {
             generateSprites(false)  // Nachgenerierung
         }
+        gameArrayChanged = true
     }
     
     override func restartButtonPressed() {
@@ -1036,7 +1058,6 @@ class CardGameScene: MyGameScene {
             pointFounded = true
         }
         
-        
         let pathToDraw:CGMutablePathRef = CGPathCreateMutable()
         let myLine:SKShapeNode = SKShapeNode(path:pathToDraw)
         myLine.lineWidth = lineWidth / 15
@@ -1064,7 +1085,6 @@ class CardGameScene: MyGameScene {
             let angleD = angleR / oneGrad
             let p1 = pointOfCircle(20.0, center: toPoint, angle: angleR - (150 * oneGrad))
             let p2 = pointOfCircle(20.0, center: toPoint, angle: angleR + (150 * oneGrad))
-            print ("Angle Degree:", angleD, "p1:", p1, "p2:", p2, offset.x, offset.y)
  
             CGPathAddLineToPoint(pathToDraw, nil, p1.x, p1.y)
             CGPathMoveToPoint(pathToDraw, nil, toPoint.x, toPoint.y)
@@ -1074,8 +1094,9 @@ class CardGameScene: MyGameScene {
         myLine.path = pathToDraw
     
         myLine.strokeColor = SKColor(red: 1.0, green: 0, blue: 0, alpha: 1.0) // GV.colorSets[GV.colorSetIndex][colorIndex + 1]
-        myLine.zPosition = 10
+        myLine.zPosition = 100
         myLine.lineCap = .Round
+        let a = sizeofValue(myLine)
         
 //        self.addChild(myLine)
         return (pointFounded, myLine, foundedPoint)

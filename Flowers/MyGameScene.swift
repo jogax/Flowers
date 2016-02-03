@@ -707,7 +707,6 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             let testNode = self.nodeAtPoint(touchLocation)
             let aktNodeType = analyzeNode(testNode)
             var aktNode: SKNode? = movedFromNode
-            var linesArray = [SKShapeNode]()
             var showLine = SKShapeNode()
             var foundedPoint: Founded?
             switch aktNodeType {

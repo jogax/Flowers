@@ -337,8 +337,8 @@ class CardGameScene: MyGameScene {
                     for column2 in 0..<countColumns {
                         for row2 in 0..<countRows {
                             if (column1 != column2 || row1 != row2) && gameArray[column2][row2].colorIndex == gameArray[column1][row1].colorIndex &&
-                                (gameArray[column2][row2].minValue == gameArray[column1][row1].maxValue - 1 ||
-                                    gameArray[column2][row2].maxValue == gameArray[column1][row1].minValue + 1) {
+                                (gameArray[column2][row2].minValue == gameArray[column1][row1].maxValue + 1 ||
+                                    gameArray[column2][row2].maxValue == gameArray[column1][row1].minValue - 1) {
                                         if !findPair(pairsToCheck, column1: column1,row1: row1,column2: column2, row2: row2) {
                                             pairsToCheck.append(((column1,row1),(column2, row2)))
                                             pairsToCheck.append(((column2,row2),(column1, row1)))
@@ -379,7 +379,7 @@ class CardGameScene: MyGameScene {
     
     func checkPathToFoundedCards(ind:(card1:(column:Int, row:Int), card2:(column:Int, row: Int))) {
         var targetPoint = CGPointZero
-        var myTippArray = [(tipp:(from:(column: Int, row:Int), to:(column:Int, row:Int), lines:[SKShapeNode]), distanceToLine:CGFloat)]()
+        var myTipp: (tipp:(from:(column: Int, row:Int), to:(column:Int, row:Int), lines:[SKShapeNode]), distanceToLine:CGFloat)?
        let startPoint = gameArray[ind.card1.column][ind.card1.row].position
 //        let name = gameArray[index.card1.column][index.card1.row].name
         if ind.card2.row == NoValue {
@@ -387,7 +387,7 @@ class CardGameScene: MyGameScene {
         } else {
             targetPoint = gameArray[ind.card2.column][ind.card2.row].position
         }
-        let startAngle = calculateAngle(startPoint, point2: targetPoint).angleRadian
+        let startAngle = calculateAngle(startPoint, point2: targetPoint).angleRadian - oneGrad * 20
         let stopAngle = startAngle + CGFloat(M_PI) * 2 // + 360°
 //        let startNode = self.childNodeWithName(name)! as! MySKNode
         var founded = false
@@ -398,24 +398,22 @@ class CardGameScene: MyGameScene {
             if foundedPoint != nil {
                 if foundedPoint!.foundContainer && ind.card2.row == NoValue && foundedPoint!.column == ind.card2.column ||
                     (foundedPoint!.column == ind.card2.column && foundedPoint!.row == ind.card2.row) {
-                    if myTippArray.count == 0 ||
-                    myTippArray.last!.distanceToLine > foundedPoint!.distanceToP0 ||
-                    myTippArray.last!.tipp.lines.count > myLines.count {
-                        if myTippArray.count > 0 {
-                            myTippArray.removeLast()
-                        }
-                        myTippArray.append((tipp:(from:(column:ind.card1.column, row:ind.card1.row), to:(column:ind.card2.column, row:ind.card2.row),lines:myLines), distanceToLine: foundedPoint!.distanceToP0))
+                    if myTipp == nil ||
+                    myTipp!.tipp.lines.count > myLines.count ||
+                    (myTipp!.tipp.lines.count == myLines.count && myTipp!.distanceToLine > foundedPoint!.distanceToP0) {
+                        myTipp = (tipp:(from:(column:ind.card1.column, row:ind.card1.row), to:(column:ind.card2.column, row:ind.card2.row),lines:myLines), distanceToLine: foundedPoint!.distanceToP0)
+                    }
+                    if myTipp != nil && myTipp!.tipp.lines.count < myLines.count {
+                        founded = true
                     }
                 }
             } else {
-                let stop = true
-                let a = stop
+                print("in else zweig von checkPathToFoundedCards !")
             }
             angle += oneGrad
         }
-        print(myTippArray.count)
-        for index in 0..<myTippArray.count {
-            tippArray.append(myTippArray[index].tipp)
+        if myTipp != nil {
+            tippArray.append(myTipp!.tipp)
         }
      }
     

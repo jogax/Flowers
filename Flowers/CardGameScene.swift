@@ -306,9 +306,10 @@ class CardGameScene: MyGameScene {
             tippIndex = 0
         }
         if tippArray.count > 0 {
-            for index in 0..<tippArray[tippIndex].lines.count {
+            for index in 0..<tippArray[tippIndex].points.count {
                 tremblingSprites.removeAll()
-                self.addChild(tippArray[tippIndex].lines[index])
+//                self.addChild(tippArray[tippIndex].points[index])
+                drawHelpLines(tippArray[tippIndex].points, lineWidth: spriteSize.width, drawFirstArrow: false)
                 var position = CGPointZero
                 if tippArray[tippIndex].from.row == NoValue {
                     position = containers[tippArray[tippIndex].from.column].mySKNode.position
@@ -379,7 +380,7 @@ class CardGameScene: MyGameScene {
     
     func checkPathToFoundedCards(ind:(card1:(column:Int, row:Int), card2:(column:Int, row: Int))) {
         var targetPoint = CGPointZero
-        var myTipp: (tipp:(from:(column: Int, row:Int), to:(column:Int, row:Int), lines:[SKShapeNode]), distanceToLine:CGFloat)?
+        var myTipp: (tipp:(from:(column: Int, row:Int), to:(column:Int, row:Int), points:[CGPoint]), distanceToLine:CGFloat)?
        let startPoint = gameArray[ind.card1.column][ind.card1.row].position
 //        let name = gameArray[index.card1.column][index.card1.row].name
         if ind.card2.row == NoValue {
@@ -399,11 +400,11 @@ class CardGameScene: MyGameScene {
                 if foundedPoint!.foundContainer && ind.card2.row == NoValue && foundedPoint!.column == ind.card2.column ||
                     (foundedPoint!.column == ind.card2.column && foundedPoint!.row == ind.card2.row) {
                     if myTipp == nil ||
-                    myTipp!.tipp.lines.count > myLines.count ||
-                    (myTipp!.tipp.lines.count == myLines.count && myTipp!.distanceToLine > foundedPoint!.distanceToP0) {
-                        myTipp = (tipp:(from:(column:ind.card1.column, row:ind.card1.row), to:(column:ind.card2.column, row:ind.card2.row),lines:myLines), distanceToLine: foundedPoint!.distanceToP0)
+                    myTipp!.tipp.points.count > myLines.count ||
+                    (myTipp!.tipp.points.count == myLines.count && myTipp!.distanceToLine > foundedPoint!.distanceToP0) {
+                        myTipp = (tipp:(from:(column:ind.card1.column, row:ind.card1.row), to:(column:ind.card2.column, row:ind.card2.row),points:myLines), distanceToLine: foundedPoint!.distanceToP0)
                     }
-                    if myTipp != nil && myTipp!.tipp.lines.count < myLines.count {
+                    if myTipp != nil && myTipp!.tipp.points.count < myLines.count {
                         founded = true
                     }
                 }
@@ -1058,45 +1059,61 @@ class CardGameScene: MyGameScene {
         }
     }
     
-    func createHelpLines(movedFrom: (column: Int, row: Int), toPoint: CGPoint, inFrame: CGRect, lineSize: CGFloat, showLines: Bool)->(foundedPoint: Founded?, [SKShapeNode]) {
+    func createHelpLines(movedFrom: (column: Int, row: Int), toPoint: CGPoint, inFrame: CGRect, lineSize: CGFloat, showLines: Bool)->(foundedPoint: Founded?, [CGPoint]) {
 //        print("createHelpLines start")
         var linesArray = [SKShapeNode]()
+        var pointArray = [CGPoint]()
         var foundedPoint: Founded?
         var founded = false
-        var myLine = SKShapeNode()
+        var myLine: SKShapeNode?
         let fromPosition = gameArray[movedFrom.column][movedFrom.row].position
         let line = JGXLine(fromPoint: fromPosition, toPoint: toPoint, inFrame: inFrame, lineSize: lineSize)
         let pointOnTheWall = line.line.toPoint
-        (founded, myLine, foundedPoint) = makeHelpLine(movedFrom, fromPoint: fromPosition, toPoint: pointOnTheWall, lineWidth: lineSize, showLines: showLines)
-        linesArray.append(myLine)
-        if showLines {self.addChild(myLine)}
-        
-        if !founded {
+        pointArray.append(fromPosition)
+        (founded, foundedPoint) = findEndPoint(movedFrom, fromPoint: fromPosition, toPoint: pointOnTheWall, lineWidth: lineSize, showLines: showLines)
+//        linesArray.append(myLine)
+//        if showLines {self.addChild(myLine)}
+        if founded {
+            pointArray.append(foundedPoint!.point)
+        } else {
+            pointArray.append(pointOnTheWall)
             let mirroredLine1 = line.createMirroredLine()
-            (founded, myLine, foundedPoint) = makeHelpLine((movedFrom.column, movedFrom.row), fromPoint: mirroredLine1.line.fromPoint, toPoint: mirroredLine1.line.toPoint, lineWidth: lineSize, showLines: showLines)
+            (founded, foundedPoint) = findEndPoint((movedFrom.column, movedFrom.row), fromPoint: mirroredLine1.line.fromPoint, toPoint: mirroredLine1.line.toPoint, lineWidth: lineSize, showLines: showLines)
             
-            linesArray.append(myLine)
-            if showLines {self.addChild(myLine)}
-            
-            if !founded && GV.showHelpLines > 2 {
+//            linesArray.append(myLine)
+//            if showLines {self.addChild(myLine)}
+            if founded {
+                pointArray.append(foundedPoint!.point)
+            } else {
+                pointArray.append(mirroredLine1.line.toPoint)
                 let mirroredLine2 = mirroredLine1.createMirroredLine()
-                (founded, myLine, foundedPoint) = makeHelpLine(movedFrom, fromPoint: mirroredLine2.line.fromPoint, toPoint: mirroredLine2.line.toPoint, lineWidth: lineSize, showLines: showLines)
-                linesArray.append(myLine)
-                if showLines {self.addChild(myLine)}
-                
-                if !founded && GV.showHelpLines > 3 {
+                (founded, foundedPoint) = findEndPoint(movedFrom, fromPoint: mirroredLine2.line.fromPoint, toPoint: mirroredLine2.line.toPoint, lineWidth: lineSize, showLines: showLines)
+//                linesArray.append(myLine)
+//                if showLines {self.addChild(myLine)}
+                if founded {
+                    pointArray.append(foundedPoint!.point)
+                } else {
+                    pointArray.append(mirroredLine2.line.toPoint)
                     let mirroredLine3 = mirroredLine2.createMirroredLine()
-                    (founded, myLine, foundedPoint) = makeHelpLine(movedFrom, fromPoint: mirroredLine3.line.fromPoint, toPoint: mirroredLine3.line.toPoint, lineWidth: lineSize, showLines: showLines)
-                    linesArray.append(myLine)
-                    if showLines {self.addChild(myLine)}
+                    (founded, foundedPoint) = findEndPoint(movedFrom, fromPoint: mirroredLine3.line.fromPoint, toPoint: mirroredLine3.line.toPoint, lineWidth: lineSize, showLines: showLines)
+//                    linesArray.append(myLine)
+//                    if showLines {self.addChild(myLine)}
+                    if founded {
+                        pointArray.append(foundedPoint!.point)
+                    } else {
+                        pointArray.append(mirroredLine3.line.toPoint)
+                    }
+                    
                 }
             }
         }
-//        print("createHelpLines end")
-        return (foundedPoint, linesArray)
+        if showLines {
+            drawHelpLines(pointArray, lineWidth: lineSize, drawFirstArrow: false)
+        }
+        return (foundedPoint, pointArray)
     }
     
-    override func makeHelpLine(movedFrom: (column: Int, row: Int), fromPoint: CGPoint, toPoint: CGPoint, lineWidth: CGFloat, showLines: Bool)->(pointFounded:Bool, line: SKShapeNode, closestPoint: Founded?) {
+    func findEndPoint(movedFrom: (column: Int, row: Int), fromPoint: CGPoint, toPoint: CGPoint, lineWidth: CGFloat, showLines: Bool)->(pointFounded:Bool, closestPoint: Founded?) {
         var foundedPoint = Founded()
         var toPoint = toPoint
         var pointFounded = false
@@ -1106,54 +1123,62 @@ class CardGameScene: MyGameScene {
             foundedPoint = nextCard
             pointFounded = true
         }
+ 
+        return (pointFounded, foundedPoint)
+    }
+    
+    func drawHelpLines(points: [CGPoint], lineWidth: CGFloat, drawFirstArrow: Bool) {
         
         let pathToDraw:CGMutablePathRef = CGPathCreateMutable()
         let myLine:SKShapeNode = SKShapeNode(path:pathToDraw)
         myLine.lineWidth = lineWidth / 15
        
         myLine.name = "myLine"
-        if fromPoint.x.isNaN || fromPoint.y.isNaN || toPoint.x.isNaN || toPoint.y.isNaN {
-            print("isNan")
-        } else {
-//            print("CGPathMoveToPoint fromPoint:", fromPoint.x, fromPoint.y)
-            CGPathMoveToPoint(pathToDraw, nil, fromPoint.x, fromPoint.y)
-//            print("CGPathAddLineToPoint toPoint:", toPoint.x, toPoint.y)
-            CGPathAddLineToPoint(pathToDraw, nil, toPoint.x, toPoint.y)
-//            print("makeHelpLine end")
-        }
-        if pointFounded {
-            
-            let offset = toPoint - fromPoint
-            var angleR:CGFloat = 0.0
-        
-            if offset.x > 0 {
-                angleR = asin(offset.y / offset.length())
-            } else {
-                if offset.y > 0 {
-                    angleR = acos(offset.x / offset.length())
-                } else {
-                    angleR = -acos(offset.x / offset.length())
-                    
-                }
+        // check if valid data
+        for index in 0..<points.count {
+            if points[0].x.isNaN || points[0].y.isNaN {
+                print("isNan")
+                return
             }
-            let angleD = angleR / oneGrad
-            let p1 = pointOfCircle(20.0, center: toPoint, angle: angleR - (150 * oneGrad))
-            let p2 = pointOfCircle(20.0, center: toPoint, angle: angleR + (150 * oneGrad))
- 
-            CGPathAddLineToPoint(pathToDraw, nil, p1.x, p1.y)
-            CGPathMoveToPoint(pathToDraw, nil, toPoint.x, toPoint.y)
-            CGPathAddLineToPoint(pathToDraw, nil, p2.x, p2.y)
-            
         }
+        
+        CGPathMoveToPoint(pathToDraw, nil, points[0].x, points[0].y)
+        for index in 1..<points.count {
+            CGPathAddLineToPoint(pathToDraw, nil, points[index].x, points[index].y)
+        }
+        
+        let lastButOneIndex = points.count - 2
+        
+        let offset = points.last! - points[lastButOneIndex]
+        var angleR:CGFloat = 0.0
+    
+        if offset.x > 0 {
+            angleR = asin(offset.y / offset.length())
+        } else {
+            if offset.y > 0 {
+                angleR = acos(offset.x / offset.length())
+            } else {
+                angleR = -acos(offset.x / offset.length())
+                
+            }
+        }
+        let angleD = angleR / oneGrad
+        let p1 = pointOfCircle(20.0, center: points.last!, angle: angleR - (150 * oneGrad))
+        let p2 = pointOfCircle(20.0, center: points.last!, angle: angleR + (150 * oneGrad))
+        
+        
+
+        CGPathAddLineToPoint(pathToDraw, nil, p1.x, p1.y)
+        CGPathMoveToPoint(pathToDraw, nil, points.last!.x, points.last!.y)
+        CGPathAddLineToPoint(pathToDraw, nil, p2.x, p2.y)
+
         myLine.path = pathToDraw
     
         myLine.strokeColor = SKColor(red: 1.0, green: 0, blue: 0, alpha: 1.0) // GV.colorSets[GV.colorSetIndex][colorIndex + 1]
         myLine.zPosition = 100
         myLine.lineCap = .Round
-        let a = sizeofValue(myLine)
         
-//        self.addChild(myLine)
-        return (pointFounded, myLine, foundedPoint)
+        self.addChild(myLine)
         
     }
     

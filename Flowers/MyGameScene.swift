@@ -260,10 +260,8 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
     var stack:Stack<SavedSprite> = Stack()
     //var gameArray = [[Bool]]() // true if Cell used
     var gameArray = [[GameArrayPositions]]()
-    var gameArrayChanged = false
     var containers = [Container]()
     var colorTab = [ColorTabLine]()
-    var tippArray = [(from:(column: Int, row:Int), to:(column:Int, row:Int), points:[CGPoint])]()
     let containersPosCorr = CGPointMake(GV.onIpad ? 0.98 : 0.98, GV.onIpad ? 0.85 : 0.85)
     var levelPosKorr = CGPointMake(GV.onIpad ? 0.7 : 0.7, GV.onIpad ? 0.97 : 0.97)
     let playerPosKorr = CGPointMake(0.3 * GV.deviceConstants.sizeMultiplier, 0.97 * GV.deviceConstants.sizeMultiplier)
@@ -707,8 +705,8 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             let testNode = self.nodeAtPoint(touchLocation)
             let aktNodeType = analyzeNode(testNode)
             var aktNode: SKNode? = movedFromNode
-            var showLine = SKShapeNode()
-            var foundedPoint: Founded?
+//            var showLine = SKShapeNode()
+//            var foundedPoint: Founded?
             switch aktNodeType {
             case MyNodeTypes.LabelNode: aktNode = self.nodeAtPoint(touchLocation).parent as! MySKNode
             case MyNodeTypes.SpriteNode: aktNode = self.nodeAtPoint(touchLocation) as! MySKNode

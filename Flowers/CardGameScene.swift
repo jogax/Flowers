@@ -10,6 +10,10 @@ import SpriteKit
 import AVFoundation
 
 class CardGameScene: MyGameScene {
+    
+    enum MyColors: Int {
+        case Red = 0, Green
+    }
 
     struct GenerateCard {
         var cardValue: Int
@@ -19,6 +23,24 @@ class CardGameScene: MyGameScene {
             cardValue = 0
             packageNr = 0
             used      = false
+        }
+    }
+    
+    struct Tipps {
+        var fromColumn: Int
+        var fromRow: Int
+        var toColumn: Int
+        var toRow: Int
+        var points:[CGPoint]
+        var twoArrows: Bool
+        
+        init() {
+            fromColumn = 0
+            fromRow = 0
+            toColumn = 0
+            toRow = 0
+            points = [CGPoint]()
+            twoArrows = false
         }
     }
     
@@ -51,10 +73,18 @@ class CardGameScene: MyGameScene {
     var lastUpdateSec = 0
     var lastNextPoint: Founded?
     var generatingTipps = false
+    var tippArray = [Tipps]()
     var tippIndex = 0
     let oneGrad:CGFloat = CGFloat(M_PI) / 180
     //var gameArrayPositions = [[GameArrayPositions]]()
     
+    var gameArrayChanged = false {
+        didSet {
+            if !oldValue && gameArrayChanged {
+                startCreateTippsInBackground()
+            }
+        }
+    }
     
     var tapLocation: CGPoint?
 
@@ -236,18 +266,21 @@ class CardGameScene: MyGameScene {
     }
     
     
-//    func startCreateTippsInBackground() {
-//        if !generatingTipps {
-//            dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0)) { //(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0)) {
-//                self.generatingTipps = true
-//                self.createTipps()
-//                dispatch_async(dispatch_get_main_queue(), {
-//                    self.generatingTipps = false
-//                })
-//            }
-//        }
-//
-//    }
+    func startCreateTippsInBackground() {
+        if !generatingTipps {
+            dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0)) { //(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0)) {
+                self.generatingTipps = true
+                let startTime = NSDate()
+                self.createTipps()
+                print(NSDate().timeIntervalSinceDate(startTime))
+                dispatch_async(dispatch_get_main_queue(), {
+                    self.generatingTipps = false
+                    self.gameArrayChanged = false
+                })
+            }
+        }
+
+    }
     func deleteEmptySprite(column: Int, row: Int) {
         let searchName = "\(emptySpriteTxt)-\(column)-\(row)"
         if self.childNodeWithName(searchName) != nil {
@@ -298,29 +331,29 @@ class CardGameScene: MyGameScene {
     }
     
     func getTipps() {
-        if gameArrayChanged {
-            let startTime = NSDate()
-            createTipps()
-            print(NSDate().timeIntervalSinceDate(startTime))
-            gameArrayChanged = false
-            tippIndex = 0
-        }
+//        if gameArrayChanged {
+//            let startTime = NSDate()
+//            createTipps()
+//            print(NSDate().timeIntervalSinceDate(startTime))
+//            gameArrayChanged = false
+//            tippIndex = 0
+//        }
         if tippArray.count > 0 {
-            for index in 0..<tippArray[tippIndex].points.count {
+            for _ in 0..<tippArray[tippIndex].points.count {
                 tremblingSprites.removeAll()
 //                self.addChild(tippArray[tippIndex].points[index])
-                drawHelpLines(tippArray[tippIndex].points, lineWidth: spriteSize.width, drawFirstArrow: false)
+                drawHelpLines(tippArray[tippIndex].points, lineWidth: spriteSize.width, twoArrows: tippArray[tippIndex].twoArrows, color: .Green)
                 var position = CGPointZero
-                if tippArray[tippIndex].from.row == NoValue {
-                    position = containers[tippArray[tippIndex].from.column].mySKNode.position
+                if tippArray[tippIndex].fromRow == NoValue {
+                    position = containers[tippArray[tippIndex].fromColumn].mySKNode.position
                 } else {
-                    position = gameArray[tippArray[tippIndex].from.column][tippArray[tippIndex].from.row].position
+                    position = gameArray[tippArray[tippIndex].fromColumn][tippArray[tippIndex].fromRow].position
                 }
                 addSpriteToTremblingSprites(position)
-                if tippArray[tippIndex].to.row == NoValue {
-                    position = containers[tippArray[tippIndex].to.column].mySKNode.position
+                if tippArray[tippIndex].toRow == NoValue {
+                    position = containers[tippArray[tippIndex].toColumn].mySKNode.position
                 } else {
-                    position = gameArray[tippArray[tippIndex].to.column][tippArray[tippIndex].to.row].position
+                    position = gameArray[tippArray[tippIndex].toColumn][tippArray[tippIndex].toRow].position
                 }
                 addSpriteToTremblingSprites(position)
             }
@@ -364,7 +397,34 @@ class CardGameScene: MyGameScene {
             print(pairsToCheck[ind])
             checkPathToFoundedCards(pairsToCheck[ind])
         }
-        print(tippArray.count)
+        var removeIndex = [Int]()
+        for ind in 0..<tippArray.count - 1 {
+            if tippArray[ind].fromColumn == tippArray[ind + 1].toColumn &&
+               tippArray[ind].fromRow == tippArray[ind + 1].toRow &&
+               tippArray[ind].toColumn == tippArray[ind + 1].fromColumn  &&
+                tippArray[ind].toRow == tippArray[ind + 1].fromRow {
+                    switch tippArray[ind].points.count {
+                    case 2:
+                        tippArray[ind].twoArrows = true
+                        removeIndex.insert(ind + 1, atIndex: 0)
+                    case 3:
+                        if (tippArray[ind].points[1] - tippArray[ind + 1].points[1]).length() < spriteSize.height{
+                            tippArray[ind].twoArrows = true
+                            removeIndex.insert(ind + 1, atIndex: 0)
+                        }
+                    case 4:
+                        if (tippArray[ind].points[1] - tippArray[ind + 1].points[1]).length() < spriteSize.height{
+                            tippArray[ind].twoArrows = true
+                            removeIndex.insert(ind + 1, atIndex: 0)
+                        }
+                    default:
+                        tippArray[ind].twoArrows = false
+                    }
+            }
+        }
+        for ind in 0..<removeIndex.count {
+            tippArray.removeAtIndex(removeIndex[ind])
+        }
      }
     
     func findPair(pairsToCheck:[(card1:(column:Int,row:Int), card2:(column:Int,row:Int))], column1:Int, row1:Int, column2:Int, row2:Int)->Bool {
@@ -380,7 +440,9 @@ class CardGameScene: MyGameScene {
     
     func checkPathToFoundedCards(ind:(card1:(column:Int, row:Int), card2:(column:Int, row: Int))) {
         var targetPoint = CGPointZero
-        var myTipp: (tipp:(from:(column: Int, row:Int), to:(column:Int, row:Int), points:[CGPoint]), distanceToLine:CGFloat)?
+        var myTipp = Tipps()
+        let firstValue: CGFloat = 10000
+        var distanceToLine = firstValue
        let startPoint = gameArray[ind.card1.column][ind.card1.row].position
 //        let name = gameArray[index.card1.column][index.card1.row].name
         if ind.card2.row == NoValue {
@@ -399,12 +461,17 @@ class CardGameScene: MyGameScene {
             if foundedPoint != nil {
                 if foundedPoint!.foundContainer && ind.card2.row == NoValue && foundedPoint!.column == ind.card2.column ||
                     (foundedPoint!.column == ind.card2.column && foundedPoint!.row == ind.card2.row) {
-                    if myTipp == nil ||
-                    myTipp!.tipp.points.count > myLines.count ||
-                    (myTipp!.tipp.points.count == myLines.count && myTipp!.distanceToLine > foundedPoint!.distanceToP0) {
-                        myTipp = (tipp:(from:(column:ind.card1.column, row:ind.card1.row), to:(column:ind.card2.column, row:ind.card2.row),points:myLines), distanceToLine: foundedPoint!.distanceToP0)
+                    if distanceToLine == firstValue ||
+                    myTipp.points.count > myLines.count ||
+                    (myTipp.points.count == myLines.count && distanceToLine > foundedPoint!.distanceToP0) {
+                        myTipp.fromColumn = ind.card1.column
+                        myTipp.fromRow = ind.card1.row
+                        myTipp.toColumn = ind.card2.column
+                        myTipp.toRow = ind.card2.row
+                        myTipp.points = myLines
+                        distanceToLine = foundedPoint!.distanceToP0
                     }
-                    if myTipp != nil && myTipp!.tipp.points.count < myLines.count {
+                    if distanceToLine != firstValue && myTipp.points.count < myLines.count {
                         founded = true
                     }
                 }
@@ -413,8 +480,8 @@ class CardGameScene: MyGameScene {
             }
             angle += oneGrad
         }
-        if myTipp != nil {
-            tippArray.append(myTipp!.tipp)
+        if distanceToLine != firstValue {
+            tippArray.append(myTipp)
         }
      }
     
@@ -511,7 +578,6 @@ class CardGameScene: MyGameScene {
             //gameArray[movingSprite.column][movingSprite.row] = false
             resetGameArrayCell(movingSprite)
             movingSprite.removeFromParent()
-//            startCreateTippsInBackground()
             playSound("Container", volume: GV.soundVolume)
             countMovingSprites = 0
             
@@ -583,7 +649,6 @@ class CardGameScene: MyGameScene {
             resetGameArrayCell(movingSprite)
             
             movingSprite.removeFromParent()
-//            startCreateTippsInBackground()
             countMovingSprites = 0
             updateSpriteCount(-1)
 //            spriteCount--
@@ -623,6 +688,39 @@ class CardGameScene: MyGameScene {
         let alert = getNextPlayArt(false)
         parentViewController!.presentViewController(alert, animated: true, completion: nil)
     }
+    
+    override func newGame(next: Bool) {
+        stopped = true
+        if next {
+            
+            
+            //levelIndex = readNextLevel()
+            gameScore += levelScore
+            
+            for index in 0..<GV.spriteGameDataArray.count {
+                if GV.spriteGameDataArray[index].name == GV.globalParam.aktName {
+                    GV.spriteGameDataArray[index] = SpriteGameData()
+                    GV.spriteGameDataArray[index].spriteLevelIndex = levelIndex
+                    GV.spriteGameDataArray[index].spriteGameScore = gameScore
+                    GV.spriteGameDataArray[index].aktLanguageKey = GV.language.getAktLanguageKey()
+                    GV.spriteGameDataArray[index].showHelpLines = GV.showHelpLines
+                    break
+                }
+            }
+            GV.dataStore.saveSpriteGameRecord()
+        }
+        //self.children.removeAll(keepCapacity: false)
+        for _ in 0..<self.children.count {
+            let testNode = children[self.children.count - 1]
+            testNode.removeFromParent()
+        }
+        
+        stopTimer()
+        
+        prepareNextGame(next)
+        generateSprites(true)
+    }
+
     
     override func getNextPlayArt(congratulations: Bool)->UIAlertController {
         let playerName = GV.globalParam.aktName == GV.dummyName ? "!" : " " + GV.globalParam.aktName + "!"
@@ -861,7 +959,6 @@ class CardGameScene: MyGameScene {
 //                    if self.childNodeWithName("\(emptySpriteTxt)-\(column)-\(row)") != nil {
 //                        self.childNodeWithName("\(emptySpriteTxt)-\(column)-\(row)")!.removeFromParent()
 //                    }
-//                    startCreateTippsInBackground()
                     sprite.reload()
                     
                 case .FallingMovingSprite:
@@ -1012,7 +1109,7 @@ class CardGameScene: MyGameScene {
             let testNode = self.nodeAtPoint(touchLocation)
             let aktNodeType = analyzeNode(testNode)
             var aktNode: SKNode? = movedFromNode
-            var myLine: SKShapeNode = SKShapeNode()
+//            var myLine: SKShapeNode = SKShapeNode()
             switch aktNodeType {
                 case MyNodeTypes.LabelNode: aktNode = self.nodeAtPoint(touchLocation).parent as! MySKNode
                 case MyNodeTypes.SpriteNode: aktNode = self.nodeAtPoint(touchLocation) as! MySKNode
@@ -1061,11 +1158,11 @@ class CardGameScene: MyGameScene {
     
     func createHelpLines(movedFrom: (column: Int, row: Int), toPoint: CGPoint, inFrame: CGRect, lineSize: CGFloat, showLines: Bool)->(foundedPoint: Founded?, [CGPoint]) {
 //        print("createHelpLines start")
-        var linesArray = [SKShapeNode]()
+//        var linesArray = [SKShapeNode]()
         var pointArray = [CGPoint]()
         var foundedPoint: Founded?
         var founded = false
-        var myLine: SKShapeNode?
+//        var myLine: SKShapeNode?
         let fromPosition = gameArray[movedFrom.column][movedFrom.row].position
         let line = JGXLine(fromPoint: fromPosition, toPoint: toPoint, inFrame: inFrame, lineSize: lineSize)
         let pointOnTheWall = line.line.toPoint
@@ -1107,8 +1204,27 @@ class CardGameScene: MyGameScene {
                 }
             }
         }
+        
         if showLines {
-            drawHelpLines(pointArray, lineWidth: lineSize, drawFirstArrow: false)
+            var color = MyColors.Red
+            var foundedColorIndex: Int
+            var foundedMinValue: Int
+            var foundedMaxValue: Int
+            if foundedPoint!.foundContainer {
+                foundedColorIndex = containers[foundedPoint!.column].mySKNode.colorIndex
+                foundedMaxValue = containers[foundedPoint!.column].mySKNode.maxValue
+                foundedMinValue = containers[foundedPoint!.column].mySKNode.minValue
+            } else {
+                foundedColorIndex = gameArray[foundedPoint!.column][foundedPoint!.row].colorIndex
+                foundedMaxValue = gameArray[foundedPoint!.column][foundedPoint!.row].minValue
+                foundedMinValue = gameArray[foundedPoint!.column][foundedPoint!.row].maxValue
+            }
+            if gameArray[movedFrom.column][movedFrom.row].colorIndex == foundedColorIndex &&
+                (gameArray[movedFrom.column][movedFrom.row].maxValue == foundedMinValue - 1 ||
+                 gameArray[movedFrom.column][movedFrom.row].minValue == foundedMaxValue + 1) {
+                 color = .Green
+            }
+            drawHelpLines(pointArray, lineWidth: lineSize, twoArrows: false, color: color)
         }
         return (foundedPoint, pointArray)
     }
@@ -1127,7 +1243,7 @@ class CardGameScene: MyGameScene {
         return (pointFounded, foundedPoint)
     }
     
-    func drawHelpLines(points: [CGPoint], lineWidth: CGFloat, drawFirstArrow: Bool) {
+    func drawHelpLines(points: [CGPoint], lineWidth: CGFloat, twoArrows: Bool, color: MyColors) {
         
         let pathToDraw:CGMutablePathRef = CGPathCreateMutable()
         let myLine:SKShapeNode = SKShapeNode(path:pathToDraw)
@@ -1136,7 +1252,7 @@ class CardGameScene: MyGameScene {
         myLine.name = "myLine"
         // check if valid data
         for index in 0..<points.count {
-            if points[0].x.isNaN || points[0].y.isNaN {
+            if points[index].x.isNaN || points[index].y.isNaN {
                 print("isNan")
                 return
             }
@@ -1162,7 +1278,7 @@ class CardGameScene: MyGameScene {
                 
             }
         }
-        let angleD = angleR / oneGrad
+        
         let p1 = pointOfCircle(20.0, center: points.last!, angle: angleR - (150 * oneGrad))
         let p2 = pointOfCircle(20.0, center: points.last!, angle: angleR + (150 * oneGrad))
         
@@ -1172,9 +1288,40 @@ class CardGameScene: MyGameScene {
         CGPathMoveToPoint(pathToDraw, nil, points.last!.x, points.last!.y)
         CGPathAddLineToPoint(pathToDraw, nil, p2.x, p2.y)
 
+        
+        if twoArrows {
+            let offset = points.first! - points[1]
+            var angleR:CGFloat = 0.0
+            
+            if offset.x > 0 {
+                angleR = asin(offset.y / offset.length())
+            } else {
+                if offset.y > 0 {
+                    angleR = acos(offset.x / offset.length())
+                } else {
+                    angleR = -acos(offset.x / offset.length())
+                    
+                }
+            }
+            
+            let p1 = pointOfCircle(20.0, center: points.first!, angle: angleR - (150 * oneGrad))
+            let p2 = pointOfCircle(20.0, center: points.first!, angle: angleR + (150 * oneGrad))
+            
+            
+            CGPathMoveToPoint(pathToDraw, nil, points[0].x, points[0].y)
+            CGPathAddLineToPoint(pathToDraw, nil, p1.x, p1.y)
+            CGPathMoveToPoint(pathToDraw, nil, points[0].x, points[0].y)
+            CGPathAddLineToPoint(pathToDraw, nil, p2.x, p2.y)
+            
+        }
+
         myLine.path = pathToDraw
-    
-        myLine.strokeColor = SKColor(red: 1.0, green: 0, blue: 0, alpha: 1.0) // GV.colorSets[GV.colorSetIndex][colorIndex + 1]
+        
+        if color == .Red {
+            myLine.strokeColor = SKColor(red: 1.0, green: 0.0, blue: 0.0, alpha: 1.0) // GV.colorSets[GV.colorSetIndex][colorIndex + 1]
+        } else {
+            myLine.strokeColor = SKColor(red: 0.0, green: 1.0, blue: 0.0, alpha: 1.0) // GV.colorSets[GV.colorSetIndex][colorIndex + 1]
+        }
         myLine.zPosition = 100
         myLine.lineCap = .Round
         
@@ -1503,7 +1650,6 @@ class CardGameScene: MyGameScene {
                         startNode.type = .SpriteType
                         gameArray[startNode.column][startNode.row].used = true
                         addPhysicsBody(startNode)
-//                        startCreateTippsInBackground()
                         foundedCard!.removeFromParent()
                         founded = true
                         gameArray[startNode.column][startNode.row].colorIndex = startNode.colorIndex

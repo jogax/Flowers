@@ -78,9 +78,9 @@ class CardGameScene: MyGameScene {
     let oneGrad:CGFloat = CGFloat(M_PI) / 180
     //var gameArrayPositions = [[GameArrayPositions]]()
     
-    var gameArrayChanged = false {
+    var gameArrayChanged: [Bool] = [Bool]() {
         didSet {
-            if !oldValue && gameArrayChanged {
+            if !generatingTipps && gameArrayChanged.count > 0 {
                 startCreateTippsInBackground()
             }
         }
@@ -257,7 +257,7 @@ class CardGameScene: MyGameScene {
             }
 
         }
-        gameArrayChanged = true
+        gameArrayChanged.append(true)
         if first {
             countUp = NSTimer.scheduledTimerWithTimeInterval(1.0, target: self, selector: Selector("doCountUp"), userInfo: nil, repeats: true)
         }
@@ -275,7 +275,9 @@ class CardGameScene: MyGameScene {
                 print(NSDate().timeIntervalSinceDate(startTime))
                 dispatch_async(dispatch_get_main_queue(), {
                     self.generatingTipps = false
-                    self.gameArrayChanged = false
+                    if self.gameArrayChanged.count > 0 {
+                        self.gameArrayChanged.removeLast()
+                    }
                 })
             }
         }
@@ -326,7 +328,9 @@ class CardGameScene: MyGameScene {
             }
         }
         if buttonName == "tipps" {
-            getTipps()
+            if !generatingTipps {
+                getTipps()
+            }
         }
     }
     
@@ -425,6 +429,7 @@ class CardGameScene: MyGameScene {
         for ind in 0..<removeIndex.count {
             tippArray.removeAtIndex(removeIndex[ind])
         }
+        tippIndex = 0
      }
     
     func findPair(pairsToCheck:[(card1:(column:Int,row:Int), card2:(column:Int,row:Int))], column1:Int, row1:Int, column2:Int, row2:Int)->Bool {
@@ -681,7 +686,7 @@ class CardGameScene: MyGameScene {
         if usedCellCount <= minUsedCells {
             generateSprites(false)  // Nachgenerierung
         }
-        gameArrayChanged = true
+        gameArrayChanged.append(true)
     }
     
     override func restartButtonPressed() {
@@ -740,7 +745,8 @@ class CardGameScene: MyGameScene {
         let newGameAction = UIAlertAction(title: GV.language.getText(TextConstants.TCNewGame), style: .Default,
             handler: {(paramAction:UIAlertAction!) in
                 self.newGame(true)
-                self.gameArrayChanged = true
+                self.gameArrayChanged.append(true)
+
         })
         alert.addAction(newGameAction)
         if levelIndex > 0 {
@@ -1026,8 +1032,8 @@ class CardGameScene: MyGameScene {
             showScore()
         }
         
-        gameArrayChanged = true
-        
+        gameArrayChanged.append(true)
+
     }
     
     func findIndex(colorIndex: Int)->Int {
@@ -1219,10 +1225,11 @@ class CardGameScene: MyGameScene {
                 foundedMaxValue = gameArray[foundedPoint!.column][foundedPoint!.row].minValue
                 foundedMinValue = gameArray[foundedPoint!.column][foundedPoint!.row].maxValue
             }
-            if gameArray[movedFrom.column][movedFrom.row].colorIndex == foundedColorIndex &&
+            if (gameArray[movedFrom.column][movedFrom.row].colorIndex == foundedColorIndex &&
                 (gameArray[movedFrom.column][movedFrom.row].maxValue == foundedMinValue - 1 ||
-                 gameArray[movedFrom.column][movedFrom.row].minValue == foundedMaxValue + 1) {
-                 color = .Green
+                gameArray[movedFrom.column][movedFrom.row].minValue == foundedMaxValue + 1)) ||
+                (foundedMinValue == NoColor && gameArray[movedFrom.column][movedFrom.row].maxValue == LastCardValue) {
+                color = .Green
             }
             drawHelpLines(pointArray, lineWidth: lineSize, twoArrows: false, color: color)
         }
@@ -1656,7 +1663,8 @@ class CardGameScene: MyGameScene {
                         gameArray[startNode.column][startNode.row].minValue = startNode.minValue
                         gameArray[startNode.column][startNode.row].maxValue = startNode.maxValue
                         pullShowCard()
-                        gameArrayChanged = true
+                        gameArrayChanged.append(true)
+
                         break
                     } else if nodes[index] is MySKNode && foundedCard!.type == .SpriteType && startNode.colorIndex == foundedCard!.colorIndex &&
                         (foundedCard!.maxValue + 1 == startNode.minValue ||
@@ -1677,7 +1685,8 @@ class CardGameScene: MyGameScene {
                             startNode.removeFromParent()
                             pullShowCard()
                             founded = true
-                            gameArrayChanged = true
+                            gameArrayChanged.append(true)
+
                             break
                    }
                 }
@@ -1758,7 +1767,8 @@ class CardGameScene: MyGameScene {
                         }
                         tremblingSprites.removeAll()
                         cardToChange = nil
-                        gameArrayChanged = true
+                        gameArrayChanged.append(true)
+
                     } else {
                         exchangeModus = true
                         //aktSprite.origSize = aktSprite.size

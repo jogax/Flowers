@@ -54,6 +54,7 @@ class MySKNode: SKSpriteNode {
             if oldValue != tremblingType {
                 if tremblingType == .NoTrembling {
                     self.size = self.origSize
+                    trembling = 0
                 } else {
                     self.origSize = self.size
                 }

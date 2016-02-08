@@ -31,8 +31,8 @@ class CardGameScene: MyGameScene {
         var fromRow: Int
         var toColumn: Int
         var toRow: Int
-        var points:[CGPoint]
         var twoArrows: Bool
+        var points:[CGPoint]
         
         init() {
             fromColumn = 0
@@ -303,6 +303,9 @@ class CardGameScene: MyGameScene {
             emptySprite.name = "\(emptySpriteTxt)-\(column)-\(row)"
             emptySprite.column = column
             emptySprite.row = row
+            gameArray[column][row].used = false
+            gameArray[column][row].colorIndex = NoColor
+            gameArray[column][row].name = searchName
             addChild(emptySprite)
         }
     }
@@ -335,17 +338,8 @@ class CardGameScene: MyGameScene {
     }
     
     func getTipps() {
-//        if gameArrayChanged {
-//            let startTime = NSDate()
-//            createTipps()
-//            print(NSDate().timeIntervalSinceDate(startTime))
-//            gameArrayChanged = false
-//            tippIndex = 0
-//        }
         if tippArray.count > 0 {
-//            for _ in 0..<tippArray[tippIndex].points.count {
                 stopTrembling()
-//                self.addChild(tippArray[tippIndex].points[index])
                 drawHelpLines(tippArray[tippIndex].points, lineWidth: spriteSize.width, twoArrows: tippArray[tippIndex].twoArrows, color: .Green)
                 var position = CGPointZero
                 if tippArray[tippIndex].fromRow == NoValue {
@@ -418,7 +412,9 @@ class CardGameScene: MyGameScene {
                                 removeIndex.insert(ind + 1, atIndex: 0)
                             }
                         case 4:
-                            if (tippArray[ind].points[1] - tippArray[ind + 1].points[1]).length() < spriteSize.height{
+                            if (tippArray[ind].points[1] - tippArray[ind + 1].points[2]).length() < spriteSize.height &&
+                                (tippArray[ind].points[2] - tippArray[ind + 1].points[1]).length() < spriteSize.height
+                            {
                                 tippArray[ind].twoArrows = true
                                 removeIndex.insert(ind + 1, atIndex: 0)
                             }
@@ -427,12 +423,26 @@ class CardGameScene: MyGameScene {
                         }
                 }
             }
+            for ind in 0..<removeIndex.count {
+                tippArray.removeAtIndex(removeIndex[ind])
+            }
+            
+            tippArray.sortInPlace({checkForSort($0, t1: $1) })
+            
+            for ind in 0..<tippArray.count {
+                print (ind, ": ", tippArray[ind])
+            }
         }
-        for ind in 0..<removeIndex.count {
-            tippArray.removeAtIndex(removeIndex[ind])
-        }
-        tippIndex = 0
+        tippIndex = 0  // set tipps to first
      }
+    
+    func checkForSort(t0: Tipps, t1:Tipps)->Bool {
+        let returnValue = gameArray[t0.fromColumn][t0.fromRow].colorIndex < gameArray[t1.fromColumn][t1.fromRow].colorIndex
+            || (gameArray[t0.fromColumn][t0.fromRow].colorIndex == gameArray[t1.fromColumn][t1.fromRow].colorIndex &&
+                (gameArray[t0.fromColumn][t0.fromRow].maxValue < gameArray[t1.fromColumn][t1.fromRow].minValue
+            || (t0.toRow != NoValue && t1.toRow != NoValue && gameArray[t0.toColumn][t0.toRow].maxValue < gameArray[t1.toColumn][t1.toRow].minValue)))
+        return returnValue
+    }
     
     func findPair(pairsToCheck:[(card1:(column:Int,row:Int), card2:(column:Int,row:Int))], column1:Int, row1:Int, column2:Int, row2:Int)->Bool {
         for index in 0..<pairsToCheck.count {
@@ -1375,6 +1385,24 @@ class CardGameScene: MyGameScene {
         let touchLocation = firstTouch!.locationInNode(self)
         
         let testNode = self.nodeAtPoint(touchLocation)
+        let nodes = nodesAtPoint(touchLocation)
+        for nodesIndex in 0..<nodes.count {
+            switch nodes[nodesIndex]  {
+                case is SKLabelNode:
+                    print (nodesIndex, ": SKLabelNode")
+                case is MyGameScene:
+                    print (nodesIndex, ": MyGameScene")
+                case is MySKButton:
+                    print (nodesIndex, ": MySKButton")
+                case is MySKNode:
+                    print(nodesIndex, ": MySKNode")
+                case is SKShapeNode:
+                    print(nodesIndex, ": SKShapeNode")
+                default:
+                    print(nodesIndex, ": other")
+            }
+        }
+        
         
         let aktNodeType = analyzeNode(testNode)
         

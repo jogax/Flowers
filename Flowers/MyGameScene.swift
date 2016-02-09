@@ -269,9 +269,9 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
     var countColorsProContainer = [Int]()
     var labelBackground = SKSpriteNode()
     var levelLabel = SKLabelNode(fontNamed: "AvenirNext-Bold")
-    var spriteCountLabel = SKLabelNode(fontNamed: "AvenirNext-Bold")
     var countUpLabel = SKLabelNode(fontNamed: "AvenirNext-Bold")
     var playerLabel = SKLabelNode(fontNamed: "AvenirNext-Bold")
+    var spriteCountLabel = SKLabelNode(fontNamed: "AvenirNext-Bold")
     
     var gameScore = Int(GV.spriteGameDataArray[GV.getAktNameIndex()].spriteGameScore)
     var levelScore = 0

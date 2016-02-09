@@ -52,4 +52,6 @@ let ruDictionary: [TextConstants: String] = [
     .TCNewGame:          "Новая игра",
     .TCGameAgain:        "Повторить игру",
     .TCChooseGame:       "Выберите пожалуйста:",
+    .TCTippCount:        "Kоличество возможных ходов:",
+
 ]

@@ -52,4 +52,5 @@ let huDictionary: [TextConstants: String] = [
     .TCNewGame:          "Új játék",
     .TCGameAgain:        "Újra játszom",
     .TCChooseGame:       "Válassz:",
+    .TCTippCount:        "Lehetséges lépések száma:",
 ]

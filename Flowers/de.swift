@@ -52,6 +52,7 @@ let deDictionary: [TextConstants: String] = [
     .TCNewGame:          "Neues Spiel",
     .TCGameAgain:        "Spiel wiederholen",
     .TCChooseGame:       "Bitte wählen Sie:",
+    .TCTippCount:        "Anzahl der möglichen Züge:",
 ]
 
 

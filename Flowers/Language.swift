@@ -54,7 +54,8 @@ enum TextConstants: Int {
     TCNextLevel,
     TCNewGame,
     TCRestart,
-    TCChooseGame
+    TCChooseGame,
+    TCTippCount
 }
 
     let LanguageDE = "de"

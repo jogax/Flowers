@@ -52,4 +52,5 @@ let enDictionary: [TextConstants: String] = [
     .TCNewGame:          "New Game",
     .TCGameAgain:        "Restart Game",
     .TCChooseGame:       "Choose Please:",
+    .TCTippCount:        "Number of possible steps:",
 ]

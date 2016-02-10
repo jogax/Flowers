@@ -62,6 +62,8 @@ class CardGameScene: MyGameScene {
     var showCard: MySKNode?
     var showCardFromStack: MySKNode?
     var showCardFromStackAddedToParent = false
+    var backGroundOperation = NSOperation()
+
 
     var lastCollisionsTime = NSDate()
     var cardArray: [[GenerateCard]] = []
@@ -81,11 +83,23 @@ class CardGameScene: MyGameScene {
     var dummy = 0
 
     //var gameArrayPositions = [[GameArrayPositions]]()
-    
-    var gameArrayChanged: [Bool] = [Bool]() {
+    var stopCreateTippsInBackground = false
+    var gameArrayChanged = false {
         didSet {
-            if !generatingTipps && gameArrayChanged.count > 0 {
-                startCreateTippsInBackground()
+//            let startAt = NSDate()
+//            createTipps()
+//            print(NSDate().timeIntervalSinceDate(startAt))
+            switch (gameArrayChanged, generatingTipps) {
+                case (true, false):
+                    startCreateTippsInBackground()
+                case (true, true):
+                    print("hier")
+                    stopCreateTippsInBackground = true
+                    while stopCreateTippsInBackground {
+                        dummy = 0
+                    }
+                    startCreateTippsInBackground()
+                default: dummy++
             }
         }
     }
@@ -254,7 +268,8 @@ class CardGameScene: MyGameScene {
             addPhysicsBody(sprite)
             push(sprite, status: .AddedFromCardStack)
             addChild(sprite)
-            let actionMove = SKAction.moveTo(zielPosition, duration: 1.5)
+            let duration:Double = Double((zielPosition - cardPackege!.position).length()) / 500
+            let actionMove = SKAction.moveTo(zielPosition, duration: duration)
             let actionHideEmptyCard = SKAction.runBlock({
                 self.deleteEmptySprite(aktColumn, row: aktRow)
             })
@@ -265,7 +280,7 @@ class CardGameScene: MyGameScene {
             }
 
         }
-        gameArrayChanged.append(true)
+        gameArrayChanged = true
         if first {
             countUp = NSTimer.scheduledTimerWithTimeInterval(1.0, target: self, selector: Selector("doCountUp"), userInfo: nil, repeats: true)
         }
@@ -278,17 +293,33 @@ class CardGameScene: MyGameScene {
         if !generatingTipps {
             dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0)) { //(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0)) {
                 self.generatingTipps = true
-                let startTime = NSDate()
-                self.createTipps()
-                print(NSDate().timeIntervalSinceDate(startTime))
+                var tippsCreated = false
+                while !tippsCreated {
+                    sleep(1)
+                    let startTime = NSDate()
+                    let grösse = self.countRows * self.countColumns
+                    let gameArrayGrösse = self.gameArray.count * self.gameArray[self.gameArray.count - 1].count
+                    print ("gameArray.count:", gameArrayGrösse, "sollGrösse:", grösse)
+                    tippsCreated = self.createTipps()
+                    print("tippsCreated:", tippsCreated, "in ", NSDate().timeIntervalSinceDate(startTime), " seconds")
+                    self.stopCreateTippsInBackground = false
+//                    print("tippsCreated:", tippsCreated)
+                }
                 dispatch_async(dispatch_get_main_queue(), {
                     self.generatingTipps = false
-                    if self.gameArrayChanged.count > 0 {
-                        self.gameArrayChanged.removeLast()
-                    }
+//                    print("stopCreateTippsInBackground:", self.stopCreateTippsInBackground)
                 })
             }
         }
+//        backGroundOperation.queuePriority = .Normal
+//        backGroundOperation.qualityOfService = .Background
+//        
+//        backGroundOperation.completionBlock = {
+//            let startTime = NSDate()
+//            let tippsCreated = self.createTipps()
+//            print("tippsCreated:", tippsCreated, startTime, NSDate(), NSDate().timeIntervalSinceDate(startTime))
+//        }
+//        NSOperationQueue.mainQueue().addOperation(backGroundOperation)
 
     }
     func deleteEmptySprite(column: Int, row: Int) {
@@ -368,14 +399,19 @@ class CardGameScene: MyGameScene {
         
     }
     
-    func createTipps() {
+    func createTipps()->Bool {
+        print("createTipps started")
         tippArray.removeAll()
+//        while gameArray.count < countColumns * countRows {
+//            sleep(1) //wait until gameArray is filled!!
+//        }
         var pairsToCheck = [(card1:(column:Int,row:Int), card2:(column:Int,row:Int))]()
         for column1 in 0..<countColumns {
             for row1 in 0..<countRows {
                 if gameArray[column1][row1].used {
                     for column2 in 0..<countColumns {
                         for row2 in 0..<countRows {
+                            if stopCreateTippsInBackground {return false}
                             if (column1 != column2 || row1 != row2) && gameArray[column2][row2].colorIndex == gameArray[column1][row1].colorIndex &&
                                 (gameArray[column2][row2].minValue == gameArray[column1][row1].maxValue + 1 ||
                                     gameArray[column2][row2].maxValue == gameArray[column1][row1].minValue - 1) {
@@ -399,9 +435,12 @@ class CardGameScene: MyGameScene {
             }
         }
  //       sleep(5)
+//        print("startcreateTipps -------------- pairsToCheck.count = ", pairsToCheck.count, "------------------------")
+
+        
         for ind in 0..<pairsToCheck.count {
-//            print(pairsToCheck[ind])
             checkPathToFoundedCards(pairsToCheck[ind])
+             if stopCreateTippsInBackground {return false}
         }
         var removeIndex = [Int]()
         if tippArray.count > 0 {
@@ -434,6 +473,7 @@ class CardGameScene: MyGameScene {
                 tippArray.removeAtIndex(removeIndex[ind])
             }
             
+            if stopCreateTippsInBackground {return false}
             tippArray.sortInPlace({checkForSort($0, t1: $1) })
             
         }
@@ -442,6 +482,7 @@ class CardGameScene: MyGameScene {
 
 
         tippIndex = 0  // set tipps to first
+        return true
      }
     
     func checkForSort(t0: Tipps, t1:Tipps)->Bool {
@@ -480,7 +521,9 @@ class CardGameScene: MyGameScene {
 //        let startNode = self.childNodeWithName(name)! as! MySKNode
         var founded = false
         var angle = startAngle
+        var angleCount = 0
         while angle <= stopAngle && !founded {
+            angleCount += 1
             let toPoint = pointOfCircle(1.0, center: startPoint, angle: angle)
             let (foundedPoint, myLines) = createHelpLines(ind.card1, toPoint: toPoint, inFrame: self.frame, lineSize: spriteSize.width, showLines: false)
             if foundedPoint != nil {
@@ -505,6 +548,8 @@ class CardGameScene: MyGameScene {
             }
             angle += oneGrad
         }
+//        print(ind.card1.column, ind.card1.row, ind.card2.column, ind.card2.row, angleCount, distanceToLine)
+
         if distanceToLine != firstValue {
             tippArray.append(myTipp)
         }
@@ -587,19 +632,19 @@ class CardGameScene: MyGameScene {
         var foundedPoint = Founded()
         var toPoint = toPoint
         var pointFounded = false
-        if let nextCard = findNextPoint(fromPoint, P2: toPoint, lineWidth: lineWidth, movedFrom: movedFrom) {
-            toPoint = nextCard.point //gameArray[closestPoint.column][closestPoint.row].position
+        if let closestCard = findClosestPoint(fromPoint, P2: toPoint, lineWidth: lineWidth, movedFrom: movedFrom) {
+            toPoint = closestCard.point //gameArray[closestPoint.column][closestPoint.row].position
             if showLines {
-                makeTrembling(nextCard)
+                makeTrembling(closestCard)
             }
-            foundedPoint = nextCard
+            foundedPoint = closestCard
             pointFounded = true
         }
         
         return (pointFounded, foundedPoint)
     }
     
-    func findNextPoint(P1: CGPoint, P2: CGPoint, lineWidth: CGFloat, movedFrom: (column: Int, row: Int)) -> Founded? {
+    func findClosestPoint(P1: CGPoint, P2: CGPoint, lineWidth: CGFloat, movedFrom: (column: Int, row: Int)) -> Founded? {
         
         /*
         Ax+By=C  - Equation of a line
@@ -788,12 +833,14 @@ class CardGameScene: MyGameScene {
             for index in 0..<nodes.count {
                 if nodes[index] is MySKNode {
                     (nodes[index] as! MySKNode).tremblingType = .NoTrembling
+
                     tremblingSprites.removeAll()
                 }
             }
             lastNextPoint = nil
         }
-        stopTrembling()
+
+//        stopTrembling()
         if lastNextPoint == nil {
             if nextPoint.foundContainer {
                 tremblingCardPosition = containers[nextPoint.column].mySKNode.position
@@ -844,7 +891,6 @@ class CardGameScene: MyGameScene {
         let sec10: Int = Int(currentTime * 10) % 3
         if sec10 != lastUpdateSec && sec10 == 0 {
             let adder:CGFloat = 5
-//            backgroudScrollUpdate()
             for index in 0..<tremblingSprites.count {
                 let aktSprite = tremblingSprites[index]
                 switch aktSprite.trembling {
@@ -1019,8 +1065,9 @@ class CardGameScene: MyGameScene {
         }
         if usedCellCount <= minUsedCells {
             generateSprites(false)  // Nachgenerierung
+        } else {
+            gameArrayChanged = true
         }
-        gameArrayChanged.append(true)
     }
     
     override func restartButtonPressed() {
@@ -1079,7 +1126,7 @@ class CardGameScene: MyGameScene {
         let newGameAction = UIAlertAction(title: GV.language.getText(TextConstants.TCNewGame), style: .Default,
             handler: {(paramAction:UIAlertAction!) in
                 self.newGame(true)
-                self.gameArrayChanged.append(true)
+                //self.gameArrayChanged = true
 
         })
         alert.addAction(newGameAction)
@@ -1200,7 +1247,9 @@ class CardGameScene: MyGameScene {
 //                        colorTab.append(colorTabLine)
                         gameArray[savedSpriteInCycle.column][savedSpriteInCycle.row].used = false
                         makeEmptyCard(savedSpriteInCycle.column, row: savedSpriteInCycle.row)
-                        let actionMove = SKAction.moveTo(cardPackege!.position, duration: 1.5)
+                        let aktPosition = gameArray[savedSpriteInCycle.column][savedSpriteInCycle.row].position
+                        let duration = Double((cardPackege!.position - aktPosition).length()) / 500.0
+                        let actionMove = SKAction.moveTo(cardPackege!.position, duration: duration)
                         let removeOldCard = SKAction.runBlock({
                             self.childNodeWithName(searchName)!.removeFromParent()
                         })
@@ -1385,7 +1434,7 @@ class CardGameScene: MyGameScene {
             showScore()
         }
         
-        gameArrayChanged.append(true)
+        gameArrayChanged = true
 
     }
     
@@ -1531,22 +1580,6 @@ class CardGameScene: MyGameScene {
     }
     
     override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
-//        var position = CGPointZero
-//        if lastNextPoint != nil {
-//            if lastNextPoint!.row == NoValue {
-//                position = containers[lastNextPoint!.column].mySKNode.position
-//            } else {
-//                position = gameArray[lastNextPoint!.column][lastNextPoint!.row].position
-//            }
-//            
-//            let nodes = nodesAtPoint(position)
-//            for index in 0..<nodes.count {
-//                if nodes[index] is MySKNode {
-//                    (nodes[index] as! MySKNode).tremblingType = .NoTrembling
-//                    tremblingSprites.removeAll()
-//                }
-//            }
-//        }
         stopTrembling()
         let firstTouch = touches.first
         let touchLocation = firstTouch!.locationInNode(self)
@@ -1620,10 +1653,6 @@ class CardGameScene: MyGameScene {
 
             if exchangeModus {
                 exchangeModus = false
-//                for index in 0..<tremblingSprites.count {
-//                    tremblingSprites[index].tremblingType = .NoTrembling
-//                }
-//                tremblingSprites.removeAll()
                 stopTrembling()
             }
             
@@ -1717,15 +1746,16 @@ class CardGameScene: MyGameScene {
                         startNode.size = foundedCard!.size
                         startNode.position = foundedCard!.position
                         startNode.type = .SpriteType
-                        gameArray[startNode.column][startNode.row].used = true
+//                        gameArray[startNode.column][startNode.row].used = true
                         addPhysicsBody(startNode)
                         foundedCard!.removeFromParent()
                         founded = true
-                        gameArray[startNode.column][startNode.row].colorIndex = startNode.colorIndex
-                        gameArray[startNode.column][startNode.row].minValue = startNode.minValue
-                        gameArray[startNode.column][startNode.row].maxValue = startNode.maxValue
+                        updateGameArrayCell(startNode)
+//                        gameArray[startNode.column][startNode.row].colorIndex = startNode.colorIndex
+//                        gameArray[startNode.column][startNode.row].minValue = startNode.minValue
+//                        gameArray[startNode.column][startNode.row].maxValue = startNode.maxValue
                         pullShowCard()
-                        gameArrayChanged.append(true)
+                        gameArrayChanged = true
 
                         break
                     } else if nodes[index] is MySKNode && foundedCard!.type == .SpriteType && startNode.colorIndex == foundedCard!.colorIndex &&
@@ -1747,7 +1777,7 @@ class CardGameScene: MyGameScene {
                             startNode.removeFromParent()
                             pullShowCard()
                             founded = true
-                            gameArrayChanged.append(true)
+                            gameArrayChanged = true
 
                             break
                    }
@@ -1812,10 +1842,6 @@ class CardGameScene: MyGameScene {
                         createAndRunAction(cardToChange!, card2: aktSprite)
                         createAndRunAction(aktSprite, card2: cardToChange!)
                         
-//                        let actionMove = SKAction.moveTo(aktSprite.position, duration: 0.5)
-//                        cardToChange!.runAction(actionMove)
-//                        let actionMove1 = SKAction.moveTo(cardToChange!.position, duration: 0.5)
-//                        aktSprite.runAction(actionMove1)
                         let column = aktSprite.column
                         let row = aktSprite.row
                         let startPosition = aktSprite.startPosition
@@ -1827,21 +1853,13 @@ class CardGameScene: MyGameScene {
                         cardToChange!.column = column
                         cardToChange!.row = row
                         cardToChange!.startPosition = startPosition
-                        //
-//                        for index in 0..<tremblingSprites.count {
-//                            //tremblingSprites[index].size = tremblingSprites[index].origSize
-//                            tremblingSprites[index].tremblingType = .NoTrembling
-//                            tremblingSprites[index].zRotation = 0
-//                            tremblingSprites[index].zPosition = 0
-//                        }
-//                        tremblingSprites.removeAll()
+
                         stopTrembling()
                         cardToChange = nil
-                        gameArrayChanged.append(true)
+                        gameArrayChanged = true
 
                     } else {
                         exchangeModus = true
-                        //aktSprite.origSize = aktSprite.size
                         tremblingSprites.append(aktSprite)
                         aktSprite.tremblingType = .ChangeSize
                         cardToChange = aktSprite
@@ -1858,9 +1876,6 @@ class CardGameScene: MyGameScene {
         let actionMove = SKAction.moveTo(card2.position, duration: 0.5)
         
         let actionDeleteEmptyCard = SKAction.runBlock({
-//            if self.childNodeWithName("\(self.emptySpriteTxt)-\(card1.column)-\(card1.row)") != nil {
-//                self.childNodeWithName("\(self.emptySpriteTxt)-\(card1.column)-\(card1.row)")!.removeFromParent()
-//            }
             self.deleteEmptySprite(card1.column, row: card1.row)
         })
         card1.runAction(SKAction.sequence([actionShowEmptyCard, actionMove, actionDeleteEmptyCard]))

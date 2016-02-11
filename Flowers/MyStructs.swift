@@ -39,6 +39,8 @@ struct GV {
     static var globalParam = GlobalParamData()
     static let dummyName = "dummy"
     static var initName = false
+    static let oneGrad:CGFloat = CGFloat(M_PI) / 180
+
 
     static let dataStore = DataStore()
     static let cloudStore = CloudData()
@@ -62,6 +64,12 @@ struct GV {
         }
         return 0
     }
+    
+    static func pointOfCircle(radius: CGFloat, center: CGPoint, angle: CGFloat) -> CGPoint {
+        let pointOfCircle = CGPoint (x: center.x + radius * cos(angle), y: center.y + radius * sin(angle))
+        return pointOfCircle
+    }
+
     
 //    static func getAktSpriteGameData()->SpriteGameData {
 //        for index in 0..<GV.spriteGameDataArray.count {

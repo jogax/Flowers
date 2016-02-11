@@ -62,7 +62,7 @@ class CardGameScene: MyGameScene {
     var showCard: MySKNode?
     var showCardFromStack: MySKNode?
     var showCardFromStackAddedToParent = false
-    var backGroundOperation = NSOperation()
+//    var backGroundOperation = NSOperation()
 
 
     var lastCollisionsTime = NSDate()
@@ -79,21 +79,27 @@ class CardGameScene: MyGameScene {
     var generatingTipps = false
     var tippArray = [Tipps]()
     var tippIndex = 0
-    let oneGrad:CGFloat = CGFloat(M_PI) / 180
+//    let oneGrad:CGFloat = CGFloat(M_PI) / 180
     var dummy = 0
 
     //var gameArrayPositions = [[GameArrayPositions]]()
-    var stopCreateTippsInBackground = false
+    var stopCreateTippsInBackground = false {
+        didSet {
+            if stopCreateTippsInBackground && !generatingTipps {
+                stopCreateTippsInBackground = false
+            } else {
+                while stopCreateTippsInBackground {
+                    dummy = 0
+                }
+            }
+        }
+    }
     var gameArrayChanged = false {
         didSet {
-//            let startAt = NSDate()
-//            createTipps()
-//            print(NSDate().timeIntervalSinceDate(startAt))
             switch (gameArrayChanged, generatingTipps) {
                 case (true, false):
                     startCreateTippsInBackground()
                 case (true, true):
-                    print("hier")
                     stopCreateTippsInBackground = true
                     while stopCreateTippsInBackground {
                         dummy = 0
@@ -123,6 +129,7 @@ class CardGameScene: MyGameScene {
     }
         
     override func specialPrepareFuncFirst() {
+        stopCreateTippsInBackground = true
         let cardSize = CGSizeMake(buttonSize * sizeMultiplier.width * 0.8, buttonSize * sizeMultiplier.height * 0.8)
         let cardPackageButtonTexture = SKTexture(image: images.getCardPackage())
         cardPackege = MySKButton(texture: cardPackageButtonTexture, frame: CGRectMake(buttonXPosNormalized * 4.0, buttonYPos, cardSize.width, cardSize.height), makePicture: false)
@@ -290,6 +297,7 @@ class CardGameScene: MyGameScene {
     
     
     func startCreateTippsInBackground() {
+        
         if !generatingTipps {
             dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0)) { //(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0)) {
                 self.generatingTipps = true
@@ -297,29 +305,15 @@ class CardGameScene: MyGameScene {
                 while !tippsCreated {
                     sleep(1)
                     let startTime = NSDate()
-                    let grösse = self.countRows * self.countColumns
-                    let gameArrayGrösse = self.gameArray.count * self.gameArray[self.gameArray.count - 1].count
-                    print ("gameArray.count:", gameArrayGrösse, "sollGrösse:", grösse)
                     tippsCreated = self.createTipps()
-                    print("tippsCreated:", tippsCreated, "in ", NSDate().timeIntervalSinceDate(startTime), " seconds")
+                    print("tippsCreated:", tippsCreated, "in ", Double(round(1000*NSDate().timeIntervalSinceDate(startTime))/1000), " seconds")
                     self.stopCreateTippsInBackground = false
-//                    print("tippsCreated:", tippsCreated)
                 }
                 dispatch_async(dispatch_get_main_queue(), {
                     self.generatingTipps = false
-//                    print("stopCreateTippsInBackground:", self.stopCreateTippsInBackground)
                 })
             }
         }
-//        backGroundOperation.queuePriority = .Normal
-//        backGroundOperation.qualityOfService = .Background
-//        
-//        backGroundOperation.completionBlock = {
-//            let startTime = NSDate()
-//            let tippsCreated = self.createTipps()
-//            print("tippsCreated:", tippsCreated, startTime, NSDate(), NSDate().timeIntervalSinceDate(startTime))
-//        }
-//        NSOperationQueue.mainQueue().addOperation(backGroundOperation)
 
     }
     func deleteEmptySprite(column: Int, row: Int) {
@@ -400,7 +394,6 @@ class CardGameScene: MyGameScene {
     }
     
     func createTipps()->Bool {
-        print("createTipps started")
         tippArray.removeAll()
 //        while gameArray.count < countColumns * countRows {
 //            sleep(1) //wait until gameArray is filled!!
@@ -434,14 +427,18 @@ class CardGameScene: MyGameScene {
                 }
             }
         }
- //       sleep(5)
-//        print("startcreateTipps -------------- pairsToCheck.count = ", pairsToCheck.count, "------------------------")
 
-        
+        print("pairsToCheck:", pairsToCheck.count)
+        let pairsToCheckCount = pairsToCheck.count
+        let startCheckTime = NSDate()
         for ind in 0..<pairsToCheck.count {
             checkPathToFoundedCards(pairsToCheck[ind])
-             if stopCreateTippsInBackground {return false}
+            tippsButton!.showProgress(ind, maxValue: pairsToCheckCount)
+            if stopCreateTippsInBackground {return false}
         }
+        let checkTime = NSDate().timeIntervalSinceDate(startCheckTime)
+        let avarageTime = checkTime / Double(pairsToCheckCount)
+        print("for ", countColumns, " columns the avarageTime is:", Double(round(1000*avarageTime)/1000), "sec / pair")
         var removeIndex = [Int]()
         if tippArray.count > 0 {
             for ind in 0..<tippArray.count - 1 {
@@ -516,7 +513,7 @@ class CardGameScene: MyGameScene {
         } else {
             targetPoint = gameArray[ind.card2.column][ind.card2.row].position
         }
-        let startAngle = calculateAngle(startPoint, point2: targetPoint).angleRadian - oneGrad * 20
+        let startAngle = calculateAngle(startPoint, point2: targetPoint).angleRadian - GV.oneGrad * 20
         let stopAngle = startAngle + CGFloat(M_PI) * 2 // + 360°
 //        let startNode = self.childNodeWithName(name)! as! MySKNode
         var founded = false
@@ -524,7 +521,7 @@ class CardGameScene: MyGameScene {
         var angleCount = 0
         while angle <= stopAngle && !founded {
             angleCount += 1
-            let toPoint = pointOfCircle(1.0, center: startPoint, angle: angle)
+            let toPoint = GV.pointOfCircle(1.0, center: startPoint, angle: angle)
             let (foundedPoint, myLines) = createHelpLines(ind.card1, toPoint: toPoint, inFrame: self.frame, lineSize: spriteSize.width, showLines: false)
             if foundedPoint != nil {
                 if foundedPoint!.foundContainer && ind.card2.row == NoValue && foundedPoint!.column == ind.card2.column ||
@@ -546,17 +543,14 @@ class CardGameScene: MyGameScene {
             } else {
                 print("in else zweig von checkPathToFoundedCards !")
             }
-            angle += oneGrad
+            angle += GV.oneGrad
         }
-//        print(ind.card1.column, ind.card1.row, ind.card2.column, ind.card2.row, angleCount, distanceToLine)
 
         if distanceToLine != firstValue {
             tippArray.append(myTipp)
         }
      }
     func createHelpLines(movedFrom: (column: Int, row: Int), toPoint: CGPoint, inFrame: CGRect, lineSize: CGFloat, showLines: Bool)->(foundedPoint: Founded?, [CGPoint]) {
-        //        print("createHelpLines start")
-        //        var linesArray = [SKShapeNode]()
         var pointArray = [CGPoint]()
         var foundedPoint: Founded?
         var founded = false
@@ -770,8 +764,8 @@ class CardGameScene: MyGameScene {
             }
         }
         
-        let p1 = pointOfCircle(20.0, center: points.last!, angle: angleR - (150 * oneGrad))
-        let p2 = pointOfCircle(20.0, center: points.last!, angle: angleR + (150 * oneGrad))
+        let p1 = GV.pointOfCircle(20.0, center: points.last!, angle: angleR - (150 * GV.oneGrad))
+        let p2 = GV.pointOfCircle(20.0, center: points.last!, angle: angleR + (150 * GV.oneGrad))
         
         
         
@@ -795,8 +789,8 @@ class CardGameScene: MyGameScene {
                 }
             }
             
-            let p1 = pointOfCircle(20.0, center: points.first!, angle: angleR - (150 * oneGrad))
-            let p2 = pointOfCircle(20.0, center: points.first!, angle: angleR + (150 * oneGrad))
+            let p1 = GV.pointOfCircle(20.0, center: points.first!, angle: angleR - (150 * GV.oneGrad))
+            let p2 = GV.pointOfCircle(20.0, center: points.first!, angle: angleR + (150 * GV.oneGrad))
             
             
             CGPathMoveToPoint(pathToDraw, nil, points[0].x, points[0].y)
@@ -881,10 +875,10 @@ class CardGameScene: MyGameScene {
         return (angleRadian, angleDegree)
     }
 
-    func pointOfCircle(radius: CGFloat, center: CGPoint, angle: CGFloat) -> CGPoint {
-        let pointOfCircle = CGPoint (x: center.x + radius * cos(angle), y: center.y + radius * sin(angle))
-        return pointOfCircle
-    }
+//    func pointOfCircle(radius: CGFloat, center: CGPoint, angle: CGFloat) -> CGPoint {
+//        let pointOfCircle = CGPoint (x: center.x + radius * cos(angle), y: center.y + radius * sin(angle))
+//        return pointOfCircle
+//    }
 
 
     override func update(currentTime: NSTimeInterval) {
@@ -947,7 +941,6 @@ class CardGameScene: MyGameScene {
 
         
         
-        //print("spriteName: \(containerColorIndex), containerName: \(spriteColorIndex)")
         if OK  {
             push(container, status: .HitcounterChanged)
             push(movingSprite, status: .Removed)
@@ -1468,13 +1461,8 @@ class CardGameScene: MyGameScene {
         let nodes = nodesAtPoint(touchLocation)
         for nodesIndex in 0..<nodes.count {
             switch nodes[nodesIndex]  {
-//                case is SKLabelNode:
-//                    print (nodesIndex, ": SKLabelNode")
-//                case is MyGameScene:
-//                    print (nodesIndex, ": MyGameScene")
                 case is MySKButton:
                     movedFromNode = (nodes[nodesIndex] as! MySKButton) as MySKNode
-//                    print (nodesIndex," ", (nodes[nodesIndex] as! MySKButton).name!, ": MySKButton")
                     break
                 case is MySKNode:
                     if (nodes[nodesIndex] as! MySKNode).type == .SpriteType ||
@@ -1491,13 +1479,9 @@ class CardGameScene: MyGameScene {
                             addChild(fingerNode)
                         }
                     }
-//                    print(nodesIndex, ": MySKNode")
                     break
-//                case is SKShapeNode:
-//                    print(nodesIndex, ": SKShapeNode")
                 default:
-//                    print(nodesIndex, ": other")
-                    dummy = dummy + 1
+                    dummy = 0
             }
         }
         

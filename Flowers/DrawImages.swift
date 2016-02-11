@@ -178,13 +178,13 @@ class DrawImages {
         let center2 = CGPoint(x: frame.origin.x + frame.width / 2, y: frame.origin.y + frame.height - adder - r0 * 1.5)
         
         
-        let oneGrad:CGFloat = CGFloat(M_PI) / 180
-        let minAngle1 = 330 * oneGrad
-        let maxAngle1 = 210 * oneGrad
+//        let oneGrad:CGFloat = CGFloat(M_PI) / 180
+        let minAngle1 = 330 * GV.oneGrad
+        let maxAngle1 = 210 * GV.oneGrad
         //println("1 Grad: \(oneGrad)")
         
-        let minAngle2 = 150 * oneGrad
-        let maxAngle2 = 30 * oneGrad
+        let minAngle2 = 150 * GV.oneGrad
+        let maxAngle2 = 30 * GV.oneGrad
         
         CGContextAddArc(ctx, center1.x, center1.y, r0, minAngle1, maxAngle1, 1)
         CGContextStrokePath(ctx)
@@ -240,9 +240,9 @@ class DrawImages {
 //        let center2 = CGPoint(x: frame.origin.x + frame.width / 2, y: frame.origin.y + frame.height - adder - r0 * 1.5)
         
         
-        let oneGrad:CGFloat = CGFloat(M_PI) / 180
-        let minAngle1 = 340 * oneGrad
-        let maxAngle1 = 200 * oneGrad
+//        let oneGrad:CGFloat = CGFloat(M_PI) / 180
+        let minAngle1 = 340 * GV.oneGrad
+        let maxAngle1 = 200 * GV.oneGrad
         //println("1 Grad: \(oneGrad)")
         
 //        let minAngle2 = 150 * oneGrad
@@ -304,9 +304,8 @@ class DrawImages {
         //        let center2 = CGPoint(x: frame.origin.x + frame.width / 2, y: frame.origin.y + frame.height - adder - r0 * 1.5)
         
         
-        let oneGrad:CGFloat = CGFloat(M_PI) / 180
-        let minAngle1 = 430 * oneGrad
-        let maxAngle1 = 90 * oneGrad
+        let minAngle1 = 430 * GV.oneGrad
+        let maxAngle1 = 90 * GV.oneGrad
         //println("1 Grad: \(oneGrad)")
         
         //        let minAngle2 = 150 * oneGrad
@@ -368,14 +367,13 @@ class DrawImages {
         //        let center2 = CGPoint(x: frame.origin.x + frame.width / 2, y: frame.origin.y + frame.height - adder - r0 * 1.5)
         
         
-        let oneGrad:CGFloat = CGFloat(M_PI) / 180
-        let minAngle1 = 410 * oneGrad
-        let maxAngle1 = 130 * oneGrad
-        let blitzAngle1 = 200 * oneGrad
-        let blitzAngle2 = 230 * oneGrad
-        let blitzAngle3 = 270 * oneGrad
-        let blitzAngle4 = 310 * oneGrad
-        let blitzAngle5 = 340 * oneGrad
+        let minAngle1 = 410 * GV.oneGrad
+        let maxAngle1 = 130 * GV.oneGrad
+        let blitzAngle1 = 200 * GV.oneGrad
+        let blitzAngle2 = 230 * GV.oneGrad
+        let blitzAngle3 = 270 * GV.oneGrad
+        let blitzAngle4 = 310 * GV.oneGrad
+        let blitzAngle5 = 340 * GV.oneGrad
         //println("1 Grad: \(oneGrad)")
         
         //        let minAngle2 = 150 * oneGrad

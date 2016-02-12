@@ -79,6 +79,7 @@ class CardGameScene: MyGameScene {
     var generatingTipps = false
     var tippArray = [Tipps]()
     var tippIndex = 0
+    var showTippAtTimer: NSTimer?
 //    let oneGrad:CGFloat = CGFloat(M_PI) / 180
     var dummy = 0
 
@@ -303,6 +304,10 @@ class CardGameScene: MyGameScene {
                 self.generatingTipps = true
                 var tippsCreated = false
                 while !tippsCreated {
+                    if self.showTippAtTimer != nil {
+                        self.showTippAtTimer!.invalidate()
+                        self.showTippAtTimer = nil
+                    }
                     sleep(1)
                     let startTime = NSDate()
                     tippsCreated = self.createTipps()
@@ -311,11 +316,17 @@ class CardGameScene: MyGameScene {
                 }
                 dispatch_async(dispatch_get_main_queue(), {
                     self.generatingTipps = false
+                    self.showTippAtTimer = NSTimer.scheduledTimerWithTimeInterval(30.0, target: self, selector: Selector("showTipp"), userInfo: nil, repeats: true)
                 })
             }
         }
 
     }
+    
+    func showTipp() {
+        getTipps()
+    }
+    
     func deleteEmptySprite(column: Int, row: Int) {
         let searchName = "\(emptySpriteTxt)-\(column)-\(row)"
         if self.childNodeWithName(searchName) != nil {
@@ -969,7 +980,7 @@ class CardGameScene: MyGameScene {
             movingSprite.removeFromParent()
             countMovingSprites = 0
             push(movingSprite, status: .Removed)
-            pull()
+            pull(false) // no createTipps
         }
         
      }
@@ -1036,7 +1047,7 @@ class CardGameScene: MyGameScene {
             movingSprite.removeFromParent()
             countMovingSprites = 0
             push(movingSprite, status: .Removed)
-            pull()
+            pull(false) // no createTipps
             
         }
         checkGameFinished()
@@ -1215,7 +1226,7 @@ class CardGameScene: MyGameScene {
     
 
 
-    override func pull() {
+    override func pull(createTipps: Bool) {
         let duration = 0.2
         var actionMoveArray = [SKAction]()
         if let savedSprite:SavedSprite  = stack.pull() {
@@ -1427,7 +1438,9 @@ class CardGameScene: MyGameScene {
             showScore()
         }
         
-        gameArrayChanged = true
+        if createTipps {
+            gameArrayChanged = true
+        }
 
     }
     
@@ -1696,7 +1709,7 @@ class CardGameScene: MyGameScene {
                     sprite.colorBlendFactor = 4
                     self.playSound("Drop", volume: GV.soundVolume)
                     sprite.removeFromParent()
-                    self.pull()
+                    self.pull(false) // no createTipps
                     self.userInteractionEnabled = true
                     
                     

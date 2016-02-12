@@ -301,7 +301,7 @@ class FlowerGameScene: MyGameScene {
         }
     }
 
-    override func pull() {
+    override func pull(createTipps: Bool) {
         let duration = 0.2
         var actionMoveArray = [SKAction]()
         if let savedSprite:SavedSprite = stack.pull() {
@@ -593,7 +593,7 @@ class FlowerGameScene: MyGameScene {
                     //                    let remove = SKAction.runBlock({sparkEmitter!.removeFromParent()/*; print("Emitter removed")*/})
                     //                    sparkEmitter!.runAction(SKAction.sequence([wait, remove]))
                     //                    self.addChild(sparkEmitter!)
-                    self.pull()
+                    self.pull(false)
                     self.userInteractionEnabled = true
                     
                     

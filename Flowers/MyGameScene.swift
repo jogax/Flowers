@@ -467,7 +467,7 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
     }
     
     func undoButtonPressed() {
-        pull()
+        pull(true)
     }
     
 //    func exchangeButtonPressed() {
@@ -1132,7 +1132,7 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
     
     // FUNCTIONS FOR OVERRIDE
     
-    func pull() {
+    func pull(createTipps: Bool) {
     }
     
     func updateSpriteCount(adder: Int) {

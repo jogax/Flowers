@@ -87,20 +87,24 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
     }
     
     struct Tipps {
+        var removed: Bool
         var fromColumn: Int
         var fromRow: Int
         var toColumn: Int
         var toRow: Int
         var twoArrows: Bool
         var points:[CGPoint]
+        var lineLength: CGFloat
         
         init() {
+            removed = false
             fromColumn = 0
             fromRow = 0
             toColumn = 0
             toRow = 0
             points = [CGPoint]()
             twoArrows = false
+            lineLength = 0
         }
     }
     
@@ -319,7 +323,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         }
         let seedIndex = SeedIndex(gameType: Int64(GV.spriteGameDataArray[GV.getAktNameIndex()].gameModus), gameDifficulty: 0, gameNumber: Int64(gameNumber))
         random = MyRandom(seedIndex: seedIndex)
-        stopTimer()
+        stopTimer(countUp)
         
         gameArray.removeAll(keepCapacity: false)
         containers.removeAll(keepCapacity: false)
@@ -750,33 +754,65 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         var removeIndex = [Int]()
         if tippArray.count > 0 {
             for ind in 0..<tippArray.count - 1 {
-                if tippArray[ind].fromColumn == tippArray[ind + 1].toColumn &&
-                   tippArray[ind].fromRow == tippArray[ind + 1].toRow &&
-                   tippArray[ind].toColumn == tippArray[ind + 1].fromColumn  &&
-                    tippArray[ind].toRow == tippArray[ind + 1].fromRow {
-                        switch tippArray[ind].points.count {
-                        case 2:
-                            tippArray[ind].twoArrows = true
-                            removeIndex.insert(ind + 1, atIndex: 0)
-                        case 3:
-                            if (tippArray[ind].points[1] - tippArray[ind + 1].points[1]).length() < spriteSize.height{
+                if !tippArray[ind].removed {
+                    let fromColumn = tippArray[ind].fromColumn
+                    let toColumn = tippArray[ind].toColumn
+                    let fromRow = tippArray[ind].fromRow
+                    let toRow = tippArray[ind].toRow
+                    if fromColumn == tippArray[ind + 1].toColumn &&
+                       fromRow == tippArray[ind + 1].toRow &&
+                       toColumn == tippArray[ind + 1].fromColumn  &&
+                       toRow == tippArray[ind + 1].fromRow {
+                            switch tippArray[ind].points.count {
+                            case 2:
                                 tippArray[ind].twoArrows = true
                                 removeIndex.insert(ind + 1, atIndex: 0)
+                            case 3:
+                                if (tippArray[ind].points[1] - tippArray[ind + 1].points[1]).length() < spriteSize.height{
+                                    tippArray[ind].twoArrows = true
+                                    removeIndex.insert(ind + 1, atIndex: 0)
+                                }
+                            case 4:
+                                if tippArray[ind + 1].points.count == 4 && (tippArray[ind].points[1] - tippArray[ind + 1].points[2]).length() < spriteSize.height && (tippArray[ind].points[2] - tippArray[ind + 1].points[1]).length() < spriteSize.height
+                                {
+                                    tippArray[ind].twoArrows = true
+                                    removeIndex.insert(ind + 1, atIndex: 0)
+                                }
+                            default:
+                                tippArray[ind].twoArrows = false
                             }
-                        case 4:
-                            if tippArray[ind + 1].points.count == 4 && (tippArray[ind].points[1] - tippArray[ind + 1].points[2]).length() < spriteSize.height && (tippArray[ind].points[2] - tippArray[ind + 1].points[1]).length() < spriteSize.height
-                            {
-                                tippArray[ind].twoArrows = true
-                                removeIndex.insert(ind + 1, atIndex: 0)
+                    }
+                    if gameArray[fromColumn][fromRow].maxValue == LastCardValue && toRow == NoValue && containers[toColumn].mySKNode.minValue == NoColor {
+                        // King to empty Container
+                        var index = 1
+                        while (ind + index) < tippArray.count && index < 4 {
+                            let fromColumn1 = tippArray[ind + index].fromColumn
+                            let toColumn1 = tippArray[ind + index].toColumn
+                            let fromRow1 = tippArray[ind + index].fromRow
+                            let toRow1 = tippArray[ind + index].toRow
+                            
+                            if fromColumn == fromColumn1 && fromRow == fromRow1 && toRow1 == NoValue && containers[toColumn1].mySKNode.minValue == NoColor
+                                && toColumn != toColumn1 {
+                                    if tippArray[ind].lineLength > tippArray[ind + index].lineLength {
+                                        let tippArchiv = tippArray[ind]
+                                        tippArray[ind] = tippArray[ind + index]
+                                        tippArray[ind + index] = tippArchiv
+                                        tippArray[ind + index].removed = true
+                                        removeIndex.insert(ind + index, atIndex: 0)
+                                    }
                             }
-                        default:
-                            tippArray[ind].twoArrows = false
+                            index++
                         }
+                        dummy = 0
+                    }
                 }
             }
+            
+            
             for ind in 0..<removeIndex.count {
                 tippArray.removeAtIndex(removeIndex[ind])
             }
+            
             
             if stopCreateTippsInBackground {return false}
             tippArray.sortInPlace({checkForSort($0, t1: $1) })
@@ -855,6 +891,10 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         }
 
         if distanceToLine != firstValue {
+            
+            for ind in 0..<myTipp.points.count - 1 {
+                myTipp.lineLength += (myTipp.points[ind] - myTipp.points[ind + 1]).length()
+            }
             tippArray.append(myTipp)
         }
      }
@@ -1358,7 +1398,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         
         if usedCellCount == 0 && containersOK { // Level completed, start a new game
             
-            stopTimer()
+            stopTimer(countUp)
             playMusic("Winner", volume: GV.musicVolume, loops: 0)
             
             let alert = getNextPlayArt(true)
@@ -1402,7 +1442,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
             testNode.removeFromParent()
         }
         
-        stopTimer()
+        stopTimer(countUp)
         
         prepareNextGame(next)
         generateSprites(true)
@@ -1761,6 +1801,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         //        }
         //let countTouches = touches.count
         
+        stopTimer(showTippAtTimer)
         
         touchesBeganAt = NSDate()
         let firstTouch = touches.first
@@ -2215,10 +2256,10 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
     func showTimeLeft() {
     }
     
-    func stopTimer() {
-        if countUp != nil {
-            countUp?.invalidate()
-            countUp = nil
+    func stopTimer(var timer: NSTimer?) {
+        if timer != nil {
+            timer?.invalidate()
+            timer = nil
         }
     }
 
@@ -2350,7 +2391,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
     
     func settingsButtonPressed() {
         playMusic("NoSound", volume: GV.musicVolume, loops: 0)
-        stopTimer()
+        stopTimer(countUp)
         settingsDelegate?.settingsDelegateFunc()
     }
     

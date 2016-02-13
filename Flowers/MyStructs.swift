@@ -8,6 +8,8 @@
 
 //import Foundation
 import UIKit
+import GameKit
+
 
 //enum Choosed: Int{
 //    case Unknown = 0, Right, Left, Settings, Restart
@@ -205,28 +207,147 @@ struct LevelParam {
     
 }
 
-//struct Level {
-//    var countContainers: Int
-//    var countSpritesProContainer: Int
-//    var targetScoreKorr: Double
-//    var countColumns: Int
-//    var countRows: Int
-//    var minProzent: Int
-//    var maxProzent: Int
-//    var containerSize: Int
-//    var spriteSize: Int
-//    
-//    init() {
-//        countContainers = 0
-//        countSpritesProContainer = 0
-//        targetScoreKorr = 0
-//        countColumns = 0
-//        countRows = 0
-//        minProzent = 0
-//        maxProzent = 0
-//        containerSize = 0
-//        spriteSize = 0
-//    }
-//}
+func + (left: CGSize, right: CGSize) -> CGSize {
+    return CGSize(width: left.width + right.width, height: left.height + right.height)
+}
+
+func - (left: CGSize, right: CGSize) -> CGSize {
+    return CGSize(width: left.width - right.width, height: left.height - right.height)
+}
+
+func * (point: CGSize, scalar: CGFloat) -> CGSize {
+    return CGSize(width: point.width * scalar, height: point.height * scalar)
+}
+
+func / (point: CGSize, scalar: CGFloat) -> CGSize {
+    return CGSize(width: point.width / scalar, height: point.height / scalar)
+}
 
 
+
+func + (left: CGPoint, right: CGPoint) -> CGPoint {
+    return CGPoint(x: left.x + right.x, y: left.y + right.y)
+}
+
+func - (left: CGPoint, right: CGPoint) -> CGPoint {
+    return CGPoint(x: left.x - right.x, y: left.y - right.y)
+}
+
+func * (point: CGPoint, scalar: CGFloat) -> CGPoint {
+    return CGPoint(x: point.x * scalar, y: point.y * scalar)
+}
+
+func / (point: CGPoint, scalar: CGFloat) -> CGPoint {
+    return CGPoint(x: point.x / scalar, y: point.y / scalar)
+}
+
+#if !(arch(x86_64) || arch(arm64))
+    func sqrt(a: CGFloat) -> CGFloat {
+        return CGFloat(sqrtf(Float(a)))
+    }
+#endif
+
+
+extension CGPoint {
+    func length() -> CGFloat {
+        return sqrt(x*x + y*y)
+    }
+    
+    func normalized() -> CGPoint {
+        return self / length()
+    }
+}
+
+struct PhysicsCategory {
+    static let None         : UInt32 = 0
+    static let All          : UInt32 = UInt32.max
+    static let Sprite       : UInt32 = 0b1      // 1
+    static let Container    : UInt32 = 0b10       // 2
+    static let MovingSprite : UInt32 = 0b100     // 4
+    static let WallAround   : UInt32 = 0b1000     // 8
+}
+
+struct MyNodeTypes {
+    static let none:            UInt32 = 0
+    static let MyGameScene:     UInt32 = 0b1        // 1
+    static let LabelNode:       UInt32 = 0b10       // 2
+    static let SpriteNode:      UInt32 = 0b100      // 4
+    static let ContainerNode:   UInt32 = 0b1000     // 8
+    static let ButtonNode:      UInt32 = 0b10000    // 16
+}
+
+struct Container {
+    let mySKNode: MySKNode
+    //    var label: SKLabelNode
+    //    var countHits: Int
+}
+
+enum SpriteStatus: Int, CustomStringConvertible {
+    case Added = 0, AddedFromCardStack, AddedFromShowCard, MovingStarted, Unification, Mirrored, FallingMovingSprite, FallingSprite, HitcounterChanged, FirstCardAdded, Removed, Exchanged, StopCycle, Nothing
+    
+    var statusName: String {
+        let statusNames = [
+            "Added",
+            "AddedFromCardStack",
+            "AddedFromShowCard",
+            "MovingStarted",
+            "Unification",
+            "Mirrored",
+            "FallingMovingSprite",
+            "FallingSprite",
+            "HitcounterChanged",
+            "Removed",
+            "Exchanged",
+            "Nothing"
+        ]
+        
+        return statusNames[rawValue]
+    }
+    
+    var description: String {
+        return statusName
+    }
+    
+}
+
+struct SavedSprite {
+    var status: SpriteStatus = .Added
+    var type: MySKNodeType = .SpriteType
+    var name: String = ""
+    //    var type: MySKNodeType
+    var startPosition: CGPoint = CGPointMake(0, 0)
+    var endPosition: CGPoint = CGPointMake(0, 0)
+    var colorIndex: Int = 0
+    var size: CGSize = CGSizeMake(0, 0)
+    var hitCounter: Int = 0
+    var minValue: Int = NoValue
+    var maxValue: Int = NoValue
+    var BGPictureAdded = false
+    var column: Int = 0
+    var row: Int = 0
+}
+
+
+enum LinePosition: Int, CustomStringConvertible {
+    case UpperHorizontal = 0, RightVertical, BottomHorizontal, LeftVertical
+    var linePositionName: String {
+        let linePositionNames = [
+            "UH",
+            "RV",
+            "BH",
+            "LV"
+        ]
+        return linePositionNames[rawValue]
+    }
+    
+    var description: String {
+        return linePositionName
+    }
+    
+}
+
+let atlas = SKTextureAtlas(named: "sprites")
+
+@objc protocol SettingsDelegate {
+    func settingsDelegateFunc()
+}

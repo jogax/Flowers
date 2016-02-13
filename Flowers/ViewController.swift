@@ -18,7 +18,8 @@ class ViewController: UIViewController, SettingsDelegate, UIApplicationDelegate 
     var aktName = ""
     var aktModus = GameModusFlowers
     var skView: SKView?
-    var scene: MyGameScene?
+    var cardsScene: CardGameScene?
+    var flowersScene: FlowerGameScene?
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -35,6 +36,8 @@ class ViewController: UIViewController, SettingsDelegate, UIApplicationDelegate 
         skView = self.view as? SKView
         skView!.showsFPS = true
         skView!.showsNodeCount = true
+        cardsScene = nil
+        flowersScene = nil
         
         /* Sprite Kit applies additional optimizations to improve rendering performance */
         skView!.ignoresSiblingOrder = true
@@ -56,22 +59,29 @@ class ViewController: UIViewController, SettingsDelegate, UIApplicationDelegate 
         GV.showHelpLines = Int(GV.spriteGameDataArray[index].showHelpLines)
         GV.soundVolume = Float(GV.spriteGameDataArray[index].soundVolume)
         GV.musicVolume = Float(GV.spriteGameDataArray[index].musicVolume)
-        
-        if GV.spriteGameDataArray[GV.getAktNameIndex()].gameModus == GameModusCards {
-            scene = CardGameScene(size: CGSizeMake(view.frame.width, view.frame.height))
-        } else {
-            scene = FlowerGameScene(size: CGSizeMake(view.frame.width, view.frame.height))
-        }
-        GV.language.addCallback(scene!.changeLanguage)
         skView!.showsFPS = true
         skView!.showsNodeCount = true
         skView!.ignoresSiblingOrder = true
-        scene!.scaleMode = .ResizeFill
-        scene!.parentViewController = self
-        scene!.settingsDelegate = self
+        
+        if GV.spriteGameDataArray[GV.getAktNameIndex()].gameModus == GameModusCards {
+            let scene = CardGameScene(size: CGSizeMake(view.frame.width, view.frame.height))
+            GV.language.addCallback(scene.changeLanguage)
+            scene.scaleMode = .ResizeFill
+            scene.parentViewController = self
+            scene.settingsDelegate = self
+            skView!.presentScene(scene)
+            cardsScene = scene
+        } else {
+            let scene = FlowerGameScene(size: CGSizeMake(view.frame.width, view.frame.height))
+            GV.language.addCallback(scene.changeLanguage)
+            scene.scaleMode = .ResizeFill
+            scene.parentViewController = self
+            scene.settingsDelegate = self
+            skView!.presentScene(scene)
+            flowersScene = scene
+        }
         
         
-        skView!.presentScene(scene)
 
     }
     
@@ -85,8 +95,13 @@ class ViewController: UIViewController, SettingsDelegate, UIApplicationDelegate 
         if aktName != GV.globalParam.aktName || aktModus != GV.spriteGameDataArray[GV.getAktNameIndex()].gameModus {
             startScene()
         } else {
-            scene?.playMusic("MyMusic", volume: GV.musicVolume, loops: 0)
-            scene?.startTimer()
+            if let scene = cardsScene {
+                scene.playMusic("MyMusic", volume: GV.musicVolume, loops: 0)
+                scene.startTimer()
+            } else if let scene = flowersScene {
+                scene.playMusic("MyMusic", volume: GV.musicVolume, loops: 0)
+                scene.startTimer()
+            }
         }
     }
 

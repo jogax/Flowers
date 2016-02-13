@@ -154,6 +154,7 @@ let atlas = SKTextureAtlas(named: "sprites")
 @objc protocol SettingsDelegate {
     func settingsDelegateFunc()
 }
+/*
 
 class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
 
@@ -1183,4 +1184,4 @@ class MyGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
     
 }
 
-
+*/

@@ -510,7 +510,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
 //        valueTab.removeAll()
         spriteCount = Int(CGFloat(countContainers * countSpritesProContainer!))
         let spriteCountText: String = GV.language.getText(.TCCardCount) + " \(spriteCount)"
-        let tippCountText: String = GV.language.getText(.TCCardCount) + " \(spriteCount)"
+        let tippCountText: String = GV.language.getText(.TCTippCount) + " \(tippArray.count)"
         createLabels(spriteCountLabel, text: spriteCountText, position: CGPointMake(self.position.x + self.size.width * spriteCountPosKorr.x, self.position.y + self.size.height * spriteCountPosKorr.y), horAlignment: .Left)
         createLabels(tippCountLabel, text: tippCountText, position: CGPointMake(self.position.x + self.size.width * spriteCountPosKorr.x, self.position.y + self.size.height * tippCountPosKorr.y), horAlignment: .Left)
     }

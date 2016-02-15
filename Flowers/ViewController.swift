@@ -97,7 +97,7 @@ class ViewController: UIViewController, SettingsDelegate, UIApplicationDelegate 
         } else {
             if let scene = cardsScene {
                 scene.playMusic("MyMusic", volume: GV.musicVolume, loops: 0)
-                scene.startTimer()
+                scene.startDoCountUpTimer()
             } else if let scene = flowersScene {
                 scene.playMusic("MyMusic", volume: GV.musicVolume, loops: 0)
                 scene.startTimer()

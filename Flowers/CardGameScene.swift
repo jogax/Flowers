@@ -108,7 +108,12 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         }
     }
     
-
+    let showTippSleepTime = 3.0
+    let doCountUpSleepTime = 1.0
+    
+    let showTippSelector = "showTipp"
+    let doCountUpSelector = "doCountUp"
+    let myLineName = "myLine"
     
     let emptySpriteTxt = "emptySprite"
     
@@ -591,7 +596,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         }
         gameArrayChanged = true
         if first {
-            countUp = NSTimer.scheduledTimerWithTimeInterval(1.0, target: self, selector: Selector("doCountUp"), userInfo: nil, repeats: true)
+            countUp = NSTimer.scheduledTimerWithTimeInterval(doCountUpSleepTime, target: self, selector: Selector(doCountUpSelector), userInfo: nil, repeats: true)
         }
         
         stopped = false
@@ -605,10 +610,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
                 self.generatingTipps = true
                 var tippsCreated = false
                 while !tippsCreated {
-                    if self.showTippAtTimer != nil {
-                        self.showTippAtTimer!.invalidate()
-                        self.showTippAtTimer = nil
-                    }
+                    self.stopTimer(self.showTippAtTimer)
                     sleep(1)
                     let startTime = NSDate()
                     tippsCreated = self.createTipps()
@@ -617,7 +619,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
                 }
                 dispatch_async(dispatch_get_main_queue(), {
                     self.generatingTipps = false
-                    self.showTippAtTimer = NSTimer.scheduledTimerWithTimeInterval(3.0, target: self, selector: Selector("showTipp"), userInfo: nil, repeats: true)
+                    self.showTippAtTimer = NSTimer.scheduledTimerWithTimeInterval(self.showTippSleepTime, target: self, selector: Selector(self.showTippSelector), userInfo: nil, repeats: true)
                 })
             }
         }
@@ -683,7 +685,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
     }
     
     func getTipps() {
-        if tippArray.count > 0 {
+        if tippArray.count > 0 && !generatingTipps {
                 stopTrembling()
                 drawHelpLines(tippArray[tippIndex].points, lineWidth: spriteSize.width, twoArrows: tippArray[tippIndex].twoArrows, color: .Green)
                 var position = CGPointZero
@@ -793,13 +795,13 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
                             
                             if fromColumn == fromColumn1 && fromRow == fromRow1 && toRow1 == NoValue && containers[toColumn1].mySKNode.minValue == NoColor
                                 && toColumn != toColumn1 {
-                                    if tippArray[ind].lineLength > tippArray[ind + index].lineLength {
-                                        let tippArchiv = tippArray[ind]
-                                        tippArray[ind] = tippArray[ind + index]
-                                        tippArray[ind + index] = tippArchiv
-                                        tippArray[ind + index].removed = true
-                                        removeIndex.insert(ind + index, atIndex: 0)
-                                    }
+                                if tippArray[ind].lineLength > tippArray[ind + index].lineLength {
+                                    let tippArchiv = tippArray[ind]
+                                    tippArray[ind] = tippArray[ind + index]
+                                    tippArray[ind + index] = tippArchiv
+                                }
+                                tippArray[ind + index].removed = true
+                                removeIndex.insert(ind + index, atIndex: 0)
                             }
                             index++
                         }
@@ -1080,9 +1082,10 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         
         let pathToDraw:CGMutablePathRef = CGPathCreateMutable()
         let myLine:SKShapeNode = SKShapeNode(path:pathToDraw)
+        removeNodesWithName(myLineName)
         myLine.lineWidth = lineWidth / 15
+        myLine.name = myLineName
         
-        myLine.name = "myLine"
         // check if valid data
         for index in 0..<points.count {
             if points[index].x.isNaN || points[index].y.isNaN {
@@ -1318,6 +1321,8 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
             countMovingSprites = 0
             push(movingSprite, status: .Removed)
             pull(false) // no createTipps
+            showTippAtTimer = NSTimer.scheduledTimerWithTimeInterval(showTippSleepTime, target: self, selector: Selector(showTippSelector), userInfo: nil, repeats: true)
+
         }
         
      }
@@ -1385,6 +1390,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
             countMovingSprites = 0
             push(movingSprite, status: .Removed)
             pull(false) // no createTipps
+            self.showTippAtTimer = NSTimer.scheduledTimerWithTimeInterval(self.showTippSleepTime, target: self, selector: Selector(showTippSelector), userInfo: nil, repeats: true)
             
         }
         checkGameFinished()
@@ -1492,6 +1498,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
                 handler: {(paramAction:UIAlertAction!) in
 //                    self.setLevel(self.nextLevel)
 //                    self.newGame(true)
+                    self.startTimer(self.showTippAtTimer, sleepTime: self.showTippSleepTime, selector: self.showTippSelector)
             })
             alert.addAction(cancelAction)
         }
@@ -1698,16 +1705,12 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
                     sprite.BGPictureAdded = savedSpriteInCycle.BGPictureAdded
                     actionMoveArray.append(SKAction.moveTo(savedSpriteInCycle.endPosition, duration: duration))
                     actionMoveArray.append(SKAction.runBlock({
-                        if self.childNodeWithName("\(self.emptySpriteTxt)-\(sprite.column)-\(sprite.row)") != nil {
-                            self.childNodeWithName("\(self.emptySpriteTxt)-\(sprite.column)-\(sprite.row)")!.removeFromParent()
-                        }
+                    self.removeNodesWithName("\(self.emptySpriteTxt)-\(sprite.column)-\(sprite.row)")
+//                        if self.childNodeWithName("\(self.emptySpriteTxt)-\(sprite.column)-\(sprite.row)") != nil {
+//                            self.childNodeWithName("\(self.emptySpriteTxt)-\(sprite.column)-\(sprite.row)")!.removeFromParent()
+//                        }
                     }))
                     sprite.runAction(SKAction.sequence(actionMoveArray))
-//                    let column = sprite.column
-//                    let row = sprite.row
-//                    if self.childNodeWithName("\(emptySpriteTxt)-\(column)-\(row)") != nil {
-//                        self.childNodeWithName("\(emptySpriteTxt)-\(column)-\(row)")!.removeFromParent()
-//                    }
                     sprite.reload()
                     
                 case .FallingMovingSprite:
@@ -1843,9 +1846,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         
         if tremblingSprites.count > 0 {
             stopTrembling()
-            while self.childNodeWithName("myLine") != nil {
-                self.childNodeWithName("myLine")!.removeFromParent()
-            }
+            removeNodesWithName(myLineName)
         }
     }
     
@@ -1855,12 +1856,8 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         //            return
         //        }
         if movedFromNode != nil {
-            while self.childNodeWithName("myLine") != nil {
-                self.childNodeWithName("myLine")!.removeFromParent()
-            }
-//            while self.childNodeWithName("nodeOnTheWall") != nil {
-//                self.childNodeWithName("nodeOnTheWall")!.removeFromParent()
-//            }
+            removeNodesWithName(myLineName)
+
             //let countTouches = touches.count
             let firstTouch = touches.first
             let touchLocation = firstTouch!.locationInNode(self)
@@ -1919,22 +1916,10 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         let firstTouch = touches.first
         let touchLocation = firstTouch!.locationInNode(self)
         
-        while self.childNodeWithName("myLine") != nil {
-            self.childNodeWithName("myLine")!.removeFromParent()
-        }
-//        while self.childNodeWithName("nodeOnTheWall") != nil {
-//            self.childNodeWithName("nodeOnTheWall")!.removeFromParent()
-//        }
+        removeNodesWithName(myLineName)
         let testNode = self.nodeAtPoint(touchLocation)
         
         let aktNodeType = analyzeNode(testNode)
-        //        if self.inFirstGenerateSprites {
-        //            switch aktNodeType {
-        //            case MyNodeTypes.LabelNode, MyNodeTypes.SpriteNode: showNextSprite(touchLocation)
-        //            default: return
-        //            }
-        //            return
-        //        }
         if movedFromNode != nil && !stopped {
             //let countTouches = touches.count
             var aktNode: MySKNode?
@@ -2398,10 +2383,18 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
     func undoButtonPressed() {
         pull(true)
     }
+
     
-    func startTimer() {
-        if countUp == nil {
-            countUp = NSTimer.scheduledTimerWithTimeInterval(1.0, target: self, selector: Selector("doCountUp"), userInfo: nil, repeats: true)
+    func startDoCountUpTimer() {
+        startTimer(countUp, sleepTime: doCountUpSleepTime, selector: doCountUpSelector)
+        if timer == nil {
+            timer = NSTimer.scheduledTimerWithTimeInterval(doCountUpSleepTime, target: self, selector: Selector(doCountUpSelector), userInfo: nil, repeats: true)
+        }
+    }
+
+    func startTimer(var timer: NSTimer?, sleepTime: Double, selector: String) {
+        if timer == nil {
+            timer = NSTimer.scheduledTimerWithTimeInterval(sleepTime, target: self, selector: Selector(selector), userInfo: nil, repeats: true)
         }
     }
     
@@ -2463,6 +2456,13 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         default: _ = 0
         }
     }
+    
+    func removeNodesWithName(name: String) {
+        while self.childNodeWithName(name) != nil {
+            self.childNodeWithName(name)!.removeFromParent()
+        }
+    }
+
     
 
 }

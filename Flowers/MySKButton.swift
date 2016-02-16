@@ -59,7 +59,16 @@ class MySKButton: MySKNode {
         fatalError("init(coder:) has not been implemented")
     }
     
+    func activateButton(activate: Bool) {
+        if activate {
+            self.alpha = 1.0
+        } else {
+            self.alpha = 0.2
+        }
+    }
+    
     func showProgress(actValue: Int, maxValue:Int) {
+        
 //        let pathToDraw:CGMutablePathRef = CGPathCreateMutable()
 //        let myProgress:SKShapeNode = SKShapeNode(path:pathToDraw)
 //        myProgress.fillColor = SKColor.redColor()

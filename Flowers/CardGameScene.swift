@@ -108,7 +108,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         }
     }
     
-    let showTippSleepTime = 3.0
+    let showTippSleepTime = 30.0
     let doCountUpSleepTime = 1.0
     
     let showTippSelector = "showTipp"
@@ -263,15 +263,21 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
     //var gameArrayPositions = [[GameArrayPositions]]()
     var stopCreateTippsInBackground = false {
         didSet {
-            if stopCreateTippsInBackground && !generatingTipps {
-                stopCreateTippsInBackground = false
-            } else {
-                while stopCreateTippsInBackground {
-                    dummy = 0
+            if stopCreateTippsInBackground {
+                if !generatingTipps {
+                    stopCreateTippsInBackground = false
+                } else {
+                    while generatingTipps && stopCreateTippsInBackground {
+//                        print ("dummy:", dummy++)
+                        dummy = 0
+                    }
+                    stopCreateTippsInBackground = false
+
                 }
             }
         }
     }
+        
     var gameArrayChanged = false {
         didSet {
             switch (gameArrayChanged, generatingTipps) {
@@ -283,7 +289,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
                         dummy = 0
                     }
                     startCreateTippsInBackground()
-                default: dummy++
+                default: dummy = 0
             }
         }
     }
@@ -614,12 +620,12 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
                     sleep(1)
                     let startTime = NSDate()
                     tippsCreated = self.createTipps()
-                    print("tippsCreated:", tippsCreated, "in ", Double(round(1000*NSDate().timeIntervalSinceDate(startTime))/1000), " seconds")
+                    print("tippsCreated:", tippsCreated, " ", self.tippArray.count,  " Tipps in ", Double(round(1000*NSDate().timeIntervalSinceDate(startTime))/1000), " seconds")
                     self.stopCreateTippsInBackground = false
                 }
                 dispatch_async(dispatch_get_main_queue(), {
                     self.generatingTipps = false
-                    self.showTippAtTimer = NSTimer.scheduledTimerWithTimeInterval(self.showTippSleepTime, target: self, selector: Selector(self.showTippSelector), userInfo: nil, repeats: true)
+                    self.startTippTimer()
                 })
             }
         }
@@ -682,6 +688,12 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
                 getTipps()
             }
         }
+        startTippTimer()
+    }
+    
+    func startTippTimer(){
+        stopTimer(showTippAtTimer)
+        showTippAtTimer = NSTimer.scheduledTimerWithTimeInterval(showTippSleepTime, target: self, selector: Selector(showTippSelector), userInfo: nil, repeats: true)
     }
     
     func getTipps() {
@@ -712,6 +724,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
 //        while gameArray.count < countColumns * countRows {
 //            sleep(1) //wait until gameArray is filled!!
 //        }
+        tippsButton!.activateButton(false)
         var pairsToCheck = [(card1:(column:Int,row:Int), card2:(column:Int,row:Int))]()
         for column1 in 0..<countColumns {
             for row1 in 0..<countRows {
@@ -747,9 +760,11 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         let startCheckTime = NSDate()
         for ind in 0..<pairsToCheck.count {
             checkPathToFoundedCards(pairsToCheck[ind])
-            tippsButton!.showProgress(ind, maxValue: pairsToCheckCount)
+            //tippsButton!.showProgress(ind, maxValue: pairsToCheckCount)
+//            print ("ind:", ind)
             if stopCreateTippsInBackground {return false}
         }
+
         let checkTime = NSDate().timeIntervalSinceDate(startCheckTime)
         let avarageTime = checkTime / Double(pairsToCheckCount)
         print("for ", countColumns, " columns the avarageTime is:", Double(round(1000*avarageTime)/1000), "sec / pair")
@@ -822,7 +837,9 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         }
         let tippCountText: String = GV.language.getText(.TCTippCount)
         tippCountLabel.text = "\(tippCountText) \(tippArray.count)"
-
+        if tippArray.count > 0 {
+            tippsButton!.activateButton(true)
+        }
 
         tippIndex = 0  // set tipps to first
         return true
@@ -859,37 +876,39 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         } else {
             targetPoint = gameArray[ind.card2.column][ind.card2.row].position
         }
-        let startAngle = calculateAngle(startPoint, point2: targetPoint).angleRadian - GV.oneGrad * 20
+        let startAngle = calculateAngle(startPoint, point2: targetPoint).angleRadian - GV.oneGrad
         let stopAngle = startAngle + CGFloat(M_PI) * 2 // + 360°
 //        let startNode = self.childNodeWithName(name)! as! MySKNode
         var founded = false
         var angle = startAngle
-        var angleCount = 0
+        let multiplierForSearch = CGFloat(5.0)
+//        let fineMultiplier = CGFloat(1.0)
+        let multiplier:CGFloat = multiplierForSearch
         while angle <= stopAngle && !founded {
-            angleCount += 1
             let toPoint = GV.pointOfCircle(1.0, center: startPoint, angle: angle)
-            let (foundedPoint, myLines) = createHelpLines(ind.card1, toPoint: toPoint, inFrame: self.frame, lineSize: spriteSize.width, showLines: false)
+            let (foundedPoint, myPoints) = createHelpLines(ind.card1, toPoint: toPoint, inFrame: self.frame, lineSize: spriteSize.width, showLines: false)
             if foundedPoint != nil {
                 if foundedPoint!.foundContainer && ind.card2.row == NoValue && foundedPoint!.column == ind.card2.column ||
                     (foundedPoint!.column == ind.card2.column && foundedPoint!.row == ind.card2.row) {
                     if distanceToLine == firstValue ||
-                    myTipp.points.count > myLines.count ||
-                    (myTipp.points.count == myLines.count && distanceToLine > foundedPoint!.distanceToP0) {
+                    myPoints.count < myTipp.points.count ||
+                    (myTipp.points.count == myPoints.count && foundedPoint!.distanceToP0 < distanceToLine) {
                         myTipp.fromColumn = ind.card1.column
                         myTipp.fromRow = ind.card1.row
                         myTipp.toColumn = ind.card2.column
                         myTipp.toRow = ind.card2.row
-                        myTipp.points = myLines
+                        myTipp.points = myPoints
                         distanceToLine = foundedPoint!.distanceToP0
+                        
                     }
-                    if distanceToLine != firstValue && myTipp.points.count < myLines.count {
+                    if distanceToLine != firstValue && distanceToLine < foundedPoint!.distanceToP0 && myTipp.points.count == 2 {
                         founded = true
                     }
                 }
             } else {
                 print("in else zweig von checkPathToFoundedCards !")
             }
-            angle += GV.oneGrad
+            angle += GV.oneGrad * multiplier
         }
 
         if distanceToLine != firstValue {
@@ -900,6 +919,8 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
             tippArray.append(myTipp)
         }
      }
+    
+    
     func createHelpLines(movedFrom: (column: Int, row: Int), toPoint: CGPoint, inFrame: CGRect, lineSize: CGFloat, showLines: Bool)->(foundedPoint: Founded?, [CGPoint]) {
         var pointArray = [CGPoint]()
         var foundedPoint: Founded?
@@ -1256,6 +1277,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
                         }
                 }
             }
+
         }
         lastUpdateSec = sec10
     }
@@ -1321,7 +1343,8 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
             countMovingSprites = 0
             push(movingSprite, status: .Removed)
             pull(false) // no createTipps
-            showTippAtTimer = NSTimer.scheduledTimerWithTimeInterval(showTippSleepTime, target: self, selector: Selector(showTippSelector), userInfo: nil, repeats: true)
+            startTippTimer()
+            tippsButton!.activateButton(true)
 
         }
         
@@ -1382,7 +1405,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
             movingSprite.removeFromParent()
             countMovingSprites = 0
             updateSpriteCount(-1)
-//            spriteCount--
+            checkGameFinished()
        } else {
 
             updateSpriteCount(-1)
@@ -1390,10 +1413,10 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
             countMovingSprites = 0
             push(movingSprite, status: .Removed)
             pull(false) // no createTipps
-            self.showTippAtTimer = NSTimer.scheduledTimerWithTimeInterval(self.showTippSleepTime, target: self, selector: Selector(showTippSelector), userInfo: nil, repeats: true)
+            startTippTimer()
+            tippsButton!.activateButton(true)
             
         }
-        checkGameFinished()
     }
 
     func checkGameFinished() {
@@ -1410,7 +1433,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
             let alert = getNextPlayArt(true)
             parentViewController!.presentViewController(alert, animated: true, completion: nil)
         }
-        if usedCellCount <= minUsedCells {
+        if usedCellCount <= minUsedCells && spriteCount > maxUsedCells {
             generateSprites(false)  // Nachgenerierung
         } else {
             gameArrayChanged = true
@@ -1449,7 +1472,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         }
         
         stopTimer(countUp)
-        
+        stopCreateTippsInBackground = true
         prepareNextGame(next)
         generateSprites(true)
     }
@@ -2038,6 +2061,8 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
                     
                 })
                 
+                tippsButton!.activateButton(false)
+                
                 
                 
                 
@@ -2052,6 +2077,8 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
                 movedFromNode.runAction(SKAction.sequence([actionEmpty, actionMove, countAndPushAction, actionMove1, countAndPushAction, actionMove2, countAndPushAction, actionMove3, actionMoveStopped//,
                     /*waitSparkAction*/]))
                 //actionMoveDone]))
+            } else if startNode.type == .SpriteType && aktNode == movedFromNode {
+                startTippTimer()
             } else if startNode.type == .ShowCardType {
                 var foundedCard: MySKNode?
                 let nodes = self.nodesAtPoint(touchLocation)
@@ -2111,8 +2138,12 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
                     startNode.zPosition = 50
                     startNode.runAction(SKAction.sequence([actionMove, actionDropShowCardFromStack]))
                 }
+            } else {
+                startTippTimer()
             }
             
+        } else {
+            startTippTimer()
         }
         
     }

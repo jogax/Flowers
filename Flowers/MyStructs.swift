@@ -206,6 +206,19 @@ struct LevelParam {
     }
     
 }
+infix operator ~> {}
+private let queue = dispatch_queue_create("serial-worker", DISPATCH_QUEUE_SERIAL)
+
+func ~> (backgroundClosure: () -> (),
+    mainClosure: () -> ())
+    
+{
+    dispatch_async(queue) {
+        backgroundClosure()
+        dispatch_async(dispatch_get_main_queue(), mainClosure)
+        
+    }
+}
 
 func + (left: CGSize, right: CGSize) -> CGSize {
     return CGSize(width: left.width + right.width, height: left.height + right.height)

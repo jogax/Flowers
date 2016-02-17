@@ -604,7 +604,17 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
     
     
     func startCreateTippsInBackground() {
-        
+        {
+            self.generatingTipps = true
+            self.stopTimer(self.showTippAtTimer)
+            let startTime = NSDate()
+            let tippsCreated = self.createTipps()
+            print("tippsCreated:", tippsCreated)
+        } ~>
+        {
+            self.generatingTipps = false
+        }
+/*
         if !generatingTipps {
             dispatch_async(backgroundQueue) { //(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0)) {
                 self.generatingTipps = true
@@ -622,7 +632,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
                 })
             }
         }
-        
+*/
 
     }
     

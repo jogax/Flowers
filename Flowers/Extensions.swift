@@ -156,3 +156,18 @@ public extension UIDevice {
 //    }
 
 }
+
+extension Double {
+    var twoDecimals: Double {
+        return Double(round(100*self)/100)
+    }
+    var threeDecimals: Double {
+        return Double(round(1000*self)/1000)
+    }
+    func nDecimals(n: Int)->Double {
+        let multiplier: Double = pow(10.0,Double(n))
+        return Double(round(multiplier*self)/Double(n*1000))
+        
+    }
+    
+}

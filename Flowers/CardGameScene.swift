@@ -131,7 +131,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
     var showCard: MySKNode?
     var showCardFromStack: MySKNode?
     var showCardFromStackAddedToParent = false
-//    var backGroundOperation = NSOperation()
+    var backGroundOperation = NSOperation()
 
 
     var lastCollisionsTime = NSDate()
@@ -149,7 +149,6 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
     var tippArray = [Tipps]()
     var tippIndex = 0
     var showTippAtTimer: NSTimer?
-//    let oneGrad:CGFloat = CGFloat(M_PI) / 180
     var dummy = 0
     
     var tremblingSprites: [MySKNode] = []
@@ -251,26 +250,18 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
     var buttonXPosNormalized = CGFloat(0)
     let images = DrawImages()
     
-    var tap: UITapGestureRecognizer?
-    
-    
-    
-    let scoreAddCorrected = [1:1, 2:2, 3:3, 4:4, 5:5, 6:7, 7:8, 8:10, 9:11, 10:13, 11:14, 12:16,13:17,14:19, 15:20, 16:22, 17:23, 18:24, 19:25, 20:27, 21:28, 22:30, 23:31, 24:33, 25:34, 26:36, 27:37, 28:39, 29:40, 30:42, 31:43, 32:45, 33:46, 34:47, 35:48, 36:50, 37:51, 38:53, 39:54, 40:54, 41:53, 42:53, 43:52, 44:52, 45:51, 46:51, 47:51, 48:50, 49:50, 50:50, 51:51, 52:52, 53:53, 54:54, 55:55, 56:56, 57:57, 58:58, 59:59, 60:60, 61:61, 62:62, 63:63, 64:64, 65:65, 66:66, 67:67, 68:68, 69:69, 70:70, 71:71, 72:72, 73:73, 74:74, 75:75, 76:76, 77:77, 78:78, 79:79, 80:80, 81:81, 82:82, 83:83, 84:84, 85:85, 86:86, 87:87, 88:88, 89:89, 90:90, 91:91, 92:92, 93:93, 94:94, 95:95, 96:96, 97:97, 98:98, 99:99, 100:100]
-    
-    
-
-
-    //var gameArrayPositions = [[GameArrayPositions]]()
     var stopCreateTippsInBackground = false {
         didSet {
             if stopCreateTippsInBackground {
                 if !generatingTipps {
                     stopCreateTippsInBackground = false
                 } else {
+                    let startWaiting = NSDate()
                     while generatingTipps && stopCreateTippsInBackground {
-//                        print ("dummy:", dummy++)
-                        dummy = 0
+                        
+                         dummy = 0
                     }
+                    print ("waiting for Stop Creating Tipps:", NSDate().timeIntervalSinceDate(startWaiting).nDecimals(5))
                     stopCreateTippsInBackground = false
 
                 }
@@ -280,29 +271,30 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         
     var gameArrayChanged = false {
         didSet {
-            switch (gameArrayChanged, generatingTipps) {
-                case (true, false):
+            switch (oldValue, gameArrayChanged, generatingTipps) {
+                case (false, true, false):
+                    print("startCreateTippsInBackground from gameArrayChanged")
                     startCreateTippsInBackground()
-                case (true, true):
+                case (_, true, true):
+                    print("stopCreateTippsInBackground from gameArrayChanged")
                     stopCreateTippsInBackground = true
-                    while stopCreateTippsInBackground {
-                        dummy = 0
-                    }
                     startCreateTippsInBackground()
+                case (true, true, false):
+                    print("restart startCreateTippsInBackground from gameArrayChanged")
+                    startCreateTippsInBackground()
+
                 default: dummy = 0
             }
         }
     }
     
     var tapLocation: CGPoint?
+    let qualityOfServiceClass = QOS_CLASS_BACKGROUND
+    let backgroundQueue = dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0)
     
     override func didMoveToView(view: SKView) {
         
         if !settingsSceneStarted {
-            
-            //            tap = UITapGestureRecognizer(target: self, action: "doubleTapped")
-            //            tap!.numberOfTapsRequired = 1
-            //            view.addGestureRecognizer(tap!)
             
             myView = view
             
@@ -449,6 +441,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
     }
         
     func specialPrepareFuncFirst() {
+        print("stopCreateTippsInBackground from specialPrepareFuncFirst")
         stopCreateTippsInBackground = true
         let cardSize = CGSizeMake(buttonSize * sizeMultiplier.width * 0.8, buttonSize * sizeMultiplier.height * 0.8)
         let cardPackageButtonTexture = SKTexture(image: images.getCardPackage())
@@ -600,6 +593,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
             }
 
         }
+        print("Count Columns:", countColumns)
         gameArrayChanged = true
         if first {
             countUp = NSTimer.scheduledTimerWithTimeInterval(doCountUpSleepTime, target: self, selector: Selector(doCountUpSelector), userInfo: nil, repeats: true)
@@ -612,25 +606,26 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
     func startCreateTippsInBackground() {
         
         if !generatingTipps {
-            dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0)) { //(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0)) {
+            dispatch_async(backgroundQueue) { //(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0)) {
                 self.generatingTipps = true
                 var tippsCreated = false
-                while !tippsCreated {
+//                while !tippsCreated {
                     self.stopTimer(self.showTippAtTimer)
-                    sleep(1)
+//                    self.stopCreateTippsInBackground = false
                     let startTime = NSDate()
                     tippsCreated = self.createTipps()
-                    print("tippsCreated:", tippsCreated, " ", self.tippArray.count,  " Tipps in ", Double(round(1000*NSDate().timeIntervalSinceDate(startTime))/1000), " seconds")
-                    self.stopCreateTippsInBackground = false
-                }
+                    print("tippsCreated:", tippsCreated, " ", self.tippArray.count,  " Tipps in ", NSDate().timeIntervalSinceDate(startTime).threeDecimals, "seconds")
+//                }
                 dispatch_async(dispatch_get_main_queue(), {
                     self.generatingTipps = false
                     self.startTippTimer()
                 })
             }
         }
+        
 
     }
+    
     
     func showTipp() {
         getTipps()
@@ -731,7 +726,11 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
                 if gameArray[column1][row1].used {
                     for column2 in 0..<countColumns {
                         for row2 in 0..<countRows {
-                            if stopCreateTippsInBackground {return false}
+                            if stopCreateTippsInBackground {
+                                print("stopped while searching pairs")
+                                stopCreateTippsInBackground = false
+                                return false
+                            }
                             if (column1 != column2 || row1 != row2) && gameArray[column2][row2].colorIndex == gameArray[column1][row1].colorIndex &&
                                 (gameArray[column2][row2].minValue == gameArray[column1][row1].maxValue + 1 ||
                                     gameArray[column2][row2].maxValue == gameArray[column1][row1].minValue - 1) {
@@ -755,6 +754,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
             }
         }
 
+        print("gameArray Size:", gameArray.count)
         print("pairsToCheck:", pairsToCheck.count)
         let pairsToCheckCount = pairsToCheck.count
         let startCheckTime = NSDate()
@@ -762,12 +762,16 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
             checkPathToFoundedCards(pairsToCheck[ind])
             //tippsButton!.showProgress(ind, maxValue: pairsToCheckCount)
 //            print ("ind:", ind)
-            if stopCreateTippsInBackground {return false}
+            if stopCreateTippsInBackground {
+                print("stopped while checking pairs")
+                stopCreateTippsInBackground = false
+                return false
+            }
         }
 
         let checkTime = NSDate().timeIntervalSinceDate(startCheckTime)
         let avarageTime = checkTime / Double(pairsToCheckCount)
-        print("for ", countColumns, " columns the avarageTime is:", Double(round(1000*avarageTime)/1000), "sec / pair")
+        print("for ", countColumns, " columns the avarageTime is:", avarageTime.threeDecimals, "sec / pair")
         var removeIndex = [Int]()
         if tippArray.count > 0 {
             for ind in 0..<tippArray.count - 1 {
@@ -831,7 +835,12 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
             }
             
             
-            if stopCreateTippsInBackground {return false}
+            if stopCreateTippsInBackground {
+                print("stopped before sorting Tipp pairs")
+
+                stopCreateTippsInBackground = false
+                return false
+            }
             tippArray.sortInPlace({checkForSort($0, t1: $1) })
             
         }
@@ -877,7 +886,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
             targetPoint = gameArray[ind.card2.column][ind.card2.row].position
         }
         let startAngle = calculateAngle(startPoint, point2: targetPoint).angleRadian - GV.oneGrad
-        let stopAngle = startAngle + CGFloat(M_PI) * 2 // + 360°
+        let stopAngle = startAngle + 360 * GV.oneGrad // + 360°
 //        let startNode = self.childNodeWithName(name)! as! MySKNode
         var founded = false
         var angle = startAngle
@@ -1020,7 +1029,6 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         */
         //let offset = P1 - P2
         var founded = Founded()
-        
         for column in 0..<countColumns {
             for row in 0..<countRows {
                 if gameArray[column][row].used {
@@ -1213,13 +1221,6 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
             } else {
                 tremblingCardPosition = gameArray[nextPoint.column][nextPoint.row].position
             }
-            //            let nodes = nodesAtPoint(tremblingCardPosition)
-            //            for index in 0..<nodes.count {
-            //                if nodes[index] is MySKNode {
-            //                    tremblingSprites.append(nodes[index] as! MySKNode)
-            //                    (nodes[index] as! MySKNode).tremblingType = .ChangeSize
-            //                }
-            //            }
             addSpriteToTremblingSprites(tremblingCardPosition)
             lastNextPoint = nextPoint
         }
@@ -1450,7 +1451,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         if next {
             
             
-            //levelIndex = readNextLevel()
+            lastNextPoint = nil
             gameScore += levelScore
             
             for index in 0..<GV.spriteGameDataArray.count {
@@ -1465,14 +1466,15 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
             }
             GV.dataStore.saveSpriteGameRecord()
         }
-        //self.children.removeAll(keepCapacity: false)
+        stopCreateTippsInBackground = true
         for _ in 0..<self.children.count {
-            let testNode = children[self.children.count - 1]
-            testNode.removeFromParent()
+            let childNode = children[self.children.count - 1]
+            childNode.removeFromParent()
         }
         
         stopTimer(countUp)
-        stopCreateTippsInBackground = true
+//        print("stopCreateTippsInBackground from newGame")
+//
         prepareNextGame(next)
         generateSprites(true)
     }
@@ -1480,11 +1482,6 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
     
     func getNextPlayArt(congratulations: Bool)->UIAlertController {
         let playerName = GV.globalParam.aktName == GV.dummyName ? "!" : " " + GV.globalParam.aktName + "!"
-//        var title = GV.language.getText(.TCChooseGame)
-//        var message = GV.language.getText(TextConstants.TCCongratulations) + playerName
-//        if congratulations {
-//            title = GV.language.getText(.TCLevelComplete)
-//        }
         let alert = UIAlertController(title: congratulations ? GV.language.getText(.TCLevelComplete) : GV.language.getText(.TCChooseGame),
             message: congratulations ? GV.language.getText(TextConstants.TCCongratulations) + playerName : "",
             preferredStyle: .Alert)
@@ -1503,6 +1500,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         if levelIndex > 0 {
             let easierAction = UIAlertAction(title: GV.language.getText(.TCPreviousLevel), style: .Default,
                 handler: {(paramAction:UIAlertAction!) in
+                    print("newGame from set Previous Level")
                     self.setLevel(self.previousLevel)
                     self.newGame(true)
             })
@@ -1511,6 +1509,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         if levelIndex < levelsForPlay.levelParam.count - 1 {
             let complexerAction = UIAlertAction(title: GV.language.getText(TextConstants.TCNextLevel), style: .Default,
                 handler: {(paramAction:UIAlertAction!) in
+                    print("newGame from set Next Level")
                     self.setLevel(self.nextLevel)
                     self.newGame(true)
             })
@@ -1527,6 +1526,52 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         }
         return alert
     }
+    
+//    func getSettings()->UIAlertController {
+//        let playerName = GV.globalParam.aktName == GV.dummyName ? "!" : " " + GV.globalParam.aktName + "!"
+//        let alert = UIAlertController(title: GV.language.getText(.TCChooseSetting),
+//            message: congratulations ? GV.language.getText(TextConstants.TCCongratulations) + playerName : "",
+//            preferredStyle: .Alert)
+//        let againAction = UIAlertAction(title: GV.language.getText(.TCGameAgain), style: .Default,
+//            handler: {(paramAction:UIAlertAction!) in
+//                self.newGame(false)
+//        })
+//        alert.addAction(againAction)
+//        let newGameAction = UIAlertAction(title: GV.language.getText(TextConstants.TCNewGame), style: .Default,
+//            handler: {(paramAction:UIAlertAction!) in
+//                self.newGame(true)
+//                //self.gameArrayChanged = true
+//                
+//        })
+//        alert.addAction(newGameAction)
+//        if levelIndex > 0 {
+//            let easierAction = UIAlertAction(title: GV.language.getText(.TCPreviousLevel), style: .Default,
+//                handler: {(paramAction:UIAlertAction!) in
+//                    self.setLevel(self.previousLevel)
+//                    self.newGame(true)
+//            })
+//            alert.addAction(easierAction)
+//        }
+//        if levelIndex < levelsForPlay.levelParam.count - 1 {
+//            let complexerAction = UIAlertAction(title: GV.language.getText(TextConstants.TCNextLevel), style: .Default,
+//                handler: {(paramAction:UIAlertAction!) in
+//                    self.setLevel(self.nextLevel)
+//                    self.newGame(true)
+//            })
+//            alert.addAction(complexerAction)
+//        }
+//        if !congratulations {
+//            let cancelAction = UIAlertAction(title: GV.language.getText(TextConstants.TCCancel), style: .Default,
+//                handler: {(paramAction:UIAlertAction!) in
+//                    //                    self.setLevel(self.nextLevel)
+//                    //                    self.newGame(true)
+//                    self.startTimer(self.showTippAtTimer, sleepTime: self.showTippSleepTime, selector: self.showTippSelector)
+//            })
+//            alert.addAction(cancelAction)
+//        }
+//        return alert
+//    }
+//
     
     func setLevel(next: Bool) {
         if next {

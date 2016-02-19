@@ -807,7 +807,7 @@ class FlowerGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate 
                 push(sprite, status: .MovingStarted)
                 
                 // 9 - Create the actions
-                let line = JGXLine(fromPoint: movedFromNode.position, toPoint: touchLocation, inFrame: self.frame, lineSize: movedFromNode.size.width)
+                let line = JGXLine(fromPoint: movedFromNode.position, toPoint: touchLocation, inFrame: self.frame, lineSize: movedFromNode.size.width, delegate: nil)
                 let pointOnTheWall = line.line.toPoint
                 
                 let mirroredLine1 = line.createMirroredLine()

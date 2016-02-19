@@ -9,7 +9,7 @@
 import SpriteKit
 import AVFoundation
 
-class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { //MyGameScene {
+class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate,  JGXLineDelegate { //MyGameScene {
 
     struct GameArrayPositions {
         var used: Bool
@@ -332,25 +332,31 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         containers.removeAll(keepCapacity: false)
         //undoCount = 3
         
-        //        for _ in 0..<countRows {
-        //            gameArray.append(Array(count: countRows, repeatedValue:false))
-        //        }
-        
+        // fill gameArray
         for _ in 0..<countColumns {
             gameArray.append(Array(count: countRows, repeatedValue:GameArrayPositions()))
         }
         
+        // calvulate Sprite Positions
+        
         for column in 0..<countColumns {
             for row in 0..<countRows {
-                gameArray[column][row].position = calculateOfSpritePosition(column, row: row)
+                gameArray[column][row].position = calculateSpritePosition(column, row: row)
             }
         }
         
+        for column in 0..<countColumns {
+            for row in 0..<countRows {
+                let columnRow = calculateColumnRowFromPosition(gameArray[column][row].position)
+                if column != columnRow.column || row != columnRow.row {
+                    print("column:", column, "row:",row, "calculated:", columnRow, column != columnRow.column || row != columnRow.row ? "Error" : "")
+                    dummy = 0
+                }
+            }
+        }
+
+
         
-        
-        //        labelBackground.color = UIColor(red: 1, green: 1, blue: 1, alpha: 0.5)
-        //        labelBackground.size = CGSizeMake(self.size.width, self.size.height / 5)
-        //        labelBackground.position = CGPointMake(self.size.width / 2, self.position.y + self.size.height)
         
         prepareContainers()
         
@@ -604,7 +610,17 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
     
     
     func startCreateTippsInBackground() {
-        
+        {
+            self.generatingTipps = true
+            self.stopTimer(self.showTippAtTimer)
+            let startTime = NSDate()
+            let tippsCreated = self.createTipps()
+            print("tippsCreated:", tippsCreated, " in ", NSDate().timeIntervalSinceDate(startTime).threeDecimals, " seconds")
+        } ~>
+        {
+            self.generatingTipps = false
+        }
+/*
         if !generatingTipps {
             dispatch_async(backgroundQueue) { //(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0)) {
                 self.generatingTipps = true
@@ -622,7 +638,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
                 })
             }
         }
-        
+*/
 
     }
     
@@ -936,7 +952,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         var founded = false
         //        var myLine: SKShapeNode?
         let fromPosition = gameArray[movedFrom.column][movedFrom.row].position
-        let line = JGXLine(fromPoint: fromPosition, toPoint: toPoint, inFrame: inFrame, lineSize: lineSize)
+        let line = JGXLine(fromPoint: fromPosition, toPoint: toPoint, inFrame: inFrame, lineSize: lineSize, delegate: self)
         let pointOnTheWall = line.line.toPoint
         pointArray.append(fromPosition)
         (founded, foundedPoint) = findEndPoint(movedFrom, fromPoint: fromPosition, toPoint: pointOnTheWall, lineWidth: lineSize, showLines: showLines)
@@ -1000,6 +1016,11 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
             drawHelpLines(pointArray, lineWidth: lineSize, twoArrows: false, color: color)
         }
         return (foundedPoint, pointArray)
+    }
+    
+    func findColumnRowDelegateFunc(fromPoint:CGPoint, toPoint:CGPoint)->FromToColumnRow {
+        let fromToColumnRow = FromToColumnRow()
+        return fromToColumnRow
     }
     
     func findEndPoint(movedFrom: (column: Int, row: Int), fromPoint: CGPoint, toPoint: CGPoint, lineWidth: CGFloat, showLines: Bool)->(pointFounded:Bool, closestPoint: Founded?) {
@@ -2059,7 +2080,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
                 push(sprite, status: .MovingStarted)
                 
                 // 9 - Create the actions
-                let line = JGXLine(fromPoint: movedFromNode.position, toPoint: touchLocation, inFrame: self.frame, lineSize: movedFromNode.size.width)
+                let line = JGXLine(fromPoint: movedFromNode.position, toPoint: touchLocation, inFrame: self.frame, lineSize: movedFromNode.size.width, delegate: self)
                 let pointOnTheWall = line.line.toPoint
                 
                 let mirroredLine1 = line.createMirroredLine()
@@ -2324,12 +2345,24 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         }
     }
 
-    func calculateOfSpritePosition(column: Int, row: Int) -> CGPoint {
+    func calculateSpritePosition(column: Int, row: Int) -> CGPoint {
         let cardPositionMultiplier = GV.deviceConstants.cardPositionMultiplier
-        return CGPointMake(
+        let point = CGPointMake(
             spriteTabRect.origin.x - spriteTabRect.size.width / 2 + CGFloat(column) * tableCellSize + tableCellSize / 2,
             spriteTabRect.origin.y - spriteTabRect.size.height / 3.0 + tableCellSize * cardPositionMultiplier / 2 + CGFloat(row) * tableCellSize * cardPositionMultiplier
         )
+        return point
+    }
+    func calculateColumnRowFromPosition(position: CGPoint)->ColumnRow {
+        var columnRow  = ColumnRow()
+        let offsetToFirstPosition = position - gameArray[0][0].position
+        let tableCellSize = gameArray[1][1].position - gameArray[0][0].position
+        
+        columnRow.column = abs(Int(round(Double(offsetToFirstPosition.x / tableCellSize.x))))
+        columnRow.row = abs(Int(round(Double(offsetToFirstPosition.y / tableCellSize.y))))
+//        print("pos11:", gameArray[1][1].position, "pos00:",  gameArray[0][0].position, "tableCellSize:", tableCellSize,"offsetToFirstPosition:", offsetToFirstPosition, "columnRow:", columnRow)
+        
+        return columnRow
     }
     
     func makeLineAroundGameboard(linePosition: LinePosition) {

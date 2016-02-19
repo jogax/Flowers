@@ -206,6 +206,36 @@ struct LevelParam {
     }
     
 }
+struct ColumnRow {
+    var column: Int
+    var row: Int
+    init () {
+        column = NoValue
+        row = NoValue
+    }
+}
+struct FromToColumnRow {
+    var fromColumnRow: ColumnRow
+    var toColumnRow: ColumnRow
+    
+    init() {
+        fromColumnRow = ColumnRow()
+        toColumnRow = ColumnRow()
+    }
+}
+infix operator ~> {}
+private let queue = dispatch_queue_create("serial-worker", DISPATCH_QUEUE_SERIAL)
+
+func ~> (backgroundClosure: () -> (),
+    mainClosure: () -> ())
+    
+{
+    dispatch_async(queue) {
+        backgroundClosure()
+        dispatch_async(dispatch_get_main_queue(), mainClosure)
+        
+    }
+}
 
 func + (left: CGSize, right: CGSize) -> CGSize {
     return CGSize(width: left.width + right.width, height: left.height + right.height)
@@ -350,4 +380,8 @@ let atlas = SKTextureAtlas(named: "sprites")
 
 @objc protocol SettingsDelegate {
     func settingsDelegateFunc()
+}
+
+protocol JGXLineDelegate {
+    func findColumnRowDelegateFunc(fromPoint:CGPoint, toPoint:CGPoint)->FromToColumnRow
 }

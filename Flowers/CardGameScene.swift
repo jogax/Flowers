@@ -9,7 +9,7 @@
 import SpriteKit
 import AVFoundation
 
-class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate,  JGXLineDelegate { //MyGameScene {
+class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { //,  JGXLineDelegate { //MyGameScene {
 
     struct GameArrayPositions {
         var used: Bool
@@ -736,7 +736,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate,  
 //            sleep(1) //wait until gameArray is filled!!
 //        }
         tippsButton!.activateButton(false)
-        var pairsToCheck = [(card1:(column:Int,row:Int), card2:(column:Int,row:Int))]()
+        var pairsToCheck = [FromToColumnRow]()
         for column1 in 0..<countColumns {
             for row1 in 0..<countRows {
                 if gameArray[column1][row1].used {
@@ -750,20 +750,23 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate,  
                             if (column1 != column2 || row1 != row2) && gameArray[column2][row2].colorIndex == gameArray[column1][row1].colorIndex &&
                                 (gameArray[column2][row2].minValue == gameArray[column1][row1].maxValue + 1 ||
                                     gameArray[column2][row2].maxValue == gameArray[column1][row1].minValue - 1) {
-                                        if !findPair(pairsToCheck, column1: column1,row1: row1,column2: column2, row2: row2) {
-                                            pairsToCheck.append(((column1,row1),(column2, row2)))
-                                            pairsToCheck.append(((column2,row2),(column1, row1)))
+                                        let aktPair = FromToColumnRow(fromColumnRow: ColumnRow(column: column1, row: row1), toColumnRow: ColumnRow(column: column2, row: row2))
+                                        if !pairExists(pairsToCheck, aktPair: aktPair) {
+                                            pairsToCheck.append(aktPair)
+                                            pairsToCheck.append(FromToColumnRow(fromColumnRow: aktPair.toColumnRow, toColumnRow: aktPair.fromColumnRow))
                                         }
                             }
                         }
                     }
                     for index in 0..<containers.count {
                         if containers[index].mySKNode.minValue == NoColor && gameArray[column1][row1].maxValue == LastCardValue {
-                            pairsToCheck.append(((column1,row1),(index, NoValue)))
+                            let actContainerPair = FromToColumnRow(fromColumnRow: ColumnRow(column: column1, row: row1), toColumnRow: ColumnRow(column: index, row: NoValue))
+                            pairsToCheck.append(actContainerPair)
                         }
                         if containers[index].mySKNode.colorIndex == gameArray[column1][row1].colorIndex &&
                          containers[index].mySKNode.minValue == gameArray[column1][row1].maxValue + 1 {
-                                    pairsToCheck.append(((column1,row1),(index, NoValue)))
+                            let actContainerPair = FromToColumnRow(fromColumnRow: ColumnRow(column: column1, row: row1), toColumnRow: ColumnRow(column: index, row: NoValue))
+                            pairsToCheck.append(actContainerPair)
                         }
                     }
                 }
@@ -771,10 +774,11 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate,  
         }
 
         print("gameArray Size:", gameArray.count)
-        print("pairsToCheck:", pairsToCheck.count)
+        print("pairsToCheck.count:", pairsToCheck.count)
         let pairsToCheckCount = pairsToCheck.count
         let startCheckTime = NSDate()
         for ind in 0..<pairsToCheck.count {
+//            print("pairsToCheck:", pairsToCheck[ind])
             checkPathToFoundedCards(pairsToCheck[ind])
             //tippsButton!.showProgress(ind, maxValue: pairsToCheckCount)
 //            print ("ind:", ind)
@@ -878,10 +882,10 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate,  
         return returnValue
     }
     
-    func findPair(pairsToCheck:[(card1:(column:Int,row:Int), card2:(column:Int,row:Int))], column1:Int, row1:Int, column2:Int, row2:Int)->Bool {
+    func pairExists(pairsToCheck:[FromToColumnRow], aktPair: FromToColumnRow)->Bool {
         for index in 0..<pairsToCheck.count {
             let aktPairToCheck = pairsToCheck[index]
-            if aktPairToCheck.card1.column == column1 && aktPairToCheck.card1.row == row1 && aktPairToCheck.card2.column == column2 && aktPairToCheck.card2.row == row2 {
+            if aktPairToCheck.fromColumnRow.column == aktPair.fromColumnRow.column && aktPairToCheck.fromColumnRow.row == aktPair.fromColumnRow.row && aktPairToCheck.toColumnRow.column == aktPair.toColumnRow.column && aktPairToCheck.toColumnRow.row == aktPair.toColumnRow.row {
                 return true
             }
         }
@@ -889,17 +893,17 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate,  
     }
 
     
-    func checkPathToFoundedCards(ind:(card1:(column:Int, row:Int), card2:(column:Int, row: Int))) {
+    func checkPathToFoundedCards(actPair:FromToColumnRow) {
         var targetPoint = CGPointZero
         var myTipp = Tipps()
         let firstValue: CGFloat = 10000
         var distanceToLine = firstValue
-       let startPoint = gameArray[ind.card1.column][ind.card1.row].position
+       let startPoint = gameArray[actPair.fromColumnRow.column][actPair.fromColumnRow.row].position
 //        let name = gameArray[index.card1.column][index.card1.row].name
-        if ind.card2.row == NoValue {
-            targetPoint = containers[ind.card2.column].mySKNode.position
+        if actPair.toColumnRow.row == NoValue {
+            targetPoint = containers[actPair.toColumnRow.column].mySKNode.position
         } else {
-            targetPoint = gameArray[ind.card2.column][ind.card2.row].position
+            targetPoint = gameArray[actPair.toColumnRow.column][actPair.toColumnRow.row].position
         }
         let startAngle = calculateAngle(startPoint, point2: targetPoint).angleRadian - GV.oneGrad
         let stopAngle = startAngle + 360 * GV.oneGrad // + 360°
@@ -911,17 +915,17 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate,  
         let multiplier:CGFloat = multiplierForSearch
         while angle <= stopAngle && !founded {
             let toPoint = GV.pointOfCircle(1.0, center: startPoint, angle: angle)
-            let (foundedPoint, myPoints) = createHelpLines(ind.card1, toPoint: toPoint, inFrame: self.frame, lineSize: spriteSize.width, showLines: false)
+            let (foundedPoint, myPoints) = createHelpLines(actPair.fromColumnRow, toPoint: toPoint, inFrame: self.frame, lineSize: spriteSize.width, showLines: false)
             if foundedPoint != nil {
-                if foundedPoint!.foundContainer && ind.card2.row == NoValue && foundedPoint!.column == ind.card2.column ||
-                    (foundedPoint!.column == ind.card2.column && foundedPoint!.row == ind.card2.row) {
+                if foundedPoint!.foundContainer && actPair.toColumnRow.row == NoValue && foundedPoint!.column == actPair.toColumnRow.column ||
+                    (foundedPoint!.column == actPair.toColumnRow.column && foundedPoint!.row == actPair.toColumnRow.row) {
                     if distanceToLine == firstValue ||
                     myPoints.count < myTipp.points.count ||
                     (myTipp.points.count == myPoints.count && foundedPoint!.distanceToP0 < distanceToLine) {
-                        myTipp.fromColumn = ind.card1.column
-                        myTipp.fromRow = ind.card1.row
-                        myTipp.toColumn = ind.card2.column
-                        myTipp.toRow = ind.card2.row
+                        myTipp.fromColumn = actPair.fromColumnRow.column
+                        myTipp.fromRow = actPair.fromColumnRow.row
+                        myTipp.toColumn = actPair.toColumnRow.column
+                        myTipp.toRow = actPair.toColumnRow.row
                         myTipp.points = myPoints
                         distanceToLine = foundedPoint!.distanceToP0
                         
@@ -946,13 +950,13 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate,  
      }
     
     
-    func createHelpLines(movedFrom: (column: Int, row: Int), toPoint: CGPoint, inFrame: CGRect, lineSize: CGFloat, showLines: Bool)->(foundedPoint: Founded?, [CGPoint]) {
+    func createHelpLines(movedFrom: ColumnRow, toPoint: CGPoint, inFrame: CGRect, lineSize: CGFloat, showLines: Bool)->(foundedPoint: Founded?, [CGPoint]) {
         var pointArray = [CGPoint]()
         var foundedPoint: Founded?
         var founded = false
         //        var myLine: SKShapeNode?
         let fromPosition = gameArray[movedFrom.column][movedFrom.row].position
-        let line = JGXLine(fromPoint: fromPosition, toPoint: toPoint, inFrame: inFrame, lineSize: lineSize, delegate: self)
+        let line = JGXLine(fromPoint: fromPosition, toPoint: toPoint, inFrame: inFrame, lineSize: lineSize) //, delegate: self)
         let pointOnTheWall = line.line.toPoint
         pointArray.append(fromPosition)
         (founded, foundedPoint) = findEndPoint(movedFrom, fromPoint: fromPosition, toPoint: pointOnTheWall, lineWidth: lineSize, showLines: showLines)
@@ -963,7 +967,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate,  
         } else {
             pointArray.append(pointOnTheWall)
             let mirroredLine1 = line.createMirroredLine()
-            (founded, foundedPoint) = findEndPoint((movedFrom.column, movedFrom.row), fromPoint: mirroredLine1.line.fromPoint, toPoint: mirroredLine1.line.toPoint, lineWidth: lineSize, showLines: showLines)
+            (founded, foundedPoint) = findEndPoint(movedFrom, fromPoint: mirroredLine1.line.fromPoint, toPoint: mirroredLine1.line.toPoint, lineWidth: lineSize, showLines: showLines)
             
             //            linesArray.append(myLine)
             //            if showLines {self.addChild(myLine)}
@@ -1018,28 +1022,27 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate,  
         return (foundedPoint, pointArray)
     }
     
-    func findColumnRowDelegateFunc(fromPoint:CGPoint, toPoint:CGPoint)->FromToColumnRow {
-        let fromToColumnRow = FromToColumnRow()
-        return fromToColumnRow
-    }
+//    func findColumnRowDelegateFunc(fromPoint:CGPoint, toPoint:CGPoint)->FromToColumnRow {
+//        let fromToColumnRow = FromToColumnRow()
+//        return fromToColumnRow
+//    }
     
-    func findEndPoint(movedFrom: (column: Int, row: Int), fromPoint: CGPoint, toPoint: CGPoint, lineWidth: CGFloat, showLines: Bool)->(pointFounded:Bool, closestPoint: Founded?) {
+    func findEndPoint(movedFrom: ColumnRow, fromPoint: CGPoint, toPoint: CGPoint, lineWidth: CGFloat, showLines: Bool)->(pointFounded:Bool, closestPoint: Founded?) {
         var foundedPoint = Founded()
         var toPoint = toPoint
         var pointFounded = false
-        if let closestCard = findClosestPoint(fromPoint, P2: toPoint, lineWidth: lineWidth, movedFrom: movedFrom) {
-            toPoint = closestCard.point //gameArray[closestPoint.column][closestPoint.row].position
+        var closestCardfast = Founded()
+        if let closestCard = fastFindClosestPoint(fromPoint, P2: toPoint, lineWidth: lineWidth, movedFrom: movedFrom) {
             if showLines {
                 makeTrembling(closestCard)
             }
-            foundedPoint = closestCard
+           foundedPoint = closestCard
             pointFounded = true
         }
-        
         return (pointFounded, foundedPoint)
     }
     
-    func findClosestPoint(P1: CGPoint, P2: CGPoint, lineWidth: CGFloat, movedFrom: (column: Int, row: Int)) -> Founded? {
+    func findClosestPoint(P1: CGPoint, P2: CGPoint, lineWidth: CGFloat, movedFrom: ColumnRow) -> Founded? {
         
         /*
         Ax+By=C  - Equation of a line
@@ -1106,6 +1109,131 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate,  
         } else {
             return nil
         }
+    }
+    func fastFindClosestPoint(P1: CGPoint, P2: CGPoint, lineWidth: CGFloat, movedFrom: ColumnRow) -> Founded? {
+        
+        /*
+        Ax+By=C  - Equation of a line
+        Line is given with 2 Points (x1, y1) and (x2, y2)
+        A = y2-y1
+        B = x1-x2
+        C = A*x1+B*y1
+        */
+        //let offset = P1 - P2
+        
+        var fromToColumnRow = FromToColumnRow()
+        fromToColumnRow.fromColumnRow = calculateColumnRowFromPosition(P1)
+        fromToColumnRow.toColumnRow = calculateColumnRowFromPosition(P2)
+        fromToColumnRow = calculateColumnRowWhenPointOnTheWall(fromToColumnRow)
+        var actColumnRow = fromToColumnRow.fromColumnRow
+        var founded = Founded()
+        var stopCycle = false
+        while !stopCycle {
+            (actColumnRow, stopCycle) = findNextPointToCheck(actColumnRow, fromToColumnRow: fromToColumnRow)
+            if gameArray[actColumnRow.column][actColumnRow.row].used {
+                let P0 = gameArray[actColumnRow.column][actColumnRow.row].position
+                //                    if (P0 - P1).length() > lineWidth { // check all others but not me!!!
+                if !(movedFrom.column == actColumnRow.column && movedFrom.row == actColumnRow.row) {
+                    let intersectionPoint = findIntersectionPoint(P1, b:P2, c:P0)
+                    
+                    let distanceToP0 = (intersectionPoint - P0).length()
+                    let distanceToP1 = (intersectionPoint - P1).length()
+                    let distanceToP2 = (intersectionPoint - P2).length()
+                    let lengthOfLineSegment = (P1 - P2).length()
+                    
+                    if distanceToP0 < lineWidth && distanceToP2 < lengthOfLineSegment {
+                        if founded.distanceToP1 > distanceToP1 {
+                            founded.point = intersectionPoint
+                            founded.distanceToP1 = distanceToP1
+                            founded.distanceToP0 = distanceToP0
+                            founded.column = actColumnRow.column
+                            founded.row = actColumnRow.row
+                            founded.foundContainer = false
+                        }
+                    }
+                }
+            }
+        }
+        for index in 0..<countContainers {
+            let P0 = containers[index].mySKNode.position
+            if (P0 - P1).length() > lineWidth { // check all others but not me!!!
+                let intersectionPoint = findIntersectionPoint(P1, b:P2, c:P0)
+                
+                let distanceToP0 = (intersectionPoint - P0).length()
+                let distanceToP1 = (intersectionPoint - P1).length()
+                let distanceToP2 = (intersectionPoint - P2).length()
+                let lengthOfLineSegment = (P1 - P2).length()
+                
+                if distanceToP0 < lineWidth && distanceToP2 < lengthOfLineSegment {
+                    if founded.distanceToP1 > distanceToP1 {
+                        founded.point = intersectionPoint
+                        founded.distanceToP1 = distanceToP1
+                        founded.distanceToP0 = distanceToP0
+                        founded.column = index
+                        founded.row = NoValue
+                        founded.foundContainer = true
+                    }
+                }
+            }
+            
+        }
+        if founded.distanceToP1 != founded.maxDistance {
+            return founded
+        } else {
+            return nil
+        }
+    }
+    
+    func calculateColumnRowWhenPointOnTheWall(fromToColumnRow: FromToColumnRow)->FromToColumnRow {
+        var myFromToColumnRow = fromToColumnRow
+        if fromToColumnRow.fromColumnRow.column <= NoValue {
+           myFromToColumnRow.fromColumnRow.column = 0
+        }
+        if fromToColumnRow.fromColumnRow.row <= NoValue {
+            myFromToColumnRow.fromColumnRow.row = 0
+        }
+        if fromToColumnRow.fromColumnRow.column >= countColumns {
+            myFromToColumnRow.fromColumnRow.column = countColumns - 1
+        }
+        if fromToColumnRow.fromColumnRow.row >= countRows {
+            myFromToColumnRow.fromColumnRow.row = countRows - 1
+        }
+        if fromToColumnRow.toColumnRow.column <= NoValue {
+            myFromToColumnRow.toColumnRow.column = 0
+        }
+        if fromToColumnRow.toColumnRow.row <= NoValue {
+            myFromToColumnRow.toColumnRow.row = 0
+        }
+        if fromToColumnRow.toColumnRow.column >= countColumns {
+            myFromToColumnRow.toColumnRow.column = countColumns - 1
+        }
+        if fromToColumnRow.toColumnRow.row >= countRows {
+            myFromToColumnRow.toColumnRow.row = countRows - 1
+        }
+        
+        return myFromToColumnRow
+    }
+    
+    func findNextPointToCheck(actColumnRow: ColumnRow, fromToColumnRow: FromToColumnRow)->(ColumnRow, Bool) {
+
+        var myActColumnRow = actColumnRow
+        let columnAdder = fromToColumnRow.fromColumnRow.column < fromToColumnRow.toColumnRow.column ? 1 : -1
+        let rowAdder = fromToColumnRow.fromColumnRow.row < fromToColumnRow.toColumnRow.row ? 1 : -1
+        
+        if myActColumnRow.column != fromToColumnRow.toColumnRow.column {
+            myActColumnRow.column += columnAdder
+        } else {
+            myActColumnRow.column = fromToColumnRow.fromColumnRow.column
+            if myActColumnRow.row != fromToColumnRow.toColumnRow.row {
+                myActColumnRow.row += rowAdder
+            }
+        }
+            
+
+        if myActColumnRow == fromToColumnRow.toColumnRow {
+            return (myActColumnRow, true) // toPoint reached
+        }
+        return (myActColumnRow, false)
     }
     
     func findIntersectionPoint(a:CGPoint, b:CGPoint, c:CGPoint) ->CGPoint {
@@ -1986,7 +2114,10 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate,  
                 } else if movedFromNode.type == .EmptyCardType {
                     
                 } else {
-                    createHelpLines((movedFromNode.column, movedFromNode.row), toPoint: touchLocation, inFrame: self.frame, lineSize: movedFromNode.size.width, showLines: true)
+                    var movedFrom = ColumnRow()
+                    movedFrom.column = movedFromNode.column
+                    movedFrom.row = movedFromNode.row
+                    createHelpLines(movedFrom, toPoint: touchLocation, inFrame: self.frame, lineSize: movedFromNode.size.width, showLines: true)
                 }
             }
             
@@ -2080,7 +2211,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate,  
                 push(sprite, status: .MovingStarted)
                 
                 // 9 - Create the actions
-                let line = JGXLine(fromPoint: movedFromNode.position, toPoint: touchLocation, inFrame: self.frame, lineSize: movedFromNode.size.width, delegate: self)
+                let line = JGXLine(fromPoint: movedFromNode.position, toPoint: touchLocation, inFrame: self.frame, lineSize: movedFromNode.size.width) //, delegate: self)
                 let pointOnTheWall = line.line.toPoint
                 
                 let mirroredLine1 = line.createMirroredLine()
@@ -2358,10 +2489,10 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate,  
         let offsetToFirstPosition = position - gameArray[0][0].position
         let tableCellSize = gameArray[1][1].position - gameArray[0][0].position
         
-        columnRow.column = abs(Int(round(Double(offsetToFirstPosition.x / tableCellSize.x))))
-        columnRow.row = abs(Int(round(Double(offsetToFirstPosition.y / tableCellSize.y))))
-//        print("pos11:", gameArray[1][1].position, "pos00:",  gameArray[0][0].position, "tableCellSize:", tableCellSize,"offsetToFirstPosition:", offsetToFirstPosition, "columnRow:", columnRow)
         
+        columnRow.column = Int(round(Double(offsetToFirstPosition.x / tableCellSize.x)))
+        columnRow.row = Int(round(Double(offsetToFirstPosition.y / tableCellSize.y)))
+//        print("pos11:", gameArray[1][1].position, "pos00:",  gameArray[0][0].position, "tableCellSize:", tableCellSize,"offsetToFirstPosition:", offsetToFirstPosition, "columnRow:", columnRow)
         return columnRow
     }
     

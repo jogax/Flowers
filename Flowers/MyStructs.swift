@@ -6,7 +6,6 @@
 //  Copyright (c) 2015 Jozsef Romhanyi. All rights reserved.
 //
 
-//import Foundation
 import UIKit
 import GameKit
 
@@ -206,12 +205,18 @@ struct LevelParam {
     }
     
 }
+
 struct ColumnRow {
     var column: Int
     var row: Int
     init () {
         column = NoValue
         row = NoValue
+    }
+    init(column: Int, row:Int) {
+        self.column = column
+        self.row = row
+        
     }
 }
 struct FromToColumnRow {
@@ -222,7 +227,17 @@ struct FromToColumnRow {
         fromColumnRow = ColumnRow()
         toColumnRow = ColumnRow()
     }
+    init(fromColumnRow: ColumnRow, toColumnRow: ColumnRow ) {
+        self.fromColumnRow = fromColumnRow
+        self.toColumnRow = toColumnRow
+    }
 }
+func == (left: ColumnRow, right: ColumnRow)->Bool {
+    return left.column == right.column && left.row == right.row
+}
+
+
+
 infix operator ~> {}
 private let queue = dispatch_queue_create("serial-worker", DISPATCH_QUEUE_SERIAL)
 
@@ -382,6 +397,6 @@ let atlas = SKTextureAtlas(named: "sprites")
     func settingsDelegateFunc()
 }
 
-protocol JGXLineDelegate {
-    func findColumnRowDelegateFunc(fromPoint:CGPoint, toPoint:CGPoint)->FromToColumnRow
-}
+//protocol JGXLineDelegate {
+//    func findColumnRowDelegateFunc(fromPoint:CGPoint, toPoint:CGPoint)->FromToColumnRow
+//}

@@ -6,7 +6,6 @@
 //  Copyright (c) 2015 Jozsef Romhanyi. All rights reserved.
 //
 
-import Foundation
 import SpriteKit
 
 class JGXLine {
@@ -61,13 +60,13 @@ class JGXLine {
     let indexUH = 1 // upper horizontal
     let indexRV = 2 // right vertical
     let indexBH = 3 // bottom horizontal
-    var delegate: JGXLineDelegate?
+//    var delegate: JGXLineDelegate?
     
-    init(fromPoint: CGPoint, toPoint: CGPoint, inFrame: CGRect, lineSize: CGFloat, delegate: JGXLineDelegate?) {
+    init(fromPoint: CGPoint, toPoint: CGPoint, inFrame: CGRect, lineSize: CGFloat) { //, delegate: JGXLineDelegate?) {
         self.line = Line(from: fromPoint, to: toPoint)
         self.frame = inFrame
         self.lineSize = lineSize
-        self.delegate = delegate
+//        self.delegate = delegate
         
         var lineOnFrame = Line( from:   CGPointMake(inFrame.origin.x + lineSize / 2, inFrame.origin.y + lineSize / 2),
                                 to:     CGPointMake(inFrame.origin.x + lineSize / 2, inFrame.origin.y + inFrame.height - lineSize / 2))
@@ -95,9 +94,9 @@ class JGXLine {
         }
         let offset = line.toPoint - line.fromPoint
         duration = Double(offset.length()) * speed
-        if let myDelegate = delegate {
-            line.fromToColumnRow = myDelegate.findColumnRowDelegateFunc(fromPoint, toPoint: toPoint)
-        }
+//        if let myDelegate = delegate {
+//            line.fromToColumnRow = myDelegate.findColumnRowDelegateFunc(fromPoint, toPoint: toPoint)
+//        }
 
     }
     
@@ -177,7 +176,7 @@ class JGXLine {
         
         let mirroredOffset = mirroredPoint - line.toPoint
         
-        let mirroredLine = JGXLine(fromPoint: self.line.toPoint, toPoint: self.line.toPoint + mirroredOffset.normalized(), inFrame: self.frame, lineSize: self.lineSize, delegate: delegate)
+        let mirroredLine = JGXLine(fromPoint: self.line.toPoint, toPoint: self.line.toPoint + mirroredOffset.normalized(), inFrame: self.frame, lineSize: self.lineSize) //, delegate: delegate)
         return mirroredLine
     }
 }

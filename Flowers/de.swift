@@ -6,7 +6,6 @@
 //  Copyright © 2015 Jozsef Romhanyi. All rights reserved.
 //
 
-//import Foundation
 
 let deDictionary: [TextConstants: String] = [
     .TCAktLanguage:      "de",

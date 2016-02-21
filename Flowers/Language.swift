@@ -6,7 +6,6 @@
 //  Copyright (c) 2015 Jozsef Romhanyi. All rights reserved.
 //
 
-//import Foundation
 import UIKit
 
 enum TextConstants: Int {

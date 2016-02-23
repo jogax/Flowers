@@ -1029,9 +1029,9 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
     
     func findEndPoint(movedFrom: ColumnRow, fromPoint: CGPoint, toPoint: CGPoint, lineWidth: CGFloat, showLines: Bool)->(pointFounded:Bool, closestPoint: Founded?) {
         var foundedPoint = Founded()
-        var toPoint = toPoint
+        let toPoint = toPoint
         var pointFounded = false
-        var closestCardfast = Founded()
+//        var closestCardfast = Founded()
         if let closestCard = fastFindClosestPoint(fromPoint, P2: toPoint, lineWidth: lineWidth, movedFrom: movedFrom) {
             if showLines {
                 makeTrembling(closestCard)
@@ -1121,15 +1121,26 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         */
         //let offset = P1 - P2
         
+        var fromToColumnRowFirst = FromToColumnRow()
         var fromToColumnRow = FromToColumnRow()
-        fromToColumnRow.fromColumnRow = calculateColumnRowFromPosition(P1)
-        fromToColumnRow.toColumnRow = calculateColumnRowFromPosition(P2)
-        fromToColumnRow = calculateColumnRowWhenPointOnTheWall(fromToColumnRow)
+        var fromWall = false
+        
+        fromToColumnRowFirst.fromColumnRow = calculateColumnRowFromPosition(P1)
+        fromToColumnRowFirst.toColumnRow = calculateColumnRowFromPosition(P2)
+        fromToColumnRow = calculateColumnRowWhenPointOnTheWall(fromToColumnRowFirst)
+        
+        fromWall = !(fromToColumnRowFirst == fromToColumnRow)
+            
         var actColumnRow = fromToColumnRow.fromColumnRow
         var founded = Founded()
         var stopCycle = false
         while !stopCycle {
-            (actColumnRow, stopCycle) = findNextPointToCheck(actColumnRow, fromToColumnRow: fromToColumnRow)
+            if fromWall {
+                (actColumnRow, stopCycle) = (actColumnRow, false)
+                fromWall = false
+            } else {
+                (actColumnRow, stopCycle) = findNextPointToCheck(actColumnRow, fromToColumnRow: fromToColumnRow)
+            }
             if gameArray[actColumnRow.column][actColumnRow.row].used {
                 let P0 = gameArray[actColumnRow.column][actColumnRow.row].position
                 //                    if (P0 - P1).length() > lineWidth { // check all others but not me!!!

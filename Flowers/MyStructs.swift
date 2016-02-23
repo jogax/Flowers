@@ -235,6 +235,10 @@ struct FromToColumnRow {
 func == (left: ColumnRow, right: ColumnRow)->Bool {
     return left.column == right.column && left.row == right.row
 }
+func == (left: FromToColumnRow, right: FromToColumnRow)->Bool {
+    return left.fromColumnRow == right.fromColumnRow && left.toColumnRow == right.toColumnRow
+}
+
 
 
 

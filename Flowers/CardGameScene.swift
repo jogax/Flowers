@@ -11,6 +11,24 @@ import AVFoundation
 
 class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { //,  JGXLineDelegate { //MyGameScene {
 
+    struct PairStatus {
+        var pair: FromToColumnRow
+        var startTime: NSDate
+        var duration: Double
+        var founded: Founded
+        var points: [CGPoint]
+        init(pair: FromToColumnRow, founded: Founded, startTime: NSDate, points: [CGPoint]) {
+            self.pair = pair
+            self.founded = founded
+            self.startTime = startTime
+            self.duration = 0
+            self.points = [CGPoint]()
+        }
+        
+        mutating func getActDuration() {
+            duration = NSDate().timeIntervalSinceDate(self.startTime)
+        }
+    }
     struct GameArrayPositions {
         var used: Bool
         var position: CGPoint
@@ -171,7 +189,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
     
     var touchesBeganAt: NSDate?
     
-    let containerSizeOrig: CGFloat = 50
+    let containerSizeOrig: CGFloat = 40
     let spriteSizeOrig: CGFloat = 35
     
     var showFingerNode = false
@@ -194,7 +212,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
     var stack:Stack<SavedSprite> = Stack()
     //var gameArray = [[Bool]]() // true if Cell used
     var gameArray = [[GameArrayPositions]]()
-    var containers = [Container]()
+    var containers = [MySKNode]()
     var colorTab = [ColorTabLine]()
     let containersPosCorr = CGPointMake(GV.onIpad ? 0.98 : 0.98, GV.onIpad ? 0.85 : 0.85)
     var levelPosKorr = CGPointMake(GV.onIpad ? 0.7 : 0.7, GV.onIpad ? 0.97 : 0.97)
@@ -242,6 +260,11 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
     var lineLV: JGXLine?
     var lineRV: JGXLine?
     var lineBH: JGXLine?
+    
+    var lastGreenPair: PairStatus?
+    var lastRedPair: PairStatus?
+    var actPair: PairStatus?
+    var oldFromToColumnRow: FromToColumnRow?
     
     var spriteGameLastPosition = CGPointZero
     
@@ -713,13 +736,13 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
                 drawHelpLines(tippArray[tippIndex].points, lineWidth: spriteSize.width, twoArrows: tippArray[tippIndex].twoArrows, color: .Green)
                 var position = CGPointZero
                 if tippArray[tippIndex].fromRow == NoValue {
-                    position = containers[tippArray[tippIndex].fromColumn].mySKNode.position
+                    position = containers[tippArray[tippIndex].fromColumn].position
                 } else {
                     position = gameArray[tippArray[tippIndex].fromColumn][tippArray[tippIndex].fromRow].position
                 }
                 addSpriteToTremblingSprites(position)
                 if tippArray[tippIndex].toRow == NoValue {
-                    position = containers[tippArray[tippIndex].toColumn].mySKNode.position
+                    position = containers[tippArray[tippIndex].toColumn].position
                 } else {
                     position = gameArray[tippArray[tippIndex].toColumn][tippArray[tippIndex].toRow].position
                 }
@@ -759,12 +782,12 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
                         }
                     }
                     for index in 0..<containers.count {
-                        if containers[index].mySKNode.minValue == NoColor && gameArray[column1][row1].maxValue == LastCardValue {
+                        if containers[index].minValue == NoColor && gameArray[column1][row1].maxValue == LastCardValue {
                             let actContainerPair = FromToColumnRow(fromColumnRow: ColumnRow(column: column1, row: row1), toColumnRow: ColumnRow(column: index, row: NoValue))
                             pairsToCheck.append(actContainerPair)
                         }
-                        if containers[index].mySKNode.colorIndex == gameArray[column1][row1].colorIndex &&
-                         containers[index].mySKNode.minValue == gameArray[column1][row1].maxValue + 1 {
+                        if containers[index].colorIndex == gameArray[column1][row1].colorIndex &&
+                         containers[index].minValue == gameArray[column1][row1].maxValue + 1 {
                             let actContainerPair = FromToColumnRow(fromColumnRow: ColumnRow(column: column1, row: row1), toColumnRow: ColumnRow(column: index, row: NoValue))
                             pairsToCheck.append(actContainerPair)
                         }
@@ -823,7 +846,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
                                 tippArray[ind].twoArrows = false
                             }
                     }
-                    if gameArray[fromColumn][fromRow].maxValue == LastCardValue && toRow == NoValue && containers[toColumn].mySKNode.minValue == NoColor {
+                    if gameArray[fromColumn][fromRow].maxValue == LastCardValue && toRow == NoValue && containers[toColumn].minValue == NoColor {
                         // King to empty Container
                         var index = 1
                         while (ind + index) < tippArray.count && index < 4 {
@@ -832,7 +855,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
                             let fromRow1 = tippArray[ind + index].fromRow
                             let toRow1 = tippArray[ind + index].toRow
                             
-                            if fromColumn == fromColumn1 && fromRow == fromRow1 && toRow1 == NoValue && containers[toColumn1].mySKNode.minValue == NoColor
+                            if fromColumn == fromColumn1 && fromRow == fromRow1 && toRow1 == NoValue && containers[toColumn1].minValue == NoColor
                                 && toColumn != toColumn1 {
                                 if tippArray[ind].lineLength > tippArray[ind + index].lineLength {
                                     let tippArchiv = tippArray[ind]
@@ -901,7 +924,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
        let startPoint = gameArray[actPair.fromColumnRow.column][actPair.fromColumnRow.row].position
 //        let name = gameArray[index.card1.column][index.card1.row].name
         if actPair.toColumnRow.row == NoValue {
-            targetPoint = containers[actPair.toColumnRow.column].mySKNode.position
+            targetPoint = containers[actPair.toColumnRow.column].position
         } else {
             targetPoint = gameArray[actPair.toColumnRow.column][actPair.toColumnRow.row].position
         }
@@ -998,28 +1021,35 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         }
         
         if showLines {
-            var color = MyColors.Red
-            var foundedColorIndex: Int
-            var foundedMinValue: Int
-            var foundedMaxValue: Int
-            if foundedPoint!.foundContainer {
-                foundedColorIndex = containers[foundedPoint!.column].mySKNode.colorIndex
-                foundedMaxValue = containers[foundedPoint!.column].mySKNode.maxValue
-                foundedMinValue = containers[foundedPoint!.column].mySKNode.minValue
-            } else {
-                foundedColorIndex = gameArray[foundedPoint!.column][foundedPoint!.row].colorIndex
-                foundedMaxValue = gameArray[foundedPoint!.column][foundedPoint!.row].maxValue
-                foundedMinValue = gameArray[foundedPoint!.column][foundedPoint!.row].minValue
-            }
-            if (gameArray[movedFrom.column][movedFrom.row].colorIndex == foundedColorIndex &&
-                (gameArray[movedFrom.column][movedFrom.row].maxValue == foundedMinValue - 1 ||
-                    gameArray[movedFrom.column][movedFrom.row].minValue == foundedMaxValue + 1)) ||
-                (foundedMinValue == NoColor && gameArray[movedFrom.column][movedFrom.row].maxValue == LastCardValue) {
-                    color = .Green
-            }
+            let color = calculateLineColor(foundedPoint!, movedFrom:  movedFrom)
             drawHelpLines(pointArray, lineWidth: lineSize, twoArrows: false, color: color)
         }
         return (foundedPoint, pointArray)
+    }
+    
+    func calculateLineColor(foundedPoint: Founded, movedFrom: ColumnRow) -> MyColors {
+        
+        var color = MyColors.Red
+        var foundedColorIndex: Int
+        var foundedMinValue: Int
+        var foundedMaxValue: Int
+        
+        if foundedPoint.foundContainer {
+            foundedColorIndex = containers[foundedPoint.column].colorIndex
+            foundedMaxValue = containers[foundedPoint.column].maxValue
+            foundedMinValue = containers[foundedPoint.column].minValue
+        } else {
+            foundedColorIndex = gameArray[foundedPoint.column][foundedPoint.row].colorIndex
+            foundedMaxValue = gameArray[foundedPoint.column][foundedPoint.row].maxValue
+            foundedMinValue = gameArray[foundedPoint.column][foundedPoint.row].minValue
+        }
+        if (gameArray[movedFrom.column][movedFrom.row].colorIndex == foundedColorIndex &&
+            (gameArray[movedFrom.column][movedFrom.row].maxValue == foundedMinValue - 1 ||
+                gameArray[movedFrom.column][movedFrom.row].minValue == foundedMaxValue + 1)) ||
+            (foundedMinValue == NoColor && gameArray[movedFrom.column][movedFrom.row].maxValue == LastCardValue) {
+                color = .Green
+        }
+        return color
     }
     
 //    func findColumnRowDelegateFunc(fromPoint:CGPoint, toPoint:CGPoint)->FromToColumnRow {
@@ -1082,7 +1112,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         }
         
         for index in 0..<countContainers {
-            let P0 = containers[index].mySKNode.position
+            let P0 = containers[index].position
             if (P0 - P1).length() > lineWidth { // check all others but not me!!!
                 let intersectionPoint = findIntersectionPoint(P1, b:P2, c:P0)
                 
@@ -1166,7 +1196,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
             }
         }
         for index in 0..<countContainers {
-            let P0 = containers[index].mySKNode.position
+            let P0 = containers[index].position
             if (P0 - P1).length() > lineWidth { // check all others but not me!!!
                 let intersectionPoint = findIntersectionPoint(P1, b:P2, c:P0)
                 
@@ -1358,7 +1388,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         var tremblingCardPosition = CGPointZero
         if lastNextPoint != nil && ((lastNextPoint!.column != nextPoint.column) ||  (lastNextPoint!.row != nextPoint.row)) {
             if lastNextPoint!.foundContainer {
-                tremblingCardPosition = containers[lastNextPoint!.column].mySKNode.position
+                tremblingCardPosition = containers[lastNextPoint!.column].position
             } else {
                 tremblingCardPosition = gameArray[lastNextPoint!.column][lastNextPoint!.row].position
             }
@@ -1377,7 +1407,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
 //        stopTrembling()
         if lastNextPoint == nil {
             if nextPoint.foundContainer {
-                tremblingCardPosition = containers[nextPoint.column].mySKNode.position
+                tremblingCardPosition = containers[nextPoint.column].position
             } else {
                 tremblingCardPosition = gameArray[nextPoint.column][nextPoint.row].position
             }
@@ -1454,7 +1484,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         if container.minValue == container.maxValue && container.maxValue == NoColor && movingSprite.maxValue == LastCardValue {
             var containerNotFound = true
             for index in 0..<countContainers {
-                if containers[index].mySKNode.colorIndex == movingSpriteColorIndex {
+                if containers[index].colorIndex == movingSpriteColorIndex {
                     containerNotFound = false
                 }
             }
@@ -1743,7 +1773,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
 
     func checkContainers()->Bool {
         for index in 0..<containers.count {
-            if containers[index].mySKNode.minValue != FirstCardValue || containers[index].mySKNode.maxValue % MaxCardValue != LastCardValue {
+            if containers[index].minValue != FirstCardValue || containers[index].maxValue % MaxCardValue != LastCardValue {
                 return false
             }
             
@@ -1773,25 +1803,22 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         for index in 0..<countContainers {
             let centerX = (size.width / CGFloat(countContainers)) * CGFloat(index) + xDelta / 2
             let centerY = size.height * containersPosCorr.y
-            let cont: Container
-//            cont = Container(mySKNode: MySKNode(texture: getTexture(index), type: .ContainerType, value: getValueForContainer()), label: SKLabelNode(), countHits: 0)
-            cont = Container(mySKNode: MySKNode(texture: getTexture(NoColor), type: .ContainerType, value: NoColor)) // getValueForContainer()))
-            containers.append(cont)
-            containers[index].mySKNode.name = "\(index)"
-            containers[index].mySKNode.position = CGPoint(x: centerX, y: centerY)
-            containers[index].mySKNode.size = CGSizeMake(containerSize.width, containerSize.height)
-//            containers[index].mySKNode.size.width = containerSize.width
-//            containers[index].mySKNode.size.height = containerSize.height
+            containers.append(MySKNode(texture: getTexture(NoColor), type: .ContainerType, value: NoColor))
+            containers[index].name = "\(index)"
+            containers[index].position = CGPoint(x: centerX, y: centerY)
+            containers[index].size = CGSizeMake(containerSize.width, containerSize.height)
+//            containers[index].size.width = containerSize.width
+//            containers[index].size.height = containerSize.height
             
-            containers[index].mySKNode.colorIndex = NoValue
-            containers[index].mySKNode.physicsBody = SKPhysicsBody(circleOfRadius: containers[index].mySKNode.size.width / 3) // 1
-            containers[index].mySKNode.physicsBody?.dynamic = true // 2
-            containers[index].mySKNode.physicsBody?.categoryBitMask = PhysicsCategory.Container
-            containers[index].mySKNode.physicsBody?.contactTestBitMask = PhysicsCategory.MovingSprite
-            containers[index].mySKNode.physicsBody?.collisionBitMask = PhysicsCategory.None
+            containers[index].colorIndex = NoValue
+            containers[index].physicsBody = SKPhysicsBody(circleOfRadius: containers[index].size.width / 3) // 1
+            containers[index].physicsBody?.dynamic = true // 2
+            containers[index].physicsBody?.categoryBitMask = PhysicsCategory.Container
+            containers[index].physicsBody?.contactTestBitMask = PhysicsCategory.MovingSprite
+            containers[index].physicsBody?.collisionBitMask = PhysicsCategory.None
             countColorsProContainer.append(countSpritesProContainer!)
-            addChild(containers[index].mySKNode)
-            containers[index].mySKNode.reload()
+            addChild(containers[index])
+            containers[index].reload()
         }
     }
     
@@ -1903,7 +1930,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
                     
                 case .HitcounterChanged:
                     
-                    let container = containers[findIndex(savedSpriteInCycle.colorIndex)].mySKNode
+                    let container = containers[findIndex(savedSpriteInCycle.colorIndex)]
                     container.minValue = savedSpriteInCycle.minValue
                     container.maxValue = savedSpriteInCycle.maxValue
                     container.BGPictureAdded = savedSpriteInCycle.BGPictureAdded
@@ -1911,7 +1938,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
                     showScore()
                     
                 case .FirstCardAdded:
-                    let container = containers[findIndex(savedSpriteInCycle.colorIndex)].mySKNode
+                    let container = containers[findIndex(savedSpriteInCycle.colorIndex)]
                     container.minValue = savedSpriteInCycle.minValue
                     container.maxValue = savedSpriteInCycle.maxValue
                     container.BGPictureAdded = savedSpriteInCycle.BGPictureAdded
@@ -2014,7 +2041,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
     
     func findIndex(colorIndex: Int)->Int {
         for index in 0..<countContainers {
-            if containers[index].mySKNode.colorIndex == colorIndex {
+            if containers[index].colorIndex == colorIndex {
                 return index
             }
         }
@@ -2033,7 +2060,9 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         //let countTouches = touches.count
         
         stopTimer(showTippAtTimer)
-        
+        oldFromToColumnRow = FromToColumnRow()
+        lastGreenPair = nil
+        lastRedPair = nil
         touchesBeganAt = NSDate()
         let firstTouch = touches.first
         let touchLocation = firstTouch!.locationInNode(self)
@@ -2128,7 +2157,23 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
                     var movedFrom = ColumnRow()
                     movedFrom.column = movedFromNode.column
                     movedFrom.row = movedFromNode.row
-                    createHelpLines(movedFrom, toPoint: touchLocation, inFrame: self.frame, lineSize: movedFromNode.size.width, showLines: true)
+                    
+                    let (foundedPoint, myPoints) = createHelpLines(movedFrom, toPoint: touchLocation, inFrame: self.frame, lineSize: movedFromNode.size.width, showLines: true)
+                    var actFromToColumnRow = FromToColumnRow()
+                    actFromToColumnRow.fromColumnRow = movedFrom
+                    actFromToColumnRow.toColumnRow.column = foundedPoint!.column
+                    actFromToColumnRow.toColumnRow.row = foundedPoint!.row
+//                    if actFromToColumnRow != oldFromToColumnRow! {
+                        let color = calculateLineColor(foundedPoint!, movedFrom: movedFrom)
+                    
+                        if color == .Green && (lastGreenPair == nil || (lastGreenPair != nil && lastGreenPair!.pair !=  actFromToColumnRow)) {
+                            lastGreenPair = PairStatus(pair: actFromToColumnRow, founded: foundedPoint!, startTime: NSDate(), points: myPoints)
+                            lastRedPair = nil
+                        } else if lastGreenPair != nil && lastGreenPair!.duration == 0 {
+                            lastGreenPair!.getActDuration()
+                            lastRedPair = PairStatus(pair: actFromToColumnRow, founded: foundedPoint!, startTime: NSDate(), points: myPoints)
+                        }
+//                    }
                 }
             }
             
@@ -2144,6 +2189,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
     
     override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
         stopTrembling()
+        print("LastGreenPair:", lastGreenPair)
         let firstTouch = touches.first
         let touchLocation = firstTouch!.locationInNode(self)
         
@@ -2209,65 +2255,83 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
             
             if startNode.type == .SpriteType && (aktNode == nil || aktNode! != movedFromNode) {
                 let sprite = movedFromNode// as! SKSpriteNode
+                let movedFrom = ColumnRow(column: movedFromNode.column, row: movedFromNode.row)
+                let (foundedPoint, myPoints) = createHelpLines(movedFrom, toPoint: touchLocation, inFrame: self.frame, lineSize: movedFromNode.size.width, showLines: false)
+                var actFromToColumnRow = FromToColumnRow()
+                actFromToColumnRow.fromColumnRow = movedFrom
+                actFromToColumnRow.toColumnRow.column = foundedPoint!.column
+                actFromToColumnRow.toColumnRow.row = foundedPoint!.row
                 
-                sprite.zPosition = 50
-                sprite.physicsBody = SKPhysicsBody(circleOfRadius: sprite!.size.width/2)
-                sprite.physicsBody?.dynamic = true
-                sprite.physicsBody?.categoryBitMask = PhysicsCategory.MovingSprite
-                sprite.physicsBody?.contactTestBitMask = PhysicsCategory.Sprite | PhysicsCategory.Container //| PhysicsCategory.WallAround
-                sprite.physicsBody?.collisionBitMask = PhysicsCategory.None
-                //sprite.physicsBody?.velocity=CGVectorMake(200, 200)
+                let color = calculateLineColor(foundedPoint!, movedFrom: movedFrom)
+                if color == .Red && lastGreenPair != nil {
+                    if lastRedPair != nil {
+                        lastRedPair!.getActDuration()
+                    }
+                    if lastRedPair!.duration < 0.5 {
+                        actFromToColumnRow.toColumnRow.column = lastGreenPair!.pair.toColumnRow.column
+                        actFromToColumnRow.toColumnRow.row = lastGreenPair!.pair.toColumnRow.row
+                    }
+                }
                 
-                sprite.physicsBody?.usesPreciseCollisionDetection = true
                 push(sprite, status: .MovingStarted)
                 
-                // 9 - Create the actions
-                let line = JGXLine(fromPoint: movedFromNode.position, toPoint: touchLocation, inFrame: self.frame, lineSize: movedFromNode.size.width) //, delegate: self)
-                let pointOnTheWall = line.line.toPoint
-                
-                let mirroredLine1 = line.createMirroredLine()
-                let pointOnTheWall1 = mirroredLine1.line.toPoint
-                
-                let mirroredLine2 = mirroredLine1.createMirroredLine()
-                let pointOnTheWall2 = mirroredLine2.line.toPoint
-                
-                let mirroredLine3 = mirroredLine2.createMirroredLine()
-                let pointOnTheWall3 = mirroredLine3.line.toPoint
                 
                 let countAndPushAction = SKAction.runBlock({
                     self.push(sprite, status: .Mirrored)
-                    sprite.hitCounter *= 2
-                    sprite.hitLabel.text = "\(sprite.hitCounter)"
                 })
-                
-                
-                
-                let actionMove = SKAction.moveTo(pointOnTheWall, duration: line.duration)
                 
                 let actionEmpty = SKAction.runBlock({
                     self.makeEmptyCard(sprite.column, row: sprite.row)
                 })
-                
-                let actionMove1 = SKAction.moveTo(pointOnTheWall1, duration: mirroredLine1.duration)
-                
-                let actionMove2 = SKAction.moveTo(pointOnTheWall2, duration: mirroredLine2.duration)
-                
-                let actionMove3 = SKAction.moveTo(pointOnTheWall3, duration: mirroredLine3.duration)
+
+                let speed: CGFloat = 0.001
+
                 
                 
-                let actionMoveStopped =  SKAction.runBlock({
-                    self.push(sprite, status: .Removed)
-                    sprite.hidden = true
-                    self.gameArray[sprite.column][sprite.row].used = false
-                    //sprite.size = CGSizeMake(sprite.size.width / 3, sprite.size.height / 3)
-                    sprite.colorBlendFactor = 4
-                    self.playSound("Drop", volume: GV.soundVolume)
-                    sprite.removeFromParent()
-                    self.pull(false) // no createTipps
-                    self.userInteractionEnabled = true
-                    
-                    
-                })
+                var actionArray = [SKAction]()
+                actionArray.append(actionEmpty)
+                actionArray.append(SKAction.moveTo(myPoints[1], duration: Double((myPoints[1] - myPoints[0]).length() * speed)))
+                
+                if myPoints.count > 2 {
+                    actionArray.append(countAndPushAction)
+                    actionArray.append(SKAction.moveTo(myPoints[2], duration: Double((myPoints[2] - myPoints[1]).length() * speed)))
+                    if myPoints.count > 3 {
+                        actionArray.append(countAndPushAction)
+                        actionArray.append(SKAction.moveTo(myPoints[3], duration: Double((myPoints[3] - myPoints[2]).length() * speed)))
+                        if myPoints.count > 4 {
+                            actionArray.append(countAndPushAction)
+                            actionArray.append(SKAction.moveTo(myPoints[4], duration: Double((myPoints[4] - myPoints[3]).length() * speed)))
+                        }
+                    }
+                }
+                var targetNode: MySKNode
+                var collisionAction: SKAction
+                if actFromToColumnRow.toColumnRow.row == NoValue {
+                    targetNode = self.childNodeWithName(containers[actFromToColumnRow.toColumnRow.column].name!) as! MySKNode
+                    collisionAction = SKAction.runBlock({
+                        self.spriteDidCollideWithContainer(self.movedFromNode, node2: targetNode)
+                    })
+                } else {
+                    targetNode = self.childNodeWithName(gameArray[actFromToColumnRow.toColumnRow.column][actFromToColumnRow.toColumnRow.row].name) as! MySKNode
+                    collisionAction = SKAction.runBlock({
+                        self.spriteDidCollideWithMovingSprite(self.movedFromNode, node2: targetNode)
+                    })
+                }
+//                let actionMoveStopped =  SKAction.runBlock({
+//                    self.push(sprite, status: .Removed)
+//                    sprite.hidden = true
+//                    self.gameArray[sprite.column][sprite.row].used = false
+//                    //sprite.size = CGSizeMake(sprite.size.width / 3, sprite.size.height / 3)
+//                    sprite.colorBlendFactor = 4
+//                    self.playSound("Drop", volume: GV.soundVolume)
+//                    sprite.removeFromParent()
+//                    self.pull(false) // no createTipps
+//                    self.userInteractionEnabled = true
+//                    
+//                    
+//                })
+                
+                actionArray.append(collisionAction)
                 
                 tippsButton!.activateButton(false)
                 
@@ -2282,9 +2346,8 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
                 countMovingSprites = 1
                 self.waitForSKActionEnded = NSTimer.scheduledTimerWithTimeInterval(0.1, target: self, selector: Selector("checkCountMovingSprites"), userInfo: nil, repeats: false) // start timer for check
                 
-                movedFromNode.runAction(SKAction.sequence([actionEmpty, actionMove, countAndPushAction, actionMove1, countAndPushAction, actionMove2, countAndPushAction, actionMove3, actionMoveStopped//,
-                    /*waitSparkAction*/]))
-                //actionMoveDone]))
+                movedFromNode.runAction(SKAction.sequence(actionArray))
+                
             } else if startNode.type == .SpriteType && aktNode == movedFromNode {
                 startTippTimer()
             } else if startNode.type == .ShowCardType {
@@ -2668,46 +2731,46 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         }
     }
 
-    func didBeginContact(contact: SKPhysicsContact) {
-        
-        var movingSprite: SKPhysicsBody
-        var partner: SKPhysicsBody
-        
-        switch (contact.bodyA.categoryBitMask, contact.bodyB.categoryBitMask) {
-        case (PhysicsCategory.Sprite, PhysicsCategory.MovingSprite):
-            movingSprite = contact.bodyB
-            partner = contact.bodyA
-            spriteDidCollideWithMovingSprite(movingSprite.node as! MySKNode, node2: partner.node as! MySKNode)
-            
-        case (PhysicsCategory.MovingSprite, PhysicsCategory.Sprite):
-            movingSprite = contact.bodyA
-            partner = contact.bodyB
-            spriteDidCollideWithMovingSprite(movingSprite.node as! MySKNode, node2: partner.node as! MySKNode)
-            
-        case (PhysicsCategory.Container, PhysicsCategory.MovingSprite):
-            movingSprite = contact.bodyB
-            partner = contact.bodyA
-            spriteDidCollideWithContainer(movingSprite.node as! MySKNode, node2: partner.node as! MySKNode)
-            
-        case (PhysicsCategory.MovingSprite, PhysicsCategory.Container):
-            movingSprite = contact.bodyA
-            partner = contact.bodyB
-            spriteDidCollideWithContainer(movingSprite.node as! MySKNode, node2: partner.node as! MySKNode)
-            /*
-            case (PhysicsCategory.WallAround, PhysicsCategory.MovingSprite):
-            movingSprite = contact.bodyB
-            partner = contact.bodyA
-            wallAroundDidCollideWithMovingSprite(movingSprite.node as! MySKNode, node2: partner.node!)
-            
-            case (PhysicsCategory.MovingSprite, PhysicsCategory.WallAround):
-            movingSprite = contact.bodyA
-            partner = contact.bodyB
-            wallAroundDidCollideWithMovingSprite(movingSprite.node as! MySKNode, node2: partner.node!)
-            */
-        default: _ = 0
-        }
-    }
-    
+//    func didBeginContact(contact: SKPhysicsContact) {
+//        
+////        var movingSprite: SKPhysicsBody
+////        var partner: SKPhysicsBody
+//        
+//        switch (contact.bodyA.categoryBitMask, contact.bodyB.categoryBitMask) {
+////        case (PhysicsCategory.Sprite, PhysicsCategory.MovingSprite):
+////            movingSprite = contact.bodyB
+////            partner = contact.bodyA
+////            spriteDidCollideWithMovingSprite(movingSprite.node as! MySKNode, node2: partner.node as! MySKNode)
+//            
+////        case (PhysicsCategory.MovingSprite, PhysicsCategory.Sprite):
+////            movingSprite = contact.bodyA
+////            partner = contact.bodyB
+////            spriteDidCollideWithMovingSprite(movingSprite.node as! MySKNode, node2: partner.node as! MySKNode)
+//            
+////        case (PhysicsCategory.Container, PhysicsCategory.MovingSprite):
+////            movingSprite = contact.bodyB
+////            partner = contact.bodyA
+////            spriteDidCollideWithContainer(movingSprite.node as! MySKNode, node2: partner.node as! MySKNode)
+//            
+////        case (PhysicsCategory.MovingSprite, PhysicsCategory.Container):
+////            movingSprite = contact.bodyA
+////            partner = contact.bodyB
+////            spriteDidCollideWithContainer(movingSprite.node as! MySKNode, node2: partner.node as! MySKNode)
+//            /*
+//            case (PhysicsCategory.WallAround, PhysicsCategory.MovingSprite):
+//            movingSprite = contact.bodyB
+//            partner = contact.bodyA
+//            wallAroundDidCollideWithMovingSprite(movingSprite.node as! MySKNode, node2: partner.node!)
+//            
+//            case (PhysicsCategory.MovingSprite, PhysicsCategory.WallAround):
+//            movingSprite = contact.bodyA
+//            partner = contact.bodyB
+//            wallAroundDidCollideWithMovingSprite(movingSprite.node as! MySKNode, node2: partner.node!)
+//            */
+//        default: _ = 0
+//        }
+//    }
+//    
     func removeNodesWithName(name: String) {
         while self.childNodeWithName(name) != nil {
             self.childNodeWithName(name)!.removeFromParent()

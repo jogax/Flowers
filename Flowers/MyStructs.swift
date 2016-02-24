@@ -239,6 +239,11 @@ func == (left: FromToColumnRow, right: FromToColumnRow)->Bool {
     return left.fromColumnRow == right.fromColumnRow && left.toColumnRow == right.toColumnRow
 }
 
+func != (left: FromToColumnRow, right: FromToColumnRow)->Bool {
+    return !(left.fromColumnRow == right.fromColumnRow && left.toColumnRow == right.toColumnRow)
+}
+
+
 
 
 

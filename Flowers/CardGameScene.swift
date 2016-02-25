@@ -22,7 +22,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
             self.founded = founded
             self.startTime = startTime
             self.duration = 0
-            self.points = [CGPoint]()
+            self.points = points
         }
         
         mutating func getActDuration() {
@@ -2164,15 +2164,35 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
                     actFromToColumnRow.toColumnRow.column = foundedPoint!.column
                     actFromToColumnRow.toColumnRow.row = foundedPoint!.row
 //                    if actFromToColumnRow != oldFromToColumnRow! {
-                        let color = calculateLineColor(foundedPoint!, movedFrom: movedFrom)
+                    let color = calculateLineColor(foundedPoint!, movedFrom: movedFrom)
                     
-                        if color == .Green && (lastGreenPair == nil || (lastGreenPair != nil && lastGreenPair!.pair !=  actFromToColumnRow)) {
+                    switch color {
+                    case .Green:
+                        if lastGreenPair == nil || lastGreenPair!.pair !=  actFromToColumnRow {
                             lastGreenPair = PairStatus(pair: actFromToColumnRow, founded: foundedPoint!, startTime: NSDate(), points: myPoints)
                             lastRedPair = nil
-                        } else if lastGreenPair != nil && lastGreenPair!.duration == 0 {
-                            lastGreenPair!.getActDuration()
-                            lastRedPair = PairStatus(pair: actFromToColumnRow, founded: foundedPoint!, startTime: NSDate(), points: myPoints)
+                        } else {
+                            lastGreenPair!.points = myPoints
                         }
+                    case .Red:
+                        if lastGreenPair != nil {
+                            if lastGreenPair!.duration == 0 { // first time Red
+                                lastGreenPair!.getActDuration() // get duration of Green
+                                lastRedPair = PairStatus(pair: actFromToColumnRow, founded: foundedPoint!, startTime: NSDate(), points: myPoints)
+                            } else if lastRedPair!.pair != actFromToColumnRow {
+                                lastRedPair = nil
+                                lastGreenPair = nil
+                            }
+                        }
+
+                    }
+//                    if color == .Green && (lastGreenPair == nil || lastGreenPair!.pair !=  actFromToColumnRow) {
+//                        lastGreenPair = PairStatus(pair: actFromToColumnRow, founded: foundedPoint!, startTime: NSDate(), points: myPoints)
+//                        lastRedPair = nil
+//                    } else if lastGreenPair != nil && lastGreenPair!.duration == 0 {
+//                        lastGreenPair!.getActDuration()
+//                        lastRedPair = PairStatus(pair: actFromToColumnRow, founded: foundedPoint!, startTime: NSDate(), points: myPoints)
+//                    }
 //                    }
                 }
             }
@@ -2189,7 +2209,6 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
     
     override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
         stopTrembling()
-        print("LastGreenPair:", lastGreenPair)
         let firstTouch = touches.first
         let touchLocation = firstTouch!.locationInNode(self)
         
@@ -2256,7 +2275,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
             if startNode.type == .SpriteType && (aktNode == nil || aktNode! != movedFromNode) {
                 let sprite = movedFromNode// as! SKSpriteNode
                 let movedFrom = ColumnRow(column: movedFromNode.column, row: movedFromNode.row)
-                let (foundedPoint, myPoints) = createHelpLines(movedFrom, toPoint: touchLocation, inFrame: self.frame, lineSize: movedFromNode.size.width, showLines: false)
+                var (foundedPoint, myPoints) = createHelpLines(movedFrom, toPoint: touchLocation, inFrame: self.frame, lineSize: movedFromNode.size.width, showLines: false)
                 var actFromToColumnRow = FromToColumnRow()
                 actFromToColumnRow.fromColumnRow = movedFrom
                 actFromToColumnRow.toColumnRow.column = foundedPoint!.column
@@ -2266,10 +2285,11 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
                 if color == .Red && lastGreenPair != nil {
                     if lastRedPair != nil {
                         lastRedPair!.getActDuration()
-                    }
-                    if lastRedPair!.duration < 0.5 {
-                        actFromToColumnRow.toColumnRow.column = lastGreenPair!.pair.toColumnRow.column
-                        actFromToColumnRow.toColumnRow.row = lastGreenPair!.pair.toColumnRow.row
+                        if lastRedPair!.duration < 0.5 && lastGreenPair!.duration > 1.0 {
+                            actFromToColumnRow.toColumnRow.column = lastGreenPair!.pair.toColumnRow.column
+                            actFromToColumnRow.toColumnRow.row = lastGreenPair!.pair.toColumnRow.row
+                            myPoints = lastGreenPair!.points // set Back to last green line
+                        }
                     }
                 }
                 

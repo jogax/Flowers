@@ -92,6 +92,10 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
     enum MyColors: Int {
         case Red = 0, Green
     }
+    
+    enum SpriteGeneratingType: Int {
+        case First = 0, Normal, Special
+    }
 
     struct GenerateCard {
         var cardValue: Int
@@ -296,10 +300,10 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         didSet {
             switch (oldValue, gameArrayChanged, generatingTipps) {
                 case (false, true, false):
-                    print("startCreateTippsInBackground from gameArrayChanged")
+                    print("startCreateTippsInBackground from gameArrayChanged, false, true, false")
                     startCreateTippsInBackground()
-                case (_, true, true):
-                    print("stopCreateTippsInBackground from gameArrayChanged")
+                case (true, true, true):
+                    print("stopCreateTippsInBackground from gameArrayChanged, true, true, true")
                     stopCreateTippsInBackground = true
                     startCreateTippsInBackground()
                 case (true, true, false):
@@ -332,7 +336,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
             buttonXPosNormalized = myView.frame.width / 10
             
             prepareNextGame(true)
-            generateSprites(true)
+            generateSprites(.First)
         } else {
             playMusic("MyMusic", volume: GV.musicVolume, loops: 0)
             
@@ -576,8 +580,9 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         }
     }
 
-    func generateSprites(first: Bool) {
-        var positionsTab = [(Int, Int)]() // all available Positions
+    func generateSprites(generatingType: SpriteGeneratingType) {
+        var generateSpecial = generatingType ==  .Special
+        var positionsTab = [(Int, Int)]() // search all available Positions
         for column in 0..<countColumns {
             for row in 0..<countRows {
                 if !gameArray[column][row].used {
@@ -587,8 +592,19 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
             }
         }
         
-        while cardStack.count(.MySKNodeType) > 0 && checkGameArray() < maxUsedCells {
-            let sprite: MySKNode = cardStack.pull()!
+        while (cardStack.count(.MySKNodeType) > 0 && checkGameArray() < maxUsedCells) || generateSpecial {
+            var sprite: MySKNode = cardStack.pull()!
+            
+            if generateSpecial {
+                while true {
+                    if findPairForSprite(sprite.colorIndex, minValue: sprite.minValue, maxValue: sprite.maxValue) {
+                        break
+                    }
+                    cardStack.pushLast(sprite)
+                    sprite = cardStack.pull()!
+                }
+                generateSpecial = false
+            }
             
             let index = random!.getRandomInt(0, max: positionsTab.count - 1)
             let (aktColumn, aktRow) = positionsTab[index]
@@ -607,7 +623,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
 
             updateGameArrayCell(sprite)
 
-            addPhysicsBody(sprite)
+//            addPhysicsBody(sprite)
             push(sprite, status: .AddedFromCardStack)
             addChild(sprite)
             let duration:Double = Double((zielPosition - cardPackege!.position).length()) / 500
@@ -623,8 +639,10 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
 
         }
         print("Count Columns:", countColumns)
-        gameArrayChanged = true
-        if first {
+        if generatingType != .Special {
+            gameArrayChanged = true
+        }
+        if generatingType == .First {
             countUp = NSTimer.scheduledTimerWithTimeInterval(doCountUpSleepTime, target: self, selector: Selector(doCountUpSelector), userInfo: nil, repeats: true)
         }
         
@@ -634,11 +652,22 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
     
     func startCreateTippsInBackground() {
         {
+            print("============ start Create Tipps =============")
             self.generatingTipps = true
             self.stopTimer(self.showTippAtTimer)
             let startTime = NSDate()
-            let tippsCreated = self.createTipps()
-            print("tippsCreated:", tippsCreated, " in ", NSDate().timeIntervalSinceDate(startTime).threeDecimals, " seconds")
+            var countCreating = 3
+            while countCreating > 0 {
+                let tippsCreated = self.createTipps()
+                print("tippsCreated:", tippsCreated, " in ", NSDate().timeIntervalSinceDate(startTime).threeDecimals, " seconds")
+                if self.tippArray.count == 0 {
+                    print("generate special Sprite")
+                    self.generateSprites(.Special)
+                    countCreating--
+                } else {
+                    countCreating = 0
+                }
+            }
         } ~>
         {
             self.generatingTipps = false
@@ -896,6 +925,30 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         tippIndex = 0  // set tipps to first
         return true
      }
+    
+    func findPairForSprite (colorIndex: Int, minValue: Int, maxValue: Int)->Bool {
+        var founded = false
+        for column in 0..<countColumns {
+            for row in 0..<countRows {
+                if gameArray[column][row].colorIndex == colorIndex &&
+                    (gameArray[column][row].minValue == maxValue + 1 ||
+                    gameArray[column][row].maxValue == minValue - 1) {
+                        founded = true
+                        break
+                }
+            }
+        }
+        if !founded {
+            for index in 0..<containers.count {
+                if (containers[index].minValue == NoColor && maxValue == LastCardValue) ||
+                    (containers[index].colorIndex == colorIndex && containers[index].minValue == maxValue + 1){
+                        founded = true
+                        break
+                }
+            }
+        }
+        return founded
+    }
     
     func checkForSort(t0: Tipps, t1:Tipps)->Bool {
         let returnValue = gameArray[t0.fromColumn][t0.fromRow].colorIndex < gameArray[t1.fromColumn][t1.fromRow].colorIndex
@@ -1557,13 +1610,13 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
     }
 
     func spriteDidCollideWithMovingSprite(node1:MySKNode, node2:MySKNode) {
-        let collisionsTime = NSDate()
-        let timeInterval: Double = collisionsTime.timeIntervalSinceDate(lastCollisionsTime); // <<<<< Difference in seconds (double)
-
-        if timeInterval < 1 {
-            return
-        }
-        lastCollisionsTime = collisionsTime
+//        let collisionsTime = NSDate()
+//        let timeInterval: Double = collisionsTime.timeIntervalSinceDate(lastCollisionsTime); // <<<<< Difference in seconds (double)
+//
+//        if timeInterval < 1 {
+//            return
+//        }
+//        lastCollisionsTime = collisionsTime
         let movingSprite = node1
         let sprite = node2
         let movingSpriteColorIndex = movingSprite.colorIndex
@@ -1625,7 +1678,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
             parentViewController!.presentViewController(alert, animated: true, completion: nil)
         }
         if usedCellCount <= minUsedCells && spriteCount > maxUsedCells {
-            generateSprites(false)  // Nachgenerierung
+            generateSprites(.Normal)  // Nachgenerierung
         } else {
             gameArrayChanged = true
         }
@@ -1666,7 +1719,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
 //        print("stopCreateTippsInBackground from newGame")
 //
         prepareNextGame(next)
-        generateSprites(true)
+        generateSprites(.First)
     }
 
     
@@ -1913,7 +1966,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
 //                    gameArray[sprite.column][sprite.row].maxValue = sprite.maxValue
                     
 //                    gameArray[sprite.column][sprite.row].used = true
-                    addPhysicsBody(sprite)
+//                    addPhysicsBody(sprite)
                     self.addChild(sprite)
                     updateSpriteCount(1)
                     sprite.reload()
@@ -2285,7 +2338,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
                 if color == .Red && lastGreenPair != nil {
                     if lastRedPair != nil {
                         lastRedPair!.getActDuration()
-                        if lastRedPair!.duration < 0.5 && lastGreenPair!.duration > 1.0 {
+                        if lastRedPair!.duration < 0.8 && lastGreenPair!.duration > 0.5 {
                             actFromToColumnRow.toColumnRow.column = lastGreenPair!.pair.toColumnRow.column
                             actFromToColumnRow.toColumnRow.row = lastGreenPair!.pair.toColumnRow.row
                             myPoints = lastGreenPair!.points // set Back to last green line
@@ -2337,6 +2390,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
                         self.spriteDidCollideWithMovingSprite(self.movedFromNode, node2: targetNode)
                     })
                 }
+                let userInteractionEnablingAction = SKAction.runBlock({self.userInteractionEnabled = true})
 //                let actionMoveStopped =  SKAction.runBlock({
 //                    self.push(sprite, status: .Removed)
 //                    sprite.hidden = true
@@ -2352,6 +2406,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
 //                })
                 
                 actionArray.append(collisionAction)
+                actionArray.append(userInteractionEnablingAction)
                 
                 tippsButton!.activateButton(false)
                 
@@ -2384,14 +2439,10 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
                         startNode.size = foundedCard!.size
                         startNode.position = foundedCard!.position
                         startNode.type = .SpriteType
-//                        gameArray[startNode.column][startNode.row].used = true
-                        addPhysicsBody(startNode)
+//                        addPhysicsBody(startNode)
                         foundedCard!.removeFromParent()
                         founded = true
                         updateGameArrayCell(startNode)
-//                        gameArray[startNode.column][startNode.row].colorIndex = startNode.colorIndex
-//                        gameArray[startNode.column][startNode.row].minValue = startNode.minValue
-//                        gameArray[startNode.column][startNode.row].maxValue = startNode.maxValue
                         pullShowCard()
                         gameArrayChanged = true
 
@@ -2644,14 +2695,14 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         return usedCellCount
     }
     
-    func addPhysicsBody(sprite: MySKNode) {
-        sprite.physicsBody = SKPhysicsBody(circleOfRadius: sprite.size.width/2)
-        sprite.physicsBody?.dynamic = true
-        sprite.physicsBody?.categoryBitMask = PhysicsCategory.Sprite
-        sprite.physicsBody?.contactTestBitMask = PhysicsCategory.MovingSprite
-        sprite.physicsBody?.collisionBitMask = PhysicsCategory.None
-        sprite.physicsBody?.usesPreciseCollisionDetection = true
-    }
+//    func addPhysicsBody(sprite: MySKNode) {
+//        sprite.physicsBody = SKPhysicsBody(circleOfRadius: sprite.size.width/2)
+//        sprite.physicsBody?.dynamic = true
+//        sprite.physicsBody?.categoryBitMask = PhysicsCategory.Sprite
+//        sprite.physicsBody?.contactTestBitMask = PhysicsCategory.MovingSprite
+//        sprite.physicsBody?.collisionBitMask = PhysicsCategory.None
+//        sprite.physicsBody?.usesPreciseCollisionDetection = true
+//    }
     
     func push(sprite1: MySKNode, sprite2: MySKNode) {
         push(sprite1, status: .Exchanged)

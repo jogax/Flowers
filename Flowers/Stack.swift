@@ -26,7 +26,11 @@ class Stack<T> {
     func push (value: MySKNode) {
         spriteStack.append(value)
     }
-    
+
+    func pushLast (value: MySKNode) {
+        spriteStack.insert(value, atIndex: 0)
+    }
+
     func count(type: StackType)->Int {
         switch type {
             case .MySKNodeType: return spriteStack.count

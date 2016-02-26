@@ -25,8 +25,12 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
             self.points = points
         }
         
-        mutating func getActDuration() {
+        mutating func setEndDuration() {
             duration = NSDate().timeIntervalSinceDate(self.startTime)
+        }
+        
+        func getActDuration() -> NSTimeInterval{
+            return NSDate().timeIntervalSinceDate(startTime)
         }
     }
     struct GameArrayPositions {
@@ -130,11 +134,26 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         }
     }
     
+    struct DrawHelpLinesParameters {
+        var points: [CGPoint]
+        var lineWidth: CGFloat
+        var twoArrows: Bool
+        var color: MyColors
+        
+        init() {
+            points = [CGPoint]()
+            lineWidth = 0
+            twoArrows = false
+            color = .Red
+        }
+    }
+    
     let showTippSleepTime = 30.0
     let doCountUpSleepTime = 1.0
     
     let showTippSelector = "showTipp"
     let doCountUpSelector = "doCountUp"
+    let checkGreenLineSelector = "setGreenLineSize"
     let myLineName = "myLine"
     
     let emptySpriteTxt = "emptySprite"
@@ -207,6 +226,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
     //    var startTimeOrig: NSDate?
     var timer: NSTimer?
     var countUp: NSTimer?
+    var greenLineTimer: NSTimer?
     var waitForSKActionEnded: NSTimer?
     var lastMirrored = ""
     var audioPlayer: AVAudioPlayer?
@@ -267,6 +287,14 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
     
     var lastGreenPair: PairStatus?
     var lastRedPair: PairStatus?
+    
+    var lastDrawHelpLinesParameters = DrawHelpLinesParameters()
+
+    
+    var lineWidthMultiplierNormal = CGFloat(0.04) //(0.0625)
+    let lineWidthMultiplierSpecial = CGFloat(0.125)
+    
+    var lineWidthMultiplier: CGFloat?
     var actPair: PairStatus?
     var oldFromToColumnRow: FromToColumnRow?
     
@@ -300,14 +328,11 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         didSet {
             switch (oldValue, gameArrayChanged, generatingTipps) {
                 case (false, true, false):
-                    print("startCreateTippsInBackground from gameArrayChanged, false, true, false")
                     startCreateTippsInBackground()
                 case (true, true, true):
-                    print("stopCreateTippsInBackground from gameArrayChanged, true, true, true")
                     stopCreateTippsInBackground = true
                     startCreateTippsInBackground()
                 case (true, true, false):
-                    print("restart startCreateTippsInBackground from gameArrayChanged")
                     startCreateTippsInBackground()
 
                 default: dummy = 0
@@ -1351,11 +1376,23 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
 
     
     func drawHelpLines(points: [CGPoint], lineWidth: CGFloat, twoArrows: Bool, color: MyColors) {
-        
+        lastDrawHelpLinesParameters.points = points
+        lastDrawHelpLinesParameters.lineWidth = lineWidth
+        lastDrawHelpLinesParameters.twoArrows = twoArrows
+        lastDrawHelpLinesParameters.color = color
+        drawHelpLinesSpec()
+    }
+    
+    func drawHelpLinesSpec() {
+        let points = lastDrawHelpLinesParameters.points
+        let lineWidth = lastDrawHelpLinesParameters.lineWidth
+        let twoArrows = lastDrawHelpLinesParameters.twoArrows
+        let color = lastDrawHelpLinesParameters.color
+    
         let pathToDraw:CGMutablePathRef = CGPathCreateMutable()
         let myLine:SKShapeNode = SKShapeNode(path:pathToDraw)
         removeNodesWithName(myLineName)
-        myLine.lineWidth = lineWidth / 15
+        myLine.lineWidth = lineWidth * lineWidthMultiplier!
         myLine.name = myLineName
         
         // check if valid data
@@ -1426,9 +1463,9 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         myLine.path = pathToDraw
         
         if color == .Red {
-            myLine.strokeColor = SKColor(red: 1.0, green: 0.0, blue: 0.0, alpha: 1.0) // GV.colorSets[GV.colorSetIndex][colorIndex + 1]
+            myLine.strokeColor = SKColor(red: 1.0, green: 0.0, blue: 0.0, alpha: 0.8) // GV.colorSets[GV.colorSetIndex][colorIndex + 1]
         } else {
-            myLine.strokeColor = SKColor(red: 0.0, green: 1.0, blue: 0.0, alpha: 1.0) // GV.colorSets[GV.colorSetIndex][colorIndex + 1]
+            myLine.strokeColor = SKColor(red: 0.0, green: 1.0, blue: 0.0, alpha: 0.8) // GV.colorSets[GV.colorSetIndex][colorIndex + 1]
         }
         myLine.zPosition = 100
         myLine.lineCap = .Round
@@ -1525,7 +1562,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         }
         lastUpdateSec = sec10
     }
-
+    
     func spriteDidCollideWithContainer(node1:MySKNode, node2:MySKNode) {
         let movingSprite = node1
         let container = node2
@@ -1680,7 +1717,9 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         if usedCellCount <= minUsedCells && spriteCount > maxUsedCells {
             generateSprites(.Normal)  // Nachgenerierung
         } else {
-            gameArrayChanged = true
+            if spriteCount > 0 {
+                gameArrayChanged = true
+            }
         }
     }
     
@@ -1763,7 +1802,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
                 handler: {(paramAction:UIAlertAction!) in
 //                    self.setLevel(self.nextLevel)
 //                    self.newGame(true)
-                    self.startTimer(self.showTippAtTimer, sleepTime: self.showTippSleepTime, selector: self.showTippSelector)
+                    self.startTimer(self.showTippAtTimer, sleepTime: self.showTippSleepTime, selector: self.showTippSelector, repeats: true)
             })
             alert.addAction(cancelAction)
         }
@@ -2111,6 +2150,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         //            return
         //        }
         //let countTouches = touches.count
+        lineWidthMultiplier = lineWidthMultiplierNormal
         
         stopTimer(showTippAtTimer)
         oldFromToColumnRow = FromToColumnRow()
@@ -2216,21 +2256,23 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
                     actFromToColumnRow.fromColumnRow = movedFrom
                     actFromToColumnRow.toColumnRow.column = foundedPoint!.column
                     actFromToColumnRow.toColumnRow.row = foundedPoint!.row
-//                    if actFromToColumnRow != oldFromToColumnRow! {
                     let color = calculateLineColor(foundedPoint!, movedFrom: movedFrom)
-                    
                     switch color {
                     case .Green:
-                        if lastGreenPair == nil || lastGreenPair!.pair !=  actFromToColumnRow {
+                        if lastGreenPair == nil || lastGreenPair!.pair !=  actFromToColumnRow || lastRedPair != nil {
+                            lineWidthMultiplier = lineWidthMultiplierNormal
                             lastGreenPair = PairStatus(pair: actFromToColumnRow, founded: foundedPoint!, startTime: NSDate(), points: myPoints)
                             lastRedPair = nil
+                            greenLineTimer = startTimer(greenLineTimer, sleepTime: 1.0, selector: checkGreenLineSelector, repeats: false) // set linewidth on Special after 1 second
                         } else {
                             lastGreenPair!.points = myPoints
                         }
                     case .Red:
+                        lineWidthMultiplier = lineWidthMultiplierNormal
+                        stopTimer(greenLineTimer)
                         if lastGreenPair != nil {
                             if lastGreenPair!.duration == 0 { // first time Red
-                                lastGreenPair!.getActDuration() // get duration of Green
+                                lastGreenPair!.setEndDuration() // get duration of Green
                                 lastRedPair = PairStatus(pair: actFromToColumnRow, founded: foundedPoint!, startTime: NSDate(), points: myPoints)
                             } else if lastRedPair!.pair != actFromToColumnRow {
                                 lastRedPair = nil
@@ -2239,14 +2281,6 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
                         }
 
                     }
-//                    if color == .Green && (lastGreenPair == nil || lastGreenPair!.pair !=  actFromToColumnRow) {
-//                        lastGreenPair = PairStatus(pair: actFromToColumnRow, founded: foundedPoint!, startTime: NSDate(), points: myPoints)
-//                        lastRedPair = nil
-//                    } else if lastGreenPair != nil && lastGreenPair!.duration == 0 {
-//                        lastGreenPair!.getActDuration()
-//                        lastRedPair = PairStatus(pair: actFromToColumnRow, founded: foundedPoint!, startTime: NSDate(), points: myPoints)
-//                    }
-//                    }
                 }
             }
             
@@ -2260,7 +2294,17 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         }
     }
     
+    func setGreenLineSize() {
+        print("setGreenLineSize")
+        lineWidthMultiplier = lineWidthMultiplierSpecial
+        drawHelpLinesSpec()
+        stopTimer(greenLineTimer)
+    }
+
+    
     override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
+        lineWidthMultiplier = lineWidthMultiplierNormal
+        stopTimer(greenLineTimer)
         stopTrembling()
         let firstTouch = touches.first
         let touchLocation = firstTouch!.locationInNode(self)
@@ -2337,8 +2381,8 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
                 let color = calculateLineColor(foundedPoint!, movedFrom: movedFrom)
                 if color == .Red && lastGreenPair != nil {
                     if lastRedPair != nil {
-                        lastRedPair!.getActDuration()
-                        if lastRedPair!.duration < 0.8 && lastGreenPair!.duration > 0.5 {
+                        lastRedPair!.setEndDuration()
+                        if lastRedPair!.duration < 1.0 && lastGreenPair!.duration > 1.0 {
                             actFromToColumnRow.toColumnRow.column = lastGreenPair!.pair.toColumnRow.column
                             actFromToColumnRow.toColumnRow.row = lastGreenPair!.pair.toColumnRow.row
                             myPoints = lastGreenPair!.points // set Back to last green line
@@ -2391,20 +2435,6 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
                     })
                 }
                 let userInteractionEnablingAction = SKAction.runBlock({self.userInteractionEnabled = true})
-//                let actionMoveStopped =  SKAction.runBlock({
-//                    self.push(sprite, status: .Removed)
-//                    sprite.hidden = true
-//                    self.gameArray[sprite.column][sprite.row].used = false
-//                    //sprite.size = CGSizeMake(sprite.size.width / 3, sprite.size.height / 3)
-//                    sprite.colorBlendFactor = 4
-//                    self.playSound("Drop", volume: GV.soundVolume)
-//                    sprite.removeFromParent()
-//                    self.pull(false) // no createTipps
-//                    self.userInteractionEnabled = true
-//                    
-//                    
-//                })
-                
                 actionArray.append(collisionAction)
                 actionArray.append(userInteractionEnablingAction)
                 
@@ -2614,13 +2644,6 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
     func showTimeLeft() {
     }
     
-    func stopTimer(var timer: NSTimer?) {
-        if timer != nil {
-            timer?.invalidate()
-            timer = nil
-        }
-    }
-
     func calculateSpritePosition(column: Int, row: Int) -> CGPoint {
         let cardPositionMultiplier = GV.deviceConstants.cardPositionMultiplier
         let point = CGPointMake(
@@ -2771,16 +2794,28 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
 
     
     func startDoCountUpTimer() {
-        startTimer(countUp, sleepTime: doCountUpSleepTime, selector: doCountUpSelector)
-        if timer == nil {
-            timer = NSTimer.scheduledTimerWithTimeInterval(doCountUpSleepTime, target: self, selector: Selector(doCountUpSelector), userInfo: nil, repeats: true)
+        startTimer(countUp, sleepTime: doCountUpSleepTime, selector: doCountUpSelector, repeats: true)
+//        if timer == nil {
+//            timer = NSTimer.scheduledTimerWithTimeInterval(doCountUpSleepTime, target: self, selector: Selector(doCountUpSelector), userInfo: nil, repeats: true)
+//        }
+    }
+    
+    func stopTimer(var timer: NSTimer?) {
+        if timer != nil {
+            timer?.invalidate()
+            timer = nil
         }
     }
+    
 
-    func startTimer(var timer: NSTimer?, sleepTime: Double, selector: String) {
-        if timer == nil {
-            timer = NSTimer.scheduledTimerWithTimeInterval(sleepTime, target: self, selector: Selector(selector), userInfo: nil, repeats: true)
+
+    func startTimer(timer: NSTimer?, sleepTime: Double, selector: String, repeats: Bool)->NSTimer {
+        if timer != nil {
+            stopTimer(timer)
         }
+        let myTimer = NSTimer.scheduledTimerWithTimeInterval(sleepTime, target: self, selector: Selector(selector), userInfo: nil, repeats: repeats)
+        
+        return myTimer
     }
     
     func doCountUp() {

@@ -107,7 +107,7 @@ class MySKNode: SKSpriteNode {
         if type == .ButtonType {
             hitLabel.verticalAlignmentMode = SKLabelVerticalAlignmentMode.Center
             hitLabel.fontSize = 20;
-            hitLabel.zPosition = 1
+            hitLabel.zPosition = self.zPosition + 1
         } else {
             
             hitLabel.position = CGPointMake(self.position.x, self.position.y + self.size.width * 0.08)
@@ -116,7 +116,7 @@ class MySKNode: SKSpriteNode {
             
             //print(minValue, text)
             setLabelText(minValueLabel, value: minValue)
-            minValueLabel.zPosition = 1
+            minValueLabel.zPosition = self.zPosition + 1
             
             
 //            var positionOffset = CGPointMake(0,0)

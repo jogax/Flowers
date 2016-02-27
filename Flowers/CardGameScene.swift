@@ -162,7 +162,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
     var showCardStack:Stack<MySKNode> = Stack()
     var tippCountLabel = SKLabelNode(fontNamed: "AvenirNext-Bold")
     
-    var cardPackege: MySKButton?
+    var cardPackage: MySKButton?
     var cardPlaceButton: MySKButton?
     var tippsButton: MySKButton?
     
@@ -304,6 +304,8 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
     var buttonYPos = CGFloat(0)
     var buttonXPosNormalized = CGFloat(0)
     let images = DrawImages()
+    
+    var stop = false
     
     var stopCreateTippsInBackground = false {
         didSet {
@@ -503,9 +505,9 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         stopCreateTippsInBackground = true
         let cardSize = CGSizeMake(buttonSize * sizeMultiplier.width * 0.8, buttonSize * sizeMultiplier.height * 0.8)
         let cardPackageButtonTexture = SKTexture(image: images.getCardPackage())
-        cardPackege = MySKButton(texture: cardPackageButtonTexture, frame: CGRectMake(buttonXPosNormalized * 4.0, buttonYPos, cardSize.width, cardSize.height), makePicture: false)
-        cardPackege!.name = "cardPackege"
-        addChild(cardPackege!)
+        cardPackage = MySKButton(texture: cardPackageButtonTexture, frame: CGRectMake(buttonXPosNormalized * 4.0, buttonYPos, cardSize.width, cardSize.height), makePicture: false)
+        cardPackage!.name = "cardPackege"
+        addChild(cardPackage!)
         
         showCardFromStack = nil
         
@@ -606,6 +608,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
     }
 
     func generateSprites(generatingType: SpriteGeneratingType) {
+        print("generateSprites:", generatingType)
         var generateSpecial = generatingType ==  .Special
         var positionsTab = [(Int, Int)]() // search all available Positions
         for column in 0..<countColumns {
@@ -635,7 +638,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
             let (aktColumn, aktRow) = positionsTab[index]
             
             let zielPosition = gameArray[aktColumn][aktRow].position
-            sprite.position = cardPackege!.position
+            sprite.position = cardPackage!.position
             sprite.startPosition = zielPosition
             
 
@@ -645,21 +648,23 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
             sprite.row = aktRow
             
             sprite.size = CGSizeMake(spriteSize.width, spriteSize.height)
-
+//            sprite.zPosition = 10
             updateGameArrayCell(sprite)
 
 //            addPhysicsBody(sprite)
             push(sprite, status: .AddedFromCardStack)
             addChild(sprite)
-            let duration:Double = Double((zielPosition - cardPackege!.position).length()) / 500
+            let duration:Double = Double((zielPosition - cardPackage!.position).length()) / 500
             let actionMove = SKAction.moveTo(zielPosition, duration: duration)
             let actionHideEmptyCard = SKAction.runBlock({
                 self.deleteEmptySprite(aktColumn, row: aktRow)
+//                sprite.zPosition = 0
+                
             })
             sprite.runAction(SKAction.sequence([actionMove, actionHideEmptyCard]))
             if cardStack.count(.MySKNodeType) == 0 {
-                cardPackege!.changeButtonPicture(SKTexture(imageNamed: "emptycard"))
-                cardPackege!.alpha = 0.3
+                cardPackage!.changeButtonPicture(SKTexture(imageNamed: "emptycard"))
+                cardPackage!.alpha = 0.3
             }
 
         }
@@ -677,21 +682,23 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
     
     func startCreateTippsInBackground() {
         {
-            print("============ start Create Tipps =============")
             self.generatingTipps = true
             self.stopTimer(self.showTippAtTimer)
             let startTime = NSDate()
-            var countCreating = 3
-            while countCreating > 0 {
+            var countCreating = self.countColumns * self.countRows - self.checkGameArray()
+            while countCreating > 0 && self.spriteCount > 0 {
                 let tippsCreated = self.createTipps()
                 print("tippsCreated:", tippsCreated, " in ", NSDate().timeIntervalSinceDate(startTime).threeDecimals, " seconds")
-                if self.tippArray.count == 0 {
-                    print("generate special Sprite")
+                if self.tippArray.count == 0 || self.stop  {
+                    print(" ==========> generate special Sprite - countCreating:", countCreating)
                     self.generateSprites(.Special)
                     countCreating--
                 } else {
                     countCreating = 0
                 }
+            }
+            if self.tippArray.count == 0 && self.spriteCount > 0{
+                print ("You have lost!")
             }
         } ~>
         {
@@ -766,8 +773,8 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
                 cardPlaceButtonAddedToParent = false
                 addChild(showCard!)
                 if cardStack.count(.MySKNodeType) == 0 {
-                    cardPackege!.changeButtonPicture(SKTexture(imageNamed: "emptycard"))
-                    cardPackege!.alpha = 0.3
+                    cardPackage!.changeButtonPicture(SKTexture(imageNamed: "emptycard"))
+                    cardPackage!.alpha = 0.3
                 }
             }
         }
@@ -1714,7 +1721,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
             let alert = getNextPlayArt(true)
             parentViewController!.presentViewController(alert, animated: true, completion: nil)
         }
-        if usedCellCount <= minUsedCells && spriteCount > maxUsedCells {
+        if usedCellCount <= minUsedCells { //  && spriteCount > maxUsedCells {
             generateSprites(.Normal)  // Nachgenerierung
         } else {
             if spriteCount > 0 {
@@ -1943,8 +1950,8 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
                         gameArray[savedSpriteInCycle.column][savedSpriteInCycle.row].used = false
                         makeEmptyCard(savedSpriteInCycle.column, row: savedSpriteInCycle.row)
                         let aktPosition = gameArray[savedSpriteInCycle.column][savedSpriteInCycle.row].position
-                        let duration = Double((cardPackege!.position - aktPosition).length()) / 500.0
-                        let actionMove = SKAction.moveTo(cardPackege!.position, duration: duration)
+                        let duration = Double((cardPackage!.position - aktPosition).length()) / 500.0
+                        let actionMove = SKAction.moveTo(cardPackage!.position, duration: duration)
                         let removeOldCard = SKAction.runBlock({
                             self.childNodeWithName(searchName)!.removeFromParent()
                         })
@@ -2402,6 +2409,8 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
                 })
 
                 let speed: CGFloat = 0.001
+                
+                sprite.zPosition += 5
 
                 
                 

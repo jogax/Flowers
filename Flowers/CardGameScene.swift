@@ -16,12 +16,14 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         var startTime: NSDate
         var duration: Double
         var founded: Founded
+        var fixed: Bool
         var points: [CGPoint]
         init(pair: FromToColumnRow, founded: Founded, startTime: NSDate, points: [CGPoint]) {
             self.pair = pair
             self.founded = founded
             self.startTime = startTime
             self.duration = 0
+            self.fixed = false
             self.points = points
         }
         
@@ -2268,22 +2270,26 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
                     case .Green:
                         if lastGreenPair == nil || lastGreenPair!.pair !=  actFromToColumnRow || lastRedPair != nil {
                             lineWidthMultiplier = lineWidthMultiplierNormal
+                            drawHelpLinesSpec()
                             lastGreenPair = PairStatus(pair: actFromToColumnRow, founded: foundedPoint!, startTime: NSDate(), points: myPoints)
                             lastRedPair = nil
-                            greenLineTimer = startTimer(greenLineTimer, sleepTime: 1.0, selector: checkGreenLineSelector, repeats: false) // set linewidth on Special after 1 second
+                            greenLineTimer = startTimer(greenLineTimer, sleepTime: 0.5, selector: checkGreenLineSelector, repeats: false) // set linewidth on Special after 0.5 second
                         } else {
                             lastGreenPair!.points = myPoints
                         }
                     case .Red:
                         lineWidthMultiplier = lineWidthMultiplierNormal
-                        stopTimer(greenLineTimer)
+                        drawHelpLinesSpec()
                         if lastGreenPair != nil {
+                            if !lastGreenPair!.fixed {
+                                stopTimer(greenLineTimer)
+                            }
                             if lastGreenPair!.duration == 0 { // first time Red
                                 lastGreenPair!.setEndDuration() // get duration of Green
                                 lastRedPair = PairStatus(pair: actFromToColumnRow, founded: foundedPoint!, startTime: NSDate(), points: myPoints)
-                            } else if lastRedPair!.pair != actFromToColumnRow {
-                                lastRedPair = nil
-                                lastGreenPair = nil
+//                            } else if lastRedPair!.pair != actFromToColumnRow {
+//                                lastRedPair = nil
+//                                lastGreenPair = nil
                             }
                         }
 
@@ -2305,6 +2311,8 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         print("setGreenLineSize")
         lineWidthMultiplier = lineWidthMultiplierSpecial
         drawHelpLinesSpec()
+        lastGreenPair!.fixed = true
+        
         stopTimer(greenLineTimer)
     }
 
@@ -2389,10 +2397,12 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
                 if color == .Red && lastGreenPair != nil {
                     if lastRedPair != nil {
                         lastRedPair!.setEndDuration()
-                        if lastRedPair!.duration < 1.0 && lastGreenPair!.duration > 1.0 {
+////                        if lastRedPair!.duration < 1.0 && lastGreenPair!.duration > 1.0 {
+                        if lastGreenPair!.fixed && lastRedPair!.duration < 2.0 {
                             actFromToColumnRow.toColumnRow.column = lastGreenPair!.pair.toColumnRow.column
                             actFromToColumnRow.toColumnRow.row = lastGreenPair!.pair.toColumnRow.row
                             myPoints = lastGreenPair!.points // set Back to last green line
+                            print("==============correctur made! lastRedPair!.duration: ", lastRedPair!.duration.nDecimals(3), "==========")
                         }
                     }
                 }

@@ -12,7 +12,9 @@ let huDictionary: [TextConstants: String] = [
     .TCLevel:            "Szint",
     .TCLevelScore:       "Pontszám:",
     .TCGameScore:        "Játék pontszám:",
-    .TCTargetScore:      "elérendö pontszám:",
+    .TCActScore:         "Az utolsó játék pontszáma: ",
+    .TCBestScore:        "Az eddigi legjobb pontszám:",
+    .TCTargetScore:      "Elérendö pontszám:",
     .TCTimeLeft:         "Elhasznált idő:",
     .TCGameLost:         "Vesztettél!",
     .TCGameLost3:        "3-szor vesztettél. Előző szintre vissza!!!",
@@ -21,7 +23,7 @@ let huDictionary: [TextConstants: String] = [
     .TCCardCount:        "Kártyalapok száma:",
     .TCReturn:           "Vissza",
     .TCOK:               "OK",
-    .TCLevelComplete:    "Szint befejezve",
+    .TCLevelComplete:    "Szint befejezve!",
     .TCNoMessage:        "nem létező üzenet",
     .TCTimeout:          "Lejárt az időd",
     .TCGameOver:         "Vesztettél",
@@ -52,4 +54,8 @@ let huDictionary: [TextConstants: String] = [
     .TCGameAgain:        "Újra játszom",
     .TCChooseGame:       "Válassz:",
     .TCTippCount:        "Lehetséges lépések száma:",
+    .TCStatistics:       "A szint statisztikája:",
+    .TCActTime:          "Utolsó játék időtartama:",
+    .TCBestTime:         "A szint legjobb ideje:",
+    .TCAllTime:          "A szint teljes játékideje:"
 ]

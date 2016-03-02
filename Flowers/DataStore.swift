@@ -24,12 +24,14 @@ class DataStore {
     var spriteGameEntity: SpriteGame?
     var globalParamEntity: GlobalParam?
     var seedDataEntity: SeedData?
+    var gameStatisticsEntity: GameStatistics?
     
     //var appVariables: AppVariables?
     var exists: Bool = true
     var spriteGameDescription:NSEntityDescription?
     var globalParamDescription:NSEntityDescription?
     var seedDataDescription:NSEntityDescription?
+    var gameStatisticsDescription:NSEntityDescription?
     
     init() {
         
@@ -38,9 +40,71 @@ class DataStore {
         spriteGameDescription = NSEntityDescription.entityForName("SpriteGame", inManagedObjectContext:managedObjectContext)
         globalParamDescription = NSEntityDescription.entityForName("GlobalParam", inManagedObjectContext:managedObjectContext)
         seedDataDescription = NSEntityDescription.entityForName("SeedData", inManagedObjectContext:managedObjectContext)
+        gameStatisticsDescription = NSEntityDescription.entityForName("GameStatistics", inManagedObjectContext:managedObjectContext)
  
     }
  
+    func saveGameStatisticsRecord(gameStatistics: GameStatisticsStruct) {
+        
+        gameStatisticsEntity = GameStatistics(entity:gameStatisticsDescription!, insertIntoManagedObjectContext: managedObjectContext)
+        gameStatisticsEntity!.name = gameStatistics.name
+        gameStatisticsEntity!.level = gameStatistics.level
+        gameStatisticsEntity!.countPlays = gameStatistics.countPlays
+        gameStatisticsEntity!.actScore = gameStatistics.actScore
+        gameStatisticsEntity!.levelScore = gameStatistics.levelScore
+        gameStatisticsEntity!.bestScore = gameStatistics.bestScore
+        gameStatisticsEntity!.bestTime = gameStatistics.bestTime
+        gameStatisticsEntity!.allTime = gameStatistics.allTime
+        gameStatisticsEntity!.actTime = gameStatistics.actTime
+        
+        do {
+            try self.managedObjectContext.save()
+        } catch {
+            let nserror = error as NSError
+            NSLog("Unresolved error \(nserror), \(nserror.userInfo)")
+            abort()
+        }
+    }
+    
+    func readGameStatisticsRecord(gameStatisticsIndex: GameStatisticsStruct)->GameStatisticsStruct {
+        let request = NSFetchRequest()
+        var gameStatisticsStruct = GameStatisticsStruct()
+        var exists: Bool
+        request.entity = self.gameStatisticsDescription
+        let p1 = NSPredicate(format: "name = %@", gameStatisticsIndex.name)
+        let p2 = NSPredicate(format: "level = %d", gameStatisticsIndex.level)
+        let predicate = NSCompoundPredicate.init(andPredicateWithSubpredicates: [p1, p2])
+
+        gameStatisticsStruct.name = gameStatisticsIndex.name
+        gameStatisticsStruct.level = gameStatisticsIndex.level
+        
+        request.predicate = predicate
+        do {
+            let results = try managedObjectContext.executeFetchRequest(request)
+            if let match = results.first as? NSManagedObject {
+                
+                gameStatisticsStruct.countPlays = match.valueForKey("countPlays") as! NSInteger
+                gameStatisticsStruct.actScore = match.valueForKey("actScore") as! NSInteger
+                gameStatisticsStruct.bestScore = match.valueForKey("bestScore") as! NSInteger
+                gameStatisticsStruct.levelScore = match.valueForKey("levelScore") as! NSInteger
+                gameStatisticsStruct.bestTime = match.valueForKey("bestTime") as! NSInteger
+                gameStatisticsStruct.allTime = match.valueForKey("allTime") as! NSInteger
+                gameStatisticsStruct.actTime = match.valueForKey("actTime") as! NSInteger
+
+                exists = true
+            } else {
+                exists = false
+            }
+        } catch {
+            let nserror = error as NSError
+            NSLog("Unresolved error \(nserror), \(nserror.userInfo)")
+            abort()
+        }
+        
+        return gameStatisticsStruct
+        
+    }
+    
     func saveSeedDataRecord(seedData: SeedDataStruct) {
         
         seedDataEntity = SeedData(entity:seedDataDescription!, insertIntoManagedObjectContext: managedObjectContext)

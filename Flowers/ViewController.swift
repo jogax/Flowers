@@ -49,6 +49,11 @@ class ViewController: UIViewController, SettingsDelegate, UIApplicationDelegate 
         GV.globalParam = GV.dataStore.getGlobalParam()
         
         GV.spriteGameDataArray = GV.dataStore.getSpriteData()
+        
+        GV.gameStatistics.name = GV.globalParam.aktName
+        GV.gameStatistics.level = GV.spriteGameDataArray[GV.getAktNameIndex()].spriteLevelIndex
+        
+        
 //        for index in 0..<GV.spriteGameDataArray.count {
 //            if GV.globalParam.aktName == GV.spriteGameDataArray[index].name {
 //                GV.spriteGameData = GV.spriteGameDataArray[index]

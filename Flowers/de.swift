@@ -9,9 +9,11 @@
 
 let deDictionary: [TextConstants: String] = [
     .TCAktLanguage:      "de",
-    .TCLevel:            "Level",
+    .TCLevel:            "Ebene",
     .TCLevelScore:       "Summe",
     .TCGameScore:        "Gesamtsumme",
+    .TCActScore:         "Ergebnis des letzten Spiels",
+    .TCBestScore:        "Das beste Ergebnis:",
     .TCTargetScore:      "Ziel Gesamtsumme:",
     .TCTimeLeft:         "verwendete Zeit:",
     .TCGameLost:         "Sie haben verloren!",
@@ -21,7 +23,7 @@ let deDictionary: [TextConstants: String] = [
     .TCCardCount:        "Anzahl von Karten:",
     .TCReturn:           "Zurück",
     .TCOK:               "OK",
-    .TCLevelComplete:    "Level beendet",
+    .TCLevelComplete:    "Level beendet!",
     .TCNoMessage:        "keine Meldung",
     .TCTimeout:          "Timeout",
     .TCGameOver:         "Spiel vorbei",
@@ -46,12 +48,16 @@ let deDictionary: [TextConstants: String] = [
     .TCMusicVolume:      "Musik Lautstärke",
     .TCStandardGame:     "Spiel mit Blumen",
     .TCCardGame:         "Spiel mit Karten",
-    .TCPreviousLevel:    "Vorherige Stufe",
-    .TCNextLevel:        "Nächste Stufe",
+    .TCPreviousLevel:    "Vorherige Ebene",
+    .TCNextLevel:        "Nächste Ebene",
     .TCNewGame:          "Neues Spiel",
     .TCGameAgain:        "Spiel wiederholen",
     .TCChooseGame:       "Bitte wählen Sie:",
     .TCTippCount:        "Anzahl der möglichen Züge:",
+    .TCStatistics:       "Statistik der Ebene:",
+    .TCActTime:          "Zeit für letzte Spiel:",
+    .TCBestTime:         "Beste Zeit der Ebene:",
+    .TCAllTime:          "Gesamtzeit für diese Ebene:"
 ]
 
 

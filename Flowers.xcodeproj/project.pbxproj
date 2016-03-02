@@ -43,6 +43,7 @@
 		200BDA0B1BCFEF5100F72109 /* MySKButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 200BDA0A1BCFEF5100F72109 /* MySKButton.swift */; };
 		201173B71C074D080022AC86 /* MyGameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201173B61C074D080022AC86 /* MyGameScene.swift */; };
 		201173B91C074D430022AC86 /* CardGameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201173B81C074D430022AC86 /* CardGameScene.swift */; };
+		2014D3821C85DA45008A1946 /* MyContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2014D3811C85DA45008A1946 /* MyContainer.swift */; };
 		201728FA1BE3D0C9005F6CA8 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201728F91BE3D0C9005F6CA8 /* SettingsViewController.swift */; };
 		201C52401C314CF9001B04AB /* LevelsForPlayWithCards.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201C523F1C314CF9001B04AB /* LevelsForPlayWithCards.swift */; };
 		201C52421C316801001B04AB /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201C52411C316801001B04AB /* Extensions.swift */; };
@@ -50,6 +51,7 @@
 		201E20421C1C7389003DBBD8 /* SeedData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201E20401C1C7389003DBBD8 /* SeedData.swift */; };
 		201E20471C1C80CF003DBBD8 /* CloudData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201E20461C1C80CF003DBBD8 /* CloudData.swift */; };
 		2024A8C51C427C420001CA95 /* cardBackground.png in Resources */ = {isa = PBXBuildFile; fileRef = 2024A8C41C427C420001CA95 /* cardBackground.png */; };
+		202F48451C87329900CC1BF4 /* GameStatistics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 202F48431C87329900CC1BF4 /* GameStatistics.swift */; };
 		204A8A181BEF93B90061D14F /* LanguageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 204A8A171BEF93B90061D14F /* LanguageViewController.swift */; };
 		205574411BBEB85C00C165A1 /* Go321.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 205574401BBEB85C00C165A1 /* Go321.m4a */; };
 		205574431BBECB6200C165A1 /* NoSound.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 205574421BBECB6200C165A1 /* NoSound.m4a */; };
@@ -125,6 +127,7 @@
 		200BDA0A1BCFEF5100F72109 /* MySKButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MySKButton.swift; sourceTree = "<group>"; };
 		201173B61C074D080022AC86 /* MyGameScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MyGameScene.swift; sourceTree = "<group>"; };
 		201173B81C074D430022AC86 /* CardGameScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CardGameScene.swift; sourceTree = "<group>"; };
+		2014D3811C85DA45008A1946 /* MyContainer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MyContainer.swift; sourceTree = "<group>"; };
 		201728F91BE3D0C9005F6CA8 /* SettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		201C523F1C314CF9001B04AB /* LevelsForPlayWithCards.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LevelsForPlayWithCards.swift; sourceTree = "<group>"; };
 		201C52411C316801001B04AB /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
@@ -133,6 +136,7 @@
 		201E20431C1C8009003DBBD8 /* Flowers.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Flowers.entitlements; sourceTree = "<group>"; };
 		201E20461C1C80CF003DBBD8 /* CloudData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CloudData.swift; path = ../CloudData.swift; sourceTree = "<group>"; };
 		2024A8C41C427C420001CA95 /* cardBackground.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = cardBackground.png; sourceTree = "<group>"; };
+		202F48431C87329900CC1BF4 /* GameStatistics.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameStatistics.swift; sourceTree = "<group>"; };
 		2034B0061BDE796300D296DA /* Flowers.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Flowers.xcdatamodel; sourceTree = "<group>"; };
 		204A8A171BEF93B90061D14F /* LanguageViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LanguageViewController.swift; sourceTree = "<group>"; };
 		205574401BBEB85C00C165A1 /* Go321.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = Go321.m4a; sourceTree = "<group>"; };
@@ -205,6 +209,7 @@
 				20F6D01D1BB43E9100BF7384 /* MyParticle.sks */,
 				2001412D1BAEB2DE003E0950 /* MyStructs.swift */,
 				200141461BAEDAE5003E0950 /* MySKNode.swift */,
+				2014D3811C85DA45008A1946 /* MyContainer.swift */,
 				201C52411C316801001B04AB /* Extensions.swift */,
 				200BDA0A1BCFEF5100F72109 /* MySKButton.swift */,
 				200140DF1BAEA96A003E0950 /* ViewController.swift */,
@@ -219,6 +224,7 @@
 				200141721BAEF900003E0950 /* SpriteGame.swift */,
 				205ADECE1BFF6D9400C9F341 /* GlobalParam.swift */,
 				201E20401C1C7389003DBBD8 /* SeedData.swift */,
+				202F48431C87329900CC1BF4 /* GameStatistics.swift */,
 				200141771BAEFBCA003E0950 /* DataStore.swift */,
 				201E20461C1C80CF003DBBD8 /* CloudData.swift */,
 				2001412B1BAEB285003E0950 /* LevelsForPlayWithSprites.swift */,
@@ -476,6 +482,7 @@
 				201173B71C074D080022AC86 /* MyGameScene.swift in Sources */,
 				200140E01BAEA96A003E0950 /* ViewController.swift in Sources */,
 				2001412E1BAEB2DE003E0950 /* MyStructs.swift in Sources */,
+				2014D3821C85DA45008A1946 /* MyContainer.swift in Sources */,
 				205ADED01BFF6D9400C9F341 /* GlobalParam.swift in Sources */,
 				200141471BAEDAE5003E0950 /* MySKNode.swift in Sources */,
 				2001413D1BAEB714003E0950 /* de.swift in Sources */,
@@ -483,6 +490,7 @@
 				2001416C1BAEF7AA003E0950 /* Flowers.xcdatamodeld in Sources */,
 				200BDA0B1BCFEF5100F72109 /* MySKButton.swift in Sources */,
 				204A8A181BEF93B90061D14F /* LanguageViewController.swift in Sources */,
+				202F48451C87329900CC1BF4 /* GameStatistics.swift in Sources */,
 				201E203E1C1C631F003DBBD8 /* MyRandom.swift in Sources */,
 				201E20421C1C7389003DBBD8 /* SeedData.swift in Sources */,
 				200141761BAEFB4F003E0950 /* JGXLine.swift in Sources */,

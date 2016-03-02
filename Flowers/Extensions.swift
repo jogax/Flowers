@@ -171,3 +171,23 @@ extension Double {
     }
     
 }
+
+extension Int {
+    var hourMinSec: String {
+        var hours: Int = 0
+        var minutes: Int = 0
+        var seconds: Int = self
+        if self > 60 {
+            seconds = self % 60
+            minutes = self / 60
+        }
+        if minutes > 60 {
+            minutes = minutes % 60
+            hours = minutes / 60
+        }
+        let hoursString = hours > 0 ? ((hours < 10 ? "0":"") + String(hours) + ":") : ""
+        let minutesString = (minutes < 10 ? "0" : "") + String(minutes) + ":"
+        let secondsString = (seconds < 10 ? "0" : "") + String(seconds)
+        return hoursString + minutesString + secondsString
+    }
+}

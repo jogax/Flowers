@@ -10,8 +10,10 @@
 let enDictionary: [TextConstants: String] = [
     .TCAktLanguage:      "en",
     .TCLevel:            "Level",
-    .TCLevelScore:       "score:",
-    .TCGameScore:        "Game score:",
+    .TCLevelScore:       "Levelscore:",
+    .TCGameScore:        "Gamescore:",
+    .TCActScore:         "Score of last Game:",
+    .TCBestScore:        "Best Score:",
     .TCTargetScore:      "target Score:",
     .TCTimeLeft:         "used time:",
     .TCGameLost:         "you lost!",
@@ -21,7 +23,7 @@ let enDictionary: [TextConstants: String] = [
     .TCCardCount:        "Count of Cards:",
     .TCReturn:           "Return",
     .TCOK:               "OK",
-    .TCLevelComplete:    "Level complete",
+    .TCLevelComplete:    "Level complete!",
     .TCNoMessage:        "no Message",
     .TCTimeout:          "timeout",
     .TCGameOver:         "Game Over",
@@ -52,4 +54,8 @@ let enDictionary: [TextConstants: String] = [
     .TCGameAgain:        "Restart Game",
     .TCChooseGame:       "Choose Please:",
     .TCTippCount:        "Number of possible steps:",
+    .TCStatistics:       "Statistics of the Level:",
+    .TCActTime:          "Time for last game:",
+    .TCBestTime:         "Best time for this Level:",
+    .TCAllTime:          "Total time for this level:"
 ]

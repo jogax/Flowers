@@ -38,6 +38,7 @@ struct GV {
     static var soundVolume: Float = 0
     static var musicVolume: Float = 0
     static var globalParam = GlobalParamData()
+    static var gameStatistics = GameStatisticsStruct()
     static let dummyName = "dummy"
     static var initName = false
     static let oneGrad:CGFloat = CGFloat(M_PI) / 180
@@ -128,6 +129,30 @@ struct SpriteGameData {
         gameModus = GameModusCards
         soundVolume = 0.1
         musicVolume = 0.1
+    }
+    
+}
+
+struct GameStatisticsStruct {
+    var name: String
+    var level: Int
+    var countPlays: Int
+    var actScore: Int
+    var levelScore: Int
+    var bestScore: Int
+    var bestTime: Int
+    var allTime: Int
+    var actTime: Int
+    init() {
+        name = GV.globalParam.aktName
+        level = 0
+        countPlays = 0
+        actScore = 0
+        bestScore = 0
+        levelScore = 0
+        allTime = 0
+        actTime = 0
+        bestTime = 10000
     }
     
 }

@@ -23,7 +23,7 @@ enum TextConstants: Int {
     TCCardCount,
     TCReturn,
     TCOK,
-    TCLevelComplete,
+    TCGameComplete,
     TCNoMessage,
     TCGameAgain,
     TCTimeout,
@@ -60,7 +60,8 @@ enum TextConstants: Int {
     TCBestScore,
     TCActTime,
     TCAllTime,
-    TCBestTime
+    TCBestTime,
+    TCCountPlays
 }
 
     let LanguageDE = "de"
@@ -92,16 +93,15 @@ class Language {
         
     }
     
-    func setLanguage(languageKey: String) {
-        
+    func setLanguage(languageKey: String) {        
         aktLanguage = languages[languageKey]!
         for index in 0..<callBacks.count {
             callBacks[index]()
         }
     }
     
-    func getText (textIndex: TextConstants) -> String {
-        return aktLanguage[textIndex]!
+    func getText (textIndex: TextConstants, values: String ...) -> String {
+        return aktLanguage[textIndex]!.replace("%", values: values)
     }
 
     func getAktLanguageKey() -> String {

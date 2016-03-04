@@ -1110,7 +1110,8 @@ class FlowerGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate 
             if levelScore < targetScore {
                 countLostGames++
                 let lost3Times = countLostGames > 2 && levelIndex > 1
-                let alert = UIAlertController(title: GV.language.getText(lost3Times ? .TCGameLost3: .TCGameLost),
+                let tc:TextConstants = lost3Times ? .TCGameLost3: .TCGameLost
+                let alert = UIAlertController(title: GV.language.getText(tc),
                     message: GV.language.getText(.TCTargetNotReached),
                     preferredStyle: .Alert)
                 if lost3Times {
@@ -1129,7 +1130,7 @@ class FlowerGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate 
                 
                 playMusic("Winner", volume: GV.musicVolume, loops: 0)
                 
-                let alert = UIAlertController(title: GV.language.getText(.TCLevelComplete),
+                let alert = UIAlertController(title: GV.language.getText(.TCGameComplete),
                     message: GV.language.getText(TextConstants.TCCongratulations) + GV.globalParam.aktName == GV.dummyName ? "" : " " + GV.globalParam.aktName,
                     preferredStyle: .Alert)
                 let cancelAction = UIAlertAction(title: GV.language.getText(.TCReturn), style: .Cancel, handler: nil)

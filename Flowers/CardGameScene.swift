@@ -559,10 +559,10 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
 
     
     func changeLanguage()->Bool {
-        playerLabel.text = GV.language.getText(TextConstants.TCGamer) + ": \(GV.globalParam.aktName)"
-        levelLabel.text = GV.language.getText(TextConstants.TCLevel) + ": \(levelIndex + 1)"
-        spriteCountLabel.text = "\(GV.language.getText(.TCCardCount)) + \(spriteCount)"
-        tippCountLabel.text = "\(GV.language.getText(.TCTippCount)) + \(tippArray.count)"
+        playerLabel.text = GV.language.getText(.TCGamer) + ": \(GV.globalParam.aktName)"
+        levelLabel.text = GV.language.getText(.TCLevel) + ": \(levelIndex + 1)"
+        spriteCountLabel.text = GV.language.getText(.TCCardCount) + " \(spriteCount)"
+        tippCountLabel.text = GV.language.getText(.TCTippCount) + " \(tippArray.count)"
         showTimeLeft()
         return true
     }
@@ -1800,16 +1800,19 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         var statisticsTxt = ""
         var congratulationsTxt = ""
         if congratulations {
-            statisticsTxt += "\r\n" + GV.language.getText(.TCStatistics) + String(levelIndex)
+            
+            statisticsTxt += "\r\n" + GV.language.getText(.TCCountPlays, values: String(GV.gameStatistics.countPlays))
             statisticsTxt += "\r\n" + GV.language.getText(.TCActScore) + String(GV.gameStatistics.actScore)
             statisticsTxt += "\r\n" + GV.language.getText(.TCBestScore) + String(GV.gameStatistics.bestScore)
-//            statisticsTxt += "\r\n" + GV.language.getText(.TCLevelScore) + String(GV.gameStatistics.levelScore)
             statisticsTxt += "\r\n" + GV.language.getText(.TCActTime) + String(GV.gameStatistics.actTime.hourMinSec)
             statisticsTxt += "\r\n" + GV.language.getText(.TCAllTime) + String(GV.gameStatistics.allTime.hourMinSec)
             statisticsTxt += "\r\n" + GV.language.getText(.TCBestTime) + String(GV.gameStatistics.bestTime.hourMinSec)
             
-            congratulationsTxt = GV.language.getText(.TCLevelComplete)
+            congratulationsTxt = GV.language.getText(.TCGameComplete)
             congratulationsTxt += "\r\n" + GV.language.getText(TextConstants.TCCongratulations) + playerName
+            congratulationsTxt += "\r\n\r\n" + GV.language.getText(.TCStatistics, values: String(levelIndex + 1))
+            congratulationsTxt += "\r\n === === ==="
+
         }
         let alert = UIAlertController(title: congratulations ? congratulationsTxt : GV.language.getText(.TCChooseGame),
             message: statisticsTxt,

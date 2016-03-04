@@ -69,7 +69,7 @@ class DataStore {
     func readGameStatisticsRecord(gameStatisticsIndex: GameStatisticsStruct)->GameStatisticsStruct {
         let request = NSFetchRequest()
         var gameStatisticsStruct = GameStatisticsStruct()
-        var exists: Bool
+//        var exists: Bool
         request.entity = self.gameStatisticsDescription
         let p1 = NSPredicate(format: "name = %@", gameStatisticsIndex.name)
         let p2 = NSPredicate(format: "level = %d", gameStatisticsIndex.level)
@@ -91,9 +91,9 @@ class DataStore {
                 gameStatisticsStruct.allTime = match.valueForKey("allTime") as! NSInteger
                 gameStatisticsStruct.actTime = match.valueForKey("actTime") as! NSInteger
 
-                exists = true
-            } else {
-                exists = false
+//                exists = true
+//            } else {
+//                exists = false
             }
         } catch {
             let nserror = error as NSError

@@ -191,3 +191,15 @@ extension Int {
         return hoursString + minutesString + secondsString
     }
 }
+
+extension String {
+    func replace(what: String, values: [String])->String {
+        let toArray = self.componentsSeparatedByString(what)
+        var endString = ""
+        var vIndex = 0
+        for index in 0..<toArray.count {
+            endString += toArray[index] + (vIndex < values.count ? values[vIndex++] : "")
+        }
+        return endString
+    }
+}

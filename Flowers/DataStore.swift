@@ -45,25 +45,57 @@ class DataStore {
     }
  
     func saveGameStatisticsRecord(gameStatistics: GameStatisticsStruct) {
+        let request = NSFetchRequest()
+        var gameStatisticsStruct = GameStatisticsStruct()
+        //        var exists: Bool
+        request.entity = self.gameStatisticsDescription
+        let p1 = NSPredicate(format: "name = %@", gameStatistics.name)
+        let p2 = NSPredicate(format: "level = %d", gameStatistics.level)
+        let predicate = NSCompoundPredicate.init(andPredicateWithSubpredicates: [p1, p2])
         
-        gameStatisticsEntity = GameStatistics(entity:gameStatisticsDescription!, insertIntoManagedObjectContext: managedObjectContext)
-        gameStatisticsEntity!.name = gameStatistics.name
-        gameStatisticsEntity!.level = gameStatistics.level
-        gameStatisticsEntity!.countPlays = gameStatistics.countPlays
-        gameStatisticsEntity!.actScore = gameStatistics.actScore
-        gameStatisticsEntity!.levelScore = gameStatistics.levelScore
-        gameStatisticsEntity!.bestScore = gameStatistics.bestScore
-        gameStatisticsEntity!.bestTime = gameStatistics.bestTime
-        gameStatisticsEntity!.allTime = gameStatistics.allTime
-        gameStatisticsEntity!.actTime = gameStatistics.actTime
+        gameStatisticsStruct.name = gameStatistics.name
+        gameStatisticsStruct.level = gameStatistics.level
         
+        request.predicate = predicate
         do {
-            try self.managedObjectContext.save()
+            let results = try managedObjectContext.executeFetchRequest(request)
+            if let managedObject = results.first as? NSManagedObject {
+                managedObject.setValue(gameStatistics.countPlays, forKey: "countPlays")
+                managedObject.setValue(gameStatistics.actScore, forKey: "actScore")
+                managedObject.setValue(gameStatistics.levelScore, forKey: "levelScore")
+                managedObject.setValue(gameStatistics.bestScore, forKey: "bestScore")
+                managedObject.setValue(gameStatistics.bestTime, forKey: "bestTime")
+                managedObject.setValue(gameStatistics.allTime, forKey: "allTime")
+                managedObject.setValue(gameStatistics.actTime, forKey: "actTime")
+            } else {
+                gameStatisticsEntity = GameStatistics(entity:gameStatisticsDescription!, insertIntoManagedObjectContext: managedObjectContext)
+                gameStatisticsEntity!.name = gameStatistics.name
+                gameStatisticsEntity!.level = gameStatistics.level
+                gameStatisticsEntity!.countPlays = gameStatistics.countPlays
+                gameStatisticsEntity!.actScore = gameStatistics.actScore
+                gameStatisticsEntity!.levelScore = gameStatistics.levelScore
+                gameStatisticsEntity!.bestScore = gameStatistics.bestScore
+                gameStatisticsEntity!.bestTime = gameStatistics.bestTime
+                gameStatisticsEntity!.allTime = gameStatistics.allTime
+                gameStatisticsEntity!.actTime = gameStatistics.actTime
+        
+            }
+            do {
+                try self.managedObjectContext.save()
+            } catch {
+                let nserror = error as NSError
+                NSLog("Unresolved error by save \(nserror), \(nserror.userInfo)")
+                abort()
+            }
+            
+            
         } catch {
             let nserror = error as NSError
-            NSLog("Unresolved error \(nserror), \(nserror.userInfo)")
+            NSLog("Unresolved error by fetch \(nserror), \(nserror.userInfo)")
             abort()
         }
+        
+        
     }
     
     func readGameStatisticsRecord(gameStatisticsIndex: GameStatisticsStruct)->GameStatisticsStruct {

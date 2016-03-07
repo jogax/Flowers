@@ -58,7 +58,9 @@ let deDictionary: [TextConstants: String] = [
     .TCActTime:          "Zeit für letzte Spiel: ",
     .TCBestTime:         "Beste Zeit der Ebene: ",
     .TCAllTime:          "Gesamtzeit für diese Ebene: ",
-    .TCCountPlays:       "Bis jetzt % Spiele gespielt"
+    .TCCountPlays:       "Bis jetzt % Spiele gespielt",
+    .TCGameCompleteWithBestScore: "Neue Rekordsumme auf der Ebene %!",
+    .TCGameCompleteWithBestTime:  "Neue Zeitrekord auf der Ebene %!",
 ]
 
 

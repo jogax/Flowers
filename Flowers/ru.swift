@@ -59,5 +59,7 @@ let ruDictionary: [TextConstants: String] = [
     .TCBestTime:         "Лучшее время уровня: ",
     .TCAllTime:          "Полное время уровня: ",
     .TCCountPlays:       "До сих пор % игр",
+    .TCGameCompleteWithBestScore: "Новый рекорд очков на уровне %!",
+    .TCGameCompleteWithBestTime:  "Новый рекорд времени на уровне % ",
 
 ]

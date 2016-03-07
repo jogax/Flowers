@@ -61,7 +61,9 @@ enum TextConstants: Int {
     TCActTime,
     TCAllTime,
     TCBestTime,
-    TCCountPlays
+    TCCountPlays,
+    TCGameCompleteWithBestScore,
+    TCGameCompleteWithBestTime
 }
 
     let LanguageDE = "de"

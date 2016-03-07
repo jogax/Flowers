@@ -1734,8 +1734,8 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
             for index in 0..<containers.count {
                 actScore += containers[index].countScore
             }
-            actScore *= 1000
-            actScore /= (1000 + timeCount)
+            actScore *= 10000
+            actScore /= (5000 + timeCount)
             
             GV.gameStatistics.actScore = actScore
             GV.gameStatistics.levelScore += actScore
@@ -1808,7 +1808,14 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
             statisticsTxt += "\r\n" + GV.language.getText(.TCAllTime) + String(GV.gameStatistics.allTime.hourMinSec)
             statisticsTxt += "\r\n" + GV.language.getText(.TCBestTime) + String(GV.gameStatistics.bestTime.hourMinSec)
             
-            congratulationsTxt = GV.language.getText(.TCGameComplete)
+            if GV.gameStatistics.bestScore == GV.gameStatistics.actScore {
+                congratulationsTxt = GV.language.getText(.TCGameCompleteWithBestScore, values: String(levelIndex + 1))
+                
+            } else if GV.gameStatistics.bestTime == GV.gameStatistics.actTime {
+                congratulationsTxt = GV.language.getText(.TCGameCompleteWithBestTime, values: String(levelIndex + 1))
+            } else {
+                congratulationsTxt = GV.language.getText(.TCGameComplete)
+            }
             congratulationsTxt += "\r\n" + GV.language.getText(TextConstants.TCCongratulations) + playerName
             congratulationsTxt += "\r\n\r\n" + GV.language.getText(.TCStatistics, values: String(levelIndex + 1))
             congratulationsTxt += "\r\n === === ==="

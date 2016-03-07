@@ -44,7 +44,7 @@ let huDictionary: [TextConstants: String] = [
     .TCChoose:           "Kiválasztás",
     .TCGamer:            "Játékos: ",
     .TCGameModus:        "Játékmód",
-    .TCSoundVolume:      "Zörejek hangerő",
+    .TCSoundVolume:      "Háttérzajok hangerő",
     .TCMusicVolume:      "Zene hangerő",
     .TCStandardGame:     "Játék virágokkal",
     .TCCardGame:         "Kártyajáték",
@@ -59,5 +59,6 @@ let huDictionary: [TextConstants: String] = [
     .TCBestTime:         "A szint legjobb ideje: ",
     .TCAllTime:          "A szint teljes játékideje: ",
     .TCCountPlays:       "Eddig % játékot játszottál",
-
+    .TCGameCompleteWithBestScore: "Új pontszám rekord a(z) % szinten!",
+    .TCGameCompleteWithBestTime:  "Legjobb idő a(z) % szinten",
 ]

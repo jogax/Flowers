@@ -50,6 +50,7 @@
 		201E203E1C1C631F003DBBD8 /* MyRandom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201E203D1C1C631F003DBBD8 /* MyRandom.swift */; };
 		201E20421C1C7389003DBBD8 /* SeedData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201E20401C1C7389003DBBD8 /* SeedData.swift */; };
 		201E20471C1C80CF003DBBD8 /* CloudData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201E20461C1C80CF003DBBD8 /* CloudData.swift */; };
+		201FE2FB1C9860FC00B5861E /* OK.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 201FE2FA1C9860FC00B5861E /* OK.m4a */; };
 		2024A8C51C427C420001CA95 /* cardBackground.png in Resources */ = {isa = PBXBuildFile; fileRef = 2024A8C41C427C420001CA95 /* cardBackground.png */; };
 		202F48451C87329900CC1BF4 /* GameStatistics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 202F48431C87329900CC1BF4 /* GameStatistics.swift */; };
 		204A8A181BEF93B90061D14F /* LanguageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 204A8A171BEF93B90061D14F /* LanguageViewController.swift */; };
@@ -57,7 +58,6 @@
 		205574431BBECB6200C165A1 /* NoSound.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 205574421BBECB6200C165A1 /* NoSound.m4a */; };
 		205ADED01BFF6D9400C9F341 /* GlobalParam.swift in Sources */ = {isa = PBXBuildFile; fileRef = 205ADECE1BFF6D9400C9F341 /* GlobalParam.swift */; };
 		206BF77C1BF247380009928E /* ChooseNameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 206BF77B1BF247380009928E /* ChooseNameViewController.swift */; };
-		20F6D01F1BB43E9100BF7384 /* MyParticle.sks in Resources */ = {isa = PBXBuildFile; fileRef = 20F6D01D1BB43E9100BF7384 /* MyParticle.sks */; };
 		20F7E7101BBB03A200451984 /* SpriteKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 20F7E70F1BBB03A200451984 /* SpriteKit.framework */; };
 		20FC65BE1BBBC82000775322 /* sprites.atlas in Resources */ = {isa = PBXBuildFile; fileRef = 20FC65BD1BBBC82000775322 /* sprites.atlas */; };
 		20FC65D91BBC123300775322 /* background.png in Resources */ = {isa = PBXBuildFile; fileRef = 20FC65D71BBC123300775322 /* background.png */; };
@@ -136,6 +136,7 @@
 		201E20401C1C7389003DBBD8 /* SeedData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SeedData.swift; path = ../SeedData.swift; sourceTree = "<group>"; };
 		201E20431C1C8009003DBBD8 /* Flowers.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Flowers.entitlements; sourceTree = "<group>"; };
 		201E20461C1C80CF003DBBD8 /* CloudData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CloudData.swift; path = ../CloudData.swift; sourceTree = "<group>"; };
+		201FE2FA1C9860FC00B5861E /* OK.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = OK.m4a; sourceTree = "<group>"; };
 		2024A8C41C427C420001CA95 /* cardBackground.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = cardBackground.png; sourceTree = "<group>"; };
 		202F48431C87329900CC1BF4 /* GameStatistics.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameStatistics.swift; sourceTree = "<group>"; };
 		2034B0061BDE796300D296DA /* Flowers.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Flowers.xcdatamodel; sourceTree = "<group>"; };
@@ -144,7 +145,6 @@
 		205574421BBECB6200C165A1 /* NoSound.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = NoSound.m4a; sourceTree = "<group>"; };
 		205ADECE1BFF6D9400C9F341 /* GlobalParam.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = GlobalParam.swift; path = ../GlobalParam.swift; sourceTree = "<group>"; };
 		206BF77B1BF247380009928E /* ChooseNameViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChooseNameViewController.swift; sourceTree = "<group>"; };
-		20F6D01D1BB43E9100BF7384 /* MyParticle.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; name = MyParticle.sks; path = ../MyParticle.sks; sourceTree = "<group>"; };
 		20F7E70F1BBB03A200451984 /* SpriteKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SpriteKit.framework; path = System/Library/Frameworks/SpriteKit.framework; sourceTree = SDKROOT; };
 		20FC65BD1BBBC82000775322 /* sprites.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; path = sprites.atlas; sourceTree = "<group>"; };
 		20FC65D11BBC0FD400775322 /* aquarium.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = aquarium.png; path = ../../JFlowers/JFlowers/aquarium.png; sourceTree = "<group>"; };
@@ -207,7 +207,6 @@
 			children = (
 				201E20431C1C8009003DBBD8 /* Flowers.entitlements */,
 				200BDA061BCFDEE600F72109 /* DrawImages.swift */,
-				20F6D01D1BB43E9100BF7384 /* MyParticle.sks */,
 				2001412D1BAEB2DE003E0950 /* MyStructs.swift */,
 				200141461BAEDAE5003E0950 /* MySKNode.swift */,
 				2014D3811C85DA45008A1946 /* MyContainer.swift */,
@@ -267,6 +266,7 @@
 		200141141BAEB1CA003E0950 /* SoundFiles */ = {
 			isa = PBXGroup;
 			children = (
+				201FE2FA1C9860FC00B5861E /* OK.m4a */,
 				205574421BBECB6200C165A1 /* NoSound.m4a */,
 				205574401BBEB85C00C165A1 /* Go321.m4a */,
 				200141151BAEB1F6003E0950 /* Container.m4a */,
@@ -441,11 +441,11 @@
 				205574411BBEB85C00C165A1 /* Go321.m4a in Resources */,
 				20FC65BE1BBBC82000775322 /* sprites.atlas in Resources */,
 				200140E81BAEA96A003E0950 /* Assets.xcassets in Resources */,
+				201FE2FB1C9860FC00B5861E /* OK.m4a in Resources */,
 				200140E31BAEA96A003E0950 /* Main.storyboard in Resources */,
 				200141271BAEB1F6003E0950 /* MyMusic.m4a in Resources */,
 				200141291BAEB1F6003E0950 /* Timeout.m4a in Resources */,
 				205574431BBECB6200C165A1 /* NoSound.m4a in Resources */,
-				20F6D01F1BB43E9100BF7384 /* MyParticle.sks in Resources */,
 				200141211BAEB1F6003E0950 /* Do_1.m4a in Resources */,
 				200141251BAEB1F6003E0950 /* Lost.m4a in Resources */,
 				20FC65DF1BBC127800775322 /* finger.png in Resources */,

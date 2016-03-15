@@ -39,7 +39,7 @@ struct GV {
     static var musicVolume: Float = 0
     static var globalParam = GlobalParamData()
     static var gameStatistics = GameStatisticsStruct()
-    static let dummyName = "dummy"
+    static var dummyName = "dummy"
     static var initName = false
     static let oneGrad:CGFloat = CGFloat(M_PI) / 180
 
@@ -111,6 +111,7 @@ struct SeedDataStruct {
 }
 
 struct SpriteGameData {
+//    var recordID: Int
     var name: String
     var aktLanguageKey: String
     var showHelpLines: Int
@@ -121,6 +122,7 @@ struct SpriteGameData {
     var musicVolume: Float
     
     init() {
+//        recordID =
         name = GV.globalParam.aktName
         aktLanguageKey = GV.language.getAktLanguageKey()
         showHelpLines = 0

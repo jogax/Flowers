@@ -347,6 +347,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
     var tapLocation: CGPoint?
     let qualityOfServiceClass = QOS_CLASS_BACKGROUND
     let backgroundQueue = dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0)
+    let playMusicForever = -1
     
     override func didMoveToView(view: SKView) {
         
@@ -371,7 +372,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
             prepareNextGame(true)
             generateSprites(.First)
         } else {
-            playMusic("MyMusic", volume: GV.musicVolume, loops: 0)
+            playMusic("MyMusic", volume: GV.musicVolume, loops: playMusicForever)
             
         }
     }
@@ -381,7 +382,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         GV.gameStatistics = GV.dataStore.readGameStatisticsRecord(GV.gameStatistics)
 
         specialPrepareFuncFirst()
-        playMusic("MyMusic", volume: GV.musicVolume, loops: 0)
+        playMusic("MyMusic", volume: GV.musicVolume, loops: playMusicForever)
         stack = Stack()
         timeCount = 0
         if newGame {
@@ -1689,7 +1690,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
             }
             sprite.reload()
             
-            playSound("Sprite1", volume: GV.soundVolume)
+            playSound(/*"Sprite1"*/"OK", volume: GV.soundVolume)
         
             updateGameArrayCell(sprite)
             resetGameArrayCell(movingSprite)

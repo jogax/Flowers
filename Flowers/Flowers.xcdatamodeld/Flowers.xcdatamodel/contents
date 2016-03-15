@@ -10,7 +10,6 @@
         <attribute name="level" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
         <attribute name="levelScore" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
         <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
-        <relationship name="recordID" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="SpriteGame" syncable="YES"/>
     </entity>
     <entity name="GlobalParam" representedClassName=".GlobalParam" syncable="YES">
         <attribute name="aktName" optional="YES" attributeType="String" syncable="YES"/>
@@ -28,7 +27,7 @@
         <attribute name="recordID" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
     </entity>
     <elements>
-        <element name="GameStatistics" positionX="-792" positionY="83" width="128" height="178"/>
+        <element name="GameStatistics" positionX="-792" positionY="83" width="128" height="180"/>
         <element name="GlobalParam" positionX="-479" positionY="102" width="128" height="60"/>
         <element name="SeedData" positionX="-425" positionY="-81" width="128" height="105"/>
         <element name="SpriteGame" positionX="-1098" positionY="44" width="128" height="103"/>

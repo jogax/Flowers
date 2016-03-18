@@ -46,29 +46,21 @@ class ViewController: UIViewController, SettingsDelegate, UIApplicationDelegate 
         //scene.scaleMode = .AspectFill
         //print("in viewDidLoad:\(view.frame.size)")
         
-        GV.globalParam = GV.dataStore.getGlobalParam()
         
-        GV.spriteGameDataArray = GV.dataStore.getSpriteData()
+        GV.actGameParam = GV.dataStore.readActGameParamRecord()
         
-        GV.gameStatistics.name = GV.globalParam.aktName
-        GV.gameStatistics.level = GV.spriteGameDataArray[GV.getAktNameIndex()].spriteLevelIndex
+        GV.gameStatistics.nameID = GV.actGameParam.nameID
+        GV.gameStatistics.level = GV.actGameParam.levelIndex
         
         
-//        for index in 0..<GV.spriteGameDataArray.count {
-//            if GV.globalParam.aktName == GV.spriteGameDataArray[index].name {
-//                GV.spriteGameData = GV.spriteGameDataArray[index]
-//            }
-//        }
-        let index = GV.getAktNameIndex()
-        GV.language.setLanguage(GV.spriteGameDataArray[index].aktLanguageKey)
-        GV.showHelpLines = Int(GV.spriteGameDataArray[index].showHelpLines)
-        GV.soundVolume = Float(GV.spriteGameDataArray[index].soundVolume)
-        GV.musicVolume = Float(GV.spriteGameDataArray[index].musicVolume)
+        GV.language.setLanguage(GV.actGameParam.aktLanguageKey)
+//        GV.soundVolume = Float(GV.actGameParam.soundVolume)
+//        GV.musicVolume = Float(GV.actGameParam.musicVolume)
         skView!.showsFPS = true
         skView!.showsNodeCount = true
         skView!.ignoresSiblingOrder = true
         
-        if GV.spriteGameDataArray[GV.getAktNameIndex()].gameModus == GameModusCards {
+        if GV.actGameParam.gameModus == GameModusCards {
             let scene = CardGameScene(size: CGSizeMake(view.frame.width, view.frame.height))
             GV.language.addCallback(scene.changeLanguage)
             scene.scaleMode = .ResizeFill
@@ -91,20 +83,20 @@ class ViewController: UIViewController, SettingsDelegate, UIApplicationDelegate 
     }
     
     func settingsDelegateFunc() {
-        aktName = GV.globalParam.aktName
-        aktModus = GV.spriteGameDataArray[GV.getAktNameIndex()].gameModus
+        aktName = GV.actGameParam.name
+        aktModus = GV.actGameParam.gameModus
         self.performSegueWithIdentifier("SettingsSegue", sender: nil)
     }
 
     @IBAction func unwindToVC(segue: UIStoryboardSegue) {
-        if aktName != GV.globalParam.aktName || aktModus != GV.spriteGameDataArray[GV.getAktNameIndex()].gameModus {
+        if aktName != GV.actGameParam.name || aktModus != GV.actGameParam.gameModus {
             startScene()
         } else {
             if let scene = cardsScene {
-                scene.playMusic("MyMusic", volume: GV.musicVolume, loops: 0)
+                scene.playMusic("MyMusic", volume: GV.actGameParam.musicVolume, loops: 0)
                 scene.startDoCountUpTimer()
             } else if let scene = flowersScene {
-                scene.playMusic("MyMusic", volume: GV.musicVolume, loops: 0)
+                scene.playMusic("MyMusic", volume: GV.actGameParam.musicVolume, loops: 0)
                 scene.startTimer()
             }
         }

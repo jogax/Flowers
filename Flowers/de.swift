@@ -27,7 +27,7 @@ let deDictionary: [TextConstants: String] = [
     .TCNoMessage:        "keine Meldung",
     .TCTimeout:          "Timeout",
     .TCGameOver:         "Spiel vorbei",
-    .TCCongratulations:  "Herzliches Glückwunsch",
+    .TCCongratulations:  "Herzliches Glückwunsch ",
     .TCName:             "Wähle Name",
     .TCVolume:           "Lautstärke",
     .TCCountHelpLines:   "Anzahl Hilfslinien",
@@ -42,7 +42,7 @@ let deDictionary: [TextConstants: String] = [
     .TCDelete:           "Löschen",
     .TCNewName:          "Neuer Name",
     .TCChoose:           "Wählen",
-    .TCGamer:            "Spieler: ",
+    .TCPlayer:           "Spieler: ",
     .TCGameModus:        "Spielmodus",
     .TCSoundVolume:      "Geräusch Lautstärke",
     .TCMusicVolume:      "Musik Lautstärke",
@@ -61,6 +61,7 @@ let deDictionary: [TextConstants: String] = [
     .TCCountPlays:       "Bis jetzt % Spiele gespielt",
     .TCGameCompleteWithBestScore: "Neue Rekordsumme auf der Ebene %!",
     .TCGameCompleteWithBestTime:  "Neue Zeitrekord auf der Ebene %!",
+    .TCGuest:            "Gast",
 ]
 
 

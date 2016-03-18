@@ -234,7 +234,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
     var audioPlayer: AVAudioPlayer?
     var soundPlayer: AVAudioPlayer?
     var myView = SKView()
-    var levelIndex = Int(GV.spriteGameDataArray[GV.getAktNameIndex()].spriteLevelIndex)
+    var levelIndex = GV.actGameParam.levelIndex
     var stack:Stack<SavedSprite> = Stack()
     //var gameArray = [[Bool]]() // true if Cell used
     var gameArray = [[GameArrayPositions]]()
@@ -242,7 +242,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
     var colorTab = [ColorTabLine]()
     let containersPosCorr = CGPointMake(GV.onIpad ? 0.98 : 0.98, GV.onIpad ? 0.85 : 0.85)
     var levelPosKorr = CGPointMake(GV.onIpad ? 0.7 : 0.7, GV.onIpad ? 0.97 : 0.97)
-    let playerPosKorr = CGPointMake(0.3 * GV.deviceConstants.sizeMultiplier, 0.97 * GV.deviceConstants.sizeMultiplier)
+    let playerPosKorr = CGPointMake(0.7 * GV.deviceConstants.sizeMultiplier, 0.5 * GV.deviceConstants.sizeMultiplier)
     let countUpPosKorr = CGPointMake(GV.onIpad ? 0.98 : 0.98, GV.onIpad ? 0.95 : 0.94)
     var countColorsProContainer = [Int]()
     var labelBackground = SKSpriteNode()
@@ -251,7 +251,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
     var playerLabel = SKLabelNode(fontNamed: "AvenirNext-Bold")
     var spriteCountLabel = SKLabelNode(fontNamed: "AvenirNext-Bold")
     
-    var gameScore = Int(GV.spriteGameDataArray[GV.getAktNameIndex()].spriteGameScore)
+    var gameScore = GV.actGameParam.gameScore
     var levelScore = 0
     var movedFromNode: MySKNode!
     var settingsButton: MySKButton?
@@ -372,23 +372,23 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
             prepareNextGame(true)
             generateSprites(.First)
         } else {
-            playMusic("MyMusic", volume: GV.musicVolume, loops: playMusicForever)
+            playMusic("MyMusic", volume: GV.actGameParam.musicVolume, loops: playMusicForever)
             
         }
     }
     
     func prepareNextGame(newGame: Bool) {
         
-        GV.gameStatistics = GV.dataStore.readGameStatisticsRecord(GV.gameStatistics)
+        GV.gameStatistics = GV.dataStore.readGameStatisticsRecord(GV.actGameParam.nameID, levelID: GV.actGameParam.levelIndex)
 
         specialPrepareFuncFirst()
-        playMusic("MyMusic", volume: GV.musicVolume, loops: playMusicForever)
+        playMusic("MyMusic", volume: GV.actGameParam.musicVolume, loops: playMusicForever)
         stack = Stack()
         timeCount = 0
         if newGame {
             gameNumber = Int(arc4random_uniform(999999))
         }
-        let seedIndex = SeedIndex(gameType: Int64(GV.spriteGameDataArray[GV.getAktNameIndex()].gameModus), gameDifficulty: 0, gameNumber: Int64(gameNumber))
+        let seedIndex = SeedIndex(gameType: Int64(GV.actGameParam.gameModus), gameDifficulty: 0, gameNumber: Int64(gameNumber))
         random = MyRandom(seedIndex: seedIndex)
         
         stopTimer(countUp)
@@ -427,11 +427,11 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         
         //        self.addChild(labelBackground)
         
-        if GV.globalParam.aktName != GV.dummyName {
-            createLabels(playerLabel, text: GV.language.getText(TextConstants.TCGamer) + "\(GV.globalParam.aktName)", position: CGPointMake(self.position.x + self.size.width * playerPosKorr.x, self.position.y + self.size.height * playerPosKorr.y))
-        } else {
-            levelPosKorr.x = 0.5
-        }
+//        if GV.actGameParam.name != GV.dummyName {
+            createLabels(playerLabel, text: GV.language.getText(TextConstants.TCPlayer) + "\(GV.actGameParam.name)", position: CGPointMake(self.position.x + self.size.width * levelPosKorr.x / 2, self.position.y + self.size.height * levelPosKorr.y))
+//        } else {
+//            levelPosKorr.x = 0.5
+//        }
         createLabels(levelLabel, text: GV.language.getText(TextConstants.TCLevel) + ": \(levelIndex + 1)", position: CGPointMake(self.position.x + self.size.width * levelPosKorr.x, self.position.y + self.size.height * levelPosKorr.y) )
         createLabels(countUpLabel, text: "", position: CGPointMake(self.position.x + self.size.width * countUpPosKorr.x, self.position.y + self.size.height * countUpPosKorr.y), horAlignment: .Right )
         
@@ -560,7 +560,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
 
     
     func changeLanguage()->Bool {
-        playerLabel.text = GV.language.getText(.TCGamer) + ": \(GV.globalParam.aktName)"
+        playerLabel.text = GV.language.getText(.TCPlayer) + ": \(GV.actGameParam.name)"
         levelLabel.text = GV.language.getText(.TCLevel) + ": \(levelIndex + 1)"
         spriteCountLabel.text = GV.language.getText(.TCCardCount) + " \(spriteCount)"
         tippCountLabel.text = GV.language.getText(.TCTippCount) + " \(tippArray.count)"
@@ -1622,7 +1622,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
             //gameArray[movingSprite.column][movingSprite.row] = false
             resetGameArrayCell(movingSprite)
             movingSprite.removeFromParent()
-            playSound("Container", volume: GV.soundVolume)
+            playSound("Container", volume: GV.actGameParam.soundVolume)
             countMovingSprites = 0
             
             updateSpriteCount(-1)
@@ -1690,7 +1690,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
             }
             sprite.reload()
             
-            playSound(/*"Sprite1"*/"OK", volume: GV.soundVolume)
+            playSound(/*"Sprite1"*/"OK", volume: GV.actGameParam.soundVolume)
         
             updateGameArrayCell(sprite)
             resetGameArrayCell(movingSprite)
@@ -1721,7 +1721,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         if usedCellCount <= 1 && containersOK { // Level completed, start a new game
             
             stopTimer(countUp)
-            playMusic("Winner", volume: GV.musicVolume, loops: 0)
+            playMusic("Winner", volume: GV.actGameParam.musicVolume, loops: 0)
             
             GV.gameStatistics.countPlays++
             GV.gameStatistics.actTime = timeCount
@@ -1768,19 +1768,19 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
             
             
             lastNextPoint = nil
-            gameScore += levelScore
+            GV.actGameParam.gameScore += levelScore
             
-            for index in 0..<GV.spriteGameDataArray.count {
-                if GV.spriteGameDataArray[index].name == GV.globalParam.aktName {
-                    GV.spriteGameDataArray[index] = SpriteGameData()
-                    GV.spriteGameDataArray[index].spriteLevelIndex = levelIndex
-                    GV.spriteGameDataArray[index].spriteGameScore = gameScore
-                    GV.spriteGameDataArray[index].aktLanguageKey = GV.language.getAktLanguageKey()
-                    GV.spriteGameDataArray[index].showHelpLines = GV.showHelpLines
-                    break
-                }
-            }
-            GV.dataStore.saveSpriteGameRecord()
+//            for index in 0..<GV.spriteGameDataArray.count {
+//                if GV.spriteGameDataArray[index].name == GV.globalParam.aktName {
+//                    GV.spriteGameDataArray[index] = SpriteGameData()
+//                    GV.spriteGameDataArray[index].spriteLevelIndex = levelIndex
+//                    GV.spriteGameDataArray[index].spriteGameScore = gameScore
+//                    GV.spriteGameDataArray[index].aktLanguageKey = GV.language.getAktLanguageKey()
+//                    GV.spriteGameDataArray[index].showHelpLines = GV.showHelpLines
+//                    break
+//                }
+//            }
+            GV.dataStore.saveGameParamRecord(GV.actGameParam)
         }
         stopCreateTippsInBackground = true
         for _ in 0..<self.children.count {
@@ -1797,7 +1797,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
 
     
     func getNextPlayArt(congratulations: Bool)->UIAlertController {
-        let playerName = GV.globalParam.aktName == GV.dummyName ? "!" : " " + GV.globalParam.aktName + "!"
+        let playerName = GV.actGameParam.name + "!"
         var statisticsTxt = ""
         var congratulationsTxt = ""
         if congratulations {
@@ -1873,6 +1873,9 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         } else {
             levelIndex = levelsForPlay.getPrevLevel()
         }
+        GV.actGameParam.levelIndex = levelIndex
+        GV.dataStore.saveGameParamRecord(GV.actGameParam)
+        GV.gameStatistics = GV.dataStore.readGameStatisticsRecord(GV.actGameParam.nameID, levelID: GV.actGameParam.levelIndex)
     }
 
     func checkContainers()->Bool {
@@ -2805,7 +2808,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
     }
     
     func settingsButtonPressed() {
-        playMusic("NoSound", volume: GV.musicVolume, loops: 0)
+        playMusic("NoSound", volume: GV.actGameParam.musicVolume, loops: 0)
         stopTimer(countUp)
         settingsDelegate?.settingsDelegateFunc()
     }

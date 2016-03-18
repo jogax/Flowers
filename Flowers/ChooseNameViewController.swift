@@ -25,11 +25,12 @@ class ChooseNameViewController: UIViewController, UITableViewDataSource, UITable
     var originalAktName = ""
     var tableViewConstraints = [NSLayoutConstraint]()
     var gamerName = UILabel()
+    var names: [Names] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        originalAktName = GV.globalParam.aktName
+        originalAktName = GV.actGameParam.name
         tableView.registerClass(UITableViewCell.self, forCellReuseIdentifier: textCellIdentifier)
         tableView.delegate = self
         tableView.dataSource = self
@@ -61,16 +62,17 @@ class ChooseNameViewController: UIViewController, UITableViewDataSource, UITable
         
         hideNameTableButtons(false)
         
-        if GV.globalParam.aktName == GV.dummyName {
+        if GV.actGameParam.name == GV.dummyName {
             getNewName("")
         } else {
             textCell.removeAll()
-            for index in 0..<GV.spriteGameDataArray.count {
-                textCell.append(GV.spriteGameDataArray[index].name)
+            names = GV.dataStore.readNamesFromGameParamRecord()
+            for index in 0..<names.count {
+                textCell.append(names[index].name)
             }
             setupTableViewLayout()
         }
-        gamerName.text = GV.language.getText(.TCGamer) + (originalAktName == GV.dummyName ? "" : originalAktName)
+        gamerName.text = GV.language.getText(.TCPlayer) + (originalAktName == GV.dummyName ? "" : originalAktName)
         self.view.addSubview(gamerName)
         gamerName.translatesAutoresizingMaskIntoConstraints = false
         
@@ -115,7 +117,7 @@ class ChooseNameViewController: UIViewController, UITableViewDataSource, UITable
         let row = indexPath.row
         cell.textLabel?.text = textCell[row]
         
-        if textCell[row] == GV.globalParam.aktName {
+        if textCell[row] == GV.actGameParam.name {
             cell.backgroundColor = UIColor(red: 0x00/0xff, green: 0xff/0xff, blue: 0x7f/0xff, alpha: 1) // Springgreen
         } else {
             cell.backgroundColor = UIColor(red: 0xff/0xff, green: 0xff/0xff, blue: 0xff/0xff, alpha: 1) // Springgreen
@@ -127,7 +129,7 @@ class ChooseNameViewController: UIViewController, UITableViewDataSource, UITable
     }
     
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        GV.globalParam.aktName = textCell[indexPath.row]
+        GV.actGameParam.name = textCell[indexPath.row]
         tableView.reloadData()
     }
     
@@ -177,30 +179,30 @@ class ChooseNameViewController: UIViewController, UITableViewDataSource, UITable
     }
 
     func cancelPressed(sender: UIButton) {
-        GV.globalParam.aktName = originalAktName
-        GV.dataStore.saveGlobalParamRecord()
+        GV.actGameParam.name = originalAktName
+        GV.dataStore.saveGameParamRecord(GV.actGameParam)
         self.performSegueWithIdentifier(backToSettings, sender: self)
     }
     
     func choosePressed(sender: UIButton) {
         if let newName = nameInputField.text {
             if newName != "" {
-                GV.globalParam.aktName = newName
+                GV.actGameParam.name = newName
             }
-            GV.dataStore.saveGlobalParamRecord()
             textCell.append(newName)
             tableView.reloadData()
             nameInputField.endEditing(true)
         }
         nameInputField.layer.hidden = true
         tableView.layer.hidden = false
-        GV.language.setLanguage(GV.spriteGameDataArray[GV.getAktNameIndex()].aktLanguageKey)
+        GV.language.setLanguage(GV.actGameParam.aktLanguageKey)
+        GV.dataStore.saveGameParamRecord(GV.actGameParam)
         self.performSegueWithIdentifier(backToSettings, sender: self)
     }
     
     func modifyPressed(sender: UIButton) {
         newNameModus = false
-        getNewName(GV.globalParam.aktName)
+        getNewName(GV.actGameParam.name)
     }
 
     func newNamePressed(sender: UIButton) {
@@ -209,13 +211,13 @@ class ChooseNameViewController: UIViewController, UITableViewDataSource, UITable
     
     func deletePressed(sender: UIButton) {
         var ind = 0
-        if GV.spriteGameDataArray.count > 1 {
-            for index in 0..<GV.spriteGameDataArray.count {
-                if GV.spriteGameDataArray[index].name == GV.globalParam.aktName {
-                    GV.spriteGameDataArray.removeAtIndex(index)
+        if names.count > 1 {
+            for index in 0..<names.count {
+                if names[index].name == GV.actGameParam.name {
+                    names.removeAtIndex(index)
                     textCell.removeAtIndex(index)
-                    if index >= GV.spriteGameDataArray.count {
-                        ind = GV.spriteGameDataArray.count - 1
+                    if index >= names.count {
+                        ind = names.count - 1
                     } else {
                         ind = index
                     }
@@ -223,9 +225,8 @@ class ChooseNameViewController: UIViewController, UITableViewDataSource, UITable
                 }
             }
             
-            GV.globalParam.aktName = GV.spriteGameDataArray[ind].name
-            GV.dataStore.saveGlobalParamRecord()
-            GV.dataStore.saveSpriteGameRecord()
+            GV.actGameParam.name = names[ind].name
+            GV.dataStore.deleteGameParamRecord(GV.actGameParam)
             tableView.reloadData()
             setupTableViewLayout()
         }
@@ -238,24 +239,23 @@ class ChooseNameViewController: UIViewController, UITableViewDataSource, UITable
 
     func doneNamePressed(sender: UIButton) {
         if let newName = nameInputField.text {
-            var newGameParam: SpriteGameData
-            if GV.globalParam.aktName == GV.dummyName {
-                GV.spriteGameDataArray[0].name = newName
+            if names.count == 0 {
+                names.append(Names(name: newName, isActPlayer: true))
+                GV.actGameParam.isActPlayer = true
                 textCell.append(newName)
             } else if !newNameModus {
-                GV.spriteGameDataArray[GV.getAktNameIndex()].name = newName
-                textCell[GV.getAktNameIndex()] = newName
+                GV.actGameParam.name = newName
+                textCell[0] = newName
             } else {
-                newGameParam = SpriteGameData()
-                newGameParam.name = newName
-                GV.spriteGameDataArray.append(newGameParam)
                 textCell.append(newName)
+                names.append(Names(name: newName, isActPlayer: false))
+                GV.actGameParam.nameID = names.count
             }
-            GV.globalParam.aktName = newName
-            GV.dataStore.saveSpriteGameRecord()
-           tableView.reloadData()
-            setupTableViewLayout()
-            nameInputField.endEditing(true)
+        GV.dataStore.saveGameParamRecord(GV.actGameParam)
+        GV.actGameParam.name = newName
+        tableView.reloadData()
+        setupTableViewLayout()
+        nameInputField.endEditing(true)
         }
         newNameModus = true
         hideNameTableButtons(false)

@@ -27,7 +27,7 @@ let enDictionary: [TextConstants: String] = [
     .TCNoMessage:        "no Message",
     .TCTimeout:          "timeout",
     .TCGameOver:         "Game Over",
-    .TCCongratulations:  "Congratulations",
+    .TCCongratulations:  "Congratulations ",
     .TCName:             "Choose a Name",
     .TCVolume:           "Lautstärke",
     .TCCountHelpLines:   "Count helplines",
@@ -42,7 +42,7 @@ let enDictionary: [TextConstants: String] = [
     .TCDelete:           "Delete",
     .TCNewName:          "New Name",
     .TCChoose:           "Choose",
-    .TCGamer:            "Player: ",
+    .TCPlayer:           "Player: ",
     .TCGameModus:        "Gamemodus",
     .TCSoundVolume:      "Sound Volume",
     .TCMusicVolume:      "Musik Volume",
@@ -61,4 +61,5 @@ let enDictionary: [TextConstants: String] = [
     .TCCountPlays:       "Until now played % games",
     .TCGameCompleteWithBestScore: "New score record at level %!",
     .TCGameCompleteWithBestTime:  "New time record at level %!",
+    .TCGuest:            "Guest",
 ]

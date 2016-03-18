@@ -36,7 +36,6 @@
 		200141451BAED8BF003E0950 /* Stack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 200141441BAED8BF003E0950 /* Stack.swift */; };
 		200141471BAEDAE5003E0950 /* MySKNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 200141461BAEDAE5003E0950 /* MySKNode.swift */; };
 		2001416C1BAEF7AA003E0950 /* Flowers.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 2001416A1BAEF7AA003E0950 /* Flowers.xcdatamodeld */; };
-		200141741BAEF900003E0950 /* SpriteGame.swift in Sources */ = {isa = PBXBuildFile; fileRef = 200141721BAEF900003E0950 /* SpriteGame.swift */; };
 		200141761BAEFB4F003E0950 /* JGXLine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 200141751BAEFB4F003E0950 /* JGXLine.swift */; };
 		200141781BAEFBCA003E0950 /* DataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 200141771BAEFBCA003E0950 /* DataStore.swift */; };
 		200BDA071BCFDEE600F72109 /* DrawImages.swift in Sources */ = {isa = PBXBuildFile; fileRef = 200BDA061BCFDEE600F72109 /* DrawImages.swift */; };
@@ -45,6 +44,8 @@
 		201173B91C074D430022AC86 /* CardGameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201173B81C074D430022AC86 /* CardGameScene.swift */; };
 		2014D3821C85DA45008A1946 /* MyContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2014D3811C85DA45008A1946 /* MyContainer.swift */; };
 		201728FA1BE3D0C9005F6CA8 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201728F91BE3D0C9005F6CA8 /* SettingsViewController.swift */; };
+		201928291C99AF2B009CA720 /* GameStatistics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201928271C99AF2B009CA720 /* GameStatistics.swift */; };
+		201928351C99C0A4009CA720 /* GameParam.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201928331C99C0A4009CA720 /* GameParam.swift */; };
 		201C52401C314CF9001B04AB /* LevelsForPlayWithCards.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201C523F1C314CF9001B04AB /* LevelsForPlayWithCards.swift */; };
 		201C52421C316801001B04AB /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201C52411C316801001B04AB /* Extensions.swift */; };
 		201E203E1C1C631F003DBBD8 /* MyRandom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201E203D1C1C631F003DBBD8 /* MyRandom.swift */; };
@@ -52,11 +53,9 @@
 		201E20471C1C80CF003DBBD8 /* CloudData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201E20461C1C80CF003DBBD8 /* CloudData.swift */; };
 		201FE2FB1C9860FC00B5861E /* OK.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 201FE2FA1C9860FC00B5861E /* OK.m4a */; };
 		2024A8C51C427C420001CA95 /* cardBackground.png in Resources */ = {isa = PBXBuildFile; fileRef = 2024A8C41C427C420001CA95 /* cardBackground.png */; };
-		202F48451C87329900CC1BF4 /* GameStatistics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 202F48431C87329900CC1BF4 /* GameStatistics.swift */; };
 		204A8A181BEF93B90061D14F /* LanguageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 204A8A171BEF93B90061D14F /* LanguageViewController.swift */; };
 		205574411BBEB85C00C165A1 /* Go321.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 205574401BBEB85C00C165A1 /* Go321.m4a */; };
 		205574431BBECB6200C165A1 /* NoSound.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 205574421BBECB6200C165A1 /* NoSound.m4a */; };
-		205ADED01BFF6D9400C9F341 /* GlobalParam.swift in Sources */ = {isa = PBXBuildFile; fileRef = 205ADECE1BFF6D9400C9F341 /* GlobalParam.swift */; };
 		206BF77C1BF247380009928E /* ChooseNameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 206BF77B1BF247380009928E /* ChooseNameViewController.swift */; };
 		20F7E7101BBB03A200451984 /* SpriteKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 20F7E70F1BBB03A200451984 /* SpriteKit.framework */; };
 		20FC65BE1BBBC82000775322 /* sprites.atlas in Resources */ = {isa = PBXBuildFile; fileRef = 20FC65BD1BBBC82000775322 /* sprites.atlas */; };
@@ -120,7 +119,6 @@
 		200141441BAED8BF003E0950 /* Stack.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Stack.swift; sourceTree = "<group>"; };
 		200141461BAEDAE5003E0950 /* MySKNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MySKNode.swift; sourceTree = "<group>"; };
 		2001416B1BAEF7AA003E0950 /* Flowers.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Flowers.xcdatamodel; sourceTree = "<group>"; };
-		200141721BAEF900003E0950 /* SpriteGame.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpriteGame.swift; sourceTree = "<group>"; };
 		200141751BAEFB4F003E0950 /* JGXLine.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JGXLine.swift; sourceTree = "<group>"; };
 		200141771BAEFBCA003E0950 /* DataStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataStore.swift; sourceTree = "<group>"; };
 		20038FCD1C8B235E007EAD71 /* MyPlayground.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; name = MyPlayground.playground; path = ../MyPlayground.playground; sourceTree = "<group>"; };
@@ -130,6 +128,8 @@
 		201173B81C074D430022AC86 /* CardGameScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CardGameScene.swift; sourceTree = "<group>"; };
 		2014D3811C85DA45008A1946 /* MyContainer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MyContainer.swift; sourceTree = "<group>"; };
 		201728F91BE3D0C9005F6CA8 /* SettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
+		201928271C99AF2B009CA720 /* GameStatistics.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameStatistics.swift; sourceTree = "<group>"; };
+		201928331C99C0A4009CA720 /* GameParam.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameParam.swift; sourceTree = "<group>"; };
 		201C523F1C314CF9001B04AB /* LevelsForPlayWithCards.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LevelsForPlayWithCards.swift; sourceTree = "<group>"; };
 		201C52411C316801001B04AB /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		201E203D1C1C631F003DBBD8 /* MyRandom.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MyRandom.swift; sourceTree = "<group>"; };
@@ -138,12 +138,10 @@
 		201E20461C1C80CF003DBBD8 /* CloudData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CloudData.swift; path = ../CloudData.swift; sourceTree = "<group>"; };
 		201FE2FA1C9860FC00B5861E /* OK.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = OK.m4a; sourceTree = "<group>"; };
 		2024A8C41C427C420001CA95 /* cardBackground.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = cardBackground.png; sourceTree = "<group>"; };
-		202F48431C87329900CC1BF4 /* GameStatistics.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameStatistics.swift; sourceTree = "<group>"; };
 		2034B0061BDE796300D296DA /* Flowers.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Flowers.xcdatamodel; sourceTree = "<group>"; };
 		204A8A171BEF93B90061D14F /* LanguageViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LanguageViewController.swift; sourceTree = "<group>"; };
 		205574401BBEB85C00C165A1 /* Go321.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = Go321.m4a; sourceTree = "<group>"; };
 		205574421BBECB6200C165A1 /* NoSound.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = NoSound.m4a; sourceTree = "<group>"; };
-		205ADECE1BFF6D9400C9F341 /* GlobalParam.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = GlobalParam.swift; path = ../GlobalParam.swift; sourceTree = "<group>"; };
 		206BF77B1BF247380009928E /* ChooseNameViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChooseNameViewController.swift; sourceTree = "<group>"; };
 		20F7E70F1BBB03A200451984 /* SpriteKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SpriteKit.framework; path = System/Library/Frameworks/SpriteKit.framework; sourceTree = SDKROOT; };
 		20FC65BD1BBBC82000775322 /* sprites.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; path = sprites.atlas; sourceTree = "<group>"; };
@@ -221,10 +219,9 @@
 				201173B81C074D430022AC86 /* CardGameScene.swift */,
 				201E203D1C1C631F003DBBD8 /* MyRandom.swift */,
 				200141751BAEFB4F003E0950 /* JGXLine.swift */,
-				200141721BAEF900003E0950 /* SpriteGame.swift */,
-				205ADECE1BFF6D9400C9F341 /* GlobalParam.swift */,
+				201928331C99C0A4009CA720 /* GameParam.swift */,
 				201E20401C1C7389003DBBD8 /* SeedData.swift */,
-				202F48431C87329900CC1BF4 /* GameStatistics.swift */,
+				201928271C99AF2B009CA720 /* GameStatistics.swift */,
 				200141771BAEFBCA003E0950 /* DataStore.swift */,
 				201E20461C1C80CF003DBBD8 /* CloudData.swift */,
 				2001412B1BAEB285003E0950 /* LevelsForPlayWithSprites.swift */,
@@ -485,20 +482,19 @@
 				200140E01BAEA96A003E0950 /* ViewController.swift in Sources */,
 				2001412E1BAEB2DE003E0950 /* MyStructs.swift in Sources */,
 				2014D3821C85DA45008A1946 /* MyContainer.swift in Sources */,
-				205ADED01BFF6D9400C9F341 /* GlobalParam.swift in Sources */,
 				200141471BAEDAE5003E0950 /* MySKNode.swift in Sources */,
 				2001413D1BAEB714003E0950 /* de.swift in Sources */,
 				201728FA1BE3D0C9005F6CA8 /* SettingsViewController.swift in Sources */,
 				2001416C1BAEF7AA003E0950 /* Flowers.xcdatamodeld in Sources */,
 				200BDA0B1BCFEF5100F72109 /* MySKButton.swift in Sources */,
 				204A8A181BEF93B90061D14F /* LanguageViewController.swift in Sources */,
-				202F48451C87329900CC1BF4 /* GameStatistics.swift in Sources */,
+				201928291C99AF2B009CA720 /* GameStatistics.swift in Sources */,
+				201928351C99C0A4009CA720 /* GameParam.swift in Sources */,
 				201E203E1C1C631F003DBBD8 /* MyRandom.swift in Sources */,
 				201E20421C1C7389003DBBD8 /* SeedData.swift in Sources */,
 				200141761BAEFB4F003E0950 /* JGXLine.swift in Sources */,
 				200141301BAEB4F6003E0950 /* Language.swift in Sources */,
 				2001410F1BAEAA82003E0950 /* FlowerGameScene.swift in Sources */,
-				200141741BAEF900003E0950 /* SpriteGame.swift in Sources */,
 				200BDA071BCFDEE600F72109 /* DrawImages.swift in Sources */,
 				201C52401C314CF9001B04AB /* LevelsForPlayWithCards.swift in Sources */,
 				2001412C1BAEB285003E0950 /* LevelsForPlayWithSprites.swift in Sources */,

@@ -35,14 +35,12 @@ struct GV {
 
     static let language = Language()
     static var showHelpLines = 0
-    static var soundVolume: Float = 0
-    static var musicVolume: Float = 0
-    static var globalParam = GlobalParamData()
-    static var gameStatistics = GameStatisticsStruct()
-    static var dummyName = "dummy"
+//    static var soundVolume: Float = 0
+//    static var musicVolume: Float = 0
+//    static var globalParam = GlobalParamData()
+    static var dummyName = GV.language.getText(.TCGuest)
     static var initName = false
     static let oneGrad:CGFloat = CGFloat(M_PI) / 180
-
 
     static let dataStore = DataStore()
     static let cloudStore = CloudData()
@@ -53,19 +51,22 @@ struct GV {
     
     static let deviceConstants = DeviceConstants(deviceType: UIDevice.currentDevice().modelName)
 
-
-    static var spriteGameDataArray: [SpriteGameData] = []
+    static var actGameParam = GameParamStruct()
+    static var countPlayers: Int = 1
+    static var gameStatistics = GameStatisticsStruct()
+    
+//    static var spriteGameDataArray: [SpriteGameData] = []
     // Constraints
     // static let myDevice = MyDevice()
 
-    static func getAktNameIndex()->Int {
-        for index in 0..<GV.spriteGameDataArray.count {
-            if GV.spriteGameDataArray[index].name == GV.globalParam.aktName {
-                return index
-            }
-        }
-        return 0
-    }
+//    static func getAktNameIndex()->Int {
+//        for index in 0..<GV.spriteGameDataArray.count {
+//            if GV.spriteGameDataArray[index].name == GV.globalParam.aktName {
+//                return index
+//            }
+//        }
+//        return 0
+//    }
     
     static func pointOfCircle(radius: CGFloat, center: CGPoint, angle: CGFloat) -> CGPoint {
         let pointOfCircle = CGPoint (x: center.x + radius * cos(angle), y: center.y + radius * sin(angle))
@@ -90,10 +91,24 @@ struct GV {
 }
 
 
-struct GlobalParamData {
-    var aktName: String
+//struct GlobalParamData {
+//    var aktName: String
+//    init() {
+//        aktName = GV.dummyName
+//    }
+//}
+
+
+struct Names {
+    var name: String
+    var isActPlayer: Bool
     init() {
-        aktName = GV.dummyName
+        name = ""
+        isActPlayer = false
+    }
+    init(name:String, isActPlayer: Bool){
+        self.name = name
+        self.isActPlayer = isActPlayer
     }
 }
 
@@ -110,24 +125,24 @@ struct SeedDataStruct {
     }
 }
 
-struct SpriteGameData {
-//    var recordID: Int
+struct GameParamStruct {
+    var isActPlayer: Bool
+    var nameID: Int
     var name: String
     var aktLanguageKey: String
-    var showHelpLines: Int
-    var spriteLevelIndex: Int
-    var spriteGameScore: Int
+    var levelIndex: Int
+    var gameScore: Int
     var gameModus: Int
     var soundVolume: Float
     var musicVolume: Float
     
     init() {
-//        recordID =
-        name = GV.globalParam.aktName
+        nameID = GV.countPlayers
+        isActPlayer = false
+        name = GV.dummyName
         aktLanguageKey = GV.language.getAktLanguageKey()
-        showHelpLines = 0
-        spriteLevelIndex = 0
-        spriteGameScore = 0
+        levelIndex = 0
+        gameScore = 0
         gameModus = GameModusCards
         soundVolume = 0.1
         musicVolume = 0.1
@@ -136,7 +151,7 @@ struct SpriteGameData {
 }
 
 struct GameStatisticsStruct {
-    var name: String
+    var nameID: Int
     var level: Int
     var countPlays: Int
     var actScore: Int
@@ -146,7 +161,7 @@ struct GameStatisticsStruct {
     var allTime: Int
     var actTime: Int
     init() {
-        name = GV.globalParam.aktName
+        nameID = GV.actGameParam.nameID
         level = 0
         countPlays = 0
         actScore = 0

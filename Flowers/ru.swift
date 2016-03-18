@@ -27,7 +27,7 @@ let ruDictionary: [TextConstants: String] = [
     .TCNoMessage:        "сообщение не найдёно",
     .TCTimeout:          "Время закончилось",
     .TCGameOver:         "Игра проиграна",
-    .TCCongratulations:  "Поздравления",
+    .TCCongratulations:  "Поздравляю ",
     .TCName:             "Выбирай имя",
     .TCVolume:           "Громкость",
     .TCCountHelpLines:   "кол. вспомогательных линий",
@@ -42,7 +42,7 @@ let ruDictionary: [TextConstants: String] = [
     .TCDelete:           "Удалить",
     .TCNewName:          "Новое имя",
     .TCChoose:           "Выбрать",
-    .TCGamer:            "Игрок: ",
+    .TCPlayer:           "Игрок: ",
     .TCGameModus:        "Тип игры",
     .TCSoundVolume:      "Громкость звука",
     .TCMusicVolume:      "Громкость музыки",
@@ -61,5 +61,6 @@ let ruDictionary: [TextConstants: String] = [
     .TCCountPlays:       "До сих пор % игр",
     .TCGameCompleteWithBestScore: "Новый рекорд очков на уровне %!",
     .TCGameCompleteWithBestTime:  "Новый рекорд времени на уровне % ",
+    .TCGuest:            "Гость",
 
 ]

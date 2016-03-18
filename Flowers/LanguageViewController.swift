@@ -43,7 +43,7 @@ class LanguageViewController: UIViewController, UITableViewDataSource, UITableVi
         tableView.registerClass(UITableViewCell.self, forCellReuseIdentifier: "languageTextCell")
         GV.language.addCallback(changeLanguage)
         aktLanguageKey = GV.language.getAktLanguageKey()
-        aktGameModus = GV.spriteGameDataArray[GV.getAktNameIndex()].gameModus
+        aktGameModus = GV.actGameParam.gameModus
         setAktlanguageRow()
         
         
@@ -51,7 +51,7 @@ class LanguageViewController: UIViewController, UITableViewDataSource, UITableVi
         switch toDo {
         case gameModusText: makeGameModusView()
         case volumeText: makeVolumeView()
-        case helpLinesText: makeHelpLinesView()
+//        case helpLinesText: makeHelpLinesView()
         case languageText: makeLangageView()
         default: break
         }
@@ -85,8 +85,8 @@ class LanguageViewController: UIViewController, UITableViewDataSource, UITableVi
         soundVolume.minimumValue = 0
         soundVolume.maximumValue = 10
         
-        soundVolume.value = GV.spriteGameDataArray[GV.getAktNameIndex()].soundVolume
-        musicVolume.value = GV.spriteGameDataArray[GV.getAktNameIndex()].musicVolume
+        soundVolume.value = GV.actGameParam.soundVolume
+        musicVolume.value = GV.actGameParam.musicVolume
         
         soundVolumeLabel.text = GV.language.getText(.TCSoundVolume)
         musicVolumeLabel.text = GV.language.getText(.TCMusicVolume)
@@ -149,25 +149,25 @@ class LanguageViewController: UIViewController, UITableViewDataSource, UITableVi
         
     }
     
-    func makeHelpLinesView() {
-        tableView.layer.hidden = true
-        oldHelpLines = GV.showHelpLines
-        lineCountPicker = UIPickerView()
-        self.view.addSubview(lineCountPicker!)
-        lineCountPicker!.delegate = self
-        lineCountPicker!.dataSource = self
-        lineCountPicker!.selectRow(Int(GV.spriteGameDataArray[GV.getAktNameIndex()].showHelpLines), inComponent: 0, animated: false)
-        
-        lineCountPicker!.translatesAutoresizingMaskIntoConstraints = false
-        
-        self.view.addConstraint(NSLayoutConstraint(item: lineCountPicker!, attribute: NSLayoutAttribute.CenterX, relatedBy: .Equal, toItem: self.view, attribute: NSLayoutAttribute.CenterX, multiplier: 1.0, constant: 0))
-        
-        self.view.addConstraint(NSLayoutConstraint(item: lineCountPicker!, attribute: .CenterY, relatedBy: .Equal, toItem: self.view, attribute: .CenterY, multiplier: 1.0, constant: -100))
-        
-        self.view.addConstraint(NSLayoutConstraint(item: lineCountPicker!, attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: 100))
-        
-        self.view.addConstraint(NSLayoutConstraint(item: lineCountPicker!, attribute: .Height , relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: 200))
-    }
+//    func makeHelpLinesView() {
+//        tableView.layer.hidden = true
+//        oldHelpLines = GV.showHelpLines
+//        lineCountPicker = UIPickerView()
+//        self.view.addSubview(lineCountPicker!)
+//        lineCountPicker!.delegate = self
+//        lineCountPicker!.dataSource = self
+//        lineCountPicker!.selectRow(Int(GV.spriteGameDataArray[GV.getAktNameIndex()].showHelpLines), inComponent: 0, animated: false)
+//        
+//        lineCountPicker!.translatesAutoresizingMaskIntoConstraints = false
+//        
+//        self.view.addConstraint(NSLayoutConstraint(item: lineCountPicker!, attribute: NSLayoutAttribute.CenterX, relatedBy: .Equal, toItem: self.view, attribute: NSLayoutAttribute.CenterX, multiplier: 1.0, constant: 0))
+//        
+//        self.view.addConstraint(NSLayoutConstraint(item: lineCountPicker!, attribute: .CenterY, relatedBy: .Equal, toItem: self.view, attribute: .CenterY, multiplier: 1.0, constant: -100))
+//        
+//        self.view.addConstraint(NSLayoutConstraint(item: lineCountPicker!, attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: 100))
+//        
+//        self.view.addConstraint(NSLayoutConstraint(item: lineCountPicker!, attribute: .Height , relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: 200))
+//    }
     
     func makeGameModusView() {
         //languageTableView = UITableView()
@@ -283,7 +283,7 @@ class LanguageViewController: UIViewController, UITableViewDataSource, UITableVi
             ]
             setAktlanguageRow()
         case gameModusText:
-            GV.spriteGameDataArray[GV.getAktNameIndex()].gameModus = indexPath.row
+            GV.actGameParam.gameModus = indexPath.row
             aktGameModus = indexPath.row
         default: break
         }
@@ -329,22 +329,21 @@ class LanguageViewController: UIViewController, UITableViewDataSource, UITableVi
     }
     
     func donePressed(sender: UIButton) {
-        let index = GV.getAktNameIndex()
         switch toDo {
         case nameText: _ = 0
         case volumeText:
-            GV.spriteGameDataArray[index].soundVolume = soundVolume.value
-            GV.spriteGameDataArray[index].musicVolume = musicVolume.value
-            GV.soundVolume = soundVolume.value
-            GV.musicVolume = musicVolume.value
-        case helpLinesText: GV.spriteGameDataArray[index].showHelpLines = GV.showHelpLines
-        case languageText:  GV.spriteGameDataArray[index].aktLanguageKey = GV.language.getAktLanguageKey()
+            GV.actGameParam.soundVolume = soundVolume.value
+            GV.actGameParam.musicVolume = musicVolume.value
+//            GV.soundVolume = soundVolume.value
+//            GV.musicVolume = musicVolume.value
+//        case helpLinesText: GV.spriteGameDataArray[index].showHelpLines = GV.showHelpLines
+        case languageText:  GV.actGameParam.aktLanguageKey = GV.language.getAktLanguageKey()
         default: break
         }
         
         
         
-        GV.dataStore.saveSpriteGameRecord()
+        GV.dataStore.saveGameParamRecord(GV.actGameParam)
         
         self.performSegueWithIdentifier(backToSettings, sender: self)
     }

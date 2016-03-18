@@ -27,7 +27,7 @@ let huDictionary: [TextConstants: String] = [
     .TCNoMessage:        "nem létező üzenet",
     .TCTimeout:          "Lejárt az időd",
     .TCGameOver:         "Vesztettél",
-    .TCCongratulations:  "Gratulálok",
+    .TCCongratulations:  "Gratulálok ",
     .TCName:             "Válassz egy nevet",
     .TCVolume:           "Hangerő",
     .TCCountHelpLines:   "Segédvonalak száma",
@@ -42,7 +42,7 @@ let huDictionary: [TextConstants: String] = [
     .TCDelete:           "Eltávolítás",
     .TCNewName:          "Új név",
     .TCChoose:           "Kiválasztás",
-    .TCGamer:            "Játékos: ",
+    .TCPlayer:           "Játékos: ",
     .TCGameModus:        "Játékmód",
     .TCSoundVolume:      "Háttérzajok hangerő",
     .TCMusicVolume:      "Zene hangerő",
@@ -61,4 +61,5 @@ let huDictionary: [TextConstants: String] = [
     .TCCountPlays:       "Eddig % játékot játszottál",
     .TCGameCompleteWithBestScore: "Új pontszám rekord a(z) % szinten!",
     .TCGameCompleteWithBestTime:  "Legjobb idő a(z) % szinten",
+    .TCGuest:            "Vendég",
 ]

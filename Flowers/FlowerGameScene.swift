@@ -119,7 +119,7 @@ class FlowerGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate 
     var audioPlayer: AVAudioPlayer?
     var soundPlayer: AVAudioPlayer?
     var myView = SKView()
-    var levelIndex = Int(GV.spriteGameDataArray[GV.getAktNameIndex()].spriteLevelIndex)
+    var levelIndex = GV.actGameParam.levelIndex
     var stack:Stack<SavedSprite> = Stack()
     //var gameArray = [[Bool]]() // true if Cell used
     var gameArray = [[GameArrayPositions]]()
@@ -136,7 +136,7 @@ class FlowerGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate 
     var playerLabel = SKLabelNode(fontNamed: "AvenirNext-Bold")
     var spriteCountLabel = SKLabelNode(fontNamed: "AvenirNext-Bold")
     
-    var gameScore = Int(GV.spriteGameDataArray[GV.getAktNameIndex()].spriteGameScore)
+    var gameScore = GV.actGameParam.gameScore
     var levelScore = 0
     var movedFromNode: MySKNode!
     var settingsButton: MySKButton?
@@ -210,7 +210,7 @@ class FlowerGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate 
             prepareNextGame(true)
             generateSprites(true)
         } else {
-            playMusic("MyMusic", volume: GV.musicVolume, loops: 0)
+            playMusic("MyMusic", volume: GV.actGameParam.musicVolume, loops: 0)
             
         }
     }
@@ -312,7 +312,7 @@ class FlowerGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate 
     }
     
     func changeLanguage()->Bool {
-        playerLabel.text = GV.language.getText(TextConstants.TCGamer) + ": \(GV.globalParam.aktName)"
+        playerLabel.text = GV.language.getText(TextConstants.TCPlayer) + ": \(GV.actGameParam.name)"
         levelLabel.text = GV.language.getText(TextConstants.TCLevel) + ": \(levelIndex + 1)"
         gameScoreLabel.text = "\(GV.language.getText(.TCGameScore)) \(gameScore)"
         spriteCountLabel.text = "\(GV.language.getText(.TCSpriteCount)) \(spriteCount)"
@@ -359,7 +359,7 @@ class FlowerGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate 
             //            let aktSize = spriteSize + 1.2 * CGFloat(sprite.hitCounter)
             //            sprite.size.width = aktSize
             //            sprite.size.height = aktSize
-            playSound("Sprite1", volume: GV.soundVolume)
+            playSound("Sprite1", volume: GV.actGameParam.soundVolume)
             
             gameArray[movingSprite.column][movingSprite.row].used = false
             movingSprite.removeFromParent()
@@ -400,7 +400,7 @@ class FlowerGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate 
             gameArray[sprite.column][sprite.row].used = false
             updateSpriteCount(-2)
 //            spriteCount--
-            playSound("Drop", volume: GV.soundVolume)
+            playSound("Drop", volume: GV.actGameParam.soundVolume)
             showScore()
         }
 //        spriteCount--
@@ -430,11 +430,11 @@ class FlowerGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate 
             }
             container.hitLabel.text = "\(container.hitCounter)"
             showScore()
-            playSound("Container", volume: GV.soundVolume)
+            playSound("Container", volume: GV.actGameParam.soundVolume)
         } else {
             container.hitCounter -= movingSprite.hitCounter
             showScore()
-            playSound("Funk_Bot", volume: GV.soundVolume)
+            playSound("Funk_Bot", volume: GV.actGameParam.soundVolume)
             container.hitLabel.text = "\(container.hitCounter)"
 
         }
@@ -851,7 +851,7 @@ class FlowerGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate 
                     self.gameArray[sprite.column][sprite.row].used = false
                     //sprite.size = CGSizeMake(sprite.size.width / 3, sprite.size.height / 3)
                     sprite.colorBlendFactor = 4
-                    self.playSound("Drop", volume: GV.soundVolume)
+                    self.playSound("Drop", volume: GV.actGameParam.soundVolume)
                     sprite.removeFromParent()
                     //                    let sparkEmitter = SKEmitterNode(fileNamed: "MyParticle.sks")
                     //                    sparkEmitter?.position = sprite.position
@@ -889,13 +889,13 @@ class FlowerGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate 
         }
     }
     func prepareNextGame(newGame: Bool) {
-        playMusic("MyMusic", volume: GV.musicVolume, loops: 0)
+        playMusic("MyMusic", volume: GV.actGameParam.musicVolume, loops: 0)
         stack = Stack()
         timeCount = 0
         if newGame {
             gameNumber = Int(arc4random_uniform(999999))
         }
-        let seedIndex = SeedIndex(gameType: Int64(GV.spriteGameDataArray[GV.getAktNameIndex()].gameModus), gameDifficulty: 0, gameNumber: Int64(gameNumber))
+        let seedIndex = SeedIndex(gameType: Int64(GV.actGameParam.gameModus), gameDifficulty: 0, gameNumber: Int64(gameNumber))
         random = MyRandom(seedIndex: seedIndex)
         stopTimer()
         
@@ -927,8 +927,8 @@ class FlowerGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate 
         
         //        self.addChild(labelBackground)
         
-        if GV.globalParam.aktName != GV.dummyName {
-            createLabels(playerLabel, text: GV.language.getText(TextConstants.TCGamer) + "\(GV.globalParam.aktName)", position: CGPointMake(self.position.x + self.size.width * playerPosKorr.x, self.position.y + self.size.height * playerPosKorr.y))
+        if GV.actGameParam.name != GV.dummyName {
+            createLabels(playerLabel, text: GV.language.getText(.TCPlayer) + "\(GV.actGameParam.name)", position: CGPointMake(self.position.x + self.size.width * playerPosKorr.x, self.position.y + self.size.height * playerPosKorr.y))
         } else {
             levelPosKorr.x = 0.5
         }
@@ -994,7 +994,7 @@ class FlowerGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate 
     
     
     func settingsButtonPressed() {
-        playMusic("NoSound", volume: GV.musicVolume, loops: 0)
+        playMusic("NoSound", volume: GV.actGameParam.musicVolume, loops: 0)
         stopTimer()
         settingsDelegate?.settingsDelegateFunc()
     }
@@ -1128,10 +1128,10 @@ class FlowerGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate 
                 parentViewController!.presentViewController(alert, animated: true, completion: nil)
             } else {
                 
-                playMusic("Winner", volume: GV.musicVolume, loops: 0)
+                playMusic("Winner", volume: GV.actGameParam.musicVolume, loops: 0)
                 
                 let alert = UIAlertController(title: GV.language.getText(.TCGameComplete),
-                    message: GV.language.getText(TextConstants.TCCongratulations) + GV.globalParam.aktName == GV.dummyName ? "" : " " + GV.globalParam.aktName,
+                    message: GV.language.getText(.TCCongratulations) + GV.actGameParam.name,
                     preferredStyle: .Alert)
                 let cancelAction = UIAlertAction(title: GV.language.getText(.TCReturn), style: .Cancel, handler: nil)
                 let againAction = UIAlertAction(title: GV.language.getText(TextConstants.TCNextLevel), style: .Default,
@@ -1240,19 +1240,19 @@ class FlowerGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate 
             
             
             //levelIndex = readNextLevel()
-            gameScore += levelScore
+            GV.actGameParam.gameScore += levelScore
             
-            for index in 0..<GV.spriteGameDataArray.count {
-                if GV.spriteGameDataArray[index].name == GV.globalParam.aktName {
-                    GV.spriteGameDataArray[index] = SpriteGameData()
-                    GV.spriteGameDataArray[index].spriteLevelIndex = levelIndex
-                    GV.spriteGameDataArray[index].spriteGameScore = gameScore
-                    GV.spriteGameDataArray[index].aktLanguageKey = GV.language.getAktLanguageKey()
-                    GV.spriteGameDataArray[index].showHelpLines = GV.showHelpLines
-                    break
-                }
-            }
-            GV.dataStore.saveSpriteGameRecord()
+//            for index in 0..<GV.spriteGameDataArray.count {
+//                if GV.spriteGameDataArray[index].name == GV.globalParam.aktName {
+//                    GV.spriteGameDataArray[index] = SpriteGameData()
+//                    GV.spriteGameDataArray[index].spriteLevelIndex = levelIndex
+//                    GV.spriteGameDataArray[index].spriteGameScore = gameScore
+//                    GV.spriteGameDataArray[index].aktLanguageKey = GV.language.getAktLanguageKey()
+//                    GV.spriteGameDataArray[index].showHelpLines = GV.showHelpLines
+//                    break
+//                }
+//            }
+            GV.dataStore.saveGameParamRecord(GV.actGameParam)
         }
         //self.children.removeAll(keepCapacity: false)
         for _ in 0..<self.children.count {

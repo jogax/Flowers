@@ -36,7 +36,7 @@ class SettingsViewController: UIViewController, UITableViewDataSource, UITableVi
     let languageRow = 3
     let gameModusRow = 4
     let returnRow = 5
-    var gamerName = UILabel()
+    var player = UILabel()
 
 
     let textCellIdentifier = "TextCell"
@@ -65,17 +65,17 @@ class SettingsViewController: UIViewController, UITableViewDataSource, UITableVi
         
         self.view.addConstraint(NSLayoutConstraint(item: tableView, attribute: .Height , relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: tableHeight))
         
-        gamerName.text = GV.language.getText(.TCGamer)  + (GV.globalParam.aktName == GV.dummyName ? "" : GV.globalParam.aktName)
-        self.view.addSubview(gamerName)
-        gamerName.translatesAutoresizingMaskIntoConstraints = false
+        player.text = GV.language.getText(.TCPlayer)  + (GV.actGameParam.name == GV.dummyName ? "" : GV.actGameParam.name)
+        self.view.addSubview(player)
+        player.translatesAutoresizingMaskIntoConstraints = false
         
-        self.view.addConstraint(NSLayoutConstraint(item: gamerName, attribute: NSLayoutAttribute.CenterX, relatedBy: .Equal, toItem: self.view, attribute: NSLayoutAttribute.CenterX, multiplier: 1.0, constant: 0.0))
+        self.view.addConstraint(NSLayoutConstraint(item: player, attribute: NSLayoutAttribute.CenterX, relatedBy: .Equal, toItem: self.view, attribute: NSLayoutAttribute.CenterX, multiplier: 1.0, constant: 0.0))
         
-        self.view.addConstraint(NSLayoutConstraint(item: gamerName, attribute: .Top, relatedBy: .Equal, toItem: self.view, attribute: .Top, multiplier: 1.0, constant: 50.0))
+        self.view.addConstraint(NSLayoutConstraint(item: player, attribute: .Top, relatedBy: .Equal, toItem: self.view, attribute: .Top, multiplier: 1.0, constant: 50.0))
         
-        self.view.addConstraint(NSLayoutConstraint(item: gamerName, attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: 120))
+        self.view.addConstraint(NSLayoutConstraint(item: player, attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: 120))
         
-        self.view.addConstraint(NSLayoutConstraint(item: gamerName, attribute: .Height , relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: 50))
+        self.view.addConstraint(NSLayoutConstraint(item: player, attribute: .Height , relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: 50))
         
         
 
@@ -114,7 +114,7 @@ class SettingsViewController: UIViewController, UITableViewDataSource, UITableVi
             case gameModusRow:
                 self.performSegueWithIdentifier(gameModusText, sender: self)
             case returnRow:
-                GV.dataStore.saveSpriteGameRecord()
+                GV.dataStore.saveGameParamRecord(GV.actGameParam)
                 self.performSegueWithIdentifier(returnText, sender: self)
             default: _ = 0
         }
@@ -144,7 +144,7 @@ class SettingsViewController: UIViewController, UITableViewDataSource, UITableVi
 
     
     @IBAction func unwindToSC(segue: UIStoryboardSegue) {
-        gamerName.text = GV.language.getText(.TCGamer) + (GV.globalParam.aktName == GV.dummyName ? "" : GV.globalParam.aktName)
+        player.text = GV.language.getText(.TCPlayer) + GV.actGameParam.name
     }
 
 }

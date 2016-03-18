@@ -43,7 +43,7 @@ enum TextConstants: Int {
     TCDelete,
     TCNewName,
     TCChoose,
-    TCGamer,
+    TCPlayer,
     TCGameModus,
     TCSoundVolume,
     TCMusicVolume,
@@ -63,7 +63,8 @@ enum TextConstants: Int {
     TCBestTime,
     TCCountPlays,
     TCGameCompleteWithBestScore,
-    TCGameCompleteWithBestTime
+    TCGameCompleteWithBestTime,
+    TCGuest
 }
 
     let LanguageDE = "de"

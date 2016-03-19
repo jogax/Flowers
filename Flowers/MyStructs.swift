@@ -286,9 +286,6 @@ func != (left: FromToColumnRow, right: FromToColumnRow)->Bool {
 }
 
 
-
-
-
 infix operator ~> {}
 private let queue = dispatch_queue_create("serial-worker", DISPATCH_QUEUE_SERIAL)
 

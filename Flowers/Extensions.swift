@@ -190,6 +190,14 @@ extension Int {
         let secondsString = (seconds < 10 ? "0" : "") + String(seconds)
         return hoursString + minutesString + secondsString
     }
+    func isMemberOf(values: Int...)->Bool {
+        for index in 0..<values.count {
+            if self == values[index] {
+                return true
+            }
+        }
+        return false
+    }
 }
 
 extension String {
@@ -201,5 +209,14 @@ extension String {
             endString += toArray[index] + (vIndex < values.count ? values[vIndex++] : "")
         }
         return endString
+    }
+    
+    func isMemberOf(values: String...)->Bool {
+        for index in 0..<values.count {
+            if self == values[index] {
+                return true
+            }
+        }
+        return false
     }
 }

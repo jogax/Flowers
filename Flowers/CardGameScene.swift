@@ -309,6 +309,8 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
     
     var stop = false
     
+    var panel: MySKPanel?
+    
     var stopCreateTippsInBackground = false {
         didSet {
             if stopCreateTippsInBackground {
@@ -2810,7 +2812,11 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
     func settingsButtonPressed() {
         playMusic("NoSound", volume: GV.actGameParam.musicVolume, loops: 0)
         stopTimer(countUp)
-        settingsDelegate?.settingsDelegateFunc()
+//        settingsDelegate?.settingsDelegateFunc()
+        panel = MySKPanel(position: CGPointMake(self.frame.midX, self.frame.midY - 100), type: .Settings, parent: self)
+        panel = nil
+//        self.addChild(panel)
+        
     }
     
     func undoButtonPressed() {

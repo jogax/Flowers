@@ -44,6 +44,8 @@
 		201173B91C074D430022AC86 /* CardGameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201173B81C074D430022AC86 /* CardGameScene.swift */; };
 		2014D3821C85DA45008A1946 /* MyContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2014D3811C85DA45008A1946 /* MyContainer.swift */; };
 		201728FA1BE3D0C9005F6CA8 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201728F91BE3D0C9005F6CA8 /* SettingsViewController.swift */; };
+		201839B61C9C40DD00B33827 /* MySKPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201839B51C9C40DD00B33827 /* MySKPanel.swift */; };
+		201839B81C9C475200B33827 /* panel.png in Resources */ = {isa = PBXBuildFile; fileRef = 201839B71C9C475200B33827 /* panel.png */; };
 		201928291C99AF2B009CA720 /* GameStatistics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201928271C99AF2B009CA720 /* GameStatistics.swift */; };
 		201928351C99C0A4009CA720 /* GameParam.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201928331C99C0A4009CA720 /* GameParam.swift */; };
 		201C52401C314CF9001B04AB /* LevelsForPlayWithCards.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201C523F1C314CF9001B04AB /* LevelsForPlayWithCards.swift */; };
@@ -128,6 +130,8 @@
 		201173B81C074D430022AC86 /* CardGameScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CardGameScene.swift; sourceTree = "<group>"; };
 		2014D3811C85DA45008A1946 /* MyContainer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MyContainer.swift; sourceTree = "<group>"; };
 		201728F91BE3D0C9005F6CA8 /* SettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
+		201839B51C9C40DD00B33827 /* MySKPanel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MySKPanel.swift; path = ../MySKPanel.swift; sourceTree = "<group>"; };
+		201839B71C9C475200B33827 /* panel.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = panel.png; sourceTree = "<group>"; };
 		201928271C99AF2B009CA720 /* GameStatistics.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameStatistics.swift; sourceTree = "<group>"; };
 		201928331C99C0A4009CA720 /* GameParam.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameParam.swift; sourceTree = "<group>"; };
 		201C523F1C314CF9001B04AB /* LevelsForPlayWithCards.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LevelsForPlayWithCards.swift; sourceTree = "<group>"; };
@@ -207,6 +211,7 @@
 				200BDA061BCFDEE600F72109 /* DrawImages.swift */,
 				2001412D1BAEB2DE003E0950 /* MyStructs.swift */,
 				200141461BAEDAE5003E0950 /* MySKNode.swift */,
+				201839B51C9C40DD00B33827 /* MySKPanel.swift */,
 				2014D3811C85DA45008A1946 /* MyContainer.swift */,
 				201C52411C316801001B04AB /* Extensions.swift */,
 				200BDA0A1BCFEF5100F72109 /* MySKButton.swift */,
@@ -296,6 +301,7 @@
 		200141481BAEE358003E0950 /* Pictures */ = {
 			isa = PBXGroup;
 			children = (
+				201839B71C9C475200B33827 /* panel.png */,
 				20FC65E11BBC12A100775322 /* Holz.png */,
 				2024A8C41C427C420001CA95 /* cardBackground.png */,
 				20FC65DC1BBC127800775322 /* finger.png */,
@@ -425,6 +431,7 @@
 				2024A8C51C427C420001CA95 /* cardBackground.png in Resources */,
 				20FC65E01BBC127800775322 /* frozen.png in Resources */,
 				200141231BAEB1F6003E0950 /* Drop.m4a in Resources */,
+				201839B81C9C475200B33827 /* panel.png in Resources */,
 				20FC65D91BBC123300775322 /* background.png in Resources */,
 				20FC65DA1BBC123300775322 /* bgImage.png in Resources */,
 				200141201BAEB1F6003E0950 /* Container.m4a in Resources */,
@@ -480,6 +487,7 @@
 				201C52421C316801001B04AB /* Extensions.swift in Sources */,
 				201173B71C074D080022AC86 /* MyGameScene.swift in Sources */,
 				200140E01BAEA96A003E0950 /* ViewController.swift in Sources */,
+				201839B61C9C40DD00B33827 /* MySKPanel.swift in Sources */,
 				2001412E1BAEB2DE003E0950 /* MyStructs.swift in Sources */,
 				2014D3821C85DA45008A1946 /* MyContainer.swift in Sources */,
 				200141471BAEDAE5003E0950 /* MySKNode.swift in Sources */,

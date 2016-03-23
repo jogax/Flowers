@@ -2813,7 +2813,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         playMusic("NoSound", volume: GV.actGameParam.musicVolume, loops: 0)
         stopTimer(countUp)
 //        settingsDelegate?.settingsDelegateFunc()
-        panel = MySKPanel(position: CGPointMake(self.frame.midX, self.frame.midY - 100), type: .Settings, parent: self)
+        panel = MySKPanel(frame: CGRectMake(self.frame.midX, self.frame.midY - 100, self.frame.width * 0.5, self.frame.height * 0.5), type: .Settings, parent: self)
         panel = nil
 //        self.addChild(panel)
         

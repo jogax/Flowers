@@ -270,7 +270,7 @@ class FlowerGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate 
             addChild(sprite)
         }
         if first {
-            countUp = NSTimer.scheduledTimerWithTimeInterval(1.0, target: self, selector: Selector("doCountUp"), userInfo: nil, repeats: true)
+            countUp = NSTimer.scheduledTimerWithTimeInterval(1.0, target: self, selector: #selector(FlowerGameScene.doCountUp), userInfo: nil, repeats: true)
         }
         
         stopped = false
@@ -385,7 +385,7 @@ class FlowerGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate 
             let movingSpriteAction = SKAction.moveTo(movingSpriteDest, duration: 1.0)
             let actionMoveDone = SKAction.removeFromParent()
             
-            movingSprite.runAction(SKAction.sequence([movingSpriteAction, actionMoveDone]), completion: {self.countMovingSprites--})
+            movingSprite.runAction(SKAction.sequence([movingSpriteAction, actionMoveDone]), completion: {self.countMovingSprites -= 1})
             
             
             let spriteDest = CGPointMake(sprite.position.x * 1.5, 0)
@@ -395,7 +395,7 @@ class FlowerGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate 
             
             
             let actionMove2 = SKAction.moveTo(spriteDest, duration: 1.5)
-            sprite.runAction(SKAction.sequence([actionMove2, actionMoveDone]), completion: {self.countMovingSprites--})
+            sprite.runAction(SKAction.sequence([actionMove2, actionMoveDone]), completion: {self.countMovingSprites -= 1})
             gameArray[movingSprite.column][movingSprite.row].used = false
             gameArray[sprite.column][sprite.row].used = false
             updateSpriteCount(-2)
@@ -459,7 +459,8 @@ class FlowerGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate 
         
         for _ in 0..<countSpritesProContainer! {
             for containerIndex in 0..<countContainers {
-                let colorTabLine = ColorTabLine(colorIndex: containerIndex, spriteName: "\(spriteName++)", spriteValue: generateValue(containerIndex))
+                let colorTabLine = ColorTabLine(colorIndex: containerIndex, spriteName: "\(spriteName)", spriteValue: generateValue(containerIndex))
+                spriteName += 1
                 colorTab.append(colorTabLine)
             }
         }
@@ -879,7 +880,7 @@ class FlowerGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate 
                 
                 self.userInteractionEnabled = false  // userInteraction forbidden!
                 countMovingSprites = 1
-                self.waitForSKActionEnded = NSTimer.scheduledTimerWithTimeInterval(0.1, target: self, selector: Selector("checkCountMovingSprites"), userInfo: nil, repeats: false) // start timer for check
+                self.waitForSKActionEnded = NSTimer.scheduledTimerWithTimeInterval(0.1, target: self, selector: #selector(FlowerGameScene.checkCountMovingSprites), userInfo: nil, repeats: false) // start timer for check
                 
                 movedFromNode.runAction(SKAction.sequence([actionEmpty, actionMove, countAndPushAction, actionMove1, countAndPushAction, actionMove2, countAndPushAction, actionMove3, actionMoveStopped//,
                     /*waitSparkAction*/]))
@@ -1086,7 +1087,7 @@ class FlowerGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate 
         for column in 0..<countColumns {
             for row in 0..<countRows {
                 if gameArray[column][row].used {
-                    usedCellCount++
+                    usedCellCount += 1
                 }
             }
         }
@@ -1108,7 +1109,7 @@ class FlowerGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate 
             
             stopTimer()
             if levelScore < targetScore {
-                countLostGames++
+                countLostGames += 1
                 let lost3Times = countLostGames > 2 && levelIndex > 1
                 let tc:TextConstants = lost3Times ? .TCGameLost3: .TCGameLost
                 let alert = UIAlertController(title: GV.language.getText(tc),
@@ -1268,13 +1269,13 @@ class FlowerGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate 
     
     func startTimer() {
         if countUp == nil {
-            countUp = NSTimer.scheduledTimerWithTimeInterval(1.0, target: self, selector: Selector("doCountUp"), userInfo: nil, repeats: true)
+            countUp = NSTimer.scheduledTimerWithTimeInterval(1.0, target: self, selector: #selector(FlowerGameScene.doCountUp), userInfo: nil, repeats: true)
         }
     }
     
     func doCountUp() {
         
-        timeCount++
+        timeCount += 1
         let countUpText = GV.language.getText(.TCTimeLeft)
         let minutes = Int(timeCount / 60)
         var seconds = "\(Int(timeCount % 60))"
@@ -1283,8 +1284,9 @@ class FlowerGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate 
     }
     
     func checkCountMovingSprites() {
-        if  countMovingSprites > 0 && countCheckCounts++ < 80 {
-            self.waitForSKActionEnded = NSTimer.scheduledTimerWithTimeInterval(0.1, target: self, selector: Selector("checkCountMovingSprites"), userInfo: nil, repeats: false)
+        if  countMovingSprites > 0 && countCheckCounts < 80 {
+            countCheckCounts += 1
+            self.waitForSKActionEnded = NSTimer.scheduledTimerWithTimeInterval(0.1, target: self, selector: #selector(FlowerGameScene.checkCountMovingSprites), userInfo: nil, repeats: false)
         } else {
             countCheckCounts = 0
             self.userInteractionEnabled = true

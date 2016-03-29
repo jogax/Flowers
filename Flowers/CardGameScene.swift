@@ -393,7 +393,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         let seedIndex = SeedIndex(gameType: Int64(GV.actGameParam.gameModus), gameDifficulty: 0, gameNumber: Int64(gameNumber))
         random = MyRandom(seedIndex: seedIndex)
         
-        stopTimer(countUp)
+        stopTimer(&countUp)
         
         gameArray.removeAll(keepCapacity: false)
         containers.removeAll(keepCapacity: false)
@@ -688,7 +688,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
     func startCreateTippsInBackground() {
         {
             self.generatingTipps = true
-            self.stopTimer(self.showTippAtTimer)
+            self.stopTimer(&self.showTippAtTimer)
             let startTime = NSDate()
             var countCreating = self.countColumns * self.countRows - self.checkGameArray()
             while countCreating > 0 && self.spriteCount > 0 {
@@ -697,7 +697,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
                 if self.tippArray.count <= 1 || self.stop  {
                     print(" ==========> generate special Sprite - countCreating:", countCreating)
                     self.generateSprites(.Special)
-                    countCreating--
+                    countCreating -= 1
                 } else {
                     countCreating = 0
                 }
@@ -792,7 +792,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
     }
     
     func startTippTimer(){
-        stopTimer(showTippAtTimer)
+        stopTimer(&showTippAtTimer)
         showTippAtTimer = NSTimer.scheduledTimerWithTimeInterval(showTippSleepTime, target: self, selector: Selector(showTippSelector), userInfo: nil, repeats: true)
     }
     
@@ -814,7 +814,8 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
                 }
                 addSpriteToTremblingSprites(position)
 //            }
-            tippIndex = ++tippIndex % tippArray.count
+            tippIndex += 1
+            tippIndex %= tippArray.count
         }
         
     }
@@ -931,7 +932,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
                                 tippArray[ind + index].removed = true
                                 removeIndex.insert(ind + index, atIndex: 0)
                             }
-                            index++
+                            index += 1
                         }
                         dummy = 0
                     }
@@ -1722,10 +1723,10 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         
         if usedCellCount <= 1 && containersOK { // Level completed, start a new game
             
-            stopTimer(countUp)
+            stopTimer(&countUp)
             playMusic("Winner", volume: GV.actGameParam.musicVolume, loops: 0)
             
-            GV.gameStatistics.countPlays++
+            GV.gameStatistics.countPlays += 1
             GV.gameStatistics.actTime = timeCount
             GV.gameStatistics.allTime += timeCount
             
@@ -1790,7 +1791,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
             childNode.removeFromParent()
         }
         
-        stopTimer(countUp)
+        stopTimer(&countUp)
 //        print("stopCreateTippsInBackground from newGame")
 //
         prepareNextGame(next)
@@ -1862,7 +1863,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
                 handler: {(paramAction:UIAlertAction!) in
 //                    self.setLevel(self.nextLevel)
 //                    self.newGame(true)
-                    self.startTimer(self.showTippAtTimer, sleepTime: self.showTippSleepTime, selector: self.showTippSelector, repeats: true)
+                    self.startTimer(&self.showTippAtTimer, sleepTime: self.showTippSleepTime, selector: self.showTippSelector, repeats: true)
             })
             alert.addAction(cancelAction)
         }
@@ -1898,9 +1899,10 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         
         for cardIndex in 0..<countSpritesProContainer! * countPackages {
             for containerIndex in 0..<countContainers {
-                let colorTabLine = ColorTabLine(colorIndex: containerIndex, spriteName: "\(spriteName++)",
+                let colorTabLine = ColorTabLine(colorIndex: containerIndex, spriteName: "\(spriteName)",
                     spriteValue: cardArray[containerIndex][cardIndex % MaxCardValue].cardValue) //generateValue(containerIndex) - 1)
                 colorTab.append(colorTabLine)
+                spriteName += 1
             }
         }
         
@@ -2169,7 +2171,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         //let countTouches = touches.count
         lineWidthMultiplier = lineWidthMultiplierNormal
         
-        stopTimer(showTippAtTimer)
+        stopTimer(&showTippAtTimer)
         oldFromToColumnRow = FromToColumnRow()
         lastGreenPair = nil
         lastRedPair = nil
@@ -2281,7 +2283,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
                             drawHelpLinesSpec()
                             lastGreenPair = PairStatus(pair: actFromToColumnRow, founded: foundedPoint!, startTime: NSDate(), points: myPoints)
                             lastRedPair = nil
-                            greenLineTimer = startTimer(greenLineTimer, sleepTime: 0.5, selector: checkGreenLineSelector, repeats: false) // set linewidth on Special after 0.5 second
+                            greenLineTimer = startTimer(&greenLineTimer, sleepTime: 0.5, selector: checkGreenLineSelector, repeats: false) // set linewidth on Special after 0.5 second
                         } else {
                             lastGreenPair!.points = myPoints
                         }
@@ -2290,7 +2292,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
                         drawHelpLinesSpec()
                         if lastGreenPair != nil {
                             if !lastGreenPair!.fixed {
-                                stopTimer(greenLineTimer)
+                                stopTimer(&greenLineTimer)
                             }
                             if lastGreenPair!.duration == 0 { // first time Red
                                 lastGreenPair!.setEndDuration() // get duration of Green
@@ -2321,13 +2323,13 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         drawHelpLinesSpec()
         lastGreenPair!.fixed = true
         
-        stopTimer(greenLineTimer)
+        stopTimer(&greenLineTimer)
     }
 
     
     override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
         lineWidthMultiplier = lineWidthMultiplierNormal
-        stopTimer(greenLineTimer)
+        stopTimer(&greenLineTimer)
         stopTrembling()
         let firstTouch = touches.first
         let touchLocation = firstTouch!.locationInNode(self)
@@ -2476,7 +2478,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
                 
                 self.userInteractionEnabled = false  // userInteraction forbidden!
                 countMovingSprites = 1
-                self.waitForSKActionEnded = NSTimer.scheduledTimerWithTimeInterval(0.1, target: self, selector: Selector("checkCountMovingSprites"), userInfo: nil, repeats: false) // start timer for check
+                self.waitForSKActionEnded = NSTimer.scheduledTimerWithTimeInterval(0.1, target: self, selector: #selector(CardGameScene.checkCountMovingSprites), userInfo: nil, repeats: false) // start timer for check
                 
                 movedFromNode.runAction(SKAction.sequence(actionArray))
                 
@@ -2738,7 +2740,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         for column in 0..<countColumns {
             for row in 0..<countRows {
                 if gameArray[column][row].used {
-                    usedCellCount++
+                    usedCellCount += 1
                 }
             }
         }
@@ -2811,7 +2813,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
     
     func settingsButtonPressed() {
         playMusic("NoSound", volume: GV.actGameParam.musicVolume, loops: 0)
-        stopTimer(countUp)
+        stopTimer(&countUp)
 //        settingsDelegate?.settingsDelegateFunc()
         panel = MySKPanel(frame: CGRectMake(self.frame.midX, self.frame.midY - 100, self.frame.width * 0.5, self.frame.height * 0.5), type: .Settings, parent: self)
         panel = nil
@@ -2825,13 +2827,13 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
 
     
     func startDoCountUpTimer() {
-        startTimer(countUp, sleepTime: doCountUpSleepTime, selector: doCountUpSelector, repeats: true)
+        startTimer(&countUp, sleepTime: doCountUpSleepTime, selector: doCountUpSelector, repeats: true)
 //        if timer == nil {
 //            timer = NSTimer.scheduledTimerWithTimeInterval(doCountUpSleepTime, target: self, selector: Selector(doCountUpSelector), userInfo: nil, repeats: true)
 //        }
     }
     
-    func stopTimer(var timer: NSTimer?) {
+    func stopTimer(inout timer: NSTimer?) {
         if timer != nil {
             timer?.invalidate()
             timer = nil
@@ -2840,10 +2842,8 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
     
 
 
-    func startTimer(timer: NSTimer?, sleepTime: Double, selector: String, repeats: Bool)->NSTimer {
-        if timer != nil {
-            stopTimer(timer)
-        }
+    func startTimer(inout timer: NSTimer?, sleepTime: Double, selector: String, repeats: Bool)->NSTimer {
+        stopTimer(&timer)
         let myTimer = NSTimer.scheduledTimerWithTimeInterval(sleepTime, target: self, selector: Selector(selector), userInfo: nil, repeats: repeats)
         
         return myTimer
@@ -2851,7 +2851,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
     
     func doCountUp() {
         
-        timeCount++
+        timeCount += 1
         let countUpText = GV.language.getText(.TCTimeLeft)
         let minutes = Int(timeCount / 60)
         var seconds = "\(Int(timeCount % 60))"
@@ -2860,8 +2860,9 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
     }
     
     func checkCountMovingSprites() {
-        if  countMovingSprites > 0 && countCheckCounts++ < 80 {
-            self.waitForSKActionEnded = NSTimer.scheduledTimerWithTimeInterval(0.1, target: self, selector: Selector("checkCountMovingSprites"), userInfo: nil, repeats: false)
+        if  countMovingSprites > 0 && countCheckCounts < 80 {
+            countCheckCounts += 1
+            self.waitForSKActionEnded = NSTimer.scheduledTimerWithTimeInterval(0.1, target: self, selector: #selector(CardGameScene.checkCountMovingSprites), userInfo: nil, repeats: false)
         } else {
             countCheckCounts = 0
             self.userInteractionEnabled = true

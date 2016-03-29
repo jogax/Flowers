@@ -206,7 +206,8 @@ extension String {
         var endString = ""
         var vIndex = 0
         for index in 0..<toArray.count {
-            endString += toArray[index] + (vIndex < values.count ? values[vIndex++] : "")
+            endString += toArray[index] + (vIndex < values.count ? values[vIndex] : "")
+            vIndex += 1
         }
         return endString
     }

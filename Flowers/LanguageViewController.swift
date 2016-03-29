@@ -61,8 +61,8 @@ class LanguageViewController: UIViewController, UITableViewDataSource, UITableVi
         
         doneButton.setTitle(GV.language.getText(.TCDone), forState: .Normal)
         doneButton.setTitleColor(titleColor, forState: UIControlState.Normal)
-        cancelButton.addTarget(self, action: "cancelPressed:", forControlEvents: UIControlEvents.TouchUpInside)
-        doneButton.addTarget(self, action: "donePressed:", forControlEvents: UIControlEvents.TouchUpInside)
+        cancelButton.addTarget(self, action: #selector(LanguageViewController.cancelPressed(_:)), forControlEvents: UIControlEvents.TouchUpInside)
+        doneButton.addTarget(self, action: #selector(LanguageViewController.donePressed(_:)), forControlEvents: UIControlEvents.TouchUpInside)
         self.view.addSubview(cancelButton)
         self.view.addSubview(doneButton)
         

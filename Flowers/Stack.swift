@@ -71,7 +71,7 @@ class Stack<T> {
     func countChangesInStack() -> Int {
         var counter = 0
         for index in 0..<savedSpriteStack.count {
-            if !(savedSpriteStack[index].status == .Added || savedSpriteStack[index].status == .AddedFromCardStack) {counter++}
+            if !(savedSpriteStack[index].status == .Added || savedSpriteStack[index].status == .AddedFromCardStack) {counter += 1}
         }
         return counter
     }

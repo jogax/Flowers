@@ -106,7 +106,7 @@ class LevelsForPlayWithSprites {
     }
     
     func getNextLevel() -> Int {
-        level++
+        level += 1
         aktLevel = levelParam[level]
         return level
     }

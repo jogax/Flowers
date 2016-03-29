@@ -51,14 +51,14 @@ class ChooseNameViewController: UIViewController, UITableViewDataSource, UITable
  
 
  
-        prepareButton(cancelButton, text: .TCCancel, action: "cancelPressed:", placeOffset: CGPointMake(-120, 20), relativeTo: tableView)
-        prepareButton(chooseButton, text: .TCChoose, action: "choosePressed:", placeOffset: CGPointMake(120, 20), relativeTo: tableView)
-        prepareButton(modifyButton, text: .TCNewName , action: "newNamePressed:", placeOffset: CGPointMake(-120, 80), relativeTo: tableView)
-        prepareButton(deleteButton, text: .TCModify, action: "modifyPressed:", placeOffset: CGPointMake(0, 80), relativeTo: tableView)
-        prepareButton(newNameButton, text: .TCDelete, action: "deletePressed:", placeOffset: CGPointMake(120, 80), relativeTo: tableView)
+        prepareButton(cancelButton, text: .TCCancel, action: #selector(ChooseNameViewController.cancelPressed(_:)), placeOffset: CGPointMake(-120, 20), relativeTo: tableView)
+        prepareButton(chooseButton, text: .TCChoose, action: #selector(ChooseNameViewController.choosePressed(_:)), placeOffset: CGPointMake(120, 20), relativeTo: tableView)
+        prepareButton(modifyButton, text: .TCNewName , action: #selector(ChooseNameViewController.newNamePressed(_:)), placeOffset: CGPointMake(-120, 80), relativeTo: tableView)
+        prepareButton(deleteButton, text: .TCModify, action: #selector(ChooseNameViewController.modifyPressed(_:)), placeOffset: CGPointMake(0, 80), relativeTo: tableView)
+        prepareButton(newNameButton, text: .TCDelete, action: #selector(ChooseNameViewController.deletePressed(_:)), placeOffset: CGPointMake(120, 80), relativeTo: tableView)
 
-        prepareButton(cancelNameButton, text: .TCCancel, action: "cancelNamePressed:", placeOffset: CGPointMake(-120, 50), relativeTo: nameInputField)
-        prepareButton(doneNameButton, text: .TCDone, action: "doneNamePressed:", placeOffset: CGPointMake(120, 50), relativeTo: nameInputField)
+        prepareButton(cancelNameButton, text: .TCCancel, action: #selector(ChooseNameViewController.cancelNamePressed(_:)), placeOffset: CGPointMake(-120, 50), relativeTo: nameInputField)
+        prepareButton(doneNameButton, text: .TCDone, action: #selector(ChooseNameViewController.doneNamePressed(_:)), placeOffset: CGPointMake(120, 50), relativeTo: nameInputField)
         
         hideNameTableButtons(false)
         

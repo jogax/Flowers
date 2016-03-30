@@ -22,5 +22,4 @@ class PlayerModel: Object {
     dynamic var musicVolume: Float = 0
     dynamic var created = NSDate()
     
-
 }

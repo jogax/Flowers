@@ -52,6 +52,21 @@ class ViewController: UIViewController, SettingsDelegate, UIApplicationDelegate 
         GV.gameStatistics.nameID = GV.actGameParam.nameID
         GV.gameStatistics.level = GV.actGameParam.levelIndex
         
+        if GV.realm.objects(PlayerModel).count == 0 {
+            GV.player = PlayerModel()
+            GV.player!.name = GV.language.getText(.TCGuest)
+            GV.player!.isActPlayer = true
+            GV.player!.nameID = 0
+            GV.player!.aktLanguageKey = GV.actGameParam.aktLanguageKey
+            try! GV.realm.write({
+                GV.realm.add(GV.player!)
+            })
+            
+        } else {
+            GV.player = GV.realm.objects(PlayerModel).filter("isActPlayer = True").first!
+            print(GV.player)
+        }
+        
         
         GV.language.setLanguage(GV.actGameParam.aktLanguageKey)
 //        GV.soundVolume = Float(GV.actGameParam.soundVolume)

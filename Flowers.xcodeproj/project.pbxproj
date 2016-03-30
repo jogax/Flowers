@@ -40,6 +40,7 @@
 		200141781BAEFBCA003E0950 /* DataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 200141771BAEFBCA003E0950 /* DataStore.swift */; };
 		200BDA071BCFDEE600F72109 /* DrawImages.swift in Sources */ = {isa = PBXBuildFile; fileRef = 200BDA061BCFDEE600F72109 /* DrawImages.swift */; };
 		200BDA0B1BCFEF5100F72109 /* MySKButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 200BDA0A1BCFEF5100F72109 /* MySKButton.swift */; };
+		200DC9561CAC2597000A000D /* StatisticModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 200DC9551CAC2597000A000D /* StatisticModel.swift */; };
 		201173B71C074D080022AC86 /* MyGameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201173B61C074D080022AC86 /* MyGameScene.swift */; };
 		201173B91C074D430022AC86 /* CardGameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201173B81C074D430022AC86 /* CardGameScene.swift */; };
 		2014D3821C85DA45008A1946 /* MyContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2014D3811C85DA45008A1946 /* MyContainer.swift */; };
@@ -69,6 +70,9 @@
 		20FC65DF1BBC127800775322 /* finger.png in Resources */ = {isa = PBXBuildFile; fileRef = 20FC65DC1BBC127800775322 /* finger.png */; };
 		20FC65E01BBC127800775322 /* frozen.png in Resources */ = {isa = PBXBuildFile; fileRef = 20FC65DD1BBC127800775322 /* frozen.png */; };
 		20FC65E51BBC12A100775322 /* Holz.png in Resources */ = {isa = PBXBuildFile; fileRef = 20FC65E11BBC12A100775322 /* Holz.png */; };
+		4C8A4C241822471DD85643EA /* Pods_FlowersUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E839F87E31342A51CBF95569 /* Pods_FlowersUITests.framework */; };
+		C07683BD776E3FD23B492CA2 /* Pods_Flowers.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4A587E004C7C9685042E2E65 /* Pods_Flowers.framework */; };
+		E76B149CBE9C23976A9DE290 /* Pods_FlowersTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B2DDBA74A1695DC5151D0660 /* Pods_FlowersTests.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -130,6 +134,7 @@
 		200141771BAEFBCA003E0950 /* DataStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataStore.swift; sourceTree = "<group>"; };
 		200BDA061BCFDEE600F72109 /* DrawImages.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DrawImages.swift; sourceTree = "<group>"; };
 		200BDA0A1BCFEF5100F72109 /* MySKButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MySKButton.swift; sourceTree = "<group>"; };
+		200DC9551CAC2597000A000D /* StatisticModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StatisticModel.swift; sourceTree = "<group>"; };
 		201173B61C074D080022AC86 /* MyGameScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MyGameScene.swift; sourceTree = "<group>"; };
 		201173B81C074D430022AC86 /* CardGameScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CardGameScene.swift; sourceTree = "<group>"; };
 		2014D3811C85DA45008A1946 /* MyContainer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MyContainer.swift; sourceTree = "<group>"; };
@@ -162,10 +167,13 @@
 		20FC65DC1BBC127800775322 /* finger.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = finger.png; sourceTree = "<group>"; };
 		20FC65DD1BBC127800775322 /* frozen.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = frozen.png; sourceTree = "<group>"; };
 		20FC65E11BBC12A100775322 /* Holz.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Holz.png; sourceTree = "<group>"; };
+		4A587E004C7C9685042E2E65 /* Pods_Flowers.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Flowers.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5956EEE324BD1A1F9500852D /* Pods-FlowersUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FlowersUITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-FlowersUITests/Pods-FlowersUITests.release.xcconfig"; sourceTree = "<group>"; };
+		B2DDBA74A1695DC5151D0660 /* Pods_FlowersTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_FlowersTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B5D096BF9F0D2CD5F43E20B6 /* Pods-FlowersTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FlowersTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-FlowersTests/Pods-FlowersTests.debug.xcconfig"; sourceTree = "<group>"; };
 		C975CF9E4729DA5389496C1D /* Pods-FlowersUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FlowersUITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-FlowersUITests/Pods-FlowersUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		E49BE7B3709F0DAA7432E3A9 /* Pods-Flowers.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Flowers.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Flowers/Pods-Flowers.debug.xcconfig"; sourceTree = "<group>"; };
+		E839F87E31342A51CBF95569 /* Pods_FlowersUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_FlowersUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -176,6 +184,7 @@
 				20F103FD1CAAD93F009D57CB /* Realm.framework in Frameworks */,
 				20F7E7101BBB03A200451984 /* SpriteKit.framework in Frameworks */,
 				20F103FB1CAAD8F5009D57CB /* RealmSwift.framework in Frameworks */,
+				C07683BD776E3FD23B492CA2 /* Pods_Flowers.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -183,6 +192,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E76B149CBE9C23976A9DE290 /* Pods_FlowersTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -190,6 +200,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4C8A4C241822471DD85643EA /* Pods_FlowersUITests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -199,7 +210,6 @@
 		200140D11BAEA96A003E0950 = {
 			isa = PBXGroup;
 			children = (
-				20F7E70F1BBB03A200451984 /* SpriteKit.framework */,
 				200140DC1BAEA96A003E0950 /* Flowers */,
 				200140F41BAEA96A003E0950 /* FlowersTests */,
 				200140FF1BAEA96A003E0950 /* FlowersUITests */,
@@ -225,6 +235,7 @@
 				201E20431C1C8009003DBBD8 /* Flowers.entitlements */,
 				200BDA061BCFDEE600F72109 /* DrawImages.swift */,
 				208BCEEF1CAAD1330050CD62 /* PlayerModel.swift */,
+				200DC9551CAC2597000A000D /* StatisticModel.swift */,
 				2001412D1BAEB2DE003E0950 /* MyStructs.swift */,
 				200141461BAEDAE5003E0950 /* MySKNode.swift */,
 				201839B51C9C40DD00B33827 /* MySKPanel.swift */,
@@ -331,8 +342,12 @@
 		37A25523B7936A9368EDCB74 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				20F7E70F1BBB03A200451984 /* SpriteKit.framework */,
 				20F103FC1CAAD93F009D57CB /* Realm.framework */,
 				20F103FA1CAAD8F5009D57CB /* RealmSwift.framework */,
+				4A587E004C7C9685042E2E65 /* Pods_Flowers.framework */,
+				B2DDBA74A1695DC5151D0660 /* Pods_FlowersTests.framework */,
+				E839F87E31342A51CBF95569 /* Pods_FlowersUITests.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -646,6 +661,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				200141451BAED8BF003E0950 /* Stack.swift in Sources */,
+				200DC9561CAC2597000A000D /* StatisticModel.swift in Sources */,
 				200141781BAEFBCA003E0950 /* DataStore.swift in Sources */,
 				200141411BAEB9F7003E0950 /* hu.swift in Sources */,
 				201E20471C1C80CF003DBBD8 /* CloudData.swift in Sources */,

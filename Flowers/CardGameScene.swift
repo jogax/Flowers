@@ -311,6 +311,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
     
     var panel: MySKPanel?
     
+    
     var stopCreateTippsInBackground = false {
         didSet {
             if stopCreateTippsInBackground {
@@ -357,6 +358,8 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
             
             myView = view
             
+            let documentsPath = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)[0]
+            print(documentsPath)
             
             spriteTabRect.origin = CGPointMake(self.frame.midX, self.frame.midY * 0.85)
             spriteTabRect.size = CGSizeMake(self.frame.size.width * 0.80, self.frame.size.height * 0.80)

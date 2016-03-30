@@ -8,6 +8,7 @@
 
 import UIKit
 import GameKit
+import RealmSwift
 
 
 //enum Choosed: Int{
@@ -54,6 +55,11 @@ struct GV {
     static var actGameParam = GameParamStruct()
     static var countPlayers: Int = 1
     static var gameStatistics = GameStatisticsStruct()
+
+    static let realm = try! Realm()
+
+    static var player: PlayerModel?
+
     
 //    static var spriteGameDataArray: [SpriteGameData] = []
     // Constraints
@@ -173,6 +179,8 @@ struct GameStatisticsStruct {
     }
     
 }
+
+
 
 struct DeviceConstants {
     var sizeMultiplier: CGFloat

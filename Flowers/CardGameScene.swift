@@ -368,6 +368,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
             let height: CGFloat = 89.0
             sizeMultiplier = CGSizeMake(GV.deviceConstants.sizeMultiplier, GV.deviceConstants.sizeMultiplier * height / width)
             buttonSizeMultiplier = CGSizeMake(GV.deviceConstants.buttonSizeMultiplier, GV.deviceConstants.buttonSizeMultiplier * height / width)
+            levelIndex = GV.player!.levelID
             levelsForPlay.setAktLevel(levelIndex)
             
             buttonSize = (myView.frame.width / 15) * buttonSizeMultiplier.width
@@ -616,7 +617,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
     }
 
     func generateSprites(generatingType: SpriteGeneratingType) {
-        print("generateSprites:", generatingType)
+//        print("generateSprites:", generatingType)
         var generateSpecial = generatingType ==  .Special
         var positionsTab = [(Int, Int)]() // search all available Positions
         for column in 0..<countColumns {
@@ -676,7 +677,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
             }
 
         }
-        print("Count Columns:", countColumns)
+//        print("Count Columns:", countColumns)
         if generatingType != .Special {
             gameArrayChanged = true
         }
@@ -866,8 +867,8 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
             }
         }
 
-        print("gameArray Size:", gameArray.count)
-        print("pairsToCheck.count:", pairsToCheck.count)
+//        print("gameArray Size:", gameArray.count)
+//        print("pairsToCheck.count:", pairsToCheck.count)
         let pairsToCheckCount = pairsToCheck.count
         let startCheckTime = NSDate()
         for ind in 0..<pairsToCheck.count {
@@ -876,7 +877,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
             //tippsButton!.showProgress(ind, maxValue: pairsToCheckCount)
 //            print ("ind:", ind)
             if stopCreateTippsInBackground {
-                print("stopped while checking pairs")
+//                print("stopped while checking pairs")
                 stopCreateTippsInBackground = false
                 return false
             }
@@ -884,7 +885,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
 
         let checkTime = NSDate().timeIntervalSinceDate(startCheckTime)
         let avarageTime = checkTime / Double(pairsToCheckCount)
-        print("for ", countColumns, " columns the avarageTime is:", avarageTime.threeDecimals, "sec / pair")
+//        print("for ", countColumns, " columns the avarageTime is:", avarageTime.threeDecimals, "sec / pair")
         var removeIndex = [Int]()
         if tippArray.count > 0 {
             for ind in 0..<tippArray.count - 1 {
@@ -1733,8 +1734,15 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
             GV.gameStatistics.actTime = timeCount
             GV.gameStatistics.allTime += timeCount
             
+            GV.statistic = GV.realm.objects(StatisticModel).filter("playerID = %d AND levelID = %d", GV.player!.ID, GV.player!.levelID).first
+            GV.realm.beginWrite()
+            GV.statistic!.countPlays += 1
+            GV.statistic!.actTime = timeCount
+            GV.statistic!.allTime += timeCount
+            
             if timeCount < GV.gameStatistics.bestTime {
                 GV.gameStatistics.bestTime = timeCount
+                GV.statistic!.bestTime = timeCount
             }
             
             var actScore: Int = 0
@@ -1746,12 +1754,21 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
             
             GV.gameStatistics.actScore = actScore
             GV.gameStatistics.levelScore += actScore
+            
+            GV.statistic!.actScore = actScore
+            GV.statistic!.levelScore += actScore
+            if GV.statistic!.bestScore < actScore {
+               GV.statistic!.bestScore = actScore
+            }
            
             if GV.gameStatistics.bestScore < actScore {
                 GV.gameStatistics.bestScore = actScore
             }
             
             GV.dataStore.saveGameStatisticsRecord(GV.gameStatistics)
+            
+            GV.realm.add(GV.statistic!, update: true)
+            try! GV.realm.commitWrite()
             let alert = getNextPlayArt(true)
             parentViewController!.presentViewController(alert, animated: true, completion: nil)
         } else if usedCellCount <= minUsedCells && usedCellCount > 1 { //  && spriteCount > maxUsedCells {
@@ -1882,6 +1899,19 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         GV.actGameParam.levelIndex = levelIndex
         GV.dataStore.saveGameParamRecord(GV.actGameParam)
         GV.gameStatistics = GV.dataStore.readGameStatisticsRecord(GV.actGameParam.nameID, levelID: GV.actGameParam.levelIndex)
+        try! GV.realm.write({
+            GV.player!.levelID = levelIndex
+            GV.realm.add(GV.player!, update: true)
+        })
+        if GV.realm.objects(StatisticModel).filter("playerID = %d AND levelID = %d", GV.player!.ID, GV.player!.levelID).count == 0 {
+            GV.statistic = StatisticModel()
+            GV.statistic!.ID = GV.realm.objects(StatisticModel).filter("playerID = %d", GV.player!.ID).count
+            GV.statistic!.playerID = GV.player!.ID
+            GV.statistic!.levelID = GV.player!.levelID
+            try! GV.realm.write({
+               GV.realm.add(GV.statistic!)
+            })
+        }
     }
 
     func checkContainers()->Bool {
@@ -2321,7 +2351,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
     }
     
     func setGreenLineSize() {
-        print("setGreenLineSize")
+//        print("setGreenLineSize")
         lineWidthMultiplier = lineWidthMultiplierSpecial
         drawHelpLinesSpec()
         lastGreenPair!.fixed = true

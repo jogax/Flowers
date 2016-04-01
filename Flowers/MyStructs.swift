@@ -59,6 +59,7 @@ struct GV {
     static let realm = try! Realm()
 
     static var player: PlayerModel?
+    static var statistic: StatisticModel?
 
     
 //    static var spriteGameDataArray: [SpriteGameData] = []

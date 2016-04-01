@@ -54,19 +54,29 @@ class ViewController: UIViewController, SettingsDelegate, UIApplicationDelegate 
         
         if GV.realm.objects(PlayerModel).count == 0 {
             GV.player = PlayerModel()
+            GV.player!.aktLanguageKey = GV.language.getAktLanguageKey()
             GV.player!.name = GV.language.getText(.TCGuest)
             GV.player!.isActPlayer = true
-            GV.player!.nameID = 0
-            GV.player!.aktLanguageKey = GV.actGameParam.aktLanguageKey
+            GV.player!.ID = 0
             try! GV.realm.write({
                 GV.realm.add(GV.player!)
             })
             
         } else {
-            GV.player = GV.realm.objects(PlayerModel).filter("isActPlayer = True").first!
-            print(GV.player)
+            GV.player = GV.realm.objects(PlayerModel).filter("isActPlayer = TRUE").first!
+         }
+ 
+        if GV.realm.objects(StatisticModel).filter("playerID = %d", GV.player!.ID).count == 0 {
+            GV.statistic = StatisticModel()
+            GV.statistic!.ID = 0
+            GV.statistic!.playerID = GV.player!.ID
+            GV.statistic!.levelID = GV.player!.levelID
+            try! GV.realm.write({
+                GV.realm.add(GV.statistic!)
+            })
+        } else {
+            GV.statistic = GV.realm.objects(StatisticModel).filter("playerID = %d AND levelID = %d", GV.player!.ID, /*GV.player!.levelID*/0).first!
         }
-        
         
         GV.language.setLanguage(GV.actGameParam.aktLanguageKey)
 //        GV.soundVolume = Float(GV.actGameParam.soundVolume)

@@ -89,8 +89,8 @@ class Language {
     
     init() {
         
-        let myString = NSLocale.preferredLanguages()[0]
-        let languageKey = myString[myString.startIndex..<myString.startIndex.advancedBy(2)]
+        let deviceLanguage = NSLocale.preferredLanguages()[0]
+        let languageKey = deviceLanguage[deviceLanguage.startIndex..<deviceLanguage.startIndex.advancedBy(2)]
         aktLanguage = languages[languageKey]!
 
         

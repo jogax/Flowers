@@ -665,12 +665,21 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
             addChild(sprite)
             let duration:Double = Double((zielPosition - cardPackage!.position).length()) / 500
             let actionMove = SKAction.moveTo(zielPosition, duration: duration)
+            
+            let zPositionPlus = SKAction.runBlock({
+                sprite.zPosition += 100
+            })
+
+            let zPositionMinus = SKAction.runBlock({
+                sprite.zPosition -= 100
+            })
+
             let actionHideEmptyCard = SKAction.runBlock({
                 self.deleteEmptySprite(aktColumn, row: aktRow)
 //                sprite.zPosition = 0
                 
             })
-            sprite.runAction(SKAction.sequence([actionMove, actionHideEmptyCard]))
+            sprite.runAction(SKAction.sequence([zPositionPlus, actionMove, zPositionMinus, actionHideEmptyCard]))
             if cardStack.count(.MySKNodeType) == 0 {
                 cardPackage!.changeButtonPicture(SKTexture(imageNamed: "emptycard"))
                 cardPackage!.alpha = 0.3
@@ -697,9 +706,9 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
             var countCreating = self.countColumns * self.countRows - self.checkGameArray()
             while countCreating > 0 && self.spriteCount > 0 {
                 let tippsCreated = self.createTipps()
-                print("tippsCreated:", tippsCreated, " in ", NSDate().timeIntervalSinceDate(startTime).threeDecimals, " seconds")
+//                print("tippsCreated:", tippsCreated, " in ", NSDate().timeIntervalSinceDate(startTime).threeDecimals, " seconds")
                 if self.tippArray.count <= 1 || self.stop  {
-                    print(" ==========> generate special Sprite - countCreating:", countCreating)
+//                    print(" ==========> generate special Sprite - countCreating:", countCreating)
                     self.generateSprites(.Special)
                     countCreating -= 1
                 } else {

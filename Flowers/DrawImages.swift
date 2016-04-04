@@ -566,6 +566,53 @@ class DrawImages {
         return pointOfCircle
     }
     
+    func getPanelImage (size: CGSize) -> UIImage {
+        UIGraphicsBeginImageContextWithOptions(size, opaque, scale)
+        let ctx = UIGraphicsGetCurrentContext()
+//        CGContextSetStrokeColorWithColor(ctx, UIColor.blackColor().CGColor)
+        
+//        CGContextBeginPath(ctx)
+        let roundRect = UIBezierPath(roundedRect: CGRectMake(0, 0, size.width, size.height), byRoundingCorners:.AllCorners, cornerRadii: CGSizeMake(size.width / 20, size.height / 20)).CGPath
+        CGContextAddPath(ctx, roundRect)
+        
+        
+        CGContextClosePath(ctx)
+        CGContextSetFillColorWithColor(ctx, UIColor.whiteColor().CGColor);
+        CGContextFillPath(ctx)
+        let image = UIGraphicsGetImageFromCurrentImageContext()
+
+        return image
+    }
+    
+    func getTableImage(size: CGSize, countLines: Int, countRows: Int) -> UIImage {
+        UIGraphicsBeginImageContextWithOptions(size, opaque, scale)
+        let ctx = UIGraphicsGetCurrentContext()
+        //        CGContextSetStrokeColorWithColor(ctx, UIColor.blackColor().CGColor)
+        
+        //        CGContextBeginPath(ctx)
+        let roundRect = UIBezierPath(roundedRect: CGRectMake(0, 0, size.width, 30 * CGFloat(countLines + 1)), byRoundingCorners:.AllCorners, cornerRadii: CGSizeMake(5, 5)).CGPath
+        CGContextSetFillColorWithColor(ctx, UIColor.yellowColor().CGColor);
+        CGContextFillPath(ctx);
+        CGContextStrokePath(ctx)
+
+        CGContextSetLineWidth(ctx, 0.2)
+        CGContextStrokeRect(ctx, CGRectMake(5, 5, size.width - 10, 30 * CGFloat(countLines + 1) - 10))
+        CGContextAddPath(ctx, roundRect);
+        
+        CGContextSetFillColorWithColor(ctx, UIColor.yellowColor().CGColor);
+        
+//        CGContextMoveToPoint(ctx, 0, 0)
+//        CGContextAddLineToPoint(ctx, size.width, size.height)
+        CGContextStrokePath(ctx)
+
+        
+        
+        CGContextClosePath(ctx);
+        let image = UIGraphicsGetImageFromCurrentImageContext()
+        
+        return image
+    }
+    
     
 }
 

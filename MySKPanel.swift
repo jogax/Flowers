@@ -33,17 +33,17 @@ class MySKPanel: SKSpriteNode {
     var touchesBeganWithNode: SKNode?
     var shadow: SKSpriteNode?
     init(frame: CGRect, type: PanelTypes, parent: SKScene) {
-        let texture: SKTexture = SKTexture(imageNamed: "panel")
+//        let texture: SKTexture = SKTexture(imageNamed: "panel")
+        let texture: SKTexture = SKTexture(image: DrawImages().getPanelImage(CGSizeMake(frame.size.width, frame.size.height)))
         
         sizeMultiplier = CGSizeMake(GV.deviceConstants.sizeMultiplier, GV.deviceConstants.sizeMultiplier * texture.size().height / texture.size().width) / 2
 
-        
         self.type = type
         super.init(texture: texture, color: UIColor.clearColor(), size: frame.size / 10)
         self.position = frame.origin
         self.color = UIColor.yellowColor()
         self.zPosition = 100
-        self.alpha = 0.85
+        self.alpha = 0.95
         self.userInteractionEnabled = true
         
         parent.addChild(self)
@@ -87,7 +87,7 @@ class MySKPanel: SKSpriteNode {
         
         label.position = CGPointMake((self.frame.minX - self.size.width) * 1.6, (self.frame.origin.y - CGFloat(lineNr) * self.frame.width * 0.1) + self.frame.origin.y * 0.8)
         label.fontName = "AvenirNext"
-        print (self.frame, label.frame)
+//        print (self.frame, label.frame)
         label.fontColor = SKColor.blueColor()
         label.zPosition = self.zPosition + 10
         label.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.Left
@@ -99,7 +99,7 @@ class MySKPanel: SKSpriteNode {
         let touchLocation = touches.first!.locationInNode(self)
         let node = nodeAtPoint(touchLocation)
         touchesBeganWithNode = node
-        print(node.name)
+//        print(node.name)
         if node is SKLabelNode && node.name!.isMemberOf (setPlayerFunc, setSoundFunc, setMusicFunc, setLanguageFunc, setReturnFunc) {
             (node as! SKLabelNode).fontSize += 2
         }
@@ -111,25 +111,28 @@ class MySKPanel: SKSpriteNode {
     
     override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
         let touchLocation = touches.first!.locationInNode(self)
-        (touchesBeganWithNode as! SKLabelNode).fontSize -= 2
-        let node = nodeAtPoint(touchLocation)
-        if node is SKLabelNode && touchesBeganWithNode == node {
-            if node.name!.isMemberOf (setPlayerFunc, setSoundFunc, setMusicFunc, setLanguageFunc, setReturnFunc) {
-//                (node   as! SKLabelNode).fontSize -= 2
-                switch node.name! {
-                case setPlayerFunc: setPlayer()
-                case setSoundFunc: setSoundVolume()
-                case setMusicFunc: setMusicVolume()
-                case setLanguageFunc: setLanguage()
-                case setReturnFunc: goBack()
-                default: goBack()
+        if touchesBeganWithNode is SKLabelNode {
+            (touchesBeganWithNode as! SKLabelNode).fontSize -= 2
+            let node = nodeAtPoint(touchLocation)
+            if node is SKLabelNode && touchesBeganWithNode == node {
+                if node.name!.isMemberOf (setPlayerFunc, setSoundFunc, setMusicFunc, setLanguageFunc, setReturnFunc) {
+    //                (node   as! SKLabelNode).fontSize -= 2
+                    switch node.name! {
+                    case setPlayerFunc: setPlayer()
+                    case setSoundFunc: setSoundVolume()
+                    case setMusicFunc: setMusicVolume()
+                    case setLanguageFunc: setLanguage()
+                    case setReturnFunc: goBack()
+                    default: goBack()
+                    }
                 }
             }
         }
     }
     
     func setPlayer() {
-        
+
+        SKPlayer(parent: self)
     }
     func setSoundVolume() {
         

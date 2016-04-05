@@ -11,6 +11,7 @@ enum PanelTypes: Int {
     case Settings = 0
 }
 class MySKPanel: SKSpriteNode {
+    var view: UIView
     override var size: CGSize {
         didSet {
             if oldValue != size {
@@ -32,29 +33,24 @@ class MySKPanel: SKSpriteNode {
     var type: PanelTypes
     var touchesBeganWithNode: SKNode?
     var shadow: SKSpriteNode?
-    init(frame: CGRect, type: PanelTypes, parent: SKScene) {
+    init(view: UIView, frame: CGRect, type: PanelTypes, parent: SKScene) {
 //        let texture: SKTexture = SKTexture(imageNamed: "panel")
         let texture: SKTexture = SKTexture(image: DrawImages().getPanelImage(CGSizeMake(frame.size.width, frame.size.height)))
         
         sizeMultiplier = CGSizeMake(GV.deviceConstants.sizeMultiplier, GV.deviceConstants.sizeMultiplier * texture.size().height / texture.size().width) / 2
-
+        
+        self.view = view
         self.type = type
         super.init(texture: texture, color: UIColor.clearColor(), size: frame.size / 10)
         self.position = frame.origin
         self.color = UIColor.yellowColor()
         self.zPosition = 100
-        self.alpha = 0.95
+        self.alpha = 1.0
         self.userInteractionEnabled = true
         
         parent.addChild(self)
         let zoomIn = SKAction.resizeToWidth(frame.size.width * sizeMultiplier.width, height: frame.size.height * sizeMultiplier.height, duration: 0.9)
         let callInitFunc = SKAction.runBlock({
-            self.shadow = SKSpriteNode()
-            self.shadow!.zPosition = self.zPosition - 10
-            self.shadow!.size = CGSizeMake(self.shadow!.size.width * self.sizeMultiplier.width, self.shadow!.size.height * self.sizeMultiplier.height)
-            self.shadow!.alpha = 0.4
-            self.shadow!.position = CGPointMake(self.frame.midX + 4, self.frame.midY - 4)
-            parent.addChild(self.shadow!)
             switch type {
                 case .Settings: self.makeSettings()
             }
@@ -131,8 +127,8 @@ class MySKPanel: SKSpriteNode {
     }
     
     func setPlayer() {
-
-        SKPlayer(parent: self)
+        
+        SKPlayer(parent: self, view: view)
     }
     func setSoundVolume() {
         

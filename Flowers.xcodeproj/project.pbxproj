@@ -61,7 +61,7 @@
 		205574431BBECB6200C165A1 /* NoSound.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 205574421BBECB6200C165A1 /* NoSound.m4a */; };
 		206BF77C1BF247380009928E /* ChooseNameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 206BF77B1BF247380009928E /* ChooseNameViewController.swift */; };
 		208BCEF01CAAD1330050CD62 /* PlayerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 208BCEEF1CAAD1330050CD62 /* PlayerModel.swift */; };
-		20AE75EB1CB2B50C006AFE29 /* SKPlayerNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20AE75EA1CB2B50C006AFE29 /* SKPlayerNode.swift */; };
+		20AE75EB1CB2B50C006AFE29 /* SKPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20AE75EA1CB2B50C006AFE29 /* SKPlayer.swift */; };
 		20F103FB1CAAD8F5009D57CB /* RealmSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 20F103FA1CAAD8F5009D57CB /* RealmSwift.framework */; };
 		20F103FD1CAAD93F009D57CB /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 20F103FC1CAAD93F009D57CB /* Realm.framework */; };
 		20F7E7101BBB03A200451984 /* SpriteKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 20F7E70F1BBB03A200451984 /* SpriteKit.framework */; };
@@ -158,7 +158,7 @@
 		205574421BBECB6200C165A1 /* NoSound.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = NoSound.m4a; sourceTree = "<group>"; };
 		206BF77B1BF247380009928E /* ChooseNameViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChooseNameViewController.swift; sourceTree = "<group>"; };
 		208BCEEF1CAAD1330050CD62 /* PlayerModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayerModel.swift; sourceTree = "<group>"; };
-		20AE75EA1CB2B50C006AFE29 /* SKPlayerNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SKPlayerNode.swift; sourceTree = "<group>"; };
+		20AE75EA1CB2B50C006AFE29 /* SKPlayer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SKPlayer.swift; sourceTree = "<group>"; };
 		20F103FA1CAAD8F5009D57CB /* RealmSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = RealmSwift.framework; sourceTree = "<group>"; };
 		20F103FC1CAAD93F009D57CB /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Realm.framework; sourceTree = "<group>"; };
 		20F7E70F1BBB03A200451984 /* SpriteKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SpriteKit.framework; path = System/Library/Frameworks/SpriteKit.framework; sourceTree = SDKROOT; };
@@ -241,7 +241,7 @@
 				2001412D1BAEB2DE003E0950 /* MyStructs.swift */,
 				200141461BAEDAE5003E0950 /* MySKNode.swift */,
 				201839B51C9C40DD00B33827 /* MySKPanel.swift */,
-				20AE75EA1CB2B50C006AFE29 /* SKPlayerNode.swift */,
+				20AE75EA1CB2B50C006AFE29 /* SKPlayer.swift */,
 				2014D3811C85DA45008A1946 /* MyContainer.swift */,
 				201C52411C316801001B04AB /* Extensions.swift */,
 				200BDA0A1BCFEF5100F72109 /* MySKButton.swift */,
@@ -691,7 +691,7 @@
 				200141761BAEFB4F003E0950 /* JGXLine.swift in Sources */,
 				200141301BAEB4F6003E0950 /* Language.swift in Sources */,
 				2001410F1BAEAA82003E0950 /* FlowerGameScene.swift in Sources */,
-				20AE75EB1CB2B50C006AFE29 /* SKPlayerNode.swift in Sources */,
+				20AE75EB1CB2B50C006AFE29 /* SKPlayer.swift in Sources */,
 				200BDA071BCFDEE600F72109 /* DrawImages.swift in Sources */,
 				201C52401C314CF9001B04AB /* LevelsForPlayWithCards.swift in Sources */,
 				2001412C1BAEB285003E0950 /* LevelsForPlayWithSprites.swift in Sources */,

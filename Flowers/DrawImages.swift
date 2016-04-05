@@ -575,10 +575,14 @@ class DrawImages {
         let roundRect = UIBezierPath(roundedRect: CGRectMake(0, 0, size.width, size.height), byRoundingCorners:.AllCorners, cornerRadii: CGSizeMake(size.width / 20, size.height / 20)).CGPath
         CGContextAddPath(ctx, roundRect)
         
-        
-        CGContextClosePath(ctx)
+//        CGContextSetShadow(ctx, CGSizeMake(10,10), 1.0)
+//        CGContextStrokePath(ctx)
+
         CGContextSetFillColorWithColor(ctx, UIColor.whiteColor().CGColor);
         CGContextFillPath(ctx)
+
+        
+        CGContextClosePath(ctx)
         let image = UIGraphicsGetImageFromCurrentImageContext()
 
         return image
@@ -591,23 +595,20 @@ class DrawImages {
         
         //        CGContextBeginPath(ctx)
         let roundRect = UIBezierPath(roundedRect: CGRectMake(0, 0, size.width, 30 * CGFloat(countLines + 1)), byRoundingCorners:.AllCorners, cornerRadii: CGSizeMake(5, 5)).CGPath
-        CGContextSetFillColorWithColor(ctx, UIColor.yellowColor().CGColor);
+        CGContextAddPath(ctx, roundRect);
+        CGContextSetShadow(ctx, CGSizeMake(5,5), 5.0)
+        CGContextSetFillColorWithColor(ctx, UIColor(red: 229/255, green: 255/255, blue: 229/255, alpha: 1.0 ).CGColor);
         CGContextFillPath(ctx);
         CGContextStrokePath(ctx)
 
         CGContextSetLineWidth(ctx, 0.2)
+        CGContextSetStrokeColorWithColor(ctx, UIColor.blackColor().CGColor)
         CGContextStrokeRect(ctx, CGRectMake(5, 5, size.width - 10, 30 * CGFloat(countLines + 1) - 10))
-        CGContextAddPath(ctx, roundRect);
         
-        CGContextSetFillColorWithColor(ctx, UIColor.yellowColor().CGColor);
-        
-//        CGContextMoveToPoint(ctx, 0, 0)
-//        CGContextAddLineToPoint(ctx, size.width, size.height)
-        CGContextStrokePath(ctx)
+//        CGContextStrokePath(ctx)
 
         
         
-        CGContextClosePath(ctx);
         let image = UIGraphicsGetImageFromCurrentImageContext()
         
         return image

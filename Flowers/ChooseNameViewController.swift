@@ -135,6 +135,7 @@ class ChooseNameViewController: UIViewController, UITableViewDataSource, UITable
     
     func getNewName(placeHolder: String) {
 
+        
         hideNameTableButtons(true)
         nameInputField.text = placeHolder
         nameInputField.placeholder = GV.language.getText(.TCName)

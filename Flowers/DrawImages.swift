@@ -605,6 +605,20 @@ class DrawImages {
         CGContextSetStrokeColorWithColor(ctx, UIColor.blackColor().CGColor)
         CGContextStrokeRect(ctx, CGRectMake(5, 5, size.width - 10, 30 * CGFloat(countLines + 1) - 10))
         
+        var lineYPosition:CGFloat = 30
+        
+        if countLines > 1 {
+            for _ in 0..<countLines {
+                CGContextBeginPath(ctx)
+                let p1 = CGPointMake(5, lineYPosition)
+                let p2 = CGPointMake(size.width, lineYPosition)
+                lineYPosition += 30
+                CGContextMoveToPoint(ctx, p1.x, p1.y)
+                CGContextAddLineToPoint(ctx, p2.x, p2.y)
+                CGContextStrokePath(ctx)
+            }
+        }
+        
 //        CGContextStrokePath(ctx)
 
         

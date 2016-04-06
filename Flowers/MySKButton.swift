@@ -37,7 +37,7 @@ class MySKButton: MySKNode {
                 shadow.color = SKColor.redColor()
                 shadow.alpha = 0.25
                 shadow.size = size
-                shadow.anchorPoint = self.anchorPoint + CGPointMake(-0.09, 0.04)
+//                shadow.anchorPoint = self.anchorPoint + CGPointMake(-0.09, 0.04)
                 shadow.zPosition = 2
                 shadow.name = buttonName
                 addChild(shadow)

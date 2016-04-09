@@ -29,27 +29,30 @@ class MySKPanel: SKSpriteNode {
     let setLanguageFunc = "setLanguage"
     let setReturnFunc = "setReturn"
     var sizeMultiplier = CGSizeMake(0, 0)
+    let fontSizeMultiplier:CGFloat = 0.09
 
     var type: PanelTypes
     var touchesBeganWithNode: SKNode?
     var shadow: SKSpriteNode?
     init(view: UIView, frame: CGRect, type: PanelTypes, parent: SKScene) {
+        let size = parent.size / 2 //CGSizeMake(parent.size.width / 2, parent.s)
 //        let texture: SKTexture = SKTexture(imageNamed: "panel")
-        let texture: SKTexture = SKTexture(image: DrawImages().getPanelImage(CGSizeMake(frame.size.width, frame.size.height)))
+        let texture: SKTexture = SKTexture(image: DrawImages().getPanelImage(size))
         
-        sizeMultiplier = CGSizeMake(GV.deviceConstants.sizeMultiplier, GV.deviceConstants.sizeMultiplier * texture.size().height / texture.size().width) / 2
+        sizeMultiplier = size / 10
         
         self.view = view
         self.type = type
-        super.init(texture: texture, color: UIColor.clearColor(), size: frame.size / 10)
-        self.position = frame.origin
+        super.init(texture: texture, color: UIColor.clearColor(), size: size)
+        self.position = CGPointMake(parent.size.width / 2, parent.size.height / 2)
+        self.size = size / 10
         self.color = UIColor.yellowColor()
         self.zPosition = 100
         self.alpha = 1.0
         self.userInteractionEnabled = true
         
         parent.addChild(self)
-        let zoomIn = SKAction.resizeToWidth(frame.size.width * sizeMultiplier.width, height: frame.size.height * sizeMultiplier.height, duration: 0.9)
+        let zoomIn = SKAction.resizeToWidth(size.width, height: size.height, duration: 0.5)
         let callInitFunc = SKAction.runBlock({
             switch type {
                 case .Settings: self.makeSettings()
@@ -77,17 +80,16 @@ class MySKPanel: SKSpriteNode {
 
     }
     func createLabels(label: SKLabelNode, text: String, lineNr: Int, horAlignment: SKLabelHorizontalAlignmentMode, name:String) {
-        let fontSizeMultiplier:CGFloat = 0.06
         label.text = text
         label.name = name
         
-        label.position = CGPointMake((self.frame.minX - self.size.width) * 1.6, (self.frame.origin.y - CGFloat(lineNr) * self.frame.width * 0.1) + self.frame.origin.y * 0.8)
+        label.position = CGPointMake(-CGFloat(size.width / 2) + sizeMultiplier.width ,  CGFloat(5 - lineNr) * sizeMultiplier.height )
         label.fontName = "AvenirNext"
 //        print (self.frame, label.frame)
         label.fontColor = SKColor.blueColor()
         label.zPosition = self.zPosition + 10
         label.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.Left
-        label.fontSize = self.frame.width * fontSizeMultiplier
+        label.fontSize = self.frame.width * fontSizeMultiplier * 0.7
         self.addChild(label)
     }
     
@@ -128,7 +130,7 @@ class MySKPanel: SKSpriteNode {
     
     func setPlayer() {
         
-        SKPlayer(parent: self, view: view)
+        MySKPlayer(parent: self, view: view)
     }
     func setSoundVolume() {
         

@@ -449,7 +449,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         bgAdder = 0.1
         
         bgImage!.anchorPoint = CGPointZero
-        bgImage!.position = CGPointMake(0, 0)
+//        bgImage!.position = self.position //CGPointMake(0, 0)
         bgImage!.zPosition = -15
         self.addChild(bgImage!)
         
@@ -2857,7 +2857,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         playMusic("NoSound", volume: GV.actGameParam.musicVolume, loops: 0)
         stopTimer(&countUp)
 //        settingsDelegate?.settingsDelegateFunc()
-        panel = MySKPanel(view: view!, frame: CGRectMake(self.frame.midX, self.frame.midY - 100, self.frame.width * 0.5, self.frame.height * 0.5), type: .Settings, parent: self)
+        panel = MySKPanel(view: view!, frame: CGRectMake(self.frame.midX, self.frame.midY, self.frame.width * 0.5, self.frame.height * 0.5), type: .Settings, parent: self)
         panel = nil
 //        self.addChild(panel)
         

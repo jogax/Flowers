@@ -575,7 +575,7 @@ class DrawImages {
         let roundRect = UIBezierPath(roundedRect: CGRectMake(0, 0, size.width, size.height), byRoundingCorners:.AllCorners, cornerRadii: CGSizeMake(size.width / 20, size.height / 20)).CGPath
         CGContextAddPath(ctx, roundRect)
         
-//        CGContextSetShadow(ctx, CGSizeMake(10,10), 1.0)
+        CGContextSetShadow(ctx, CGSizeMake(10,10), 1.0)
 //        CGContextStrokePath(ctx)
 
         CGContextSetFillColorWithColor(ctx, UIColor.whiteColor().CGColor);
@@ -589,12 +589,13 @@ class DrawImages {
     }
     
     func getTableImage(size: CGSize, countLines: Int, countRows: Int) -> UIImage {
-        UIGraphicsBeginImageContextWithOptions(size, opaque, scale)
+        let mySize = CGSizeMake(size.width - 10, CGFloat(countLines * 30) + 20)
+        UIGraphicsBeginImageContextWithOptions(mySize, opaque, scale)
         let ctx = UIGraphicsGetCurrentContext()
         //        CGContextSetStrokeColorWithColor(ctx, UIColor.blackColor().CGColor)
         
         //        CGContextBeginPath(ctx)
-        let roundRect = UIBezierPath(roundedRect: CGRectMake(0, 0, size.width, 30 * CGFloat(countLines + 1)), byRoundingCorners:.AllCorners, cornerRadii: CGSizeMake(5, 5)).CGPath
+        let roundRect = UIBezierPath(roundedRect: CGRectMake(0, 0, mySize.width, 30 * CGFloat(countLines) + 20), byRoundingCorners:.AllCorners, cornerRadii: CGSizeMake(5, 5)).CGPath
         CGContextAddPath(ctx, roundRect);
         CGContextSetShadow(ctx, CGSizeMake(5,5), 5.0)
         CGContextSetFillColorWithColor(ctx, UIColor(red: 229/255, green: 255/255, blue: 229/255, alpha: 1.0 ).CGColor);
@@ -603,15 +604,15 @@ class DrawImages {
 
         CGContextSetLineWidth(ctx, 0.2)
         CGContextSetStrokeColorWithColor(ctx, UIColor.blackColor().CGColor)
-        CGContextStrokeRect(ctx, CGRectMake(5, 5, size.width - 10, 30 * CGFloat(countLines + 1) - 10))
+        CGContextStrokeRect(ctx, CGRectMake(5, 5, mySize.width, 30 * CGFloat(countLines)))
         
-        var lineYPosition:CGFloat = 30
+        var lineYPosition:CGFloat = mySize.height / CGFloat(countLines)
         
         if countLines > 1 {
-            for _ in 0..<countLines {
+            for _ in 0..<countLines - 1 {
                 CGContextBeginPath(ctx)
                 let p1 = CGPointMake(5, lineYPosition)
-                let p2 = CGPointMake(size.width, lineYPosition)
+                let p2 = CGPointMake(mySize.width - 5, lineYPosition)
                 lineYPosition += 30
                 CGContextMoveToPoint(ctx, p1.x, p1.y)
                 CGContextAddLineToPoint(ctx, p2.x, p2.y)
@@ -619,7 +620,7 @@ class DrawImages {
             }
         }
         
-//        CGContextStrokePath(ctx)
+        CGContextStrokePath(ctx)
 
         
         

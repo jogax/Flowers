@@ -588,46 +588,134 @@ class DrawImages {
         return image
     }
     
-    func getTableImage(size: CGSize, countLines: Int, countRows: Int) -> UIImage {
-        let mySize = CGSizeMake(size.width - 10, CGFloat(countLines * 30) + 20)
-        UIGraphicsBeginImageContextWithOptions(mySize, opaque, scale)
+    func getDeleteImage (size: CGSize) -> UIImage {
+        UIGraphicsBeginImageContextWithOptions(size, opaque, scale)
         let ctx = UIGraphicsGetCurrentContext()
-        //        CGContextSetStrokeColorWithColor(ctx, UIColor.blackColor().CGColor)
+        let w = size.width
+        let h = size.height
+        CGContextSetLineWidth(ctx, w * 0.04)
+       
+        CGContextSetStrokeColorWithColor(ctx, UIColor.redColor().CGColor)
+        CGContextSetLineJoin (ctx, .Round)
+        CGContextSetLineCap (ctx, .Round)
         
-        //        CGContextBeginPath(ctx)
-        let roundRect = UIBezierPath(roundedRect: CGRectMake(0, 0, mySize.width, 30 * CGFloat(countLines) + 20), byRoundingCorners:.AllCorners, cornerRadii: CGSizeMake(5, 5)).CGPath
-        CGContextAddPath(ctx, roundRect);
-        CGContextSetShadow(ctx, CGSizeMake(5,5), 5.0)
-        CGContextSetFillColorWithColor(ctx, UIColor(red: 229/255, green: 255/255, blue: 229/255, alpha: 1.0 ).CGColor);
-        CGContextFillPath(ctx);
-        CGContextStrokePath(ctx)
+        let points1 = [
+            CGPointMake(w * 0.20,h * 0.20),
+            CGPointMake(w * 0.30, h * 0.90),
+            CGPointMake(w * 0.70, h * 0.90),
+            CGPointMake(w * 0.80, h * 0.20)
+        ]
+        CGContextAddLines(ctx, points1, points1.count)
+        
+        CGContextMoveToPoint(ctx, w * 0.32, h * 0.25)
+        CGContextAddLineToPoint(ctx, w * 0.38, h * 0.80)
+        
+        CGContextMoveToPoint(ctx, w * 0.50, h * 0.25)
+        CGContextAddLineToPoint(ctx, w * 0.50, h * 0.80)
+        
+        CGContextMoveToPoint(ctx, w * 0.68, h * 0.25)
+        CGContextAddLineToPoint(ctx, w * 0.62, h * 0.80)
 
-        CGContextSetLineWidth(ctx, 0.2)
-        CGContextSetStrokeColorWithColor(ctx, UIColor.blackColor().CGColor)
-        CGContextStrokeRect(ctx, CGRectMake(5, 5, mySize.width, 30 * CGFloat(countLines)))
         
-        var lineYPosition:CGFloat = mySize.height / CGFloat(countLines)
         
-        if countLines > 1 {
-            for _ in 0..<countLines - 1 {
-                CGContextBeginPath(ctx)
-                let p1 = CGPointMake(5, lineYPosition)
-                let p2 = CGPointMake(mySize.width - 5, lineYPosition)
-                lineYPosition += 30
-                CGContextMoveToPoint(ctx, p1.x, p1.y)
-                CGContextAddLineToPoint(ctx, p2.x, p2.y)
-                CGContextStrokePath(ctx)
-            }
+        CGContextMoveToPoint(ctx, w * 0.16, h * 0.18)
+        CGContextAddLineToPoint(ctx, w * 0.84, h * 0.18)
+        
+        
+        CGContextMoveToPoint(ctx, w * 0.18, h * 0.15)
+        CGContextAddLineToPoint(ctx, w * 0.82, h * 0.15)
+        
+        CGContextSetLineCap (ctx, .Round)
+        CGContextStrokePath(ctx)
+        
+        CGContextBeginPath(ctx)
+        
+        let r0 = w * 0.10
+        
+        let center1 = CGPointMake(w * 0.50, h * 0.14)
+        
+        
+        //        let oneGrad:CGFloat = CGFloat(M_PI) / 180
+        let minAngle1 = 180 * GV.oneGrad
+        let maxAngle1 = 0 * GV.oneGrad
+        //println("1 Grad: \(oneGrad)")
+        
+        
+        CGContextAddArc(ctx, center1.x, center1.y, r0, minAngle1, maxAngle1, 0)
+ 
+        CGContextStrokePath(ctx)
+        
+        
+        if let image = UIGraphicsGetImageFromCurrentImageContext() {
+            return image
         }
+        return UIImage()
+    }
+
+    
+    func getModifyImage (size: CGSize) -> UIImage {
+        UIGraphicsBeginImageContextWithOptions(size, opaque, scale)
+        let ctx = UIGraphicsGetCurrentContext()
+        let w = size.width
+        let h = size.height
+        CGContextSetLineWidth(ctx, w * 0.08)
+        //        let roundRect = UIBezierPath(roundedRect: CGRectMake(0, 0, size.width * 0.6, size.height * 0.8), byRoundingCorners:.AllCorners, cornerRadii: CGSizeMake(size.width * rounding, size.height * rounding)).CGPath
+        //
+        //        CGContextAddPath(ctx, roundRect)
         
+        //        CGContextSetShadow(ctx, CGSizeMake(10,10), 1.0)
+        //        CGContextStrokePath(ctx)
+        
+        
+        CGContextSetStrokeColorWithColor(ctx, UIColor.grayColor().CGColor)
+        CGContextSetLineJoin (ctx, .Round)
+        CGContextSetLineCap (ctx, .Round)
+        
+        let roundRect = UIBezierPath(roundedRect: CGRectMake(w * 0.1, h * 0.4, w * 0.8, h * 0.5), byRoundingCorners:.AllCorners, cornerRadii: CGSizeMake(w * 0.08, h * 0.08)).CGPath
+        CGContextAddPath(ctx, roundRect)
         CGContextStrokePath(ctx)
 
+        CGContextBeginPath(ctx)
+        CGContextSetLineWidth(ctx, w * 0.1)
+        CGContextSetStrokeColorWithColor(ctx, UIColor.brownColor().CGColor)
+        CGContextSetLineJoin (ctx, .Round)
+        CGContextSetLineCap (ctx, .Round)
         
         
-        let image = UIGraphicsGetImageFromCurrentImageContext()
+//        CGContextSetShadow(ctx, CGSizeMake(w * 0.04, h * 0.04), 0.5)
+//        CGContextSetFillColorWithColor(ctx, UIColor(red: 240/255, green: 255/255, blue: 240/255, alpha: 1.0 ).CGColor);
+
+//        let frame = CGRectMake(w * 0.1, h * 0.1, w * 0.8, h * 0.8)
+//        
+//        CGContextStrokeRect(ctx, frame)
+
+        let points = [
+            CGPointMake(w * 0.60, h * 0.60),
+            CGPointMake(w * 0.80, h * 0.20)
+        ]
+        CGContextAddLines(ctx, points, points.count)
+        CGContextStrokePath(ctx)
+
+        CGContextBeginPath(ctx)
+        CGContextSetLineWidth(ctx, w * 0.03)
+        CGContextSetStrokeColorWithColor(ctx, UIColor.whiteColor().CGColor)
+        CGContextSetLineJoin (ctx, .Round)
+        CGContextSetLineCap (ctx, .Round)
+        let points1 = [
+            CGPointMake(w * 0.63, h * 0.50),
+            CGPointMake(w * 0.73, h * 0.30)
+        ]
+        CGContextAddLines(ctx, points1, points1.count)
+
+        CGContextStrokePath(ctx)
         
-        return image
+        
+        if let image = UIGraphicsGetImageFromCurrentImageContext() {
+            return image
+        }
+        return UIImage()
     }
+    
     
     
 }

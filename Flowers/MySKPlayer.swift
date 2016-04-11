@@ -29,6 +29,10 @@ class MySKPlayer: MySKTable, UITextFieldDelegate {
     var parentNode: SKSpriteNode
     var positionMultiplier = GV.deviceConstants.cardPositionMultiplier * 0.6
     var countLines = 0
+    let myColumnWidths: [CGFloat] = [80, 10, 10]
+    let deleteImage = DrawImages().getDeleteImage(CGSizeMake(40,50))
+    let modifyImage = DrawImages().getModifyImage(CGSizeMake(50,50))
+
 
     init(parent: SKSpriteNode, view: UIView) {
         self.view = view
@@ -42,18 +46,20 @@ class MySKPlayer: MySKTable, UITextFieldDelegate {
 
         
 //        let texture: SKTexture = SKTexture(image: DrawImages().getTableImage(parent.frame.size,countLines: Int(countLines), countRows: 1))
-        super.init(size: size, columns: 1, rows:countLines)
+        super.init(size: size, columnWidths: myColumnWidths, columns: 3, rows:countLines)
 
         let myPosition = CGPointMake(0, parent.position.y - parent.size.height * 0.58 )
+        self.nameInputField.delegate = self
         self.position = myPosition
         
         self.zPosition = parent.zPosition + 200
         
         if countLines == 1 && nameTable[0].name == GV.language.getText(.TCGuest) {
-            getPlayerName("")
+            getPlayerName(0)
         } else {
             showPlayers()
         }
+        
 
         self.alpha = 1.0
 //        self.userInteractionEnabled = true
@@ -63,8 +69,9 @@ class MySKPlayer: MySKTable, UITextFieldDelegate {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    func getPlayerName(name: String) {
-        
+    
+    func getPlayerName(row: Int) {
+        let name = nameTable[row].name == GV.language.getText(.TCGuest) ? "" : nameTable[row].name
         nameInputField.text = name
         nameInputField.placeholder = GV.language.getText(.TCName)
         nameInputField.backgroundColor = UIColor(red: 229/255, green: 255/255, blue: 229/255, alpha: 1.0 )
@@ -72,7 +79,6 @@ class MySKPlayer: MySKTable, UITextFieldDelegate {
                                           parentNode.position.y - 0.92 * (parentNode.size.height / 2),
                                           size.width * 0.8,
                                           0.8 * self.size.height / CGFloat(countLines))
-        nameInputField.delegate  = self
         nameInputField.autocorrectionType = .No
         nameInputField.layer.borderWidth = 0.0
         nameInputField.becomeFirstResponder()
@@ -88,43 +94,39 @@ class MySKPlayer: MySKTable, UITextFieldDelegate {
         nameInputField.removeFromSuperview()
     }
     
-    func textView(textView: UITextView, shouldChangeTextInRange range: NSRange, replacementText text: String) -> Bool {
-        if (text == "\n") {
-            textView.resignFirstResponder()
-        }
-        return true
-    }
-    
-    func textFieldEditingDidChange(sender: AnyObject) {
-        print("textField:hier)")
-        
-    }
-    
-    func textFieldDidBeginEditing(textField: UITextField) {
-        _ = 0
-    }
     
     func textFieldShouldReturn(textField: UITextField)->Bool {
-        nameTable[nameTableIndex].name = nameInputField.text!
-        updatePlayers()
-        showPlayers()
-        nameInputField.removeFromSuperview()
-
-       return true
+        textFieldDidEndEditing(textField)
+        return true
     }
 
     func showPlayers() {
         for index in 0..<nameTable.count {
-            showElementOfTable(nameTable[index].name + "   >", column: 0, row: index, selected: nameTable[index].isActPlayer)
+//            let fixedLength = 40
+//            let lengthOfName = nameTable[index].name.characters.count
+//            let spaces = String(count: fixedLength - lengthOfName, repeatedValue: (" " as Character))
+            let name = nameTable[index].name // + spaces + ">"
+            showElementOfTable(name, column: 0, row: index, selected: nameTable[index].isActPlayer)
+            showImageInTable(modifyImage, column: 1, row: index, selected: nameTable[index].isActPlayer)
+            showImageInTable(deleteImage, column: 2, row: index, selected: nameTable[index].isActPlayer)
         }
         showElementOfTable("+", column: 0, row: nameTable.count, selected: false)
     }
     
     func updatePlayers() {
+        var doUpdate = true
         GV.realm.beginWrite()
-        let editedPlayer = GV.realm.objects(PlayerModel).filter("ID = \(nameTable[nameTableIndex].playerID)").first
-        editedPlayer!.name = nameTable[nameTableIndex].name
-        GV.realm.add(editedPlayer!, update: true)
+        if let editedPlayer = GV.realm.objects(PlayerModel).filter("ID = \(nameTable[nameTableIndex].playerID)").first {
+            editedPlayer.name = nameTable[nameTableIndex].name
+            GV.realm.add(editedPlayer, update: true)
+        } else {
+            let newPlayer = PlayerModel()
+            newPlayer.aktLanguageKey = GV.language.getAktLanguageKey()
+            newPlayer.name = nameTable[nameTableIndex].name
+            newPlayer.isActPlayer = true
+            newPlayer.ID = nameTableIndex
+            GV.realm.add(newPlayer)
+        }
         try! GV.realm.commitWrite()
     }
     
@@ -141,13 +143,19 @@ class MySKPlayer: MySKTable, UITextFieldDelegate {
         let touchLocation = touches.first!.locationInNode(self)
         let touchesEndedAtNode = nodeAtPoint(touchLocation)
         
-        if touchesBeganAtNode != nil && touchesBeganAtNode == touchesEndedAtNode {
-            let (column, row) = getColumnRowOfElement(touchesEndedAtNode.name!)
+        if touchesBeganAtNode != nil && touchesBeganAtNode == touchesEndedAtNode && touchesBeganAtNode is SKLabelNode {
+            let (column, row) = getColumnRowOfElement(touchesBeganAtNode!.name!)
             if row == nameTable.count {
-                getPlayerName("Gálka")
+                nameTable.append(nameTableMember(playerID: row, name: "", isActPlayer: false))
+                nameTableIndex = nameTable.count
+                let size = CGSizeMake(parent!.frame.width * 0.9, CGFloat(countLines) * heightOfTableRow)
+
+                reDraw(size, columnWidths: myColumnWidths, columns: 0, rows: nameTableIndex)
+
             }
+            nameTableIndex = row
+            getPlayerName(row)
         }
-        self.removeFromParent()
         
         
     }

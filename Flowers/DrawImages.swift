@@ -8,6 +8,8 @@
 
 import UIKit
 
+
+
 class DrawImages {
     var pfeillinksImage = UIImage()
     var pfeilrechtsImage = UIImage()
@@ -588,51 +590,51 @@ class DrawImages {
         return image
     }
     
-    func getDeleteImage (size: CGSize) -> UIImage {
-        UIGraphicsBeginImageContextWithOptions(size, opaque, scale)
+    static func getDeleteImage (size: CGSize) -> UIImage {
+        UIGraphicsBeginImageContextWithOptions(size, false, 1)
         let ctx = UIGraphicsGetCurrentContext()
-        let w = size.width
-        let h = size.height
-        CGContextSetLineWidth(ctx, w * 0.04)
+        let w = size.width / 100
+        let h = size.height / 100
+        CGContextSetLineWidth(ctx, w * 2)
        
         CGContextSetStrokeColorWithColor(ctx, UIColor.redColor().CGColor)
         CGContextSetLineJoin (ctx, .Round)
         CGContextSetLineCap (ctx, .Round)
         
         let points1 = [
-            CGPointMake(w * 0.20,h * 0.20),
-            CGPointMake(w * 0.30, h * 0.90),
-            CGPointMake(w * 0.70, h * 0.90),
-            CGPointMake(w * 0.80, h * 0.20)
+            CGPointMake(w * 20,h * 20),
+            CGPointMake(w * 30, h * 90),
+            CGPointMake(w * 70, h * 90),
+            CGPointMake(w * 80, h * 20)
         ]
         CGContextAddLines(ctx, points1, points1.count)
         
-        CGContextMoveToPoint(ctx, w * 0.32, h * 0.25)
-        CGContextAddLineToPoint(ctx, w * 0.38, h * 0.80)
+        CGContextMoveToPoint(ctx, w * 32, h * 25)
+        CGContextAddLineToPoint(ctx, w * 38, h * 80)
         
-        CGContextMoveToPoint(ctx, w * 0.50, h * 0.25)
-        CGContextAddLineToPoint(ctx, w * 0.50, h * 0.80)
+        CGContextMoveToPoint(ctx, w * 50, h * 25)
+        CGContextAddLineToPoint(ctx, w * 50, h * 80)
         
-        CGContextMoveToPoint(ctx, w * 0.68, h * 0.25)
-        CGContextAddLineToPoint(ctx, w * 0.62, h * 0.80)
+        CGContextMoveToPoint(ctx, w * 68, h * 25)
+        CGContextAddLineToPoint(ctx, w * 62, h * 80)
 
         
         
-        CGContextMoveToPoint(ctx, w * 0.16, h * 0.18)
-        CGContextAddLineToPoint(ctx, w * 0.84, h * 0.18)
+        CGContextMoveToPoint(ctx, w * 16, h * 18)
+        CGContextAddLineToPoint(ctx, w * 84, h * 18)
         
         
-        CGContextMoveToPoint(ctx, w * 0.18, h * 0.15)
-        CGContextAddLineToPoint(ctx, w * 0.82, h * 0.15)
+        CGContextMoveToPoint(ctx, w * 18, h * 15)
+        CGContextAddLineToPoint(ctx, w * 82, h * 15)
         
         CGContextSetLineCap (ctx, .Round)
         CGContextStrokePath(ctx)
         
         CGContextBeginPath(ctx)
         
-        let r0 = w * 0.10
+        let r0 = w * 10
         
-        let center1 = CGPointMake(w * 0.50, h * 0.14)
+        let center1 = CGPointMake(w * 50, h * 14)
         
         
         //        let oneGrad:CGFloat = CGFloat(M_PI) / 180
@@ -653,8 +655,8 @@ class DrawImages {
     }
 
     
-    func getModifyImage (size: CGSize) -> UIImage {
-        UIGraphicsBeginImageContextWithOptions(size, opaque, scale)
+    static func getModifyImage (size: CGSize) -> UIImage {
+        UIGraphicsBeginImageContextWithOptions(size, false, 1)
         let ctx = UIGraphicsGetCurrentContext()
         let w = size.width
         let h = size.height
@@ -715,52 +717,97 @@ class DrawImages {
         }
         return UIImage()
     }
+
+    static func getOKImage (size: CGSize) -> UIImage {
+        UIGraphicsBeginImageContextWithOptions(size, false, 1)
+        let ctx = UIGraphicsGetCurrentContext()
+        let w = size.width / 100
+        let h = size.height / 100
+        
+        CGContextSetStrokeColorWithColor(ctx, UIColor.greenAppleColor().CGColor)
+        CGContextSetLineJoin (ctx, .Round)
+        CGContextSetLineCap (ctx, .Round)
+        
+        CGContextSetLineWidth(ctx, w * 20)
+        let points = [
+            CGPointMake(w * 30, h * 60),
+            CGPointMake(w * 50, h * 80),
+            CGPointMake(w * 80, h * 20)
+        ]
+        CGContextAddLines(ctx, points, points.count)
+        CGContextStrokePath(ctx)
+        
+        if let image = UIGraphicsGetImageFromCurrentImageContext() {
+            return image
+        }
+        return UIImage()
+    }
     
-    
-    
+    static func getStatisticImage(size: CGSize) -> UIImage {
+        UIGraphicsBeginImageContextWithOptions(size, false, 1)
+        let ctx = UIGraphicsGetCurrentContext()
+        let w = size.width / 100
+        let h = size.height / 100
+        
+        CGContextSetStrokeColorWithColor(ctx, UIColor.blackColor().CGColor)
+        CGContextSetLineJoin (ctx, .Round)
+        CGContextSetLineCap (ctx, .Round)
+        
+        CGContextSetLineWidth(ctx, w * 4)
+        var points = [
+            CGPointMake(w * 10, h * 10),
+            CGPointMake(w * 5, h * 90),
+            CGPointMake(w * 90, h * 90)
+        ]
+        CGContextAddLines(ctx, points, points.count)
+        CGContextStrokePath(ctx)
+        
+        CGContextBeginPath(ctx)
+        CGContextSetStrokeColorWithColor(ctx, UIColor.blackColor().CGColor)
+        CGContextSetLineWidth(ctx, w * 0.5)
+        points = [
+            CGPointMake(w * 10, h * 25),
+            CGPointMake(w * 90, h * 25)
+        ]
+        CGContextAddLines(ctx, points, points.count)
+
+        points = [
+            CGPointMake(w * 10, h * 50),
+            CGPointMake(w * 90, h * 50)
+        ]
+        CGContextAddLines(ctx, points, points.count)
+        
+        points = [
+            CGPointMake(w * 10, h * 70),
+            CGPointMake(w * 90, h * 70)
+        ]
+        CGContextAddLines(ctx, points, points.count)
+        
+        CGContextStrokePath(ctx)
+        
+        CGContextBeginPath(ctx)
+        CGContextSetStrokeColorWithColor(ctx, UIColor.redColor().CGColor)
+        CGContextSetLineWidth(ctx, w * 5)
+        points.removeAll()
+        
+        points = [
+            CGPointMake(w * 10, h * 80),
+            CGPointMake(w * 30, h * 40),
+            CGPointMake(w * 60, h * 60),
+            CGPointMake(w * 90, h * 30)
+        ]
+        CGContextAddLines(ctx, points, points.count)
+        CGContextStrokePath(ctx)
+
+        
+        if let image = UIGraphicsGetImageFromCurrentImageContext() {
+            return image
+        }
+        return UIImage()
+    }
+
 }
 
-extension UIImage {
-    public func imageRotatedByDegrees(degrees: CGFloat, flip: Bool) -> UIImage {
-//        let radiansToDegrees: (CGFloat) -> CGFloat = {
-//            return $0 * (180.0 / CGFloat(M_PI))
-//        }
-        let degreesToRadians: (CGFloat) -> CGFloat = {
-            return $0 / 180.0 * CGFloat(M_PI)
-        }
-        
-        // calculate the size of the rotated view's containing box for our drawing space
-        let rotatedViewBox = UIView(frame: CGRect(origin: CGPointZero, size: size))
-        let t = CGAffineTransformMakeRotation(degreesToRadians(degrees));
-        rotatedViewBox.transform = t
-        let rotatedSize = rotatedViewBox.frame.size
-        
-        // Create the bitmap context
-        UIGraphicsBeginImageContext(rotatedSize)
-        let bitmap = UIGraphicsGetCurrentContext()
-        
-        // Move the origin to the middle of the image so we will rotate and scale around the center.
-        CGContextTranslateCTM(bitmap, rotatedSize.width / 2.0, rotatedSize.height / 2.0);
-        
-        //   // Rotate the image context
-        CGContextRotateCTM(bitmap, degreesToRadians(degrees));
-        
-        // Now, draw the rotated/scaled image into the context
-        var yFlip: CGFloat
-        
-        if(flip){
-            yFlip = CGFloat(-1.0)
-        } else {
-            yFlip = CGFloat(1.0)
-        }
-        
-        CGContextScaleCTM(bitmap, yFlip, -1.0)
-        CGContextDrawImage(bitmap, CGRectMake(-size.width / 2, -size.height / 2, size.width, size.height), CGImage)
-        
-        let newImage = UIGraphicsGetImageFromCurrentImageContext()
-        UIGraphicsEndImageContext()
-        
-        return newImage
-    }
-}
+
+
 

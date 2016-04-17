@@ -18,9 +18,10 @@ class MySKTable: SKSpriteNode {
     var touchesBeganAtNode: SKNode?
     let separator = "/"
     var columnWidths: [CGFloat]
+    var fontSize:CGFloat = 0
     
     init(size: CGSize, columnWidths: [CGFloat], columns: Int, rows: Int) {
-        self.columns = columns
+        self.columns = columnWidths.count
         self.rows = rows
         self.sizeOfElement = CGSizeMake(size.width / CGFloat(columns), size.height / CGFloat(rows))
         self.columnWidths = columnWidths
@@ -29,6 +30,7 @@ class MySKTable: SKSpriteNode {
         self.alpha = 1.0
         self.texture = SKTexture(image: drawTableImage(size, columnWidths: columnWidths, columns: columns, rows: rows))
         self.userInteractionEnabled = true
+        fontSize = size.width * GV.deviceConstants.fontSizeMultiplier * 0.7
 
 //        parent!.addChild(self)
     }
@@ -40,33 +42,36 @@ class MySKTable: SKSpriteNode {
     
     func showElementOfTable(element: String, column: Int, row: Int, selected: Bool) {
         let name = "\(column)\(separator)\(row)"
+        var label = SKLabelNode()
+        var labelExists = false
         
         for index in 0..<self.children.count {
             if self.children[index].name == name {
-                self.children[index].removeFromParent()
+                label = self.children[index] as! SKLabelNode
+                labelExists = true
                 break
             }
         }
-        let fontSizeMultiplier = GV.deviceConstants.fontSizeMultiplier
-        let label = SKLabelNode()
-        label.text = element
-        label.name = name
         
-        label.position = CGPointMake(-size.width * 0.45 + CGFloat(column) * sizeOfElement.width, (self.size.height - sizeOfElement.height) / 2 - CGFloat(row) * sizeOfElement.height)
         if selected {
-            label.fontName = "TimesNewRomanBold"
+            label.fontName = "ArialMT"
             label.fontColor = SKColor.blueColor()
         } else {
-            label.fontName = "TimesNewRoman"
+            label.fontName = "Arial"
             label.fontColor = SKColor.blackColor()
         }
-        label.zPosition = self.zPosition + 10
-        label.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.Left
-        label.verticalAlignmentMode = SKLabelVerticalAlignmentMode.Center
 
-        label.fontSize = self.frame.width * fontSizeMultiplier * 0.7
-        self.addChild(label)
-
+        label.fontSize = fontSize
+        if !labelExists {
+            label.zPosition = self.zPosition + 10
+            label.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.Left
+            label.verticalAlignmentMode = SKLabelVerticalAlignmentMode.Center
+            label.text = element
+            label.name = name
+            
+            label.position = CGPointMake(-size.width * 0.45 + CGFloat(column) * sizeOfElement.width, (self.size.height - sizeOfElement.height) / 2 - CGFloat(row) * sizeOfElement.height)
+            self.addChild(label)
+        }
     }
     
     func showImageInTable(image: UIImage, column: Int, row: Int, selected: Bool) {
@@ -102,7 +107,7 @@ class MySKTable: SKSpriteNode {
     
 
     func reDraw(size: CGSize, columnWidths: [CGFloat], columns: Int, rows: Int) {
-        self.columns = columns
+        self.columns = columnWidths.count
         self.rows = rows
         self.sizeOfElement = CGSizeMake(size.width / CGFloat(columns), size.height / CGFloat(rows))
         self.size = size

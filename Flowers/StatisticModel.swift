@@ -21,9 +21,5 @@ class StatisticModel: Object {
     dynamic var bestTime = 0
     dynamic var countPlays = 0
     dynamic var levelScore = 0
-    
-    override  class func primaryKey() -> String {
-        return "ID"
-    }
-    
+     
 }

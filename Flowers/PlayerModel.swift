@@ -15,7 +15,7 @@ class PlayerModel: Object {
     dynamic var levelID = 0
     dynamic var name = ""
     dynamic var isActPlayer = false
-    dynamic var aktLanguageKey = ""
+    dynamic var aktLanguageKey = GV.language.getAktLanguageKey()
     dynamic var soundVolume: Float = 0
     dynamic var musicVolume: Float = 0
     dynamic var created = NSDate()

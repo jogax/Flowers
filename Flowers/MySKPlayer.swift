@@ -34,6 +34,7 @@ class MySKPlayer: MySKTable, UITextFieldDelegate {
     let modifyImage = DrawImages.getModifyImage(CGSizeMake(30,30))
     let OKImage = DrawImages.getOKImage(CGSizeMake(30,30))
     let statisticImage = DrawImages.getStatisticImage(CGSizeMake(30,30))
+    let myName = "MyName"
 
 
     init(parent: SKSpriteNode, view: UIView) {
@@ -49,9 +50,8 @@ class MySKPlayer: MySKTable, UITextFieldDelegate {
         
 //        let texture: SKTexture = SKTexture(image: DrawImages().getTableImage(parent.frame.size,countLines: Int(countLines), countRows: 1))
         super.init(size: size, columnWidths: myColumnWidths, columns: 3, rows:countLines)
+        self.name = myName
         
-        
-
         let myPosition = CGPointMake(0, (parent.size.height - size.height) / 2 - 10)
         
         self.nameInputField.delegate = self
@@ -75,12 +75,16 @@ class MySKPlayer: MySKTable, UITextFieldDelegate {
     }
     
     func getPlayerName(row: Int) {
+        let yPosition = parentNode.position.y - parentNode.size.height * 0.474 + (CGFloat(row) * heightOfTableRow)
+        let xPosition = parentNode.position.x - 0.405 * parentNode.size.width
         let name = nameTable[row].name == GV.language.getText(.TCGuest) ? "" : nameTable[row].name
+        let myFont = UIFont(name: "ArialMT", size: fontSize)
+        nameInputField.font = myFont
+        nameInputField.textColor = UIColor.blueColor()
         nameInputField.text = name
-        nameInputField.placeholder = GV.language.getText(.TCName)
-        nameInputField.backgroundColor = UIColor(red: 229/255, green: 255/255, blue: 229/255, alpha: 1.0 )
-        nameInputField.frame = CGRectMake(parentNode.position.x - 0.9 * (parentNode.size.width / 2),
-                                          parentNode.position.y - 0.92 * (parentNode.size.height / 2),
+        nameInputField.placeholder = GV.language.getText(.TCNewName)
+        nameInputField.backgroundColor = UIColor.whiteColor()
+        nameInputField.frame = CGRectMake(xPosition, yPosition,
                                           size.width * 0.8,
                                           0.8 * self.size.height / CGFloat(countLines))
         nameInputField.autocorrectionType = .No
@@ -92,14 +96,11 @@ class MySKPlayer: MySKTable, UITextFieldDelegate {
     }
     
     func textFieldDidEndEditing(textField: UITextField) {
-        if nameTableIndex == nameTable.count { // new player added
-            nameTable.append(nameTableMember(playerID: nameTableIndex, name: nameInputField.text!, isActPlayer: true))
-        } else { // player modifyed
-            nameTable[nameTableIndex].name = nameInputField.text!
-        }
+        nameTable[nameTableIndex].name = nameInputField.text!
+        nameInputField.removeFromSuperview()
+        changeActPlayer()
         updatePlayers()
         showPlayers()
-        nameInputField.removeFromSuperview()
     }
     
     
@@ -110,22 +111,19 @@ class MySKPlayer: MySKTable, UITextFieldDelegate {
 
     func showPlayers() {
         for index in 0..<nameTable.count {
-//            let fixedLength = 40
-//            let lengthOfName = nameTable[index].name.characters.count
-//            let spaces = String(count: fixedLength - lengthOfName, repeatedValue: (" " as Character))
-            let name = nameTable[index].name // + spaces + ">"
+            let name = nameTable[index].name
             showElementOfTable(name, column: 0, row: index, selected: nameTable[index].isActPlayer)
             showImageInTable(OKImage, column: 1, row: index, selected: nameTable[index].isActPlayer)
             showImageInTable(modifyImage, column: 2, row: index, selected: nameTable[index].isActPlayer)
             showImageInTable(deleteImage, column: 3, row: index, selected: nameTable[index].isActPlayer)
             showImageInTable(statisticImage, column: 4, row: index, selected: nameTable[index].isActPlayer)
         }
-        showElementOfTable("+", column: 0, row: nameTable.count, selected: false)
+        showElementOfTable(GV.language.getText(.TCNewName), column: 0, row: nameTable.count, selected: false)
     }
     
     func updatePlayers() {
         GV.realm.beginWrite()
-        if let editedPlayer = GV.realm.objects(PlayerModel).filter("ID = \(nameTable[nameTableIndex].playerID)").first {
+        if let editedPlayer = GV.realm.objects(PlayerModel).filter("ID = \(nameTableIndex)").first {
             editedPlayer.name = nameTable[nameTableIndex].name
             GV.realm.add(editedPlayer, update: true)
         } else {
@@ -142,6 +140,9 @@ class MySKPlayer: MySKTable, UITextFieldDelegate {
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
         let touchLocation = touches.first!.locationInNode(self)
         touchesBeganAtNode = nodeAtPoint(touchLocation)
+        if !(touchesBeganAtNode is SKLabelNode || (touchesBeganAtNode is SKSpriteNode && touchesBeganAtNode!.name != myName)) {
+            touchesBeganAtNode = nil
+        }
     }
     
     override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?) {
@@ -151,57 +152,60 @@ class MySKPlayer: MySKTable, UITextFieldDelegate {
     override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
         let touchLocation = touches.first!.locationInNode(self)
         let touchesEndedAtNode = nodeAtPoint(touchLocation)
-        
-        if touchesBeganAtNode != nil && touchesBeganAtNode == touchesEndedAtNode && (touchesBeganAtNode is SKLabelNode || touchesBeganAtNode is SKSpriteNode) {
+        if touchesBeganAtNode != nil && touchesEndedAtNode is SKLabelNode || (touchesEndedAtNode is SKSpriteNode && touchesEndedAtNode.name != myName) {
             let (column, row) = getColumnRowOfElement(touchesBeganAtNode!.name!)
             nameTableIndex = row
            if row == nameTable.count { // add new Player
                 nameTable.append(nameTableMember(playerID: row, name: "", isActPlayer: false))
-                nameTableIndex = nameTable.count
+                nameTableIndex = nameTable.count - 1
                 let size = CGSizeMake(parent!.frame.width * 0.9, CGFloat(countLines) * heightOfTableRow)
-
-                reDraw(size, columnWidths: myColumnWidths, columns: 0, rows: nameTableIndex)
+                reDraw(size, columnWidths: myColumnWidths, columns: 0, rows: nameTableIndex + 1)
                 getPlayerName(row)
 
             } else {
-                GV.realm.beginWrite()
                 switch column {
                 case 0: // select a Player
-                    let oldActPlayer = GV.realm.objects(PlayerModel).filter("isActPlayer = true").first
-                    let newActPlayer = GV.realm.objects(PlayerModel).filter("ID =  \(nameTable[nameTableIndex].playerID)").first
-                    oldActPlayer!.isActPlayer = false
-                    newActPlayer!.isActPlayer = true
-                    nameTable[oldActPlayer!.ID].isActPlayer = false
-                    nameTable[newActPlayer!.ID].isActPlayer = true
-                    GV.realm.add(oldActPlayer!, update: true)
-                    GV.realm.add(newActPlayer!, update: true)
+                    changeActPlayer()
                     showPlayers()
 
                 case 1: // choose a Player
-                    let oldActPlayer = GV.realm.objects(PlayerModel).filter("isActPlayer = true").first
-                    let newActPlayer = GV.realm.objects(PlayerModel).filter("ID =  \(nameTable[nameTableIndex].playerID)").first
-                    oldActPlayer!.isActPlayer = false
-                    newActPlayer!.isActPlayer = true
-                    GV.realm.add(oldActPlayer!, update: true)
-                    GV.realm.add(newActPlayer!, update: true)
+                    changeActPlayer()
                     removeFromParent()
                 case 2: // modify the player
-                    let playerToModify = GV.realm.objects(PlayerModel).filter("ID =  \(nameTable[nameTableIndex].playerID)").first
-                    let a = 0
+                    let playerToModify = GV.realm.objects(PlayerModel).filter("ID = \(nameTable[nameTableIndex].playerID)").first
+                    getPlayerName(playerToModify!.ID)
                 case 3: // delete the player
-                    let playerToDelete = GV.realm.objects(PlayerModel).filter("ID =  \(nameTable[nameTableIndex].playerID)").first
-                    let a = playerToDelete
+                    if GV.realm.objects(PlayerModel).count > 1 {
+                        let playerToDelete = GV.realm.objects(PlayerModel).filter("ID =  \(nameTable[nameTableIndex].playerID)").first
+                        GV.realm.delete(playerToDelete!)
+                    }
                 case 4: // show statistic of the player
-                    let playerToModify = GV.realm.objects(PlayerModel).filter("ID =  \(nameTable[nameTableIndex].playerID)").first
-                    let a = 0
+                    let playerforStatistic = GV.realm.objects(PlayerModel).filter("ID =  \(nameTable[nameTableIndex].playerID)").first
 
                 default: break
                 }
-                try! GV.realm.commitWrite()
              }
         }
         
         
+    }
+    
+    func changeActPlayer () {
+        GV.realm.beginWrite()
+        let oldActPlayer = GV.realm.objects(PlayerModel).filter("isActPlayer = true").first
+        var newActPlayer = GV.realm.objects(PlayerModel).filter("ID =  \(nameTable[nameTableIndex].playerID)").first
+        if newActPlayer == nil {
+            newActPlayer = PlayerModel()
+            newActPlayer!.ID = nameTable[nameTableIndex].playerID
+            newActPlayer!.name = nameTable[nameTableIndex].name
+        }
+        oldActPlayer!.isActPlayer = false
+        newActPlayer!.isActPlayer = true
+        nameTable[oldActPlayer!.ID].isActPlayer = false
+        nameTable[newActPlayer!.ID].isActPlayer = true
+        GV.realm.add(oldActPlayer!, update: true)
+        GV.realm.add(newActPlayer!, update: true)
+        try! GV.realm.commitWrite()
     }
     
     

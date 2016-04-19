@@ -21,6 +21,7 @@ class MySKPlayer: MySKTable, UITextFieldDelegate {
             self.isActPlayer = isActPlayer
         }
     }
+    var callBack: ()->()
     let heightOfTableRow: CGFloat = 40
     var view: UIView
     var nameInputField = UITextField()
@@ -37,7 +38,7 @@ class MySKPlayer: MySKTable, UITextFieldDelegate {
     let myName = "MyName"
 
 
-    init(parent: SKSpriteNode, view: UIView) {
+    init(parent: SKSpriteNode, view: UIView, callBack: ()->()) {
         self.view = view
         let members = GV.realm.objects(PlayerModel)
         for index in 0..<members.count {
@@ -45,17 +46,18 @@ class MySKPlayer: MySKTable, UITextFieldDelegate {
         }
         countLines = nameTable.count + (nameTable[0].name == GV.language.getText(.TCGuest) ? 0 : 1)
         self.parentNode = parent
+        self.callBack = callBack
         let size = CGSizeMake(parent.frame.width * 0.9, CGFloat(countLines) * heightOfTableRow)
 
         
 //        let texture: SKTexture = SKTexture(image: DrawImages().getTableImage(parent.frame.size,countLines: Int(countLines), countRows: 1))
-        super.init(size: size, columnWidths: myColumnWidths, columns: 3, rows:countLines)
+        super.init(size: size, columnWidths: myColumnWidths, columns: 5, rows:countLines, parent: parent)
         self.name = myName
         
         let myPosition = CGPointMake(0, (parent.size.height - size.height) / 2 - 10)
+        self.position = myPosition
         
         self.nameInputField.delegate = self
-        self.position = myPosition
         self.zPosition = parent.zPosition + 200
         
         if countLines == 1 && nameTable[0].name == GV.language.getText(.TCGuest) {
@@ -75,7 +77,7 @@ class MySKPlayer: MySKTable, UITextFieldDelegate {
     }
     
     func getPlayerName(row: Int) {
-        let yPosition = parentNode.position.y - parentNode.size.height * 0.474 + (CGFloat(row) * heightOfTableRow)
+        let yPosition = parentNode.position.y - myParent.size.height * 0.470 + (CGFloat(row) * heightOfTableRow)
         let xPosition = parentNode.position.x - 0.405 * parentNode.size.width
         let name = nameTable[row].name == GV.language.getText(.TCGuest) ? "" : nameTable[row].name
         let myFont = UIFont(name: "ArialMT", size: fontSize)
@@ -96,8 +98,8 @@ class MySKPlayer: MySKTable, UITextFieldDelegate {
     }
     
     func textFieldDidEndEditing(textField: UITextField) {
-        nameTable[nameTableIndex].name = nameInputField.text!
         nameInputField.removeFromSuperview()
+        nameTable[nameTableIndex].name = nameInputField.text!
         changeActPlayer()
         updatePlayers()
         showPlayers()
@@ -105,11 +107,15 @@ class MySKPlayer: MySKTable, UITextFieldDelegate {
     
     
     func textFieldShouldReturn(textField: UITextField)->Bool {
-        textFieldDidEndEditing(textField)
+        nameInputField.removeFromSuperview()
         return true
     }
 
     func showPlayers() {
+        if self.rows < nameTable.count + 1 {
+            let size = CGSizeMake(parent!.frame.width * 0.9, CGFloat(nameTable.count + 1) * heightOfTableRow)
+            reDraw(size, columnWidths: myColumnWidths, rows: nameTable.count + 1)
+         }
         for index in 0..<nameTable.count {
             let name = nameTable[index].name
             showElementOfTable(name, column: 0, row: index, selected: nameTable[index].isActPlayer)
@@ -126,14 +132,9 @@ class MySKPlayer: MySKTable, UITextFieldDelegate {
         if let editedPlayer = GV.realm.objects(PlayerModel).filter("ID = \(nameTableIndex)").first {
             editedPlayer.name = nameTable[nameTableIndex].name
             GV.realm.add(editedPlayer, update: true)
-        } else {
-            let newPlayer = PlayerModel()
-            newPlayer.aktLanguageKey = GV.language.getAktLanguageKey()
-            newPlayer.name = nameTable[nameTableIndex].name
-            newPlayer.isActPlayer = true
-            newPlayer.ID = nameTableIndex
-            GV.realm.add(newPlayer)
+            GV.player = editedPlayer
         }
+
         try! GV.realm.commitWrite()
     }
     
@@ -158,8 +159,6 @@ class MySKPlayer: MySKTable, UITextFieldDelegate {
            if row == nameTable.count { // add new Player
                 nameTable.append(nameTableMember(playerID: row, name: "", isActPlayer: false))
                 nameTableIndex = nameTable.count - 1
-                let size = CGSizeMake(parent!.frame.width * 0.9, CGFloat(countLines) * heightOfTableRow)
-                reDraw(size, columnWidths: myColumnWidths, columns: 0, rows: nameTableIndex + 1)
                 getPlayerName(row)
 
             } else {
@@ -171,13 +170,25 @@ class MySKPlayer: MySKTable, UITextFieldDelegate {
                 case 1: // choose a Player
                     changeActPlayer()
                     removeFromParent()
+                    callBack()
                 case 2: // modify the player
                     let playerToModify = GV.realm.objects(PlayerModel).filter("ID = \(nameTable[nameTableIndex].playerID)").first
                     getPlayerName(playerToModify!.ID)
                 case 3: // delete the player
                     if GV.realm.objects(PlayerModel).count > 1 {
                         let playerToDelete = GV.realm.objects(PlayerModel).filter("ID =  \(nameTable[nameTableIndex].playerID)").first
+                        GV.realm.beginWrite()
+                        if GV.realm.objects(StatisticModel).filter("playerID = %d",  (playerToDelete?.ID)!).count > 0 {
+                            GV.realm.delete(GV.realm.objects(StatisticModel).filter("playerID = %d", (playerToDelete?.ID)!))
+                        }
                         GV.realm.delete(playerToDelete!)
+                        let playerToSetActPlayer = GV.realm.objects(PlayerModel).first
+                        playerToSetActPlayer!.isActPlayer = true
+                        GV.realm.add(playerToSetActPlayer!)
+                        nameTable.removeAtIndex(nameTableIndex)
+                        try! GV.realm.commitWrite()
+                        let size = CGSizeMake(parent!.frame.width * 0.9, CGFloat(nameTable.count + 1) * heightOfTableRow)
+                        reDraw(size, columnWidths: myColumnWidths, rows: nameTable.count + 1)
                     }
                 case 4: // show statistic of the player
                     let playerforStatistic = GV.realm.objects(PlayerModel).filter("ID =  \(nameTable[nameTableIndex].playerID)").first

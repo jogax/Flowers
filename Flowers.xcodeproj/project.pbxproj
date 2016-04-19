@@ -58,6 +58,7 @@
 		2024A8C51C427C420001CA95 /* cardBackground.png in Resources */ = {isa = PBXBuildFile; fileRef = 2024A8C41C427C420001CA95 /* cardBackground.png */; };
 		20343A6F1CB7F4660063DF8D /* MySKTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20343A6E1CB7F4660063DF8D /* MySKTable.swift */; };
 		204A8A181BEF93B90061D14F /* LanguageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 204A8A171BEF93B90061D14F /* LanguageViewController.swift */; };
+		205008BB1CC65635000B1468 /* GameModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 205008BA1CC65635000B1468 /* GameModel.swift */; };
 		205574411BBEB85C00C165A1 /* Go321.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 205574401BBEB85C00C165A1 /* Go321.m4a */; };
 		205574431BBECB6200C165A1 /* NoSound.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 205574421BBECB6200C165A1 /* NoSound.m4a */; };
 		206BF77C1BF247380009928E /* ChooseNameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 206BF77B1BF247380009928E /* ChooseNameViewController.swift */; };
@@ -157,6 +158,7 @@
 		20343A6E1CB7F4660063DF8D /* MySKTable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MySKTable.swift; sourceTree = "<group>"; };
 		2034B0061BDE796300D296DA /* Flowers.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Flowers.xcdatamodel; sourceTree = "<group>"; };
 		204A8A171BEF93B90061D14F /* LanguageViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LanguageViewController.swift; sourceTree = "<group>"; };
+		205008BA1CC65635000B1468 /* GameModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameModel.swift; sourceTree = "<group>"; };
 		205574401BBEB85C00C165A1 /* Go321.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = Go321.m4a; sourceTree = "<group>"; };
 		205574421BBECB6200C165A1 /* NoSound.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = NoSound.m4a; sourceTree = "<group>"; };
 		206BF77B1BF247380009928E /* ChooseNameViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChooseNameViewController.swift; sourceTree = "<group>"; };
@@ -239,6 +241,7 @@
 			children = (
 				201E20431C1C8009003DBBD8 /* Flowers.entitlements */,
 				200BDA061BCFDEE600F72109 /* DrawImages.swift */,
+				205008BA1CC65635000B1468 /* GameModel.swift */,
 				208BCEEF1CAAD1330050CD62 /* PlayerModel.swift */,
 				200DC9551CAC2597000A000D /* StatisticModel.swift */,
 				2001412D1BAEB2DE003E0950 /* MyStructs.swift */,
@@ -697,6 +700,7 @@
 				200141301BAEB4F6003E0950 /* Language.swift in Sources */,
 				2001410F1BAEAA82003E0950 /* FlowerGameScene.swift in Sources */,
 				20AE75EB1CB2B50C006AFE29 /* MySKPlayer.swift in Sources */,
+				205008BB1CC65635000B1468 /* GameModel.swift in Sources */,
 				200BDA071BCFDEE600F72109 /* DrawImages.swift in Sources */,
 				201C52401C314CF9001B04AB /* LevelsForPlayWithCards.swift in Sources */,
 				20343A6F1CB7F4660063DF8D /* MySKTable.swift in Sources */,

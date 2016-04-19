@@ -47,10 +47,10 @@ class ViewController: UIViewController, SettingsDelegate, UIApplicationDelegate 
         //print("in viewDidLoad:\(view.frame.size)")
         
         
-        GV.actGameParam = GV.dataStore.readActGameParamRecord()
+//        GV.actGameParam = GV.dataStore.readActGameParamRecord()
         
-        GV.gameStatistics.nameID = GV.actGameParam.nameID
-        GV.gameStatistics.level = GV.actGameParam.levelIndex
+//        GV.gameStatistics.nameID = GV.player!.ID
+//        GV.gameStatistics.level = GV.player!.levelID
         
         if GV.realm.objects(PlayerModel).count == 0 {
             GV.player = PlayerModel()
@@ -68,7 +68,7 @@ class ViewController: UIViewController, SettingsDelegate, UIApplicationDelegate 
  
         if GV.realm.objects(StatisticModel).filter("playerID = %d", GV.player!.ID).count == 0 {
             GV.statistic = StatisticModel()
-            GV.statistic!.ID = 0
+            GV.statistic!.ID = GV.realm.objects(StatisticModel).count
             GV.statistic!.playerID = GV.player!.ID
             GV.statistic!.levelID = GV.player!.levelID
             try! GV.realm.write({
@@ -78,14 +78,14 @@ class ViewController: UIViewController, SettingsDelegate, UIApplicationDelegate 
             GV.statistic = GV.realm.objects(StatisticModel).filter("playerID = %d AND levelID = %d", GV.player!.ID, /*GV.player!.levelID*/0).first!
         }
         
-        GV.language.setLanguage(GV.actGameParam.aktLanguageKey)
+        GV.language.setLanguage(GV.player!.aktLanguageKey)
 //        GV.soundVolume = Float(GV.actGameParam.soundVolume)
 //        GV.musicVolume = Float(GV.actGameParam.musicVolume)
         skView!.showsFPS = true
         skView!.showsNodeCount = true
         skView!.ignoresSiblingOrder = true
         
-        if GV.actGameParam.gameModus == GameModusCards {
+//        if GV.actGameParam.gameModus == GameModusCards {
             let scene = CardGameScene(size: CGSizeMake(view.frame.width, view.frame.height))
             GV.language.addCallback(scene.changeLanguage)
             scene.scaleMode = .ResizeFill
@@ -93,37 +93,37 @@ class ViewController: UIViewController, SettingsDelegate, UIApplicationDelegate 
             scene.settingsDelegate = self
             skView!.presentScene(scene)
             cardsScene = scene
-        } else {
-            let scene = FlowerGameScene(size: CGSizeMake(view.frame.width, view.frame.height))
-            GV.language.addCallback(scene.changeLanguage)
-            scene.scaleMode = .ResizeFill
-            scene.parentViewController = self
-            scene.settingsDelegate = self
-            skView!.presentScene(scene)
-            flowersScene = scene
-        }
+//        } else {
+//            let scene = FlowerGameScene(size: CGSizeMake(view.frame.width, view.frame.height))
+//            GV.language.addCallback(scene.changeLanguage)
+//            scene.scaleMode = .ResizeFill
+//            scene.parentViewController = self
+//            scene.settingsDelegate = self
+//            skView!.presentScene(scene)
+//            flowersScene = scene
+//        }
         
         
 
     }
     
     func settingsDelegateFunc() {
-        aktName = GV.actGameParam.name
-        aktModus = GV.actGameParam.gameModus
+        aktName = GV.player!.name
+//        aktModus = GV.actGameParam.gameModus
         self.performSegueWithIdentifier("SettingsSegue", sender: nil)
     }
 
     @IBAction func unwindToVC(segue: UIStoryboardSegue) {
-        if aktName != GV.actGameParam.name || aktModus != GV.actGameParam.gameModus {
-            startScene()
-        } else {
+//        if aktName != GV.player!.name || aktModus != GV.actGameParam.gameModus {
+//            startScene()
+//        } else {
             if let scene = cardsScene {
-                scene.playMusic("MyMusic", volume: GV.actGameParam.musicVolume, loops: 0)
+                scene.playMusic("MyMusic", volume: GV.player!.musicVolume, loops: 0)
                 scene.startDoCountUpTimer()
-            } else if let scene = flowersScene {
-                scene.playMusic("MyMusic", volume: GV.actGameParam.musicVolume, loops: 0)
-                scene.startTimer()
-            }
+//            } else if let scene = flowersScene {
+//                scene.playMusic("MyMusic", volume: GV.player!.musicVolume, loops: 0)
+//                scene.startTimer()
+//            }
         }
     }
 

@@ -30,7 +30,7 @@ class ChooseNameViewController: UIViewController, UITableViewDataSource, UITable
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        originalAktName = GV.actGameParam.name
+        originalAktName = GV.player!.name
         tableView.registerClass(UITableViewCell.self, forCellReuseIdentifier: textCellIdentifier)
         tableView.delegate = self
         tableView.dataSource = self
@@ -62,11 +62,11 @@ class ChooseNameViewController: UIViewController, UITableViewDataSource, UITable
         
         hideNameTableButtons(false)
         
-        if GV.actGameParam.name == GV.dummyName {
+        if GV.player!.name == GV.dummyName {
             getNewName("")
         } else {
             textCell.removeAll()
-            names = GV.dataStore.readNamesFromGameParamRecord()
+//            names = GV.dataStore.readNamesFromGameParamRecord()
             for index in 0..<names.count {
                 textCell.append(names[index].name)
             }
@@ -117,7 +117,7 @@ class ChooseNameViewController: UIViewController, UITableViewDataSource, UITable
         let row = indexPath.row
         cell.textLabel?.text = textCell[row]
         
-        if textCell[row] == GV.actGameParam.name {
+        if textCell[row] == GV.player!.name {
             cell.backgroundColor = UIColor(red: 0x00/0xff, green: 0xff/0xff, blue: 0x7f/0xff, alpha: 1) // Springgreen
         } else {
             cell.backgroundColor = UIColor(red: 0xff/0xff, green: 0xff/0xff, blue: 0xff/0xff, alpha: 1) // Springgreen
@@ -129,7 +129,7 @@ class ChooseNameViewController: UIViewController, UITableViewDataSource, UITable
     }
     
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        GV.actGameParam.name = textCell[indexPath.row]
+        GV.player!.name = textCell[indexPath.row]
         tableView.reloadData()
     }
     
@@ -180,15 +180,15 @@ class ChooseNameViewController: UIViewController, UITableViewDataSource, UITable
     }
 
     func cancelPressed(sender: UIButton) {
-        GV.actGameParam.name = originalAktName
-        GV.dataStore.saveGameParamRecord(GV.actGameParam)
+        GV.player!.name = originalAktName
+//        GV.dataStore.saveGameParamRecord(GV.actGameParam)
         self.performSegueWithIdentifier(backToSettings, sender: self)
     }
     
     func choosePressed(sender: UIButton) {
         if let newName = nameInputField.text {
             if newName != "" {
-                GV.actGameParam.name = newName
+                GV.player!.name = newName
             }
             textCell.append(newName)
             tableView.reloadData()
@@ -196,14 +196,14 @@ class ChooseNameViewController: UIViewController, UITableViewDataSource, UITable
         }
         nameInputField.layer.hidden = true
         tableView.layer.hidden = false
-        GV.language.setLanguage(GV.actGameParam.aktLanguageKey)
-        GV.dataStore.saveGameParamRecord(GV.actGameParam)
+        GV.language.setLanguage(GV.player!.aktLanguageKey)
+//        GV.dataStore.saveGameParamRecord(GV.actGameParam)
         self.performSegueWithIdentifier(backToSettings, sender: self)
     }
     
     func modifyPressed(sender: UIButton) {
         newNameModus = false
-        getNewName(GV.actGameParam.name)
+        getNewName(GV.player!.name)
     }
 
     func newNamePressed(sender: UIButton) {
@@ -214,7 +214,7 @@ class ChooseNameViewController: UIViewController, UITableViewDataSource, UITable
         var ind = 0
         if names.count > 1 {
             for index in 0..<names.count {
-                if names[index].name == GV.actGameParam.name {
+                if names[index].name == GV.player!.name {
                     names.removeAtIndex(index)
                     textCell.removeAtIndex(index)
                     if index >= names.count {
@@ -226,8 +226,8 @@ class ChooseNameViewController: UIViewController, UITableViewDataSource, UITable
                 }
             }
             
-            GV.actGameParam.name = names[ind].name
-            GV.dataStore.deleteGameParamRecord(GV.actGameParam)
+            GV.player!.name = names[ind].name
+//            GV.dataStore.deleteGameParamRecord(GV.actGameParam)
             tableView.reloadData()
             setupTableViewLayout()
         }
@@ -242,18 +242,18 @@ class ChooseNameViewController: UIViewController, UITableViewDataSource, UITable
         if let newName = nameInputField.text {
             if names.count == 0 {
                 names.append(Names(name: newName, isActPlayer: true))
-                GV.actGameParam.isActPlayer = true
+                GV.player!.isActPlayer = true
                 textCell.append(newName)
             } else if !newNameModus {
-                GV.actGameParam.name = newName
+                GV.player!.name = newName
                 textCell[0] = newName
             } else {
                 textCell.append(newName)
                 names.append(Names(name: newName, isActPlayer: false))
-                GV.actGameParam.nameID = names.count
+                GV.player!.ID = names.count
             }
-        GV.dataStore.saveGameParamRecord(GV.actGameParam)
-        GV.actGameParam.name = newName
+//        GV.dataStore.saveGameParamRecord(GV.actGameParam)
+        GV.player!.name = newName
         tableView.reloadData()
         setupTableViewLayout()
         nameInputField.endEditing(true)

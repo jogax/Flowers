@@ -43,8 +43,8 @@ struct GV {
     static var initName = false
     static let oneGrad:CGFloat = CGFloat(M_PI) / 180
 
-    static let dataStore = DataStore()
-    static let cloudStore = CloudData()
+//    static let dataStore = DataStore()
+//    static let cloudStore = CloudData()
     
     static let deviceType = UIDevice.currentDevice().modelName
     
@@ -52,9 +52,9 @@ struct GV {
     
     static let deviceConstants = DeviceConstants(deviceType: UIDevice.currentDevice().modelName)
 
-    static var actGameParam = GameParamStruct()
+//    static var actGameParam = GameParamStruct()
     static var countPlayers: Int = 1
-    static var gameStatistics = GameStatisticsStruct()
+//    static var gameStatistics = GameStatisticsStruct()
 
     static let realm = try! Realm()
 
@@ -119,18 +119,18 @@ struct Names {
     }
 }
 
-struct SeedDataStruct {
-    var gameType: Int64
-    var gameDifficulty: Int64
-    var gameNumber: Int64
-    var seed: NSData
-    init(gameType: Int64, gameDifficulty:Int64, gameNumber: Int64, seed: NSData) {
-        self.gameType = gameType
-        self.gameDifficulty = gameDifficulty
-        self.gameNumber = gameNumber
-        self.seed = seed
-    }
-}
+//struct SeedDataStruct {
+//    var gameType: Int64
+//    var gameDifficulty: Int64
+//    var gameNumber: Int64
+//    var seed: NSData
+//    init(gameType: Int64, gameDifficulty:Int64, gameNumber: Int64, seed: NSData) {
+//        self.gameType = gameType
+//        self.gameDifficulty = gameDifficulty
+//        self.gameNumber = gameNumber
+//        self.seed = seed
+//    }
+//}
 
 struct GameParamStruct {
     var isActPlayer: Bool
@@ -157,29 +157,29 @@ struct GameParamStruct {
     
 }
 
-struct GameStatisticsStruct {
-    var nameID: Int
-    var level: Int
-    var countPlays: Int
-    var actScore: Int
-    var levelScore: Int
-    var bestScore: Int
-    var bestTime: Int
-    var allTime: Int
-    var actTime: Int
-    init() {
-        nameID = GV.actGameParam.nameID
-        level = 0
-        countPlays = 0
-        actScore = 0
-        bestScore = 0
-        levelScore = 0
-        allTime = 0
-        actTime = 0
-        bestTime = 10000
-    }
-    
-}
+//struct GameStatisticsStruct {
+//    var nameID: Int
+//    var level: Int
+//    var countPlays: Int
+//    var actScore: Int
+//    var levelScore: Int
+//    var bestScore: Int
+//    var bestTime: Int
+//    var allTime: Int
+//    var actTime: Int
+//    init() {
+//        nameID = GV.player!.ID
+//        level = 0
+//        countPlays = 0
+//        actScore = 0
+//        bestScore = 0
+//        levelScore = 0
+//        allTime = 0
+//        actTime = 0
+//        bestTime = 10000
+//    }
+//    
+//}
 
 
 

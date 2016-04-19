@@ -43,7 +43,7 @@ class LanguageViewController: UIViewController, UITableViewDataSource, UITableVi
         tableView.registerClass(UITableViewCell.self, forCellReuseIdentifier: "languageTextCell")
         GV.language.addCallback(changeLanguage)
         aktLanguageKey = GV.language.getAktLanguageKey()
-        aktGameModus = GV.actGameParam.gameModus
+//        aktGameModus = GV.actGameParam.gameModus
         setAktlanguageRow()
         
         
@@ -85,8 +85,8 @@ class LanguageViewController: UIViewController, UITableViewDataSource, UITableVi
         soundVolume.minimumValue = 0
         soundVolume.maximumValue = 10
         
-        soundVolume.value = GV.actGameParam.soundVolume
-        musicVolume.value = GV.actGameParam.musicVolume
+        soundVolume.value = GV.player!.soundVolume
+        musicVolume.value = GV.player!.musicVolume
         
         soundVolumeLabel.text = GV.language.getText(.TCSoundVolume)
         musicVolumeLabel.text = GV.language.getText(.TCMusicVolume)
@@ -283,7 +283,7 @@ class LanguageViewController: UIViewController, UITableViewDataSource, UITableVi
             ]
             setAktlanguageRow()
         case gameModusText:
-            GV.actGameParam.gameModus = indexPath.row
+//            GV.actGameParam.gameModus = indexPath.row
             aktGameModus = indexPath.row
         default: break
         }
@@ -332,18 +332,18 @@ class LanguageViewController: UIViewController, UITableViewDataSource, UITableVi
         switch toDo {
         case nameText: _ = 0
         case volumeText:
-            GV.actGameParam.soundVolume = soundVolume.value
-            GV.actGameParam.musicVolume = musicVolume.value
+            GV.player!.soundVolume = soundVolume.value
+            GV.player!.musicVolume = musicVolume.value
 //            GV.soundVolume = soundVolume.value
 //            GV.musicVolume = musicVolume.value
 //        case helpLinesText: GV.spriteGameDataArray[index].showHelpLines = GV.showHelpLines
-        case languageText:  GV.actGameParam.aktLanguageKey = GV.language.getAktLanguageKey()
+        case languageText:  GV.player!.aktLanguageKey = GV.language.getAktLanguageKey()
         default: break
         }
         
         
         
-        GV.dataStore.saveGameParamRecord(GV.actGameParam)
+//        GV.dataStore.saveGameParamRecord(GV.actGameParam)
         
         self.performSegueWithIdentifier(backToSettings, sender: self)
     }

@@ -21,35 +21,35 @@ class CloudData {
         privatDB = container.privateCloudDatabase
     }
     
-    func saveRecord(seedData: SeedDataStruct) {
-        let seedDataRecord = CKRecord(recordType: "SeedData")
-        seedDataRecord.setValue(NSNumber(longLong: seedData.gameType), forKey: "gameType")
-        seedDataRecord.setValue(NSNumber(longLong: seedData.gameDifficulty), forKey: "gameDifficulty")
-        seedDataRecord.setValue(NSNumber(longLong: seedData.gameNumber), forKey: "gameNumber")
-        seedDataRecord.setValue(seedData.seed, forKey: "seed")
-        publicDB.saveRecord(seedDataRecord, completionHandler: { returnRecord, error in
-            if let err = error {
-                print("error: \(err)")
-            }
-        })
-    }
+//    func saveRecord(seedData: SeedDataStruct) {
+//        let seedDataRecord = CKRecord(recordType: "SeedData")
+//        seedDataRecord.setValue(NSNumber(longLong: seedData.gameType), forKey: "gameType")
+//        seedDataRecord.setValue(NSNumber(longLong: seedData.gameDifficulty), forKey: "gameDifficulty")
+//        seedDataRecord.setValue(NSNumber(longLong: seedData.gameNumber), forKey: "gameNumber")
+//        seedDataRecord.setValue(seedData.seed, forKey: "seed")
+//        publicDB.saveRecord(seedDataRecord, completionHandler: { returnRecord, error in
+//            if let err = error {
+//                print("error: \(err)")
+//            }
+//        })
+//    }
     
-    func readRecord(gameType: Int64, gameDifficulty: Int64, gameNumber: Int64) {
-        let p1 = NSPredicate(format: "gameDifficulty = %d", gameDifficulty)
-        let p2 = NSPredicate(format: "gameNumber = %d", gameNumber)
-        let p3 = NSPredicate(format: "gameType = %d", gameNumber)
-        let predicate = NSCompoundPredicate.init(andPredicateWithSubpredicates: [p1, p2, p3])
-        let query = CKQuery(recordType: "SeedData", predicate: predicate)
-        privatDB.performQuery(query, inZoneWithID: nil) {
-            results, error in
-            if error != nil {
-                
-            } else {
-                //println("results:\(results.count)")
-                self.wait = false
-            }
-        }
-        
-    }
+//    func readRecord(gameType: Int64, gameDifficulty: Int64, gameNumber: Int64) {
+//        let p1 = NSPredicate(format: "gameDifficulty = %d", gameDifficulty)
+//        let p2 = NSPredicate(format: "gameNumber = %d", gameNumber)
+//        let p3 = NSPredicate(format: "gameType = %d", gameNumber)
+//        let predicate = NSCompoundPredicate.init(andPredicateWithSubpredicates: [p1, p2, p3])
+//        let query = CKQuery(recordType: "SeedData", predicate: predicate)
+//        privatDB.performQuery(query, inZoneWithID: nil) {
+//            results, error in
+//            if error != nil {
+//                
+//            } else {
+//                //println("results:\(results.count)")
+//                self.wait = false
+//            }
+//        }
+//        
+//    }
     
 }

@@ -234,7 +234,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
     var audioPlayer: AVAudioPlayer?
     var soundPlayer: AVAudioPlayer?
     var myView = SKView()
-    var levelIndex = GV.actGameParam.levelIndex
+    var levelIndex = GV.player!.levelID
     var stack:Stack<SavedSprite> = Stack()
     //var gameArray = [[Bool]]() // true if Cell used
     var gameArray = [[GameArrayPositions]]()
@@ -251,7 +251,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
     var playerLabel = SKLabelNode(fontNamed: "AvenirNext-Bold")
     var spriteCountLabel = SKLabelNode(fontNamed: "AvenirNext-Bold")
     
-    var gameScore = GV.actGameParam.gameScore
+//    var gameScore = GV.player!.gameScore
     var levelScore = 0
     var movedFromNode: MySKNode!
     var settingsButton: MySKButton?
@@ -378,24 +378,24 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
             prepareNextGame(true)
             generateSprites(.First)
         } else {
-            playMusic("MyMusic", volume: GV.actGameParam.musicVolume, loops: playMusicForever)
+            playMusic("MyMusic", volume: GV.player!.musicVolume, loops: playMusicForever)
             
         }
     }
     
     func prepareNextGame(newGame: Bool) {
         
-        GV.gameStatistics = GV.dataStore.readGameStatisticsRecord(GV.actGameParam.nameID, levelID: GV.actGameParam.levelIndex)
+//        GV.gameStatistics = GV.dataStore.readGameStatisticsRecord(GV.actGameParam.nameID, levelID: GV.actGameParam.levelIndex)
+        GV.statistic = GV.realm.objects(StatisticModel).filter("playerID = %d and levelID = %d", GV.player!.ID, GV.player!.levelID).first
 
         specialPrepareFuncFirst()
-        playMusic("MyMusic", volume: GV.actGameParam.musicVolume, loops: playMusicForever)
+        playMusic("MyMusic", volume: GV.player!.musicVolume, loops: playMusicForever)
         stack = Stack()
         timeCount = 0
         if newGame {
             gameNumber = Int(arc4random_uniform(999999))
         }
-        let seedIndex = SeedIndex(gameType: Int64(GV.actGameParam.gameModus), gameDifficulty: 0, gameNumber: Int64(gameNumber))
-        random = MyRandom(seedIndex: seedIndex)
+        random = MyRandom(gameID: gameNumber, levelID: levelIndex)
         
         stopTimer(&countUp)
         
@@ -434,7 +434,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         //        self.addChild(labelBackground)
         
 //        if GV.actGameParam.name != GV.dummyName {
-            createLabels(playerLabel, text: GV.language.getText(TextConstants.TCPlayer) + "\(GV.actGameParam.name)", position: CGPointMake(self.position.x + self.size.width * levelPosKorr.x / 2, self.position.y + self.size.height * levelPosKorr.y))
+            createLabels(playerLabel, text: GV.language.getText(TextConstants.TCPlayer) + "\(GV.player!.name)", position: CGPointMake(self.position.x + self.size.width * levelPosKorr.x / 2, self.position.y + self.size.height * levelPosKorr.y))
 //        } else {
 //            levelPosKorr.x = 0.5
 //        }
@@ -566,7 +566,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
 
     
     func changeLanguage()->Bool {
-        playerLabel.text = GV.language.getText(.TCPlayer) + ": \(GV.actGameParam.name)"
+        playerLabel.text = GV.language.getText(.TCPlayer) + ": \(GV.player!.name)"
         levelLabel.text = GV.language.getText(.TCLevel) + ": \(levelIndex + 1)"
         spriteCountLabel.text = GV.language.getText(.TCCardCount) + " \(spriteCount)"
         tippCountLabel.text = GV.language.getText(.TCTippCount) + " \(tippArray.count)"
@@ -1638,7 +1638,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
             //gameArray[movingSprite.column][movingSprite.row] = false
             resetGameArrayCell(movingSprite)
             movingSprite.removeFromParent()
-            playSound("Container", volume: GV.actGameParam.soundVolume)
+            playSound("Container", volume: GV.player!.soundVolume)
             countMovingSprites = 0
             
             updateSpriteCount(-1)
@@ -1706,7 +1706,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
             }
             sprite.reload()
             
-            playSound(/*"Sprite1"*/"OK", volume: GV.actGameParam.soundVolume)
+            playSound(/*"Sprite1"*/"OK", volume: GV.player!.soundVolume)
         
             updateGameArrayCell(sprite)
             resetGameArrayCell(movingSprite)
@@ -1737,21 +1737,21 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         if usedCellCount <= 1 && containersOK { // Level completed, start a new game
             
             stopTimer(&countUp)
-            playMusic("Winner", volume: GV.actGameParam.musicVolume, loops: 0)
-            
-            GV.gameStatistics.countPlays += 1
-            GV.gameStatistics.actTime = timeCount
-            GV.gameStatistics.allTime += timeCount
+            playMusic("Winner", volume: GV.player!.musicVolume, loops: 0)
             
             GV.statistic = GV.realm.objects(StatisticModel).filter("playerID = %d AND levelID = %d", GV.player!.ID, GV.player!.levelID).first
+            let actGame = GV.realm.objects(GameModel).filter("ID = %d", gameNumber).first
+            
             GV.realm.beginWrite()
             GV.statistic!.countPlays += 1
             GV.statistic!.actTime = timeCount
             GV.statistic!.allTime += timeCount
             
-            if timeCount < GV.gameStatistics.bestTime {
-                GV.gameStatistics.bestTime = timeCount
+            if timeCount < GV.statistic!.bestTime && timeCount > 0 {
                 GV.statistic!.bestTime = timeCount
+            }
+            if  timeCount < actGame!.bestTime  && timeCount > 0 {
+                actGame!.bestTime = timeCount
             }
             
             var actScore: Int = 0
@@ -1761,8 +1761,8 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
             actScore *= 10000
             actScore /= (5000 + timeCount)
             
-            GV.gameStatistics.actScore = actScore
-            GV.gameStatistics.levelScore += actScore
+//            GV.gameStatistics.actScore = actScore
+//            GV.gameStatistics.levelScore += actScore
             
             GV.statistic!.actScore = actScore
             GV.statistic!.levelScore += actScore
@@ -1770,13 +1770,16 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
                GV.statistic!.bestScore = actScore
             }
            
-            if GV.gameStatistics.bestScore < actScore {
-                GV.gameStatistics.bestScore = actScore
+            if GV.statistic!.bestScore < actScore {
+                GV.statistic!.bestScore = actScore
+            }
+            if actGame!.bestScore < actScore {
+                actGame!.bestScore = actScore
             }
             
-            GV.dataStore.saveGameStatisticsRecord(GV.gameStatistics)
-            
             GV.realm.add(GV.statistic!, update: true)
+            GV.realm.add(actGame!, update: true)
+            
             try! GV.realm.commitWrite()
             let alert = getNextPlayArt(true)
             parentViewController!.presentViewController(alert, animated: true, completion: nil)
@@ -1800,7 +1803,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
             
             
             lastNextPoint = nil
-            GV.actGameParam.gameScore += levelScore
+//            GV.actGameParam.gameScore += levelScore
             
 //            for index in 0..<GV.spriteGameDataArray.count {
 //                if GV.spriteGameDataArray[index].name == GV.globalParam.aktName {
@@ -1812,7 +1815,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
 //                    break
 //                }
 //            }
-            GV.dataStore.saveGameParamRecord(GV.actGameParam)
+//            GV.dataStore.saveGameParamRecord(GV.actGameParam)
         }
         stopCreateTippsInBackground = true
         for _ in 0..<self.children.count {
@@ -1829,22 +1832,22 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
 
     
     func getNextPlayArt(congratulations: Bool)->UIAlertController {
-        let playerName = GV.actGameParam.name + "!"
+        let playerName = GV.player!.name + "!"
         var statisticsTxt = ""
         var congratulationsTxt = ""
         if congratulations {
             
-            statisticsTxt += "\r\n" + GV.language.getText(.TCCountPlays, values: String(GV.gameStatistics.countPlays))
-            statisticsTxt += "\r\n" + GV.language.getText(.TCActScore) + String(GV.gameStatistics.actScore)
-            statisticsTxt += "\r\n" + GV.language.getText(.TCBestScore) + String(GV.gameStatistics.bestScore)
-            statisticsTxt += "\r\n" + GV.language.getText(.TCActTime) + String(GV.gameStatistics.actTime.hourMinSec)
-            statisticsTxt += "\r\n" + GV.language.getText(.TCAllTime) + String(GV.gameStatistics.allTime.hourMinSec)
-            statisticsTxt += "\r\n" + GV.language.getText(.TCBestTime) + String(GV.gameStatistics.bestTime.hourMinSec)
+            statisticsTxt += "\r\n" + GV.language.getText(.TCCountPlays, values: String(GV.statistic!.countPlays))
+            statisticsTxt += "\r\n" + GV.language.getText(.TCActScore) + String(GV.statistic!.actScore)
+            statisticsTxt += "\r\n" + GV.language.getText(.TCBestScore) + String(GV.statistic!.bestScore)
+            statisticsTxt += "\r\n" + GV.language.getText(.TCActTime) + String(GV.statistic!.actTime.hourMinSec)
+            statisticsTxt += "\r\n" + GV.language.getText(.TCAllTime) + String(GV.statistic!.allTime.hourMinSec)
+            statisticsTxt += "\r\n" + GV.language.getText(.TCBestTime) + String(GV.statistic!.bestTime.hourMinSec)
             
-            if GV.gameStatistics.bestScore == GV.gameStatistics.actScore {
+            if GV.statistic!.bestScore == GV.statistic!.actScore {
                 congratulationsTxt = GV.language.getText(.TCGameCompleteWithBestScore, values: String(levelIndex + 1))
                 
-            } else if GV.gameStatistics.bestTime == GV.gameStatistics.actTime {
+            } else if GV.statistic!.bestTime == GV.statistic!.actTime {
                 congratulationsTxt = GV.language.getText(.TCGameCompleteWithBestTime, values: String(levelIndex + 1))
             } else {
                 congratulationsTxt = GV.language.getText(.TCGameComplete)
@@ -1905,16 +1908,13 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         } else {
             levelIndex = levelsForPlay.getPrevLevel()
         }
-        GV.actGameParam.levelIndex = levelIndex
-        GV.dataStore.saveGameParamRecord(GV.actGameParam)
-        GV.gameStatistics = GV.dataStore.readGameStatisticsRecord(GV.actGameParam.nameID, levelID: GV.actGameParam.levelIndex)
         try! GV.realm.write({
             GV.player!.levelID = levelIndex
             GV.realm.add(GV.player!, update: true)
         })
         if GV.realm.objects(StatisticModel).filter("playerID = %d AND levelID = %d", GV.player!.ID, GV.player!.levelID).count == 0 {
             GV.statistic = StatisticModel()
-            GV.statistic!.ID = GV.realm.objects(StatisticModel).filter("playerID = %d", GV.player!.ID).count
+            GV.statistic!.ID = GV.realm.objects(StatisticModel).count
             GV.statistic!.playerID = GV.player!.ID
             GV.statistic!.levelID = GV.player!.levelID
             try! GV.realm.write({
@@ -2854,7 +2854,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
     }
     
     func settingsButtonPressed() {
-        playMusic("NoSound", volume: GV.actGameParam.musicVolume, loops: 0)
+        playMusic("NoSound", volume: GV.player!.musicVolume, loops: 0)
         stopTimer(&countUp)
 //        settingsDelegate?.settingsDelegateFunc()
         panel = MySKPanel(view: view!, frame: CGRectMake(self.frame.midX, self.frame.midY, self.frame.width * 0.5, self.frame.height * 0.5), type: .Settings, parent: self)

@@ -129,8 +129,7 @@ class MySKPanel: SKSpriteNode {
     }
     
     func setPlayer() {
-        
-        MySKPlayer(parent: self, view: view)
+        let _ = MySKPlayer(parent: self, view: view, callBack: callIfMySKPlayerEnds)
     }
     func setSoundVolume() {
         
@@ -144,6 +143,10 @@ class MySKPanel: SKSpriteNode {
     func goBack() {
         shadow?.removeFromParent()
         self.removeFromParent()
+    }
+    
+    func callIfMySKPlayerEnds () {
+        let a = 1
     }
 
 

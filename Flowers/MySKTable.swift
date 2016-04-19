@@ -16,15 +16,17 @@ class MySKTable: SKSpriteNode {
     var sizeOfElement: CGSize
     var touchesBeganAt: NSDate = NSDate()
     var touchesBeganAtNode: SKNode?
+    var myParent: SKSpriteNode
     let separator = "/"
     var columnWidths: [CGFloat]
     var fontSize:CGFloat = 0
     
-    init(size: CGSize, columnWidths: [CGFloat], columns: Int, rows: Int) {
+    init(size: CGSize, columnWidths: [CGFloat], columns: Int, rows: Int, parent: SKSpriteNode) {
         self.columns = columnWidths.count
         self.rows = rows
         self.sizeOfElement = CGSizeMake(size.width / CGFloat(columns), size.height / CGFloat(rows))
         self.columnWidths = columnWidths
+        self.myParent = parent
         super.init(texture: SKTexture(), color: UIColor.clearColor(), size: size)
         self.size = size
         self.alpha = 1.0
@@ -60,13 +62,13 @@ class MySKTable: SKSpriteNode {
             label.fontName = "Arial"
             label.fontColor = SKColor.blackColor()
         }
+        label.text = element
 
         label.fontSize = fontSize
         if !labelExists {
             label.zPosition = self.zPosition + 10
             label.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.Left
             label.verticalAlignmentMode = SKLabelVerticalAlignmentMode.Center
-            label.text = element
             label.name = name
             
             label.position = CGPointMake(-size.width * 0.45 + CGFloat(column) * sizeOfElement.width, (self.size.height - sizeOfElement.height) / 2 - CGFloat(row) * sizeOfElement.height)
@@ -106,12 +108,20 @@ class MySKTable: SKSpriteNode {
     }
     
 
-    func reDraw(size: CGSize, columnWidths: [CGFloat], columns: Int, rows: Int) {
+    func reDraw(size: CGSize, columnWidths: [CGFloat], rows: Int) {
+        for _ in 0..<children.count {
+            self.children.last!.removeFromParent()
+        }
         self.columns = columnWidths.count
         self.rows = rows
         self.sizeOfElement = CGSizeMake(size.width / CGFloat(columns), size.height / CGFloat(rows))
         self.size = size
         self.texture = SKTexture(image: drawTableImage(size, columnWidths: columnWidths, columns: columns, rows: rows))
+        let myPosition = CGPointMake(0, (myParent.size.height - size.height) / 2 - 10)
+        self.position = myPosition
+        self.removeFromParent()
+        myParent.addChild(self)
+        
     }
     
     func getColumnRowOfElement(name: String)->(column:Int, row:Int) {
@@ -177,17 +187,6 @@ class MySKTable: SKSpriteNode {
             }
         }
         
-//        var xPos: CGFloat = 0
-//        if columns > 1 {
-//            for index in 0..<columns - 1 {
-//                CGContextBeginPath(ctx)
-//                CGContextSetStrokeColorWithColor(ctx, UIColor.grayColor().CGColor)
-//                xPos += size.width * columnWidths[index] / 100
-//                CGContextMoveToPoint(ctx, xPos, 0)
-//                CGContextAddLineToPoint(ctx, xPos, size.height)
-//                CGContextStrokePath(ctx)
-//            }
-//        }
         
         CGContextStrokePath(ctx)
         

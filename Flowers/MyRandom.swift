@@ -9,46 +9,47 @@
 import GameplayKit
 
 
-struct SeedIndex: Hashable {
-    var gameType: Int64
-    var gameDifficulty: Int64
-    var gameNumber: Int64
-    var hashValue: Int {
-        get {
-            let hash = gameDifficulty * gameNumber
-            return Int(hash)
-        }
-    }
-    
-}
-
-func == (lhs: SeedIndex, rhs: SeedIndex) -> Bool {
-    return lhs.hashValue == rhs.hashValue
-}
-
+//struct SeedIndex: Hashable {
+//    var gameNumber: Int64
+//    var hashValue: Int {
+//        get {
+//            let hash = gameNumber
+//            return Int(hash)
+//        }
+//    }
+//    
+//}
+//
+//func == (lhs: SeedIndex, rhs: SeedIndex) -> Bool {
+//    return lhs.hashValue == rhs.hashValue
+//}
+//
 class MyRandom {
-    static var seedLibrary = [SeedIndex:NSData]()
+//    static var seedLibrary = [SeedIndex:NSData]()
     var random: GKARC4RandomSource
     //var seed: NSData
-    init(seedIndex: SeedIndex) {
-        let (seedDataStruct, exists) = GV.dataStore.readSeedDataRecord(seedIndex)
-        if exists {
-            random = GKARC4RandomSource(seed: seedDataStruct.seed)
+    init(gameID: Int, levelID: Int) {
+        
+//        let (seedDataStruct, exists) = GV.dataStore.readSeedDataRecord(seedIndex)
+        if let gameData = GV.realm.objects(GameModel).filter("ID = %d", gameID).first {
+            random = GKARC4RandomSource(seed: gameData.seedData)
             random.dropValuesWithCount(2048)
         }
         else {
+            GV.realm.beginWrite()
             random = GKARC4RandomSource()
-            let seedData = SeedDataStruct(gameType: seedIndex.gameType, gameDifficulty: seedIndex.gameDifficulty, gameNumber: seedIndex.gameNumber, seed: random.seed)
-            GV.dataStore.saveSeedDataRecord(seedData)
-            //GV.cloudStore.saveRecord(seedData)
+            let gameData = GameModel()
+            gameData.seedData = random.seed
+            gameData.ID = gameID
+            gameData.levelID = levelID
+            GV.realm.add(gameData)
+            try! GV.realm.commitWrite()
             random.dropValuesWithCount(2048)
         }
     }
     
     func getRandomInt(min: Int, max: Int) -> Int {
- //       let randomInt = min + Int(arc4random_uniform(UInt32(max + 1 - min)))
-        return min + random.nextIntWithUpperBound((max + 1 - min))
-        //return randomInt
+         return min + random.nextIntWithUpperBound((max + 1 - min))
     }
 
     

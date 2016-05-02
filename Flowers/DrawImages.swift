@@ -806,6 +806,33 @@ class DrawImages {
         return UIImage()
     }
 
+    static func getGoBackImage(size: CGSize) -> UIImage {
+        UIGraphicsBeginImageContextWithOptions(size, false, 1)
+        let ctx = UIGraphicsGetCurrentContext()
+        let w = size.width / 100
+        let h = size.height / 100
+        
+        CGContextSetStrokeColorWithColor(ctx, UIColor.blueColor().CGColor)
+        CGContextSetLineJoin (ctx, .Round)
+        CGContextSetLineCap (ctx, .Round)
+        
+        CGContextSetLineWidth(ctx, w * 4)
+        let points = [
+            CGPointMake(w * 80, h * 10),
+            CGPointMake(w * 5, h * 50),
+            CGPointMake(w * 80, h * 90)
+        ]
+        CGContextAddLines(ctx, points, points.count)
+        CGContextStrokePath(ctx)
+        
+        
+        
+        if let image = UIGraphicsGetImageFromCurrentImageContext() {
+            return image
+        }
+        return UIImage()
+    }
+
 }
 
 

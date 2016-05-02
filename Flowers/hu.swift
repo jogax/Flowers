@@ -62,4 +62,5 @@ let huDictionary: [TextConstants: String] = [
     .TCGameCompleteWithBestScore: "Új pontszám rekord a(z) % szinten!",
     .TCGameCompleteWithBestTime:  "Legjobb idő a(z) % szinten",
     .TCGuest:            "Vendég",
+    .TCStatistic:        "Statisztikák",
 ]

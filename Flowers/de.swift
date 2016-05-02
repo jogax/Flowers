@@ -62,6 +62,7 @@ let deDictionary: [TextConstants: String] = [
     .TCGameCompleteWithBestScore: "Neue Rekordsumme auf der Ebene %!",
     .TCGameCompleteWithBestTime:  "Neue Zeitrekord auf der Ebene %!",
     .TCGuest:            "Gast",
+    .TCStatistic:        "Statistiken",
 ]
 
 

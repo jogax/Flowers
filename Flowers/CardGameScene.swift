@@ -310,6 +310,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
     var stop = false
     
     var panel: MySKPanel?
+    var countUpAdder = 0
     
     
     var stopCreateTippsInBackground = false {
@@ -385,14 +386,24 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
     
     func prepareNextGame(newGame: Bool) {
         
-//        GV.gameStatistics = GV.dataStore.readGameStatisticsRecord(GV.actGameParam.nameID, levelID: GV.actGameParam.levelIndex)
-        GV.statistic = GV.realm.objects(StatisticModel).filter("playerID = %d and levelID = %d", GV.player!.ID, GV.player!.levelID).first
+        levelIndex = GV.player!.levelID
+        levelsForPlay.setAktLevel(levelIndex)
+
+//        GV.statistic = GV.realm.objects(StatisticModel).filter("playerID = %d and levelID = %d", GV.player!.ID, GV.player!.levelID).first
+        self.removeAllChildren()
 
         specialPrepareFuncFirst()
         playMusic("MyMusic", volume: GV.player!.musicVolume, loops: playMusicForever)
         stack = Stack()
         timeCount = 0
         if newGame {
+            if let actGame = GV.realm.objects(GameModel).filter("ID = %d", gameNumber).first {
+                if actGame.bestScore == 0 {
+                    GV.realm.beginWrite()
+                    GV.realm.delete(actGame) // Game delete if not used!
+                    try! GV.realm.commitWrite()
+                }
+            }
             gameNumber = Int(arc4random_uniform(999999))
         }
         random = MyRandom(gameID: gameNumber, levelID: levelIndex)
@@ -510,7 +521,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
     }
     
     func specialPrepareFuncFirst() {
-        print("stopCreateTippsInBackground from specialPrepareFuncFirst")
+//        print("stopCreateTippsInBackground from specialPrepareFuncFirst")
         stopCreateTippsInBackground = true
         let cardSize = CGSizeMake(buttonSize * sizeMultiplier.width * 0.8, buttonSize * sizeMultiplier.height * 0.8)
         let cardPackageButtonTexture = SKTexture(image: images.getCardPackage())
@@ -692,6 +703,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         }
         if generatingType == .First {
             countUp = NSTimer.scheduledTimerWithTimeInterval(doCountUpSleepTime, target: self, selector: Selector(doCountUpSelector), userInfo: nil, repeats: true)
+            countUpAdder = 1
         }
         
         stopped = false
@@ -702,10 +714,10 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         {
             self.generatingTipps = true
             self.stopTimer(&self.showTippAtTimer)
-            let startTime = NSDate()
+//            let startTime = NSDate()
             var countCreating = self.countColumns * self.countRows - self.checkGameArray()
             while countCreating > 0 && self.spriteCount > 0 {
-                let tippsCreated = self.createTipps()
+                _ = self.createTipps()
 //                print("tippsCreated:", tippsCreated, " in ", NSDate().timeIntervalSinceDate(startTime).threeDecimals, " seconds")
                 if self.tippArray.count <= 1 || self.stop  {
 //                    print(" ==========> generate special Sprite - countCreating:", countCreating)
@@ -878,7 +890,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
 
 //        print("gameArray Size:", gameArray.count)
 //        print("pairsToCheck.count:", pairsToCheck.count)
-        let pairsToCheckCount = pairsToCheck.count
+//        let pairsToCheckCount = pairsToCheck.count
         let startCheckTime = NSDate()
         for ind in 0..<pairsToCheck.count {
 //            print("pairsToCheck:", pairsToCheck[ind])
@@ -892,9 +904,8 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
             }
         }
 
-        let checkTime = NSDate().timeIntervalSinceDate(startCheckTime)
-        let avarageTime = checkTime / Double(pairsToCheckCount)
-//        print("for ", countColumns, " columns the avarageTime is:", avarageTime.threeDecimals, "sec / pair")
+//        let checkTime = NSDate().timeIntervalSinceDate(startCheckTime)
+//        print("for ", countColumns, " columns the avarageTime is:", checkTime / Double(pairsToCheckCount).threeDecimals, "sec / pair")
         var removeIndex = [Int]()
         if tippArray.count > 0 {
             for ind in 0..<tippArray.count - 1 {
@@ -959,7 +970,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
             
             
             if stopCreateTippsInBackground {
-                print("stopped before sorting Tipp pairs")
+//                print("stopped before sorting Tipp pairs")
 
                 stopCreateTippsInBackground = false
                 return false
@@ -1747,10 +1758,10 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
             GV.statistic!.actTime = timeCount
             GV.statistic!.allTime += timeCount
             
-            if timeCount < GV.statistic!.bestTime && timeCount > 0 {
+            if GV.statistic!.bestTime == 0 || timeCount < GV.statistic!.bestTime {
                 GV.statistic!.bestTime = timeCount
             }
-            if  timeCount < actGame!.bestTime  && timeCount > 0 {
+            if  actGame!.bestTime == 0 || timeCount < actGame!.bestTime {
                 actGame!.bestTime = timeCount
             }
             
@@ -1803,19 +1814,6 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
             
             
             lastNextPoint = nil
-//            GV.actGameParam.gameScore += levelScore
-            
-//            for index in 0..<GV.spriteGameDataArray.count {
-//                if GV.spriteGameDataArray[index].name == GV.globalParam.aktName {
-//                    GV.spriteGameDataArray[index] = SpriteGameData()
-//                    GV.spriteGameDataArray[index].spriteLevelIndex = levelIndex
-//                    GV.spriteGameDataArray[index].spriteGameScore = gameScore
-//                    GV.spriteGameDataArray[index].aktLanguageKey = GV.language.getAktLanguageKey()
-//                    GV.spriteGameDataArray[index].showHelpLines = GV.showHelpLines
-//                    break
-//                }
-//            }
-//            GV.dataStore.saveGameParamRecord(GV.actGameParam)
         }
         stopCreateTippsInBackground = true
         for _ in 0..<self.children.count {
@@ -2855,12 +2853,22 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
     
     func settingsButtonPressed() {
         playMusic("NoSound", volume: GV.player!.musicVolume, loops: 0)
-        stopTimer(&countUp)
+        countUpAdder = 0
 //        settingsDelegate?.settingsDelegateFunc()
-        panel = MySKPanel(view: view!, frame: CGRectMake(self.frame.midX, self.frame.midY, self.frame.width * 0.5, self.frame.height * 0.5), type: .Settings, parent: self)
+        panel = MySKPanel(view: view!, frame: CGRectMake(self.frame.midX, self.frame.midY, self.frame.width * 0.5, self.frame.height * 0.5), type: .Settings, parent: self, callBack: comeBackFromSettings )
         panel = nil
 //        self.addChild(panel)
         
+    }
+    
+    func comeBackFromSettings(restart: Bool) {
+        if restart {
+            prepareNextGame(true)
+            generateSprites(.First)
+        } else {
+            playerLabel.text = GV.player!.name
+            countUpAdder = 1
+        }
     }
     
     func undoButtonPressed() {
@@ -2870,9 +2878,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
     
     func startDoCountUpTimer() {
         startTimer(&countUp, sleepTime: doCountUpSleepTime, selector: doCountUpSelector, repeats: true)
-//        if timer == nil {
-//            timer = NSTimer.scheduledTimerWithTimeInterval(doCountUpSleepTime, target: self, selector: Selector(doCountUpSelector), userInfo: nil, repeats: true)
-//        }
+        countUpAdder = 1
     }
     
     func stopTimer(inout timer: NSTimer?) {
@@ -2893,7 +2899,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
     
     func doCountUp() {
         
-        timeCount += 1
+        timeCount += countUpAdder
         let countUpText = GV.language.getText(.TCTimeLeft)
         let minutes = Int(timeCount / 60)
         var seconds = "\(Int(timeCount % 60))"

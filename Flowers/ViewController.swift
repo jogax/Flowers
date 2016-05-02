@@ -53,29 +53,20 @@ class ViewController: UIViewController, SettingsDelegate, UIApplicationDelegate 
 //        GV.gameStatistics.level = GV.player!.levelID
         
         if GV.realm.objects(PlayerModel).count == 0 {
-            GV.player = PlayerModel()
-            GV.player!.aktLanguageKey = GV.language.getAktLanguageKey()
-            GV.player!.name = GV.language.getText(.TCGuest)
-            GV.player!.isActPlayer = true
-            GV.player!.ID = 0
-            try! GV.realm.write({
-                GV.realm.add(GV.player!)
-            })
-            
-        } else {
-            GV.player = GV.realm.objects(PlayerModel).filter("isActPlayer = TRUE").first!
-         }
+              GV.createNewPlayer(true)
+        }
+        GV.player = GV.realm.objects(PlayerModel).filter("isActPlayer = TRUE").first!
  
         if GV.realm.objects(StatisticModel).filter("playerID = %d", GV.player!.ID).count == 0 {
             GV.statistic = StatisticModel()
-            GV.statistic!.ID = GV.realm.objects(StatisticModel).count
+            GV.statistic!.ID = GV.getNewStatisticID()
             GV.statistic!.playerID = GV.player!.ID
             GV.statistic!.levelID = GV.player!.levelID
             try! GV.realm.write({
                 GV.realm.add(GV.statistic!)
             })
         } else {
-            GV.statistic = GV.realm.objects(StatisticModel).filter("playerID = %d AND levelID = %d", GV.player!.ID, /*GV.player!.levelID*/0).first!
+            GV.statistic = GV.realm.objects(StatisticModel).filter("playerID = %d AND levelID = %d", GV.player!.ID, GV.player!.levelID).first!
         }
         
         GV.language.setLanguage(GV.player!.aktLanguageKey)

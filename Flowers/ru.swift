@@ -62,5 +62,5 @@ let ruDictionary: [TextConstants: String] = [
     .TCGameCompleteWithBestScore: "Новый рекорд очков на уровне %!",
     .TCGameCompleteWithBestTime:  "Новый рекорд времени на уровне % ",
     .TCGuest:            "Гость",
-
+    .TCStatistic:        "Статистика",
 ]

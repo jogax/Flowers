@@ -27,22 +27,36 @@ class MySKPanel: SKSpriteNode {
     let setSoundFunc = "setSoundVolume"
     let setMusicFunc = "setMusicVolume"
     let setLanguageFunc = "setLanguage"
+    let setStatisticFunc = "setStatistics"
     let setReturnFunc = "setReturn"
     var sizeMultiplier = CGSizeMake(0, 0)
     let fontSizeMultiplier:CGFloat = 0.09
+    var callBack: (Bool)->()
+    var parentScene: SKScene?
+    
+    let nameLabel = SKLabelNode()
+    let soundLabel = SKLabelNode()
+    let musicLabel = SKLabelNode()
+    let languageLabel = SKLabelNode()
+    let statisticLabel = SKLabelNode()
+    let returnLabel = SKLabelNode()
+
 
     var type: PanelTypes
+    var playerChanged = false
     var touchesBeganWithNode: SKNode?
     var shadow: SKSpriteNode?
-    init(view: UIView, frame: CGRect, type: PanelTypes, parent: SKScene) {
+    init(view: UIView, frame: CGRect, type: PanelTypes, parent: SKScene, callBack: (Bool)->()) {
         let size = parent.size / 2 //CGSizeMake(parent.size.width / 2, parent.s)
 //        let texture: SKTexture = SKTexture(imageNamed: "panel")
         let texture: SKTexture = SKTexture(image: DrawImages().getPanelImage(size))
         
         sizeMultiplier = size / 10
         
+        self.callBack = callBack
         self.view = view
         self.type = type
+        self.parentScene = parent
         super.init(texture: texture, color: UIColor.clearColor(), size: size)
         self.position = CGPointMake(parent.size.width / 2, parent.size.height / 2)
         self.size = size / 10
@@ -50,8 +64,8 @@ class MySKPanel: SKSpriteNode {
         self.zPosition = 100
         self.alpha = 1.0
         self.userInteractionEnabled = true
-        
-        parent.addChild(self)
+        parentScene!.userInteractionEnabled = false
+        parentScene!.addChild(self)
         let zoomIn = SKAction.resizeToWidth(size.width, height: size.height, duration: 0.5)
         let callInitFunc = SKAction.runBlock({
             switch type {
@@ -67,16 +81,12 @@ class MySKPanel: SKSpriteNode {
     }
     
     func makeSettings() {
-        let nameLabel = SKLabelNode()
         createLabels(nameLabel, text: GV.language.getText(.TCName), lineNr: 1, horAlignment: SKLabelHorizontalAlignmentMode.Left, name: setPlayerFunc)
-        let soundLabel = SKLabelNode()
         createLabels(soundLabel, text: GV.language.getText(.TCSoundVolume), lineNr: 2, horAlignment: SKLabelHorizontalAlignmentMode.Left, name: setSoundFunc )
-        let musicLabel = SKLabelNode()
         createLabels(musicLabel, text: GV.language.getText(.TCMusicVolume), lineNr: 3, horAlignment: SKLabelHorizontalAlignmentMode.Left, name: setMusicFunc )
-        let languageLabel = SKLabelNode()
         createLabels(languageLabel, text: GV.language.getText(.TCLanguage), lineNr: 4, horAlignment: SKLabelHorizontalAlignmentMode.Left, name: setLanguageFunc )
-        let returnLabel = SKLabelNode()
-        createLabels(returnLabel, text: GV.language.getText(.TCReturn), lineNr: 5, horAlignment: SKLabelHorizontalAlignmentMode.Left, name: setReturnFunc )
+        createLabels(statisticLabel, text: GV.language.getText(.TCStatistic), lineNr: 5, horAlignment: SKLabelHorizontalAlignmentMode.Left, name: setStatisticFunc )
+        createLabels(returnLabel, text: GV.language.getText(.TCReturn), lineNr: 6, horAlignment: SKLabelHorizontalAlignmentMode.Left, name: setReturnFunc )
 
     }
     func createLabels(label: SKLabelNode, text: String, lineNr: Int, horAlignment: SKLabelHorizontalAlignmentMode, name:String) {
@@ -98,7 +108,7 @@ class MySKPanel: SKSpriteNode {
         let node = nodeAtPoint(touchLocation)
         touchesBeganWithNode = node
 //        print(node.name)
-        if node is SKLabelNode && node.name!.isMemberOf (setPlayerFunc, setSoundFunc, setMusicFunc, setLanguageFunc, setReturnFunc) {
+        if node is SKLabelNode && node.name!.isMemberOf (setPlayerFunc, setSoundFunc, setMusicFunc, setLanguageFunc, setStatisticFunc,setReturnFunc) {
             (node as! SKLabelNode).fontSize += 2
         }
 
@@ -120,6 +130,7 @@ class MySKPanel: SKSpriteNode {
                     case setSoundFunc: setSoundVolume()
                     case setMusicFunc: setMusicVolume()
                     case setLanguageFunc: setLanguage()
+                    case setStatisticFunc: setStatistic()
                     case setReturnFunc: goBack()
                     default: goBack()
                     }
@@ -129,6 +140,7 @@ class MySKPanel: SKSpriteNode {
     }
     
     func setPlayer() {
+        userInteractionEnabled = false
         let _ = MySKPlayer(parent: self, view: view, callBack: callIfMySKPlayerEnds)
     }
     func setSoundVolume() {
@@ -138,17 +150,44 @@ class MySKPanel: SKSpriteNode {
         
     }
     func setLanguage() {
+        userInteractionEnabled = false
+        let _ = MySKLanguages(parent: self, callBack: callIfMySKLanguagesEnds)
+    }
+    
+    func setStatistic() {
         
     }
+    
     func goBack() {
         shadow?.removeFromParent()
         self.removeFromParent()
+        parentScene!.userInteractionEnabled = true
+        callBack(playerChanged)
     }
     
     func callIfMySKPlayerEnds () {
-        let a = 1
+        if GV.player!.name != GV.realm.objects(PlayerModel).filter("isActPlayer = true").first!.name {
+            GV.realm.beginWrite()
+            GV.player = GV.realm.objects(PlayerModel).filter("isActPlayer = true").first
+            GV.statistic = GV.realm.objects(StatisticModel).filter("playerID = %d and levelID = %d", GV.player!.ID, GV.player!.levelID).first
+            try! GV.realm.commitWrite()
+            playerChanged = true
+        }
+        self.userInteractionEnabled = true
+    }
+    
+    func callIfMySKLanguagesEnds() {
+        self.userInteractionEnabled = true
+        nameLabel.text = GV.language.getText(.TCName)
+        soundLabel.text = GV.language.getText(.TCSoundVolume)
+        musicLabel.text = GV.language.getText(.TCMusicVolume)
+        languageLabel.text = GV.language.getText(.TCLanguage)
+        statisticLabel.text = GV.language.getText(.TCStatistic)
+        returnLabel.text = GV.language.getText(.TCReturn)
     }
 
+    deinit {
+    }
 
 }
 

@@ -60,6 +60,7 @@ struct GV {
 
     static var player: PlayerModel?
     static var statistic: StatisticModel?
+    static var playerID = GV.PlayerID()
 
     
 //    static var spriteGameDataArray: [SpriteGameData] = []
@@ -78,6 +79,60 @@ struct GV {
     static func pointOfCircle(radius: CGFloat, center: CGPoint, angle: CGFloat) -> CGPoint {
         let pointOfCircle = CGPoint (x: center.x + radius * cos(angle), y: center.y + radius * sin(angle))
         return pointOfCircle
+    }
+    
+    static func createNewPlayer(isActPlayer: Bool...)->Int {
+        let newPlayer = PlayerModel()
+        newPlayer.aktLanguageKey = GV.language.getAktLanguageKey()
+        newPlayer.name = GV.language.getText(.TCGuest)
+        newPlayer.isActPlayer = isActPlayer.count == 0 ? false : isActPlayer[0]
+        newPlayer.ID = GV.playerID.getNewID()!
+        try! GV.realm.write({
+            GV.realm.add(newPlayer)
+        })
+        return newPlayer.ID        
+    }
+    
+    static func getNewStatisticID()->Int{
+        var statisticID = 0
+        repeat {
+            statisticID = Int(arc4random_uniform(1000000))
+        } while GV.realm.objects(StatisticModel).filter("ID = %d", statisticID).count == 1
+        return statisticID
+    }
+    
+
+    
+    
+    class PlayerID {
+        var availableIDs = [Int]()
+        var maxIndex = 9
+        var newID: Int
+        var counter = 0
+        init () {
+            let availableCount = maxIndex - GV.realm.objects(PlayerModel).count
+            repeat {
+                newID = Int(arc4random_uniform(1000000))
+                if !availableIDs.contains(newID) {
+                    availableIDs.append(newID)
+                }
+            } while availableIDs.count <= availableCount
+        }
+        
+        func getNewID()->Int? {
+            if availableIDs.count > 0 {
+                let returnID = availableIDs.first!
+                availableIDs.removeFirst()
+                return returnID
+            } else {
+                return nil
+            }
+        }
+        
+        func putOldID(ID: Int) {
+            availableIDs.append(ID)
+        }
+        
     }
 
     
@@ -119,18 +174,6 @@ struct Names {
     }
 }
 
-//struct SeedDataStruct {
-//    var gameType: Int64
-//    var gameDifficulty: Int64
-//    var gameNumber: Int64
-//    var seed: NSData
-//    init(gameType: Int64, gameDifficulty:Int64, gameNumber: Int64, seed: NSData) {
-//        self.gameType = gameType
-//        self.gameDifficulty = gameDifficulty
-//        self.gameNumber = gameNumber
-//        self.seed = seed
-//    }
-//}
 
 struct GameParamStruct {
     var isActPlayer: Bool

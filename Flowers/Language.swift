@@ -64,18 +64,23 @@ enum TextConstants: Int {
     TCCountPlays,
     TCGameCompleteWithBestScore,
     TCGameCompleteWithBestTime,
-    TCGuest
+    TCGuest,
+    TCStatistic
 }
 
-    let LanguageDE = "de"
-    let LanguageEN = "en"
-    let LanguageHU = "hu"
-    let LanguageRU = "ru"
+    let LanguageEN = "en" // index 0
+    let LanguageDE = "de" // index 1
+    let LanguageHU = "hu" // index 2
+    let LanguageRU = "ru" // index 3
 
-
+enum LanguageCodes: Int {
+    case ENCode = 0, DECode, HUCode, RUCode
+}
 
 
 class Language {
+    
+    let languageNames = [LanguageEN, LanguageDE, LanguageHU, LanguageRU]
     
     let languages = [
         "de": deDictionary,
@@ -83,6 +88,8 @@ class Language {
         "hu": huDictionary,
         "ru": ruDictionary
     ]
+    
+    
     
     var callBacks: [()->Bool] = []
     var aktLanguage = [TextConstants: String]()
@@ -103,6 +110,13 @@ class Language {
         }
     }
     
+    func setLanguage(languageCode: LanguageCodes) {
+        aktLanguage = languages[languageNames[languageCode.rawValue]]!
+        for index in 0..<callBacks.count {
+            callBacks[index]()
+        }
+    }
+    
     func getText (textIndex: TextConstants, values: String ...) -> String {
         return aktLanguage[textIndex]!.replace("%", values: values)
     }
@@ -117,6 +131,19 @@ class Language {
     
     func addCallback(callBack: ()->Bool) {
         callBacks.append(callBack)
+    }
+    
+    func count()->Int {
+        return languages.count
+    }
+    
+    func getLanguageNames(index:LanguageCodes)->(String, Bool) {
+        switch index {
+            case .ENCode: return (aktLanguage[.TCEnglish]!, aktLanguage[.TCAktLanguage] == LanguageEN)
+            case .DECode: return (aktLanguage[.TCGerman]!, aktLanguage[.TCAktLanguage] == LanguageDE)
+            case .HUCode: return (aktLanguage[.TCHungarian]!, aktLanguage[.TCAktLanguage] == LanguageHU)
+            case .RUCode: return (aktLanguage[.TCRussian]!, aktLanguage[.TCAktLanguage] == LanguageRU)
+        }
     }
     
 }

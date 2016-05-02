@@ -62,4 +62,5 @@ let enDictionary: [TextConstants: String] = [
     .TCGameCompleteWithBestScore: "New score record at level %!",
     .TCGameCompleteWithBestTime:  "New time record at level %!",
     .TCGuest:            "Guest",
+    .TCStatistic:        "Statistics",
 ]

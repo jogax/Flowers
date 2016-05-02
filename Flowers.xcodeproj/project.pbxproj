@@ -45,6 +45,7 @@
 		201173B91C074D430022AC86 /* CardGameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201173B81C074D430022AC86 /* CardGameScene.swift */; };
 		2014D3821C85DA45008A1946 /* MyContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2014D3811C85DA45008A1946 /* MyContainer.swift */; };
 		201728FA1BE3D0C9005F6CA8 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201728F91BE3D0C9005F6CA8 /* SettingsViewController.swift */; };
+		2017D7871CD0FDA200D1778F /* MySKLanguages.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2017D7861CD0FDA200D1778F /* MySKLanguages.swift */; };
 		201839B61C9C40DD00B33827 /* MySKPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201839B51C9C40DD00B33827 /* MySKPanel.swift */; };
 		201839B81C9C475200B33827 /* panel.png in Resources */ = {isa = PBXBuildFile; fileRef = 201839B71C9C475200B33827 /* panel.png */; };
 		201928291C99AF2B009CA720 /* GameStatistics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201928271C99AF2B009CA720 /* GameStatistics.swift */; };
@@ -143,6 +144,7 @@
 		2014D3811C85DA45008A1946 /* MyContainer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MyContainer.swift; sourceTree = "<group>"; };
 		2016FE731CBE778400609592 /* MyPlayground.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = MyPlayground.playground; sourceTree = "<group>"; };
 		201728F91BE3D0C9005F6CA8 /* SettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
+		2017D7861CD0FDA200D1778F /* MySKLanguages.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MySKLanguages.swift; sourceTree = "<group>"; };
 		201839B51C9C40DD00B33827 /* MySKPanel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MySKPanel.swift; path = ../MySKPanel.swift; sourceTree = "<group>"; };
 		201839B71C9C475200B33827 /* panel.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = panel.png; sourceTree = "<group>"; };
 		201928271C99AF2B009CA720 /* GameStatistics.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameStatistics.swift; sourceTree = "<group>"; };
@@ -249,6 +251,7 @@
 				201839B51C9C40DD00B33827 /* MySKPanel.swift */,
 				20343A6E1CB7F4660063DF8D /* MySKTable.swift */,
 				20AE75EA1CB2B50C006AFE29 /* MySKPlayer.swift */,
+				2017D7861CD0FDA200D1778F /* MySKLanguages.swift */,
 				2016FE731CBE778400609592 /* MyPlayground.playground */,
 				2014D3811C85DA45008A1946 /* MyContainer.swift */,
 				201C52411C316801001B04AB /* Extensions.swift */,
@@ -327,8 +330,8 @@
 			isa = PBXGroup;
 			children = (
 				2001412F1BAEB4F6003E0950 /* Language.swift */,
-				2001413C1BAEB714003E0950 /* de.swift */,
 				2001413E1BAEB95B003E0950 /* en.swift */,
+				2001413C1BAEB714003E0950 /* de.swift */,
 				200141401BAEB9F7003E0950 /* hu.swift */,
 				200141421BAEBAA2003E0950 /* ru.swift */,
 			);
@@ -673,6 +676,7 @@
 			files = (
 				200141451BAED8BF003E0950 /* Stack.swift in Sources */,
 				200DC9561CAC2597000A000D /* StatisticModel.swift in Sources */,
+				2017D7871CD0FDA200D1778F /* MySKLanguages.swift in Sources */,
 				200141781BAEFBCA003E0950 /* DataStore.swift in Sources */,
 				200141411BAEB9F7003E0950 /* hu.swift in Sources */,
 				201E20471C1C80CF003DBBD8 /* CloudData.swift in Sources */,

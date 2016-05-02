@@ -57,6 +57,7 @@
 		201E20471C1C80CF003DBBD8 /* CloudData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201E20461C1C80CF003DBBD8 /* CloudData.swift */; };
 		201FE2FB1C9860FC00B5861E /* OK.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 201FE2FA1C9860FC00B5861E /* OK.m4a */; };
 		2024A8C51C427C420001CA95 /* cardBackground.png in Resources */ = {isa = PBXBuildFile; fileRef = 2024A8C41C427C420001CA95 /* cardBackground.png */; };
+		202AF3F91CD7A571003318DF /* Podfile in Resources */ = {isa = PBXBuildFile; fileRef = 202AF3F81CD7A571003318DF /* Podfile */; };
 		20343A6F1CB7F4660063DF8D /* MySKTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20343A6E1CB7F4660063DF8D /* MySKTable.swift */; };
 		204A8A181BEF93B90061D14F /* LanguageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 204A8A171BEF93B90061D14F /* LanguageViewController.swift */; };
 		205008BB1CC65635000B1468 /* GameModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 205008BA1CC65635000B1468 /* GameModel.swift */; };
@@ -157,6 +158,7 @@
 		201E20461C1C80CF003DBBD8 /* CloudData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CloudData.swift; path = ../CloudData.swift; sourceTree = "<group>"; };
 		201FE2FA1C9860FC00B5861E /* OK.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = OK.m4a; sourceTree = "<group>"; };
 		2024A8C41C427C420001CA95 /* cardBackground.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = cardBackground.png; sourceTree = "<group>"; };
+		202AF3F81CD7A571003318DF /* Podfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Podfile; sourceTree = "<group>"; };
 		20343A6E1CB7F4660063DF8D /* MySKTable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MySKTable.swift; sourceTree = "<group>"; };
 		2034B0061BDE796300D296DA /* Flowers.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Flowers.xcdatamodel; sourceTree = "<group>"; };
 		204A8A171BEF93B90061D14F /* LanguageViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LanguageViewController.swift; sourceTree = "<group>"; };
@@ -275,6 +277,7 @@
 				200141441BAED8BF003E0950 /* Stack.swift */,
 				200140DD1BAEA96A003E0950 /* AppDelegate.swift */,
 				200140E11BAEA96A003E0950 /* Main.storyboard */,
+				202AF3F81CD7A571003318DF /* Podfile */,
 				200140E71BAEA96A003E0950 /* Assets.xcassets */,
 				20FC65BD1BBBC82000775322 /* sprites.atlas */,
 				2001416A1BAEF7AA003E0950 /* Flowers.xcdatamodeld */,
@@ -524,6 +527,7 @@
 				200141271BAEB1F6003E0950 /* MyMusic.m4a in Resources */,
 				200141291BAEB1F6003E0950 /* Timeout.m4a in Resources */,
 				205574431BBECB6200C165A1 /* NoSound.m4a in Resources */,
+				202AF3F91CD7A571003318DF /* Podfile in Resources */,
 				200141211BAEB1F6003E0950 /* Do_1.m4a in Resources */,
 				200141251BAEB1F6003E0950 /* Lost.m4a in Resources */,
 				20FC65DF1BBC127800775322 /* finger.png in Resources */,

@@ -23,6 +23,8 @@ class MySKPanel: SKSpriteNode {
             }
         }
     }
+    
+    let noTouchFunc = "noTouch"
     let setPlayerFunc = "setPlayer"
     let setSoundFunc = "setSoundVolume"
     let setMusicFunc = "setMusicVolume"
@@ -30,10 +32,11 @@ class MySKPanel: SKSpriteNode {
     let setStatisticFunc = "setStatistics"
     let setReturnFunc = "setReturn"
     var sizeMultiplier = CGSizeMake(0, 0)
-    let fontSizeMultiplier:CGFloat = 0.09
+    var fontSize:CGFloat = 0
     var callBack: (Bool)->()
     var parentScene: SKScene?
     
+    let playerLabel = SKLabelNode()
     let nameLabel = SKLabelNode()
     let soundLabel = SKLabelNode()
     let musicLabel = SKLabelNode()
@@ -49,7 +52,7 @@ class MySKPanel: SKSpriteNode {
     init(view: UIView, frame: CGRect, type: PanelTypes, parent: SKScene, callBack: (Bool)->()) {
         let size = parent.size / 2 //CGSizeMake(parent.size.width / 2, parent.s)
 //        let texture: SKTexture = SKTexture(imageNamed: "panel")
-        let texture: SKTexture = SKTexture(image: DrawImages().getPanelImage(size))
+        let texture: SKTexture = SKTexture()
         
         sizeMultiplier = size / 10
         
@@ -58,11 +61,14 @@ class MySKPanel: SKSpriteNode {
         self.type = type
         self.parentScene = parent
         super.init(texture: texture, color: UIColor.clearColor(), size: size)
+        self.texture = SKTexture(image: getPanelImage(size))
+        setMyDeviceConstants()
         self.position = CGPointMake(parent.size.width / 2, parent.size.height / 2)
         self.size = size / 10
         self.color = UIColor.yellowColor()
         self.zPosition = 100
         self.alpha = 1.0
+        self.name = "MySKPanel"
         self.userInteractionEnabled = true
         parentScene!.userInteractionEnabled = false
         parentScene!.addChild(self)
@@ -81,12 +87,15 @@ class MySKPanel: SKSpriteNode {
     }
     
     func makeSettings() {
-        createLabels(nameLabel, text: GV.language.getText(.TCName), lineNr: 1, horAlignment: SKLabelHorizontalAlignmentMode.Left, name: setPlayerFunc)
-        createLabels(soundLabel, text: GV.language.getText(.TCSoundVolume), lineNr: 2, horAlignment: SKLabelHorizontalAlignmentMode.Left, name: setSoundFunc )
-        createLabels(musicLabel, text: GV.language.getText(.TCMusicVolume), lineNr: 3, horAlignment: SKLabelHorizontalAlignmentMode.Left, name: setMusicFunc )
-        createLabels(languageLabel, text: GV.language.getText(.TCLanguage), lineNr: 4, horAlignment: SKLabelHorizontalAlignmentMode.Left, name: setLanguageFunc )
-        createLabels(statisticLabel, text: GV.language.getText(.TCStatistic), lineNr: 5, horAlignment: SKLabelHorizontalAlignmentMode.Left, name: setStatisticFunc )
-        createLabels(returnLabel, text: GV.language.getText(.TCReturn), lineNr: 6, horAlignment: SKLabelHorizontalAlignmentMode.Left, name: setReturnFunc )
+        let name = GV.player!.name == GV.language.getText(.TCAnonym) ? GV.language.getText(.TCGuest) : GV.player!.name
+        createLabels(playerLabel, text: GV.language.getText(.TCPlayer) + ": \(name)", lineNr: 1, horAlignment: SKLabelHorizontalAlignmentMode.Center, name: noTouchFunc)
+        playerLabel.fontColor = UIColor.blackColor()
+        createLabels(nameLabel, text: GV.language.getText(.TCName), lineNr: 2, horAlignment: SKLabelHorizontalAlignmentMode.Left, name: setPlayerFunc)
+        createLabels(soundLabel, text: GV.language.getText(.TCSoundVolume), lineNr: 3, horAlignment: SKLabelHorizontalAlignmentMode.Left, name: setSoundFunc )
+        createLabels(musicLabel, text: GV.language.getText(.TCMusicVolume), lineNr: 4, horAlignment: SKLabelHorizontalAlignmentMode.Left, name: setMusicFunc )
+        createLabels(languageLabel, text: GV.language.getText(.TCLanguage), lineNr: 5, horAlignment: SKLabelHorizontalAlignmentMode.Left, name: setLanguageFunc )
+        createLabels(statisticLabel, text: GV.language.getText(.TCStatistic), lineNr: 6, horAlignment: SKLabelHorizontalAlignmentMode.Left, name: setStatisticFunc )
+        createLabels(returnLabel, text: GV.language.getText(.TCReturn), lineNr: 7, horAlignment: SKLabelHorizontalAlignmentMode.Left, name: setReturnFunc )
 
     }
     func createLabels(label: SKLabelNode, text: String, lineNr: Int, horAlignment: SKLabelHorizontalAlignmentMode, name:String) {
@@ -98,8 +107,8 @@ class MySKPanel: SKSpriteNode {
 //        print (self.frame, label.frame)
         label.fontColor = SKColor.blueColor()
         label.zPosition = self.zPosition + 10
-        label.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.Left
-        label.fontSize = self.frame.width * fontSizeMultiplier * 0.7
+        label.horizontalAlignmentMode = .Left
+        label.fontSize = fontSize
         self.addChild(label)
     }
     
@@ -120,10 +129,12 @@ class MySKPanel: SKSpriteNode {
     override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
         let touchLocation = touches.first!.locationInNode(self)
         if touchesBeganWithNode is SKLabelNode {
-            (touchesBeganWithNode as! SKLabelNode).fontSize -= 2
+            if touchesBeganWithNode!.name != noTouchFunc {
+                (touchesBeganWithNode as! SKLabelNode).fontSize -= 2
+            }
             let node = nodeAtPoint(touchLocation)
             if node is SKLabelNode && touchesBeganWithNode == node {
-                if node.name!.isMemberOf (setPlayerFunc, setSoundFunc, setMusicFunc, setLanguageFunc, setReturnFunc) {
+                if node.name!.isMemberOf (setPlayerFunc, setSoundFunc, setMusicFunc, setLanguageFunc, setStatisticFunc, setReturnFunc) {
     //                (node   as! SKLabelNode).fontSize -= 2
                     switch node.name! {
                     case setPlayerFunc: setPlayer()
@@ -137,6 +148,10 @@ class MySKPanel: SKSpriteNode {
                 }
             }
         }
+    }
+    
+    func noTouch() {
+        
     }
     
     func setPlayer() {
@@ -155,7 +170,8 @@ class MySKPanel: SKSpriteNode {
     }
     
     func setStatistic() {
-        
+        userInteractionEnabled = false
+        let _ = MySKStatistic(parent: self, callBack: callIfMySKStatisticEnds)
     }
     
     func goBack() {
@@ -173,11 +189,15 @@ class MySKPanel: SKSpriteNode {
             try! GV.realm.commitWrite()
             playerChanged = true
         }
+        let name = GV.player!.name == GV.language.getText(.TCAnonym) ? GV.language.getText(.TCGuest) : GV.player!.name
+        playerLabel.text = GV.language.getText(.TCPlayer) + ": \(name)"
         self.userInteractionEnabled = true
     }
     
     func callIfMySKLanguagesEnds() {
         self.userInteractionEnabled = true
+        let name = GV.player!.name == GV.language.getText(.TCAnonym) ? GV.language.getText(.TCGuest) : GV.player!.name
+        playerLabel.text = GV.language.getText(.TCPlayer) + ": \(name)"
         nameLabel.text = GV.language.getText(.TCName)
         soundLabel.text = GV.language.getText(.TCSoundVolume)
         musicLabel.text = GV.language.getText(.TCMusicVolume)
@@ -185,6 +205,76 @@ class MySKPanel: SKSpriteNode {
         statisticLabel.text = GV.language.getText(.TCStatistic)
         returnLabel.text = GV.language.getText(.TCReturn)
     }
+    
+    func callIfMySKStatisticEnds() {
+        self.userInteractionEnabled = true
+        let name = GV.player!.name == GV.language.getText(.TCAnonym) ? GV.language.getText(.TCGuest) : GV.player!.name
+        playerLabel.text = GV.language.getText(.TCPlayer) + ": \(name)"
+        nameLabel.text = GV.language.getText(.TCName)
+        soundLabel.text = GV.language.getText(.TCSoundVolume)
+        musicLabel.text = GV.language.getText(.TCMusicVolume)
+        languageLabel.text = GV.language.getText(.TCLanguage)
+        statisticLabel.text = GV.language.getText(.TCStatistic)
+        returnLabel.text = GV.language.getText(.TCReturn)
+    }
+    
+    func setMyDeviceConstants() {
+        
+        switch GV.deviceConstants.type {
+        case .iPadPro12_9:
+            fontSize = CGFloat(20)
+        case .iPad2:
+            fontSize = CGFloat(20)
+        case .iPadMini:
+            fontSize = CGFloat(20)
+        case .iPhone6Plus:
+            fontSize = CGFloat(15)
+        case .iPhone6:
+            fontSize = CGFloat(15)
+        case .iPhone5:
+            fontSize = CGFloat(13)
+        case .iPhone4:
+            fontSize = CGFloat(12)
+        default:
+            break
+        }
+        
+    }
+    
+    func getPanelImage (size: CGSize) -> UIImage {
+        let opaque = false
+        let scale: CGFloat = 1
+
+        UIGraphicsBeginImageContextWithOptions(size, opaque, scale)
+        let ctx = UIGraphicsGetCurrentContext()
+        //        CGContextSetStrokeColorWithColor(ctx, UIColor.blackColor().CGColor)
+        
+        //        CGContextBeginPath(ctx)
+        let roundRect = UIBezierPath(roundedRect: CGRectMake(0, 0, size.width, size.height), byRoundingCorners:.AllCorners, cornerRadii: CGSizeMake(size.width / 20, size.height / 20)).CGPath
+        CGContextAddPath(ctx, roundRect)
+        CGContextSetFillColorWithColor(ctx, UIColor.whiteColor().CGColor);
+        CGContextFillPath(ctx)
+        
+        let points = [
+            CGPointMake(size.width * 0.1, size.height * 0.12),
+            CGPointMake(size.width * 0.9, size.height * 0.12)
+        ]
+        CGContextAddLines(ctx, points, points.count)
+        CGContextStrokePath(ctx)
+        
+//        CGContextSetShadow(ctx, CGSizeMake(10,10), 1.0)
+        //        CGContextStrokePath(ctx)
+        
+        
+        
+        CGContextClosePath(ctx)
+        let image = UIGraphicsGetImageFromCurrentImageContext()
+        
+        return image
+    }
+    
+
+
 
     deinit {
     }

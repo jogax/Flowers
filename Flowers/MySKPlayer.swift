@@ -1,5 +1,5 @@
 //
-//  SKPlayerNode.swift
+//  MySKPlayer.swift
 //  Flowers
 //
 //  Created by Jozsef Romhanyi on 04/04/2016.
@@ -13,34 +13,37 @@ class MySKPlayer: MySKTable, UITextFieldDelegate {
     
     var callBack: ()->()
     let heightOfTableRow: CGFloat = 40
-    var view: UIView
     var nameInputField = UITextField()
     var nameTable = [PlayerModel]()
     var nameTableIndex = 0
     var parentNode: SKSpriteNode
     var positionMultiplier = GV.deviceConstants.cardPositionMultiplier * 0.6
     var countLines = 0
-    let myColumnWidths: [CGFloat] = [80, 10, 10]  // in %
-    let deleteImage = DrawImages.getDeleteImage(CGSizeMake(30,30))
-    let modifyImage = DrawImages.getModifyImage(CGSizeMake(30,30))
-    let OKImage = DrawImages.getOKImage(CGSizeMake(30,30))
+    let myColumnWidths: [CGFloat] = [70, 15, 15]  // in %
+    let imageSize = CGSizeMake(30 * GV.deviceConstants.imageSizeMultiplier,30 * GV.deviceConstants.imageSizeMultiplier)
+    var deleteImage: UIImage
+    var modifyImage: UIImage
+    var OKImage: UIImage
 //    let statisticImage = DrawImages.getStatisticImage(CGSizeMake(30,30))
-    let myName = "MyName"
+    let myName = "MySKPlayer"
 
 
 
     init(parent: SKSpriteNode, view: UIView, callBack: ()->()) {
-        self.view = view
         nameTable = Array(GV.realm.objects(PlayerModel))
         countLines = nameTable.count// + (nameTable[0].name == GV.language.getText(.TCGuest) ? 0 : 1)
         self.parentNode = parent
         self.callBack = callBack
         let size = CGSizeMake(parent.frame.width * 0.9, CGFloat(countLines) * heightOfTableRow)
+        self.deleteImage = DrawImages.getDeleteImage(imageSize)
+        self.modifyImage = DrawImages.getModifyImage(imageSize)
+        self.OKImage = DrawImages.getOKImage(imageSize)
 
         
 //        let texture: SKTexture = SKTexture(image: DrawImages().getTableImage(parent.frame.size,countLines: Int(countLines), countRows: 1))
         super.init(columnWidths: myColumnWidths, rows:countLines, headLines: "", parent: parent)
         self.name = myName
+        self.parentView = view
         
         let myPosition = CGPointMake(0, (parent.size.height - size.height) / 2 - 10)
         self.position = myPosition
@@ -48,11 +51,8 @@ class MySKPlayer: MySKTable, UITextFieldDelegate {
         self.nameInputField.delegate = self
         self.zPosition = parent.zPosition + 200
         
-        if countLines == 1 && nameTable[0].name == GV.language.getText(.TCGuest) {
-            getPlayerName(0)
-        } else {
-            showPlayers()
-        }
+        
+        showPlayers()
 
         
 
@@ -67,10 +67,11 @@ class MySKPlayer: MySKTable, UITextFieldDelegate {
     
     func getPlayerName(row: Int) {
         self.userInteractionEnabled = false
-        let yPosition = parentNode.position.y - parentNode.size.height * 0.435 + (CGFloat(row) * heightOfTableRow)
-        let xPosition = parentNode.position.x - 0.405 * parentNode.size.width
-        let name = nameTable[row].name == GV.language.getText(.TCGuest) ? "" : nameTable[row].name
-        let myFont = UIFont(name: "Courier", size: fontSize)
+        let name = nameTable[row].name == GV.language.getText(.TCAnonym) ? "" : nameTable[row].name
+        let myFont = UIFont(name: "Times New Roman", size: fontSize)
+        
+        let xPosition = positionsTable[0][row].x
+        let yPosition = parentView!.frame.size.height - positionsTable[0][row].y - 0.8 * heightOfLabelRow / 2
         nameInputField.hidden = false
         nameInputField.font = myFont
         nameInputField.textColor = UIColor.blueColor()
@@ -79,11 +80,11 @@ class MySKPlayer: MySKTable, UITextFieldDelegate {
         nameInputField.backgroundColor = UIColor.whiteColor()
         nameInputField.frame = CGRectMake(xPosition, yPosition,
                                           size.width * 0.6,
-                                          0.6 * self.size.height / CGFloat(countLines))
+                                          heightOfTableRow * 0.8)
         nameInputField.autocorrectionType = .No
         nameInputField.layer.borderWidth = 0.0
         nameInputField.becomeFirstResponder()
-        view.addSubview(nameInputField)
+        parentView!.addSubview(nameInputField)
         
 //        return nameInputField.text!
     }
@@ -111,10 +112,16 @@ class MySKPlayer: MySKTable, UITextFieldDelegate {
     func showPlayers() {
         reDrawWhenChanged(myColumnWidths, rows: GV.realm.objects(PlayerModel).count)
         for index in 0..<nameTable.count {
-            let name = nameTable[index].name == GV.language.getText(.TCGuest) ? "+" : nameTable[index].name
-            showElementOfTable(name, column: 0, row: index, selected: nameTable[index].isActPlayer)
-            showImageInTable(modifyImage, column: 1, row: index, selected: nameTable[index].isActPlayer)
-            showImageInTable(deleteImage, column: 2, row: index, selected: nameTable[index].isActPlayer)
+            let name = nameTable[index].name == GV.language.getText(.TCAnonym) ? "+" : nameTable[index].name
+            var elements: [MultiVar] = [MultiVar(string: name)]
+            if !(name == "+") {
+                elements.append(MultiVar(image: modifyImage))
+                elements.append(MultiVar(image: deleteImage))
+            }
+            showLineOfTable(elements, row: index, selected: nameTable[index].isActPlayer)
+        }
+        if nameTable[0].name == GV.language.getText(.TCAnonym) {
+            getPlayerName(0)
         }
     }
     
@@ -197,7 +204,7 @@ class MySKPlayer: MySKTable, UITextFieldDelegate {
     
     func addNewPlayerWhenRequired() -> Int {
         let lastPlayer = GV.realm.objects(PlayerModel).last!
-        if lastPlayer.name == GV.language.getText(.TCGuest) {
+        if lastPlayer.name == GV.language.getText(.TCAnonym) {
             return lastPlayer.ID
         } else {
             let newPlayerID = GV.createNewPlayer()

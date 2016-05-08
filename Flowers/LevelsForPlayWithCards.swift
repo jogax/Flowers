@@ -82,4 +82,8 @@ class LevelsForPlayWithCards {
         return level
     }
     
+    func count()->Int {
+        return levelContent.count
+    }
+    
 }

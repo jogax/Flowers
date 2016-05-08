@@ -568,28 +568,6 @@ class DrawImages {
         return pointOfCircle
     }
     
-    func getPanelImage (size: CGSize) -> UIImage {
-        UIGraphicsBeginImageContextWithOptions(size, opaque, scale)
-        let ctx = UIGraphicsGetCurrentContext()
-//        CGContextSetStrokeColorWithColor(ctx, UIColor.blackColor().CGColor)
-        
-//        CGContextBeginPath(ctx)
-        let roundRect = UIBezierPath(roundedRect: CGRectMake(0, 0, size.width, size.height), byRoundingCorners:.AllCorners, cornerRadii: CGSizeMake(size.width / 20, size.height / 20)).CGPath
-        CGContextAddPath(ctx, roundRect)
-        
-        CGContextSetShadow(ctx, CGSizeMake(10,10), 1.0)
-//        CGContextStrokePath(ctx)
-
-        CGContextSetFillColorWithColor(ctx, UIColor.whiteColor().CGColor);
-        CGContextFillPath(ctx)
-
-        
-        CGContextClosePath(ctx)
-        let image = UIGraphicsGetImageFromCurrentImageContext()
-
-        return image
-    }
-    
     static func getDeleteImage (size: CGSize) -> UIImage {
         UIGraphicsBeginImageContextWithOptions(size, false, 1)
         let ctx = UIGraphicsGetCurrentContext()
@@ -821,6 +799,33 @@ class DrawImages {
             CGPointMake(w * 80, h * 10),
             CGPointMake(w * 5, h * 50),
             CGPointMake(w * 80, h * 90)
+        ]
+        CGContextAddLines(ctx, points, points.count)
+        CGContextStrokePath(ctx)
+        
+        
+        
+        if let image = UIGraphicsGetImageFromCurrentImageContext() {
+            return image
+        }
+        return UIImage()
+    }
+
+    static func getGoForwardImage(size: CGSize) -> UIImage {
+        UIGraphicsBeginImageContextWithOptions(size, false, 1)
+        let ctx = UIGraphicsGetCurrentContext()
+        let w = size.width / 100
+        let h = size.height / 100
+        
+        CGContextSetStrokeColorWithColor(ctx, UIColor.blueColor().CGColor)
+        CGContextSetLineJoin (ctx, .Round)
+        CGContextSetLineCap (ctx, .Round)
+        
+        CGContextSetLineWidth(ctx, w * 4)
+        let points = [
+            CGPointMake(w * 20, h * 10),
+            CGPointMake(w * 95, h * 50),
+            CGPointMake(w * 20, h * 90)
         ]
         CGContextAddLines(ctx, points, points.count)
         CGContextStrokePath(ctx)

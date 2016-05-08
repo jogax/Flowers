@@ -84,7 +84,7 @@ struct GV {
     static func createNewPlayer(isActPlayer: Bool...)->Int {
         let newPlayer = PlayerModel()
         newPlayer.aktLanguageKey = GV.language.getAktLanguageKey()
-        newPlayer.name = GV.language.getText(.TCGuest)
+        newPlayer.name = GV.language.getText(.TCAnonym)
         newPlayer.isActPlayer = isActPlayer.count == 0 ? false : isActPlayer[0]
         newPlayer.ID = GV.playerID.getNewID()!
         try! GV.realm.write({
@@ -224,6 +224,9 @@ struct GameParamStruct {
 //    
 //}
 
+enum DeviceTypes: Int {
+    case iPadPro12_9 = 0, iPad2, iPadMini, iPhone6Plus, iPhone6, iPhone5, iPhone4, none
+}
 
 
 struct DeviceConstants {
@@ -231,6 +234,8 @@ struct DeviceConstants {
     var buttonSizeMultiplier: CGFloat
     var cardPositionMultiplier: CGFloat
     var fontSizeMultiplier: CGFloat
+    var imageSizeMultiplier: CGFloat
+    var type: DeviceTypes
     
     init(deviceType: String) {
         switch deviceType {
@@ -239,41 +244,57 @@ struct DeviceConstants {
                 buttonSizeMultiplier = 0.9
                 cardPositionMultiplier = 1.0
                 fontSizeMultiplier = 0.10
+                imageSizeMultiplier = 1.0
+                type = .iPadPro12_9
             case "iPad 2", "iPad 3", "iPad 4", "iPad Air", "iPad Air 2":
                 sizeMultiplier = 1.6
                 buttonSizeMultiplier = 1.2
                 cardPositionMultiplier = 1.0
-                fontSizeMultiplier = 0.10
+                fontSizeMultiplier = 0.20
+                imageSizeMultiplier = 1.3
+                type = .iPad2
             case "iPad Mini", "iPad Mini 2", "iPad Mini 3", "iPad Mini 4":
                 sizeMultiplier = 1.3
                 buttonSizeMultiplier = 1.3
                 cardPositionMultiplier = 1.5
                 fontSizeMultiplier = 0.10
+                imageSizeMultiplier = 1.0
+                type = .iPadMini
             case "iPhone 6 Plus", "iPhone 6s Plus":
-                sizeMultiplier = 1.2
+                sizeMultiplier = 1.0
                 buttonSizeMultiplier = 1.8
                 cardPositionMultiplier = 1.4
-                fontSizeMultiplier = 0.10
+                fontSizeMultiplier = 0.20
+                imageSizeMultiplier = 1.0
+                type = .iPhone6Plus
             case "iPhone 6", "iPhone 6s":
                 sizeMultiplier = 1.0
                 buttonSizeMultiplier = 2.0
                 cardPositionMultiplier = 1.4
-                fontSizeMultiplier = 0.10
+                fontSizeMultiplier = 0.20
+                imageSizeMultiplier = 0.8
+                type = .iPhone6
             case "iPhone 5s", "iPhone 5", "iPhone 5c":
                 sizeMultiplier = 0.8
                 buttonSizeMultiplier = 2.1
                 cardPositionMultiplier = 1.3
-                fontSizeMultiplier = 0.10
+                fontSizeMultiplier = 0.20
+                imageSizeMultiplier = 0.7
+                type = .iPhone5
             case "iPhone 4s", "iPhone 4":
                 sizeMultiplier = 0.8
                 buttonSizeMultiplier = 2.0
                 cardPositionMultiplier = 1.1
                 fontSizeMultiplier = 0.10
+                imageSizeMultiplier = 0.7
+                type = .iPhone4
            default:
                 sizeMultiplier = 1.0
                 buttonSizeMultiplier = 1.0
                 cardPositionMultiplier = 1.0
                 fontSizeMultiplier = 1.0
+                imageSizeMultiplier = 1.0
+                type = .none
         }
         
     }

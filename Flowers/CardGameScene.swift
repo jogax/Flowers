@@ -194,6 +194,10 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
     var showTippAtTimer: NSTimer?
     var dummy = 0
     
+    var labelFontSize = CGFloat(0)
+    var labelYPosProcent = CGFloat(0)
+    var labelHeight = CGFloat(0)
+    
     var tremblingSprites: [MySKNode] = []
     var random: MyRandom?
     // Values from json File
@@ -386,6 +390,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
     
     func prepareNextGame(newGame: Bool) {
         
+        setMyDeviceConstants()
         levelIndex = GV.player!.levelID
         levelsForPlay.setAktLevel(levelIndex)
 
@@ -444,13 +449,6 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         
         //        self.addChild(labelBackground)
         
-//        if GV.actGameParam.name != GV.dummyName {
-            createLabels(playerLabel, text: GV.language.getText(TextConstants.TCPlayer) + "\(GV.player!.name)", position: CGPointMake(self.position.x + self.size.width * levelPosKorr.x / 2, self.position.y + self.size.height * levelPosKorr.y))
-//        } else {
-//            levelPosKorr.x = 0.5
-//        }
-        createLabels(levelLabel, text: GV.language.getText(TextConstants.TCLevel) + ": \(levelIndex + 1)", position: CGPointMake(self.position.x + self.size.width * levelPosKorr.x, self.position.y + self.size.height * levelPosKorr.y) )
-        createLabels(countUpLabel, text: "", position: CGPointMake(self.position.x + self.size.width * countUpPosKorr.x, self.position.y + self.size.height * countUpPosKorr.y), horAlignment: .Right )
         
         showTimeLeft()
         
@@ -490,24 +488,45 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         makeLineAroundGameboard(.BottomHorizontal)
         makeLineAroundGameboard(.LeftVertical)
         //        self.inFirstGenerateSprites = false
-        spezialPrepareFunc()
+        spriteCount = Int(CGFloat(countContainers * countSpritesProContainer!))
+        let spriteCountText: String = GV.language.getText(.TCCardCount) + " \(spriteCount)"
+        let tippCountText: String = GV.language.getText(.TCTippCount) + " \(tippArray.count)"
+        let name = GV.player!.name == GV.language.getText(.TCAnonym) ? GV.language.getText(.TCGuest) : GV.player!.name
+        createLabels(playerLabel, text: GV.language.getText(TextConstants.TCPlayer) + ": \(name)", column: 2, row: 1)
+        createLabels(levelLabel, text: GV.language.getText(TextConstants.TCLevel) + ": \(levelIndex + 1)", column: 3, row: 1)
+        createLabels(countUpLabel, text: "", column: 4, row: 2)
+        createLabels(spriteCountLabel, text: spriteCountText, column: 1, row: 2)
+        createLabels(tippCountLabel, text: tippCountText, column: 1, row: 3)
+
     }
     
-    func createLabels(label: SKLabelNode, text: String, position: CGPoint) {
+    func createLabels(label: SKLabelNode, text: String, column: Int, row: Int) {
         label.text = text
-        label.position = position
+        var xPos = CGFloat(0)
+        var horAlignment = SKLabelHorizontalAlignmentMode.Center
+        switch column {
+        case 1:
+            xPos = self.position.x + self.size.width * 0.1
+            horAlignment = .Left
+        case 2:
+            xPos = self.position.x + self.size.width * 0.4
+        case 3:
+            xPos = self.position.x + self.size.width * 0.6
+        case 4:
+            xPos = self.position.x + self.size.width * 0.8
+        default: break
+        }
+        let yPos = CGFloat(self.size.height * labelYPosProcent / 100) + CGFloat((5 - row)) * labelHeight
+        
+        label.position = CGPointMake(xPos, yPos)
         label.fontColor = SKColor.blackColor()
-        label.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.Center
+        label.horizontalAlignmentMode = horAlignment
         label.verticalAlignmentMode = SKLabelVerticalAlignmentMode.Center
-        label.fontSize = 15;
+        label.fontSize = labelFontSize;
         label.color = UIColor(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)
         self.addChild(label)
     }
     
-    func createLabels(label: SKLabelNode, text: String, position: CGPoint, horAlignment: SKLabelHorizontalAlignmentMode) {
-        createLabels(label, text: text, position: position)
-        label.horizontalAlignmentMode = horAlignment
-    }
     
     
 
@@ -577,7 +596,8 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
 
     
     func changeLanguage()->Bool {
-        playerLabel.text = GV.language.getText(.TCPlayer) + ": \(GV.player!.name)"
+        let name = GV.player!.name == GV.language.getText(.TCAnonym) ? GV.language.getText(.TCGuest) : GV.player!.name
+        playerLabel.text = GV.language.getText(.TCPlayer) + ": \(name)"
         levelLabel.text = GV.language.getText(.TCLevel) + ": \(levelIndex + 1)"
         spriteCountLabel.text = GV.language.getText(.TCCardCount) + " \(spriteCount)"
         tippCountLabel.text = GV.language.getText(.TCTippCount) + " \(tippArray.count)"
@@ -592,11 +612,6 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
     
     func spezialPrepareFunc() {
 //        valueTab.removeAll()
-        spriteCount = Int(CGFloat(countContainers * countSpritesProContainer!))
-        let spriteCountText: String = GV.language.getText(.TCCardCount) + " \(spriteCount)"
-        let tippCountText: String = GV.language.getText(.TCTippCount) + " \(tippArray.count)"
-        createLabels(spriteCountLabel, text: spriteCountText, position: CGPointMake(self.position.x + self.size.width * spriteCountPosKorr.x, self.position.y + self.size.height * spriteCountPosKorr.y), horAlignment: .Left)
-        createLabels(tippCountLabel, text: tippCountText, position: CGPointMake(self.position.x + self.size.width * spriteCountPosKorr.x, self.position.y + self.size.height * tippCountPosKorr.y), horAlignment: .Left)
     }
 
     func getValueForContainer()->Int {
@@ -1750,10 +1765,20 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
             stopTimer(&countUp)
             playMusic("Winner", volume: GV.player!.musicVolume, loops: 0)
             
+            GV.realm.beginWrite()
+            
+            if GV.realm.objects(StatisticModel).filter("playerID = %d AND levelID = %d", GV.player!.ID, GV.player!.levelID).count == 0 {
+                GV.statistic = StatisticModel()
+                GV.statistic!.ID = GV.getNewStatisticID()
+                GV.statistic!.playerID = GV.player!.ID
+                GV.statistic!.levelID = GV.player!.levelID
+            } else {
+                GV.statistic = GV.realm.objects(StatisticModel).filter("playerID = %d AND levelID = %d", GV.player!.ID, GV.player!.levelID).first!
+            }
+            
             GV.statistic = GV.realm.objects(StatisticModel).filter("playerID = %d AND levelID = %d", GV.player!.ID, GV.player!.levelID).first
             let actGame = GV.realm.objects(GameModel).filter("ID = %d", gameNumber).first
             
-            GV.realm.beginWrite()
             GV.statistic!.countPlays += 1
             GV.statistic!.actTime = timeCount
             GV.statistic!.allTime += timeCount
@@ -1835,12 +1860,12 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         var congratulationsTxt = ""
         if congratulations {
             
-            statisticsTxt += "\r\n" + GV.language.getText(.TCCountPlays, values: String(GV.statistic!.countPlays))
+            statisticsTxt += "\r\n" + GV.language.getText(.TCCountPlaysForLevel, values: String(GV.statistic!.countPlays))
             statisticsTxt += "\r\n" + GV.language.getText(.TCActScore) + String(GV.statistic!.actScore)
             statisticsTxt += "\r\n" + GV.language.getText(.TCBestScore) + String(GV.statistic!.bestScore)
             statisticsTxt += "\r\n" + GV.language.getText(.TCActTime) + String(GV.statistic!.actTime.hourMinSec)
-            statisticsTxt += "\r\n" + GV.language.getText(.TCAllTime) + String(GV.statistic!.allTime.hourMinSec)
-            statisticsTxt += "\r\n" + GV.language.getText(.TCBestTime) + String(GV.statistic!.bestTime.hourMinSec)
+            statisticsTxt += "\r\n" + GV.language.getText(.TCAllTimeForLevel) + String(GV.statistic!.allTime.hourMinSec)
+            statisticsTxt += "\r\n" + GV.language.getText(.TCBestTimeForLevel) + String(GV.statistic!.bestTime.hourMinSec)
             
             if GV.statistic!.bestScore == GV.statistic!.actScore {
                 congratulationsTxt = GV.language.getText(.TCGameCompleteWithBestScore, values: String(levelIndex + 1))
@@ -2787,14 +2812,6 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         return usedCellCount
     }
     
-//    func addPhysicsBody(sprite: MySKNode) {
-//        sprite.physicsBody = SKPhysicsBody(circleOfRadius: sprite.size.width/2)
-//        sprite.physicsBody?.dynamic = true
-//        sprite.physicsBody?.categoryBitMask = PhysicsCategory.Sprite
-//        sprite.physicsBody?.contactTestBitMask = PhysicsCategory.MovingSprite
-//        sprite.physicsBody?.collisionBitMask = PhysicsCategory.None
-//        sprite.physicsBody?.usesPreciseCollisionDetection = true
-//    }
     
     func push(sprite1: MySKNode, sprite2: MySKNode) {
         push(sprite1, status: .Exchanged)
@@ -2866,7 +2883,8 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
             prepareNextGame(true)
             generateSprites(.First)
         } else {
-            playerLabel.text = GV.player!.name
+            let name = GV.player!.name == GV.language.getText(.TCAnonym) ? GV.language.getText(.TCGuest) : GV.player!.name
+            playerLabel.text = GV.language.getText(TextConstants.TCPlayer) + ": \(name)"
             countUpAdder = 1
         }
     }
@@ -2922,6 +2940,45 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
             self.childNodeWithName(name)!.removeFromParent()
         }
     }
+    
+    func setMyDeviceConstants() {
+        
+        switch GV.deviceConstants.type {
+        case .iPadPro12_9:
+            labelFontSize = 20
+            labelYPosProcent = 90
+            labelHeight = 20
+        case .iPad2:
+            labelFontSize = 17
+            labelYPosProcent = 90
+            labelHeight = 18
+        case .iPadMini:
+            labelFontSize = 17
+            labelYPosProcent = 90
+            labelHeight = 18
+        case .iPhone6Plus:
+            labelFontSize = 14
+            labelYPosProcent = 88
+            labelHeight = 15
+        case .iPhone6:
+            labelFontSize = 12
+            labelYPosProcent = 88
+            labelHeight = 13
+        case .iPhone5:
+            labelFontSize = 10
+            labelYPosProcent = 87
+            labelHeight = 12
+        case .iPhone4:
+            labelFontSize = 10
+            labelYPosProcent = 85
+            labelHeight = 10
+        default:
+            break
+        }
+        
+    }
+    
+
 
     
 

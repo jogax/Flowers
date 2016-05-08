@@ -59,12 +59,15 @@ enum TextConstants: Int {
     TCActScore,
     TCBestScore,
     TCActTime,
+    TCAllTimeForLevel,
     TCAllTime,
-    TCBestTime,
+    TCBestTimeForLevel,
+    TCCountPlaysForLevel,
     TCCountPlays,
     TCGameCompleteWithBestScore,
     TCGameCompleteWithBestTime,
     TCGuest,
+    TCAnonym,
     TCStatistic
 }
 

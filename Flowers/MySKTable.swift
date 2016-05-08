@@ -15,6 +15,27 @@ class MySKTable: SKSpriteNode {
     enum MyEvents: Int {
         case GoBackEvent = 0, NoEvent
     }
+    
+    enum VarType: Int {
+        case String = 0, Image
+    }
+    struct MultiVar {
+        var varType: VarType
+        var stringVar: String?
+        var imageVar: UIImage?
+        init(string:String) {
+            stringVar = string
+            varType = .String
+        }
+        init(image: UIImage) {
+            imageVar = image
+            varType = .Image
+        }
+    }
+    var heightOfMyImageRow = CGFloat(0)
+    var heightOfLabelRow = CGFloat(0)
+    var fontSize = CGFloat(0)
+    var myImageSize = CGFloat(0)
     var columns: Int
     var rows: Int
     var sizeOfElement: CGSize
@@ -23,37 +44,66 @@ class MySKTable: SKSpriteNode {
     var myParent: SKSpriteNode
     let separator = "/"
     var columnWidths: [CGFloat]
-    var fontSize:CGFloat = 0
-    let heigthOfMyImageRow:CGFloat = 30
-    let heightOfLabelRow: CGFloat = 40
-    var myHeight: CGFloat
+    var columnXPositions = [CGFloat]()
+    var myHeight: CGFloat = 0
+    var positionsTable: [[CGPoint]]
+    var parentView: UIView?
+    var showVerticalLines = false
     
     let goBackImageName = "GoBackImage"
     
-    init(columnWidths: [CGFloat], rows: Int, headLines: String, parent: SKSpriteNode) {
+    init(columnWidths: [CGFloat], rows: Int, headLines: String, parent: SKSpriteNode, width: CGFloat...) {
         
         self.columns = columnWidths.count
         self.rows = rows
         self.sizeOfElement = CGSizeMake(parent.size.width / CGFloat(self.columns), heightOfLabelRow)
         self.columnWidths = columnWidths
         self.myParent = parent
-        myHeight = heightOfLabelRow * CGFloat(rows) + heigthOfMyImageRow
-        let mySize = CGSizeMake(parent.size.width * 0.9, myHeight)
-        super.init(texture: SKTexture(), color: UIColor.clearColor(), size: mySize)
+        positionsTable = Array(count: columnWidths.count, repeatedValue: Array(count: rows, repeatedValue: CGPointZero))
+        
+        super.init(texture: SKTexture(), color: UIColor.clearColor(), size: CGSizeZero)
+        setMyDeviceConstants()
+        setMyDeviceSpecialConstants()
+
+        myHeight = heightOfLabelRow * CGFloat(rows) + heightOfMyImageRow
+        
+        var mySize = CGSizeZero
+        if width.count > 0 {
+            mySize = CGSizeMake(width[0], myHeight)
+            self.showVerticalLines = true
+        } else {
+            mySize = CGSizeMake(parent.size.width * 0.9, myHeight)
+        }
         self.size = mySize
         self.alpha = 1.0
         self.texture = SKTexture(image: drawTableImage(mySize, columnWidths: columnWidths, columns: self.columns, rows: rows))
+        var columnMidX = -(mySize.width * 0.48)
+        for column in 0..<columnWidths.count {
+            columnXPositions.append(columnMidX)
+            columnMidX += mySize.width * columnWidths[column] / 100
+        }
         self.userInteractionEnabled = true
-        fontSize = size.width * GV.deviceConstants.fontSizeMultiplier * 0.7
-        showMyImages(DrawImages.getGoBackImage(CGSizeMake(20, 20)), position: 10, name: goBackImageName)
-
-//        parent!.addChild(self)
+        //        fontSize = CGFloat(0)
+        showMyImages(DrawImages.getGoBackImage(CGSizeMake(myImageSize, myImageSize)), position: 10, name: goBackImageName)
+        
+        //        parent!.addChild(self)
     }
+    
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
+    func showLineOfTable(elements: [MultiVar], row: Int, selected: Bool) {
+        for column in 0..<elements.count {
+            switch elements[column].varType {
+            case .String:
+                showElementOfTable(elements[column].stringVar!, column: column, row: row, selected: selected)
+            case .Image:
+                showImageInTable(elements[column].imageVar!, column: column, row: row, selected: selected)
+            }
+        }
+    }
     
     func showElementOfTable(element: String, column: Int, row: Int, selected: Bool) {
         let name = "\(column)\(separator)\(row)"
@@ -69,10 +119,10 @@ class MySKTable: SKSpriteNode {
         }
         
         if selected {
-            label.fontName = "Courier"
+            label.fontName = "Times New Roman"
             label.fontColor = SKColor.blueColor()
         } else {
-            label.fontName = "Courier"
+            label.fontName = "Times New Roman"
             label.fontColor = SKColor.blackColor()
         }
         label.text = element
@@ -83,8 +133,15 @@ class MySKTable: SKSpriteNode {
             label.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.Left
             label.verticalAlignmentMode = SKLabelVerticalAlignmentMode.Center
             label.name = name
-            let verticalPosition = (self.size.height - heightOfLabelRow) / 2 - heigthOfMyImageRow
-            label.position = CGPointMake(-size.width * 0.45 + CGFloat(column) * sizeOfElement.width,  verticalPosition - CGFloat(row) * heightOfLabelRow)
+            let verticalPosition = (self.size.height - heightOfLabelRow) / 2 - heightOfMyImageRow
+            let horizontalPosition = columnXPositions[column]
+            label.position = CGPointMake(horizontalPosition,  verticalPosition - CGFloat(row) * heightOfLabelRow)
+            if self.parentView != nil {
+                let panelAbsPosition = CGPointMake(parentView!.frame.midX, parentView!.frame.midY)
+                let myAbsPosition = CGPointMake(panelAbsPosition.x + position.x, panelAbsPosition.y + position.y)
+                let labelAbsPosition = CGPointMake(myAbsPosition.x + label.position.x, myAbsPosition.y + label.position.y)
+                positionsTable[0][row] = labelAbsPosition
+            }
             self.addChild(label)
         }
     }
@@ -95,7 +152,7 @@ class MySKTable: SKSpriteNode {
         shape.name = name
         
         
-        shape.position = CGPointMake(-(self.size.width * 0.5 * (100 - position) / 100), (self.size.height  - heigthOfMyImageRow) / 2) //CGPointMake(self.size.width * position, (self.size.height - heigthOfMyImageRow) / 2)
+        shape.position = CGPointMake(-(self.size.width * 0.4), (self.size.height - heightOfMyImageRow) / 2) //CGPointMake(self.size.width * position, (self.size.height - heigthOfMyImageRow) / 2)
         shape.alpha = 1.0
         shape.size = image.size
         shape.zPosition = self.zPosition + 1000
@@ -113,9 +170,11 @@ class MySKTable: SKSpriteNode {
                 break
             }
         }
+        
         if !selected {
             return
         }
+        
         let shape = SKSpriteNode()
         shape.texture = SKTexture(image: image)
         shape.name = name
@@ -127,7 +186,7 @@ class MySKTable: SKSpriteNode {
         xPos += (size.width * columnWidths[column] / 100) / 2
         xPos -= self.size.width / 2
         
-        let verticalPosition = (self.size.height - heightOfLabelRow) / 2 - heigthOfMyImageRow
+        let verticalPosition = (self.size.height - heightOfLabelRow) / 2 - heightOfMyImageRow
 //        label.position = CGPointMake(-size.width * 0.45 + CGFloat(column) * sizeOfElement.width,  verticalPosition - CGFloat(row) * sizeOfElement.height)
         shape.position = CGPointMake(xPos, verticalPosition - CGFloat(row) * heightOfLabelRow)
         shape.alpha = 1.0
@@ -148,14 +207,15 @@ class MySKTable: SKSpriteNode {
         self.columns = columnWidths.count
         self.rows = rows
         self.sizeOfElement = CGSizeMake(size.width / CGFloat(columns), size.height / CGFloat(rows))
-        myHeight = heightOfLabelRow * CGFloat(rows) + heigthOfMyImageRow
+        myHeight = heightOfLabelRow * CGFloat(rows) + heightOfMyImageRow
 
         self.size = CGSizeMake(self.size.width, myHeight)
         self.texture = SKTexture(image: drawTableImage(size, columnWidths: columnWidths, columns: columns, rows: rows))
         let myPosition = CGPointMake(0, (myParent.size.height - size.height) / 2 - 10)
         self.position = myPosition
+        positionsTable = Array(count: columnWidths.count, repeatedValue: Array(count: rows, repeatedValue: CGPointZero))
         self.removeFromParent()
-        showMyImages(DrawImages.getGoBackImage(CGSizeMake(20, 20)), position: 10, name: goBackImageName)
+        showMyImages(DrawImages.getGoBackImage(CGSizeMake(myImageSize, myImageSize)), position: 20, name: goBackImageName)
         myParent.addChild(self)
         
     }
@@ -203,8 +263,8 @@ class MySKTable: SKSpriteNode {
         
         points.removeAll()
         points = [
-            CGPointMake(w * 0, heigthOfMyImageRow),
-            CGPointMake(w * 100, heigthOfMyImageRow)
+            CGPointMake(w * 0, heightOfMyImageRow),
+            CGPointMake(w * 100, heightOfMyImageRow)
         ]
         CGContextSetLineWidth(ctx, 0.1)
         CGContextSetStrokeColorWithColor(ctx, UIColor.darkGrayColor().CGColor)
@@ -223,23 +283,34 @@ class MySKTable: SKSpriteNode {
         CGContextSetStrokeColorWithColor(ctx, UIColor.blackColor().CGColor)
 //        CGContextStrokeRect(ctx, CGRectMake(5, 5, mySize.width, mySize.height))
         
-        var yPos:CGFloat = (size.height - heigthOfMyImageRow) / CGFloat(rows) + heigthOfMyImageRow
+        var yPos:CGFloat = (size.height - heightOfMyImageRow) / CGFloat(rows) + heightOfMyImageRow
+        CGContextBeginPath(ctx)
         
         if rows > 1 {
             for _ in 0..<rows - 1 {
-                CGContextBeginPath(ctx)
                 let p1 = CGPointMake(5, yPos)
                 let p2 = CGPointMake(size.width - 5, yPos)
                 yPos += heightOfLabelRow
                 CGContextMoveToPoint(ctx, p1.x, p1.y)
                 CGContextAddLineToPoint(ctx, p2.x, p2.y)
-                CGContextStrokePath(ctx)
             }
         }
-        
-        
         CGContextStrokePath(ctx)
         
+        
+        
+        if showVerticalLines {
+            CGContextBeginPath(ctx)
+            var xProcent = CGFloat(0)
+            for column in 0..<columnWidths.count {
+                xProcent += columnWidths[column]
+                let p1 = (CGPointMake(w * xProcent, heightOfMyImageRow))
+                let p2 = (CGPointMake(w * xProcent, myHeight))
+                CGContextMoveToPoint(ctx, p1.x, p1.y)
+                CGContextAddLineToPoint(ctx, p2.x, p2.y)
+            }
+            CGContextStrokePath(ctx)
+        }
         
         
         if let image = UIGraphicsGetImageFromCurrentImageContext() {
@@ -259,6 +330,54 @@ class MySKTable: SKSpriteNode {
         
         
     }
+    func setMyDeviceSpecialConstants() {
+        
+    }
+    
+    func setMyDeviceConstants() {
+        
+        switch GV.deviceConstants.type {
+        case .iPadPro12_9:
+            heightOfMyImageRow = CGFloat(30)
+            heightOfLabelRow = CGFloat(40)
+            fontSize = CGFloat(30)
+            myImageSize = CGFloat(30)
+        case .iPad2:
+            heightOfMyImageRow = CGFloat(30)
+            heightOfLabelRow = CGFloat(40)
+            fontSize = CGFloat(30)
+            myImageSize = CGFloat(25)
+        case .iPadMini:
+            heightOfMyImageRow = CGFloat(30)
+            heightOfLabelRow = CGFloat(40)
+            fontSize = CGFloat(30)
+            myImageSize = CGFloat(30)
+        case .iPhone6Plus:
+            heightOfMyImageRow = CGFloat(30)
+            heightOfLabelRow = CGFloat(40)
+            fontSize = CGFloat(25)
+            myImageSize = CGFloat(23)
+        case .iPhone6:
+            heightOfMyImageRow = CGFloat(30)
+            heightOfLabelRow = CGFloat(40)
+            fontSize = CGFloat(25)
+            myImageSize = CGFloat(20)
+        case .iPhone5:
+            heightOfMyImageRow = CGFloat(25)
+            heightOfLabelRow = CGFloat(35)
+            fontSize = CGFloat(28)
+            myImageSize = CGFloat(15)
+        case .iPhone4:
+            heightOfMyImageRow = CGFloat(20)
+            heightOfLabelRow = CGFloat(35)
+            fontSize = CGFloat(20)
+            myImageSize = CGFloat(15)
+        default:
+            break
+        }
+        
+    }
+    
 
    
 }

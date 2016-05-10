@@ -42,13 +42,15 @@ class MySKTable: SKSpriteNode {
     var touchesBeganAt: NSDate = NSDate()
     var touchesBeganAtNode: SKNode?
     var myParent: SKSpriteNode
-    let separator = "/"
+    let separator = "-"
     var columnWidths: [CGFloat]
     var columnXPositions = [CGFloat]()
     var myHeight: CGFloat = 0
-    var positionsTable: [[CGPoint]]
+//    var positionsTable: [[CGPoint]]
     var parentView: UIView?
     var showVerticalLines = false
+    var myStartPosition = CGPointZero
+    var myTargetPosition = CGPointZero
     
     let goBackImageName = "GoBackImage"
     
@@ -59,11 +61,18 @@ class MySKTable: SKSpriteNode {
         self.sizeOfElement = CGSizeMake(parent.size.width / CGFloat(self.columns), heightOfLabelRow)
         self.columnWidths = columnWidths
         self.myParent = parent
-        positionsTable = Array(count: columnWidths.count, repeatedValue: Array(count: rows, repeatedValue: CGPointZero))
+//        positionsTable = Array(count: columnWidths.count, repeatedValue: Array(count: rows, repeatedValue: CGPointZero))
         
         super.init(texture: SKTexture(), color: UIColor.clearColor(), size: CGSizeZero)
         setMyDeviceConstants()
         setMyDeviceSpecialConstants()
+
+        let pSize = parent.parent!.scene!.size
+        myStartPosition = CGPointMake(pSize.width, pSize.height / 2)//(pSize.height - size.height) / 2 - 10)
+        myTargetPosition = CGPointMake(pSize.width / 2, pSize.height / 2) //(pSize.height - size.height) / 2 - 10)
+        self.position = myStartPosition
+        
+        self.zPosition = parent.zPosition + 200
 
         myHeight = heightOfLabelRow * CGFloat(rows) + heightOfMyImageRow
         
@@ -136,12 +145,12 @@ class MySKTable: SKSpriteNode {
             let verticalPosition = (self.size.height - heightOfLabelRow) / 2 - heightOfMyImageRow
             let horizontalPosition = columnXPositions[column]
             label.position = CGPointMake(horizontalPosition,  verticalPosition - CGFloat(row) * heightOfLabelRow)
-            if self.parentView != nil {
-                let panelAbsPosition = CGPointMake(parentView!.frame.midX, parentView!.frame.midY)
-                let myAbsPosition = CGPointMake(panelAbsPosition.x + position.x, panelAbsPosition.y + position.y)
-                let labelAbsPosition = CGPointMake(myAbsPosition.x + label.position.x, myAbsPosition.y + label.position.y)
-                positionsTable[0][row] = labelAbsPosition
-            }
+//            if self.parentView != nil {
+//                let panelAbsPosition = CGPointMake(parentView!.frame.midX, parentView!.frame.midY)
+//                let myAbsPosition = CGPointMake(panelAbsPosition.x + position.x, panelAbsPosition.y + position.y)
+//                let labelAbsPosition = CGPointMake(myAbsPosition.x + label.position.x, myAbsPosition.y + label.position.y)
+//                positionsTable[0][row] = labelAbsPosition
+//            }
             self.addChild(label)
         }
     }
@@ -196,7 +205,16 @@ class MySKTable: SKSpriteNode {
         
     }
     
-
+    func  showMe(runAfter:()->()) {
+        let actionMove = SKAction.moveTo(myTargetPosition, duration: 0.3)
+        let alphaAction = SKAction.fadeOutWithDuration(0.5)
+        let runAfterAction = SKAction.runBlock({runAfter()})
+        myParent.parent!.addChild(self)
+        
+        myParent.runAction(alphaAction)
+        self.runAction(SKAction.sequence([actionMove, runAfterAction]))
+    }
+    
     func reDrawWhenChanged(columnWidths: [CGFloat], rows: Int) {
         if rows == self.rows {
             return
@@ -211,12 +229,14 @@ class MySKTable: SKSpriteNode {
 
         self.size = CGSizeMake(self.size.width, myHeight)
         self.texture = SKTexture(image: drawTableImage(size, columnWidths: columnWidths, columns: columns, rows: rows))
-        let myPosition = CGPointMake(0, (myParent.size.height - size.height) / 2 - 10)
-        self.position = myPosition
-        positionsTable = Array(count: columnWidths.count, repeatedValue: Array(count: rows, repeatedValue: CGPointZero))
+//        let myPosition = CGPointMake(0, (myParent.size.height - size.height) / 2 - 10)
+        let myTargetPosition = CGPointMake(parentView!.frame.size.width / 2, parentView!.frame.size.height / 2)
+        self.position = myTargetPosition
+//        positionsTable = Array(count: columnWidths.count, repeatedValue: Array(count: rows, repeatedValue: CGPointZero))
         self.removeFromParent()
         showMyImages(DrawImages.getGoBackImage(CGSizeMake(myImageSize, myImageSize)), position: 20, name: goBackImageName)
-        myParent.addChild(self)
+//        myParent.addChild(self)
+        myParent.parent!.addChild(self)
         
     }
     

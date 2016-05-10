@@ -29,29 +29,14 @@ class MySKLanguages: MySKTable {
         countLanguages = GV.language.count()
         self.parentNode = parent
         self.callBack = callBack
-        let size = CGSizeMake(parent.frame.width * 0.9, heightOfTableRow + CGFloat(countLanguages) * heightOfTableRow)
+//        let size = CGSizeMake(parent.frame.width * 0.9, heightOfTableRow + CGFloat(countLanguages) * heightOfTableRow)
         
         
         super.init(columnWidths: myColumnWidths, rows:countLanguages, headLines: "", parent: parent)
         self.name = myName
 
-        let pSize = parent.parent!.scene!.size
-        let myStartPosition = CGPointMake(-pSize.width, (pSize.height - size.height) / 2 - 10)
-        let myTargetPosition = CGPointMake(pSize.width / 2, pSize.height / 2) //(pSize.height - size.height) / 2 - 10)
-        self.position = myStartPosition
+        showMe(showLanguages)
         
-        self.zPosition = parent.zPosition + 200
-        
-        showLanguages()
-        
-        
-        self.alpha = 1.0
-        let actionMove = SKAction.moveTo(myTargetPosition, duration: 1.0)
-        let alphaAction = SKAction.fadeOutWithDuration(1.0)
-        parent.parent!.addChild(self)
-        
-        parent.runAction(alphaAction)
-        self.runAction(actionMove)
     }
     
     required init?(coder aDecoder: NSCoder) {

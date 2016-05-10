@@ -23,7 +23,7 @@ class MySKStatistic: MySKTable {
     
     
     init(parent: SKSpriteNode, callBack: ()->()) {
-        nameTable = Array(GV.realm.objects(PlayerModel))
+        nameTable = Array(GV.realm.objects(PlayerModel).sorted("created", ascending: true))
         var countLines = nameTable.count
         if countLines == 1 {
             countLines += 1
@@ -35,25 +35,25 @@ class MySKStatistic: MySKTable {
         self.showVerticalLines = true
         self.name = myName
         
-        let pSize = parent.parent!.scene!.size
-        let myStartPosition = CGPointMake(-pSize.width, (pSize.height - size.height) / 2 - 10)
-        let myZielPosition = CGPointMake(pSize.width / 2, pSize.height / 2) //(pSize.height - size.height) / 2 - 10)
-        self.position = myStartPosition
+//        let pSize = parent.parent!.scene!.size
+//        let myStartPosition = CGPointMake(-pSize.width, (pSize.height - size.height) / 2 - 10)
+//        let myZielPosition = CGPointMake(pSize.width / 2, pSize.height / 2) //(pSize.height - size.height) / 2 - 10)
+//        self.position = myStartPosition
         
-        self.zPosition = parent.zPosition + 200
-        
-        showPlayerStatistic()
+//        self.zPosition = parent.zPosition + 200
         
         
+        showMe(showPlayerStatistic)
         
-        self.alpha = 1.0
-        //        self.userInteractionEnabled = true
-        let actionMove = SKAction.moveTo(myZielPosition, duration: 1.0)
-        let alphaAction = SKAction.fadeOutWithDuration(1.0)
-        parent.parent!.addChild(self)
         
-        parent.runAction(alphaAction)
-        self.runAction(actionMove)
+//        self.alpha = 1.0
+//        //        self.userInteractionEnabled = true
+//        let actionMove = SKAction.moveTo(myTargetPosition, duration: 1.0)
+//        let alphaAction = SKAction.fadeOutWithDuration(1.0)
+//        parent.parent!.addChild(self)
+//        
+//        parent.runAction(alphaAction)
+//        self.runAction(actionMove)
     }
     
     required init?(coder aDecoder: NSCoder) {

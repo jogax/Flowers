@@ -63,22 +63,20 @@ class MySKPanel: SKSpriteNode {
         super.init(texture: texture, color: UIColor.clearColor(), size: size)
         self.texture = SKTexture(image: getPanelImage(size))
         setMyDeviceConstants()
-        self.position = CGPointMake(parent.size.width / 2, parent.size.height / 2)
-        self.size = size / 10
+        let startPosition = CGPointMake(parent.size.width, parent.size.height / 2)
+        let zielPosition = CGPointMake(parent.size.width / 2, parent.size.height / 2)
+        self.size = size
+        self.position = startPosition
         self.color = UIColor.yellowColor()
         self.zPosition = 100
         self.alpha = 1.0
         self.name = "MySKPanel"
         self.userInteractionEnabled = true
         parentScene!.userInteractionEnabled = false
+        makeSettings()
         parentScene!.addChild(self)
-        let zoomIn = SKAction.resizeToWidth(size.width, height: size.height, duration: 0.5)
-        let callInitFunc = SKAction.runBlock({
-            switch type {
-                case .Settings: self.makeSettings()
-            }
-        })
-        self.runAction(SKAction.sequence([zoomIn, callInitFunc]))
+        let moveAction = SKAction.moveTo(zielPosition, duration: 0.5)
+        self.runAction(moveAction)
 
     }
 
@@ -156,7 +154,7 @@ class MySKPanel: SKSpriteNode {
     
     func setPlayer() {
         userInteractionEnabled = false
-        let _ = MySKPlayer(parent: self, view: view, callBack: callIfMySKPlayerEnds)
+        let _ = MySKPlayer(parent: self, view: parentScene!.view!, callBack: callIfMySKPlayerEnds)
     }
     func setSoundVolume() {
         

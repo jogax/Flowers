@@ -794,7 +794,7 @@ class DrawImages {
         CGContextSetLineJoin (ctx, .Round)
         CGContextSetLineCap (ctx, .Round)
         
-        CGContextSetLineWidth(ctx, w * 4)
+        CGContextSetLineWidth(ctx, w * 2)
         let points = [
             CGPointMake(w * 80, h * 10),
             CGPointMake(w * 5, h * 50),
@@ -821,7 +821,7 @@ class DrawImages {
         CGContextSetLineJoin (ctx, .Round)
         CGContextSetLineCap (ctx, .Round)
         
-        CGContextSetLineWidth(ctx, w * 4)
+        CGContextSetLineWidth(ctx, w * 2)
         let points = [
             CGPointMake(w * 20, h * 10),
             CGPointMake(w * 95, h * 50),

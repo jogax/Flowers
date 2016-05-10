@@ -12,7 +12,7 @@ import RealmSwift
 class MySKPlayer: MySKTable, UITextFieldDelegate {
     
     var callBack: ()->()
-    let heightOfTableRow: CGFloat = 40
+//    var heightOfTableRow: CGFloat = 0
     var nameInputField = UITextField()
     var nameTable = [PlayerModel]()
     var nameTableIndex = 0
@@ -34,7 +34,6 @@ class MySKPlayer: MySKTable, UITextFieldDelegate {
         countLines = nameTable.count// + (nameTable[0].name == GV.language.getText(.TCGuest) ? 0 : 1)
         self.parentNode = parent
         self.callBack = callBack
-        let size = CGSizeMake(parent.frame.width * 0.9, CGFloat(countLines) * heightOfTableRow)
         self.deleteImage = DrawImages.getDeleteImage(imageSize)
         self.modifyImage = DrawImages.getModifyImage(imageSize)
         self.OKImage = DrawImages.getOKImage(imageSize)
@@ -44,6 +43,7 @@ class MySKPlayer: MySKTable, UITextFieldDelegate {
         super.init(columnWidths: myColumnWidths, rows:countLines, headLines: "", parent: parent)
         self.name = myName
         self.parentView = view
+//        let size = CGSizeMake(parent.frame.width * 0.9, CGFloat(countLines) * self.heightOfLabelRow)
         
         let myPosition = CGPointMake(0, (parent.size.height - size.height) / 2 - 10)
         self.position = myPosition
@@ -80,7 +80,7 @@ class MySKPlayer: MySKTable, UITextFieldDelegate {
         nameInputField.backgroundColor = UIColor.whiteColor()
         nameInputField.frame = CGRectMake(xPosition, yPosition,
                                           size.width * 0.6,
-                                          heightOfTableRow * 0.8)
+                                          heightOfLabelRow * 0.8)
         nameInputField.autocorrectionType = .No
         nameInputField.layer.borderWidth = 0.0
         nameInputField.becomeFirstResponder()
@@ -244,5 +244,32 @@ class MySKPlayer: MySKTable, UITextFieldDelegate {
             }
         }
         return nil
+    }
+    override func setMyDeviceSpecialConstants() {
+        switch GV.deviceConstants.type {
+        case .iPadPro12_9:
+            fontSize = CGFloat(20)
+            heightOfLabelRow = 40
+        case .iPad2:
+            fontSize = CGFloat(20)
+            heightOfLabelRow = 40
+        case .iPadMini:
+            fontSize = CGFloat(20)
+            heightOfLabelRow = 40
+        case .iPhone6Plus:
+            fontSize = CGFloat(15)
+            heightOfLabelRow = 35
+        case .iPhone6:
+            fontSize = CGFloat(15)
+            heightOfLabelRow = 35
+        case .iPhone5:
+            fontSize = CGFloat(13)
+            heightOfLabelRow = 30
+        case .iPhone4:
+            fontSize = CGFloat(12)
+            heightOfLabelRow = 30
+        default:
+            break
+        }
     }
 }

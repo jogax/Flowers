@@ -509,9 +509,9 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
             xPos = self.position.x + self.size.width * 0.1
             horAlignment = .Left
         case 2:
-            xPos = self.position.x + self.size.width * 0.4
+            xPos = self.position.x + self.size.width * 0.3
         case 3:
-            xPos = self.position.x + self.size.width * 0.6
+            xPos = self.position.x + self.size.width * 0.7
         case 4:
             xPos = self.position.x + self.size.width * 0.8
         default: break
@@ -2970,7 +2970,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
             labelHeight = 12
         case .iPhone4:
             labelFontSize = 10
-            labelYPosProcent = 85
+            labelYPosProcent = 87
             labelHeight = 10
         default:
             break

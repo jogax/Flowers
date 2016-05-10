@@ -34,9 +34,11 @@ class MySKLanguages: MySKTable {
         
         super.init(columnWidths: myColumnWidths, rows:countLanguages, headLines: "", parent: parent)
         self.name = myName
-        
-        let myPosition = CGPointMake(0, (parent.size.height - size.height) / 2 - 10)
-        self.position = myPosition
+
+        let pSize = parent.parent!.scene!.size
+        let myStartPosition = CGPointMake(-pSize.width, (pSize.height - size.height) / 2 - 10)
+        let myTargetPosition = CGPointMake(pSize.width / 2, pSize.height / 2) //(pSize.height - size.height) / 2 - 10)
+        self.position = myStartPosition
         
         self.zPosition = parent.zPosition + 200
         
@@ -44,8 +46,12 @@ class MySKLanguages: MySKTable {
         
         
         self.alpha = 1.0
-        //        self.userInteractionEnabled = true
-        parent.addChild(self)
+        let actionMove = SKAction.moveTo(myTargetPosition, duration: 1.0)
+        let alphaAction = SKAction.fadeOutWithDuration(1.0)
+        parent.parent!.addChild(self)
+        
+        parent.runAction(alphaAction)
+        self.runAction(actionMove)
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -77,6 +83,8 @@ class MySKLanguages: MySKTable {
         let touchesEndedAtNode = nodeAtPoint(touchLocation)
         switch checkTouches(touches, withEvent: event) {
             case MyEvents.GoBackEvent:
+                let fadeInAction = SKAction.fadeInWithDuration(0.5)
+                myParent.runAction(fadeInAction)                
                 removeFromParent()
                 callBack()
             case .NoEvent:

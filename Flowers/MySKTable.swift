@@ -243,22 +243,27 @@ class MySKTable: SKSpriteNode {
         
         CGContextBeginPath(ctx)
         CGContextSetFillColorWithColor(ctx, UIColor.whiteColor().CGColor)
-        CGContextFillRect(ctx, CGRectMake(w * 0, h * 0, w * 100, myHeight))
-        CGContextStrokePath(ctx)
+//        CGContextFillRect(ctx, CGRectMake(w * 0, h * 0, w * 100, myHeight))
+//        CGContextStrokePath(ctx)
 
         CGContextBeginPath(ctx)
         CGContextSetLineJoin(ctx, .Round)
         CGContextSetLineCap(ctx, .Round)
         CGContextSetStrokeColorWithColor(ctx, UIColor.blackColor().CGColor)
-        
-        var points = [
-            CGPointMake(w * 0, 0),
-            CGPointMake(w * 100, 0),
-            CGPointMake(w * 100, myHeight),
-            CGPointMake(w * 0, myHeight),
-            CGPointMake(w * 0, h * 0)
-        ]
-        CGContextAddLines(ctx, points, points.count)
+
+        let roundRect = UIBezierPath(roundedRect: CGRectMake(0, 0, size.width, size.height), byRoundingCorners:.AllCorners, cornerRadii: CGSizeMake(size.width * 0.02, size.height * 0.02)).CGPath
+        CGContextAddPath(ctx, roundRect)
+        CGContextSetFillColorWithColor(ctx, UIColor.whiteColor().CGColor);
+        CGContextFillPath(ctx)
+        var points = [CGPoint]()
+//        var points = [
+//            CGPointMake(w * 0, 0),
+//            CGPointMake(w * 100, 0),
+//            CGPointMake(w * 100, myHeight),
+//            CGPointMake(w * 0, myHeight),
+//            CGPointMake(w * 0, h * 0)
+//        ]
+//        CGContextAddLines(ctx, points, points.count)
         CGContextStrokePath(ctx)
         
         points.removeAll()

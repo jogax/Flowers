@@ -33,6 +33,8 @@ struct GV {
     static var gameSizeMultiplier: CGFloat = 1.0
     static let onIpad = UIDevice.currentDevice().model.hasSuffix("iPad")
     static var ipadKorrektur: CGFloat = 0
+    static var levelsForPlay = LevelsForPlayWithCards()
+
 
     static let language = Language()
     static var showHelpLines = 0
@@ -82,15 +84,18 @@ struct GV {
     }
     
     static func createNewPlayer(isActPlayer: Bool...)->Int {
-        let newPlayer = PlayerModel()
-        newPlayer.aktLanguageKey = GV.language.getAktLanguageKey()
-        newPlayer.name = GV.language.getText(.TCAnonym)
-        newPlayer.isActPlayer = isActPlayer.count == 0 ? false : isActPlayer[0]
-        newPlayer.ID = GV.playerID.getNewID()!
-        try! GV.realm.write({
-            GV.realm.add(newPlayer)
-        })
-        return newPlayer.ID        
+        let newID = GV.playerID.getNewID()!
+        if newID != 0 {
+            let newPlayer = PlayerModel()
+            newPlayer.aktLanguageKey = GV.language.getAktLanguageKey()
+            newPlayer.name = GV.language.getText(.TCAnonym)
+            newPlayer.isActPlayer = isActPlayer.count == 0 ? false : isActPlayer[0]
+            newPlayer.ID = newID
+            try! GV.realm.write({
+                GV.realm.add(newPlayer)
+            })
+        }
+        return newID
     }
     
     static func getNewStatisticID()->Int{
@@ -106,14 +111,14 @@ struct GV {
     
     class PlayerID {
         var availableIDs = [Int]()
-        var maxIndex = 9
+        var maxIndex = 7
         var newID: Int
         var counter = 0
         init () {
             let availableCount = maxIndex - GV.realm.objects(PlayerModel).count
             repeat {
                 newID = Int(arc4random_uniform(1000000))
-                if !availableIDs.contains(newID) {
+                if !availableIDs.contains(newID) && newID != 0 {
                     availableIDs.append(newID)
                 }
             } while availableIDs.count <= availableCount
@@ -125,7 +130,7 @@ struct GV {
                 availableIDs.removeFirst()
                 return returnID
             } else {
-                return nil
+                return 0
             }
         }
         

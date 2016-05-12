@@ -13,7 +13,6 @@ import RealmSwift
 class MySKStatistic: MySKTable {
     
     var callBack: ()->()
-    let heightOfTableRow: CGFloat = 40
     var nameTable = [PlayerModel]()
     let myColumnWidths: [CGFloat] = [25, 40, 25, 10]  // in %
     let myDetailedColumnWidths = [20, 20, 20, 20, 20] // in %
@@ -23,7 +22,7 @@ class MySKStatistic: MySKTable {
     
     
     init(parent: SKSpriteNode, callBack: ()->()) {
-        nameTable = Array(GV.realm.objects(PlayerModel))
+        nameTable = Array(GV.realm.objects(PlayerModel).sorted("created", ascending: true))
         var countLines = nameTable.count
         if countLines == 1 {
             countLines += 1
@@ -31,29 +30,29 @@ class MySKStatistic: MySKTable {
         
         self.callBack = callBack
         
-        super.init(columnWidths: myColumnWidths, rows:countLines, headLines: "", parent: parent, width: parent.parent!.frame.width * 0.9)
+        super.init(columnWidths: myColumnWidths, rows:countLines, headLines: [], parent: parent, width: parent.parent!.frame.width * 0.9)
         self.showVerticalLines = true
         self.name = myName
         
-        let pSize = parent.parent!.scene!.size
-        let myStartPosition = CGPointMake(-pSize.width, (pSize.height - size.height) / 2 - 10)
-        let myZielPosition = CGPointMake(pSize.width / 2, pSize.height / 2) //(pSize.height - size.height) / 2 - 10)
-        self.position = myStartPosition
+//        let pSize = parent.parent!.scene!.size
+//        let myStartPosition = CGPointMake(-pSize.width, (pSize.height - size.height) / 2 - 10)
+//        let myZielPosition = CGPointMake(pSize.width / 2, pSize.height / 2) //(pSize.height - size.height) / 2 - 10)
+//        self.position = myStartPosition
         
-        self.zPosition = parent.zPosition + 200
-        
-        showPlayerStatistic()
+//        self.zPosition = parent.zPosition + 200
         
         
+        showMe(showPlayerStatistic)
         
-        self.alpha = 1.0
-        //        self.userInteractionEnabled = true
-        let actionMove = SKAction.moveTo(myZielPosition, duration: 1.0)
-        let alphaAction = SKAction.fadeOutWithDuration(1.0)
-        parent.parent!.addChild(self)
         
-        parent.runAction(alphaAction)
-        self.runAction(actionMove)
+//        self.alpha = 1.0
+//        //        self.userInteractionEnabled = true
+//        let actionMove = SKAction.moveTo(myTargetPosition, duration: 1.0)
+//        let alphaAction = SKAction.fadeOutWithDuration(1.0)
+//        parent.parent!.addChild(self)
+//        
+//        parent.runAction(alphaAction)
+//        self.runAction(actionMove)
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -77,7 +76,7 @@ class MySKStatistic: MySKTable {
                 }
                 let elements: [MultiVar] = [MultiVar(string: convertNameWhenRequired(nameTable[row].name)),
                                             MultiVar(string: "\(countPlays)"),
-                                            MultiVar(string: allTime.hourMinSec),
+                                            MultiVar(string: allTime.dayHourMinSec),
                                             MultiVar(image: DrawImages.getGoForwardImage(CGSizeMake(20, 20)))
                 ]
                 showLineOfTable(elements, row: row + 1, selected: true)
@@ -126,10 +125,14 @@ class MySKStatistic: MySKTable {
     }
     
     func showDetailedPlayerStatistic(row: Int) {
-        let countLevelLines = Int(LevelsForPlayWithCards().count() + 1)
+        let playerID = nameTable[row].ID
+        _ = MySKDetailedStatistic(playerID: playerID, parent: self, callBack: backFromMySKDetailedStatistic)
         
     }
     
+    func backFromMySKDetailedStatistic() {
+        
+    }
     override func setMyDeviceSpecialConstants() {
         switch GV.deviceConstants.type {
         case .iPadPro12_9:

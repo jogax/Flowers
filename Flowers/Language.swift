@@ -62,13 +62,15 @@ enum TextConstants: Int {
     TCAllTimeForLevel,
     TCAllTime,
     TCBestTimeForLevel,
+    TCBestTime,
     TCCountPlaysForLevel,
     TCCountPlays,
     TCGameCompleteWithBestScore,
     TCGameCompleteWithBestTime,
     TCGuest,
     TCAnonym,
-    TCStatistic
+    TCStatistic,
+    TCPlayerStatisticHeader
 }
 
     let LanguageEN = "en" // index 0

@@ -13,7 +13,7 @@ let huDictionary: [TextConstants: String] = [
     .TCLevelScore:       "Pontszám: ",
     .TCGameScore:        "Játék pontszám: ",
     .TCActScore:         "Az utolsó játék pontszáma: ",
-    .TCBestScore:        "Az eddigi legjobb pontszám: ",
+    .TCBestScore:        "Legjobb pontszám",
     .TCTargetScore:      "Elérendö pontszám: ",
     .TCTimeLeft:         "Elhasznált idő:",
     .TCGameLost:         "Vesztettél!",
@@ -57,6 +57,7 @@ let huDictionary: [TextConstants: String] = [
     .TCStatistics:       "A(z) %. szint statisztikája ",
     .TCActTime:          "Utolsó játék időtartama: ",
     .TCBestTimeForLevel: "A szint legjobb ideje: ",
+    .TCBestTime:         "Legjobb idő",
     .TCAllTimeForLevel:  "A szint teljes játékideje: ",
     .TCAllTime:          "Teljes játékidő",
     .TCCountPlaysForLevel: "Eddig % játékot játszottál",
@@ -66,4 +67,5 @@ let huDictionary: [TextConstants: String] = [
     .TCGuest:            "Vendég",
     .TCAnonym:           "Anonymus",
     .TCStatistic:        "Statisztikák",
+    .TCPlayerStatisticHeader: "% statisztikái",
 ]

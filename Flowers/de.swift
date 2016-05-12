@@ -13,7 +13,7 @@ let deDictionary: [TextConstants: String] = [
     .TCLevelScore:       "Summe",
     .TCGameScore:        "Gesamtsumme",
     .TCActScore:         "Ergebnis des letzten Spiels: ",
-    .TCBestScore:        "Das beste Ergebnis: ",
+    .TCBestScore:        "Beste Ergebnis",
     .TCTargetScore:      "Ziel Gesamtsumme: ",
     .TCTimeLeft:         "verwendete Zeit:",
     .TCGameLost:         "Sie haben verloren!",
@@ -57,6 +57,7 @@ let deDictionary: [TextConstants: String] = [
     .TCStatistics:       "Statistik der Ebene %",
     .TCActTime:          "Zeit für letzte Spiel: ",
     .TCBestTimeForLevel: "Beste Zeit der Ebene: ",
+    .TCBestTime:         "Beste Zeit",
     .TCAllTimeForLevel:  "Gesamtzeit für diese Ebene: ",
     .TCAllTime:          "Gesamtzeit",
     .TCCountPlaysForLevel: "Bis jetzt % Spiele gespielt",
@@ -66,6 +67,7 @@ let deDictionary: [TextConstants: String] = [
     .TCGuest:            "Gast",
     .TCAnonym:           "Anonymus",
     .TCStatistic:        "Statistiken",
+    .TCPlayerStatisticHeader: "Statistiken für %",
 ]
 
 

@@ -182,7 +182,6 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
 //    var valueTab = [Int]()
     let spriteCountPosKorr = CGPointMake(GV.onIpad ? 0.05 : 0.05, GV.onIpad ? 0.96 : 0.96)
     let tippCountPosKorr = CGPointMake(GV.onIpad ? 0.05 : 0.05, GV.onIpad ? 0.94 : 0.94)
-    var levelsForPlay = LevelsForPlayWithCards()
     var countPackages = 0
     let nextLevel = true
     let previousLevel = false
@@ -374,7 +373,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
             sizeMultiplier = CGSizeMake(GV.deviceConstants.sizeMultiplier, GV.deviceConstants.sizeMultiplier * height / width)
             buttonSizeMultiplier = CGSizeMake(GV.deviceConstants.buttonSizeMultiplier, GV.deviceConstants.buttonSizeMultiplier * height / width)
             levelIndex = GV.player!.levelID
-            levelsForPlay.setAktLevel(levelIndex)
+            GV.levelsForPlay.setAktLevel(levelIndex)
             
             buttonSize = (myView.frame.width / 15) * buttonSizeMultiplier.width
             buttonYPos = myView.frame.height * 0.07
@@ -392,7 +391,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         
         setMyDeviceConstants()
         levelIndex = GV.player!.levelID
-        levelsForPlay.setAktLevel(levelIndex)
+        GV.levelsForPlay.setAktLevel(levelIndex)
 
 //        GV.statistic = GV.realm.objects(StatisticModel).filter("playerID = %d and levelID = %d", GV.player!.ID, GV.player!.levelID).first
         self.removeAllChildren()
@@ -563,15 +562,15 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         addChild(tippsButton!)
         
 
-        countContainers = levelsForPlay.aktLevel.countContainers
-        countPackages = levelsForPlay.aktLevel.countPackages
+        countContainers = GV.levelsForPlay.aktLevel.countContainers
+        countPackages = GV.levelsForPlay.aktLevel.countPackages
         countSpritesProContainer = MaxCardValue //levelsForPlay.aktLevel.countSpritesProContainer
-        countColumns = levelsForPlay.aktLevel.countColumns
-        countRows = levelsForPlay.aktLevel.countRows
-        minUsedCells = levelsForPlay.aktLevel.minProzent * countColumns * countRows / 100
-        maxUsedCells = levelsForPlay.aktLevel.maxProzent * countColumns * countRows / 100
+        countColumns = GV.levelsForPlay.aktLevel.countColumns
+        countRows = GV.levelsForPlay.aktLevel.countRows
+        minUsedCells = GV.levelsForPlay.aktLevel.minProzent * countColumns * countRows / 100
+        maxUsedCells = GV.levelsForPlay.aktLevel.maxProzent * countColumns * countRows / 100
         containerSize = CGSizeMake(CGFloat(containerSizeOrig) * sizeMultiplier.width, CGFloat(containerSizeOrig) * sizeMultiplier.height)
-        spriteSize = CGSizeMake(CGFloat(levelsForPlay.aktLevel.spriteSize) * sizeMultiplier.width, CGFloat(levelsForPlay.aktLevel.spriteSize) * sizeMultiplier.height )
+        spriteSize = CGSizeMake(CGFloat(GV.levelsForPlay.aktLevel.spriteSize) * sizeMultiplier.width, CGFloat(GV.levelsForPlay.aktLevel.spriteSize) * sizeMultiplier.height )
         //gameArrayPositions.removeAll(keepCapacity: false)
         tableCellSize = spriteTabRect.width / CGFloat(countColumns)
         
@@ -1862,10 +1861,10 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
             
             statisticsTxt += "\r\n" + GV.language.getText(.TCCountPlaysForLevel, values: String(GV.statistic!.countPlays))
             statisticsTxt += "\r\n" + GV.language.getText(.TCActScore) + String(GV.statistic!.actScore)
-            statisticsTxt += "\r\n" + GV.language.getText(.TCBestScore) + String(GV.statistic!.bestScore)
-            statisticsTxt += "\r\n" + GV.language.getText(.TCActTime) + String(GV.statistic!.actTime.hourMinSec)
-            statisticsTxt += "\r\n" + GV.language.getText(.TCAllTimeForLevel) + String(GV.statistic!.allTime.hourMinSec)
-            statisticsTxt += "\r\n" + GV.language.getText(.TCBestTimeForLevel) + String(GV.statistic!.bestTime.hourMinSec)
+            statisticsTxt += "\r\n" + GV.language.getText(.TCBestScore) + ": " + String(GV.statistic!.bestScore)
+            statisticsTxt += "\r\n" + GV.language.getText(.TCActTime) + String(GV.statistic!.actTime.dayHourMinSec)
+            statisticsTxt += "\r\n" + GV.language.getText(.TCAllTimeForLevel) + String(GV.statistic!.allTime.dayHourMinSec)
+            statisticsTxt += "\r\n" + GV.language.getText(.TCBestTimeForLevel) + String(GV.statistic!.bestTime.dayHourMinSec)
             
             if GV.statistic!.bestScore == GV.statistic!.actScore {
                 congratulationsTxt = GV.language.getText(.TCGameCompleteWithBestScore, values: String(levelIndex + 1))
@@ -1904,7 +1903,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
             })
             alert.addAction(easierAction)
         }
-        if levelIndex < levelsForPlay.levelParam.count - 1 {
+        if levelIndex < GV.levelsForPlay.levelParam.count - 1 {
             let complexerAction = UIAlertAction(title: GV.language.getText(TextConstants.TCNextLevel), style: .Default,
                 handler: {(paramAction:UIAlertAction!) in
                     print("newGame from set Next Level")
@@ -1927,9 +1926,9 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
     
     func setLevel(next: Bool) {
         if next {
-            levelIndex = levelsForPlay.getNextLevel()
+            levelIndex = GV.levelsForPlay.getNextLevel()
         } else {
-            levelIndex = levelsForPlay.getPrevLevel()
+            levelIndex = GV.levelsForPlay.getPrevLevel()
         }
         try! GV.realm.write({
             GV.player!.levelID = levelIndex
@@ -2225,7 +2224,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
     }
     
     func readNextLevel() -> Int {
-        return levelsForPlay.getNextLevel()
+        return GV.levelsForPlay.getNextLevel()
     }
 
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?)

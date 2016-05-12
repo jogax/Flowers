@@ -13,7 +13,7 @@ let ruDictionary: [TextConstants: String] = [
     .TCLevelScore:       "Очки:",
     .TCGameScore:        "Очки :",
     .TCActScore:         "Очки последней игры: ",
-    .TCBestScore:        "Самые лучшие очки: ",
+    .TCBestScore:        "Лучшие очки",
     .TCTargetScore:      "получить очки: ",
     .TCTimeLeft:         "используемое время:",
     .TCGameLost:         "ты проиграл!",
@@ -57,6 +57,7 @@ let ruDictionary: [TextConstants: String] = [
     .TCStatistics:       "Статистика уровня %",
     .TCActTime:          "Продолжительность последней игры: ",
     .TCBestTimeForLevel: "Лучшее время уровня: ",
+    .TCBestTime:         "Лучшее время",
     .TCAllTimeForLevel:  "Полное время уровня: ",
     .TCAllTime:          "Полное время",
     .TCCountPlaysForLevel: "До сих пор % игр",
@@ -66,4 +67,5 @@ let ruDictionary: [TextConstants: String] = [
     .TCGuest:            "Гость",
     .TCAnonym:           "Anonymus",
     .TCStatistic:        "Статистика",
+    .TCPlayerStatisticHeader: "Статистики игрока %",
 ]

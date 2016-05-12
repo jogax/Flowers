@@ -173,22 +173,28 @@ extension Double {
 }
 
 extension Int {
-    var hourMinSec: String {
+    var dayHourMinSec: String {
+        var days: Int = 0
         var hours: Int = 0
         var minutes: Int = 0
         var seconds: Int = self
-        if self > 60 {
+        if self > 59 {
             seconds = self % 60
             minutes = self / 60
         }
-        if minutes > 60 {
-            minutes = minutes % 60
+        if minutes > 59 {
             hours = minutes / 60
+            minutes = minutes % 60
         }
-        let hoursString = hours > 0 ? ((hours < 10 ? "0":"") + String(hours) + ":") : ""
+        if hours > 23 {
+            days = hours / 24
+            hours = hours % 24
+        }
+        let daysString = days > 0 ? ((days < 10 ? "0":"") + String(days) + ":") : ""
+        let hoursString = hours > 0 ? ((hours < 10 ? "0":"") + String(hours) + ":") : days > 0 ? "00:" : ""
         let minutesString = (minutes < 10 ? "0" : "") + String(minutes) + ":"
         let secondsString = (seconds < 10 ? "0" : "") + String(seconds)
-        return hoursString + minutesString + secondsString
+        return daysString + hoursString + minutesString + secondsString
     }
     func isMemberOf(values: Int...)->Bool {
         for index in 0..<values.count {

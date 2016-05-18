@@ -52,7 +52,7 @@ class ChooseNameViewController: UIViewController, UITableViewDataSource, UITable
 
  
         prepareButton(cancelButton, text: .TCCancel, action: #selector(ChooseNameViewController.cancelPressed(_:)), placeOffset: CGPointMake(-120, 20), relativeTo: tableView)
-        prepareButton(chooseButton, text: .TCChoose, action: #selector(ChooseNameViewController.choosePressed(_:)), placeOffset: CGPointMake(120, 20), relativeTo: tableView)
+//        prepareButton(chooseButton, text: .TCChoose, action: #selector(ChooseNameViewController.choosePressed(_:)), placeOffset: CGPointMake(120, 20), relativeTo: tableView)
         prepareButton(modifyButton, text: .TCNewName , action: #selector(ChooseNameViewController.newNamePressed(_:)), placeOffset: CGPointMake(-120, 80), relativeTo: tableView)
         prepareButton(deleteButton, text: .TCModify, action: #selector(ChooseNameViewController.modifyPressed(_:)), placeOffset: CGPointMake(0, 80), relativeTo: tableView)
         prepareButton(newNameButton, text: .TCDelete, action: #selector(ChooseNameViewController.deletePressed(_:)), placeOffset: CGPointMake(120, 80), relativeTo: tableView)

@@ -44,6 +44,7 @@
 		201173B71C074D080022AC86 /* MyGameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201173B61C074D080022AC86 /* MyGameScene.swift */; };
 		201173B91C074D430022AC86 /* CardGameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201173B81C074D430022AC86 /* CardGameScene.swift */; };
 		2014D3821C85DA45008A1946 /* MyContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2014D3811C85DA45008A1946 /* MyContainer.swift */; };
+		2015851A1CE5F2AE00EF27CA /* MySKSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201585191CE5F2AE00EF27CA /* MySKSlider.swift */; };
 		201728FA1BE3D0C9005F6CA8 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201728F91BE3D0C9005F6CA8 /* SettingsViewController.swift */; };
 		2017D7871CD0FDA200D1778F /* MySKLanguages.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2017D7861CD0FDA200D1778F /* MySKLanguages.swift */; };
 		201839B61C9C40DD00B33827 /* MySKPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201839B51C9C40DD00B33827 /* MySKPanel.swift */; };
@@ -145,6 +146,7 @@
 		201173B61C074D080022AC86 /* MyGameScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MyGameScene.swift; sourceTree = "<group>"; };
 		201173B81C074D430022AC86 /* CardGameScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CardGameScene.swift; sourceTree = "<group>"; };
 		2014D3811C85DA45008A1946 /* MyContainer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MyContainer.swift; sourceTree = "<group>"; };
+		201585191CE5F2AE00EF27CA /* MySKSlider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MySKSlider.swift; sourceTree = "<group>"; };
 		2016FE731CBE778400609592 /* MyPlayground.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = MyPlayground.playground; sourceTree = "<group>"; };
 		201728F91BE3D0C9005F6CA8 /* SettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		2017D7861CD0FDA200D1778F /* MySKLanguages.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MySKLanguages.swift; sourceTree = "<group>"; };
@@ -258,6 +260,7 @@
 				20343A6E1CB7F4660063DF8D /* MySKTable.swift */,
 				20AE75EA1CB2B50C006AFE29 /* MySKPlayer.swift */,
 				2021E3801CDB930900D522CD /* MySKStatistic.swift */,
+				201585191CE5F2AE00EF27CA /* MySKSlider.swift */,
 				2030C0431CE35FBC00AA8307 /* MySKDetailedStatistic.swift */,
 				2017D7861CD0FDA200D1778F /* MySKLanguages.swift */,
 				2016FE731CBE778400609592 /* MyPlayground.playground */,
@@ -710,6 +713,7 @@
 				201928291C99AF2B009CA720 /* GameStatistics.swift in Sources */,
 				201928351C99C0A4009CA720 /* GameParam.swift in Sources */,
 				201E203E1C1C631F003DBBD8 /* MyRandom.swift in Sources */,
+				2015851A1CE5F2AE00EF27CA /* MySKSlider.swift in Sources */,
 				201E20421C1C7389003DBBD8 /* SeedData.swift in Sources */,
 				200141761BAEFB4F003E0950 /* JGXLine.swift in Sources */,
 				200141301BAEB4F6003E0950 /* Language.swift in Sources */,

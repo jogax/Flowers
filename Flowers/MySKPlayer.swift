@@ -150,7 +150,7 @@ class MySKPlayer: MySKTable, UITextFieldDelegate {
                     elements.append(MultiVar(image: deleteImage))
                 }
             }
-            showLineOfTable(elements, row: index, selected: nameTable[index].isActPlayer)
+            showRowOfTable(elements, row: index, selected: nameTable[index].isActPlayer)
         }
         if nameTable[0].name == GV.language.getText(.TCAnonym) {
             getPlayerName(0)

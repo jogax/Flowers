@@ -15,7 +15,7 @@ class MySKStatistic: MySKTable {
     var callBack: ()->()
     var nameTable = [PlayerModel]()
     let myColumnWidths: [CGFloat] = [25, 40, 25, 10]  // in %
-    let myDetailedColumnWidths = [20, 20, 20, 20, 20] // in %
+//    let myDetailedColumnWidths = [20, 20, 20, 20, 20] // in %
     let myName = "MySKStatistic"
 
     
@@ -64,7 +64,7 @@ class MySKStatistic: MySKTable {
                                     MultiVar(string: GV.language.getText(.TCCountPlays)),
                                     MultiVar(string: GV.language.getText(.TCAllTime)),
                                    ]
-        showLineOfTable(elements, row: 0, selected: true)
+        showRowOfTable(elements, row: 0, selected: true)
         for row in 0..<nameTable.count {
             if nameTable[row].name != GV.language.getText(.TCAnonym) || row == 0 {
                 let statisticTable = GV.realm.objects(StatisticModel).filter("playerID = %d", nameTable[row].ID)
@@ -79,7 +79,7 @@ class MySKStatistic: MySKTable {
                                             MultiVar(string: allTime.dayHourMinSec),
                                             MultiVar(image: DrawImages.getGoForwardImage(CGSizeMake(20, 20)))
                 ]
-                showLineOfTable(elements, row: row + 1, selected: true)
+                showRowOfTable(elements, row: row + 1, selected: true)
             }
         }
     }

@@ -32,7 +32,7 @@ class MySKLanguages: MySKTable {
 //        let size = CGSizeMake(parent.frame.width * 0.9, heightOfTableRow + CGFloat(countLanguages) * heightOfTableRow)
         
         
-        super.init(columnWidths: myColumnWidths, rows:countLanguages, headLines: [], parent: parent)
+        super.init(columnWidths: myColumnWidths, rows:countLanguages, headLines: [GV.language.getText(.TCChooseLanguage)], parent: parent)
         self.name = myName
 
         showMe(showLanguages)
@@ -44,6 +44,8 @@ class MySKLanguages: MySKTable {
     }
     
     func showLanguages() {
+        changeHeadLines([GV.language.getText(.TCChooseLanguage)])
+        reDraw()
         for index in 0..<countLanguages {
             let (languageName, selected) = GV.language.getLanguageNames(LanguageCodes(rawValue:index)!)
             showElementOfTable(languageName, column: 0, row: index, selected: selected)

@@ -9,6 +9,7 @@
 import UIKit
 import GameKit
 import RealmSwift
+import AVFoundation
 
 
 //enum Choosed: Int{
@@ -34,7 +35,6 @@ struct GV {
     static let onIpad = UIDevice.currentDevice().model.hasSuffix("iPad")
     static var ipadKorrektur: CGFloat = 0
     static var levelsForPlay = LevelsForPlayWithCards()
-
 
     static let language = Language()
     static var showHelpLines = 0

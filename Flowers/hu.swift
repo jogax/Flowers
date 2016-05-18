@@ -41,7 +41,7 @@ let huDictionary: [TextConstants: String] = [
     .TCModify:           "Módosítás",
     .TCDelete:           "Eltávolítás",
     .TCNewName:          "Új játékos",
-    .TCChoose:           "Kiválasztás",
+    .TCChooseLanguage:   "Nyelv kiválasztás",
     .TCPlayer:           "Játékos",
     .TCGameModus:        "Játékmód",
     .TCSoundVolume:      "Háttérzajok hangerő",

@@ -62,7 +62,7 @@ class MySKDetailedStatistic: MySKTable {
                                     MultiVar(string: GV.language.getText(.TCBestTime)),
                                     MultiVar(string: GV.language.getText(.TCBestScore)),
                                     ]
-        showLineOfTable(elements, row: 0, selected: true)
+        showRowOfTable(elements, row: 0, selected: true)
         for levelID in 0..<countLines {
             var statistic: StatisticModel?
             statistic = GV.realm.objects(StatisticModel).filter("playerID = %d and levelID = %d", playerID, levelID).first
@@ -78,7 +78,7 @@ class MySKDetailedStatistic: MySKTable {
                                             MultiVar(string: "\(statistic!.bestTime.dayHourMinSec)"),
                                             MultiVar(string: bestScoreString!)
                 ]
-                showLineOfTable(elements, row: levelID + 1, selected: true)
+                showRowOfTable(elements, row: levelID + 1, selected: true)
                 let a = 1
             }
 

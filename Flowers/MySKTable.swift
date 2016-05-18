@@ -111,7 +111,12 @@ class MySKTable: SKSpriteNode {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func showLineOfTable(elements: [MultiVar], row: Int, selected: Bool) {
+    func changeHeadLines(headLines: [String]) {
+        self.headLines.removeAll()
+        self.headLines.appendContentsOf(headLines)
+    }
+    
+    func showRowOfTable(elements: [MultiVar], row: Int, selected: Bool) {
         for column in 0..<elements.count {
             switch elements[column].varType {
             case .String:
@@ -156,23 +161,18 @@ class MySKTable: SKSpriteNode {
             }
             let horizontalPosition = columnXPositions[column]
             label.position = CGPointMake(horizontalPosition,  verticalPosition - CGFloat(row) * heightOfLabelRow)
-//            if self.parentView != nil {
-//                let panelAbsPosition = CGPointMake(parentView!.frame.midX, parentView!.frame.midY)
-//                let myAbsPosition = CGPointMake(panelAbsPosition.x + position.x, panelAbsPosition.y + position.y)
-//                let labelAbsPosition = CGPointMake(myAbsPosition.x + label.position.x, myAbsPosition.y + label.position.y)
-//                positionsTable[0][row] = labelAbsPosition
-//            }
             self.addChild(label)
         }
     }
     
     func showMyImagesAndHeader(image: UIImage, position: CGFloat, name: String) {
+
         let shape = SKSpriteNode(texture: SKTexture(image: image))
  //       shape.texture = SKTexture(image: image)
         shape.name = name
         
         
-        shape.position = CGPointMake(-(self.size.width * 0.47), (self.size.height - heightOfMyHeadRow) / 2) //CGPointMake(self.size.width * position, (self.size.height - heigthOfMyImageRow) / 2)
+        shape.position = CGPointMake(-(self.size.width * 0.43), (self.size.height - heightOfMyHeadRow) / 2) //CGPointMake(self.size.width * position, (self.size.height - heigthOfMyImageRow) / 2)
         shape.alpha = 1.0
         shape.size = image.size
         shape.zPosition = self.zPosition + 1000
@@ -186,7 +186,20 @@ class MySKTable: SKSpriteNode {
             label.name = name
             label.zPosition = self.zPosition + 100
             label.fontSize = fontSize
-            label.position = CGPointMake(0, shape.position.y - heightOfLabelRow * 0.40 + CGFloat(index) * heightOfLabelRow)
+            var correctur = CGFloat(0)
+            switch  headLines.count {
+            case 1:
+                correctur = heightOfLabelRow * 0.24
+            case 2:
+                correctur = heightOfLabelRow * -0.3
+            case 3:
+                correctur = heightOfLabelRow * -0.8
+            case 4:
+                correctur = heightOfLabelRow * -1.2
+            default:
+                correctur = heightOfLabelRow / 2
+            }
+            label.position = CGPointMake(0, (self.size.height - heightOfMyHeadRow) / 2 - correctur - CGFloat(index) * heightOfLabelRow)
             self.addChild(label)
         }
         
@@ -242,23 +255,27 @@ class MySKTable: SKSpriteNode {
         if rows == self.rows {
             return
         }
+        self.columns = columnWidths.count
+        self.rows = rows
+        reDraw()
+    }
+        
+    func reDraw() {
         for _ in 0..<children.count {
             self.children.last!.removeFromParent()
         }
-        self.columns = columnWidths.count
-        self.rows = rows
         self.sizeOfElement = CGSizeMake(size.width / CGFloat(columns), size.height / CGFloat(rows))
         myHeight = heightOfLabelRow * CGFloat(rows) + heightOfMyHeadRow
 
         self.size = CGSizeMake(self.size.width, myHeight)
         self.texture = SKTexture(image: drawTableImage(size, columnWidths: columnWidths, columns: columns, rows: rows))
-//        let myPosition = CGPointMake(0, (myParent.size.height - size.height) / 2 - 10)
-        let myTargetPosition = CGPointMake(parentView!.frame.size.width / 2, parentView!.frame.size.height / 2)
+//        let myTargetPosition = CGPointMake(parentView!.frame.size.width / 2, parentView!.frame.size.height / 2)
+        let pSize = myParent.parent!.scene!.size
+        myTargetPosition = CGPointMake(pSize.width / 2, pSize.height / 2)
         self.position = myTargetPosition
-//        positionsTable = Array(count: columnWidths.count, repeatedValue: Array(count: rows, repeatedValue: CGPointZero))
+        myStartPosition = CGPointMake(pSize.width, pSize.height / 2)
         self.removeFromParent()
         showMyImagesAndHeader(DrawImages.getGoBackImage(CGSizeMake(myImageSize, myImageSize)), position: 20, name: goBackImageName)
-//        myParent.addChild(self)
         myParent.parent!.addChild(self)
         
     }

@@ -157,10 +157,11 @@ class MySKPanel: SKSpriteNode {
         let _ = MySKPlayer(parent: self, view: parentScene!.view!, callBack: callIfMySKPlayerEnds)
     }
     func setSoundVolume() {
+        _ = MySKSlider(parent: self, callBack: callIfMySKSliderEnds, soundType: .Sound)
         
     }
     func setMusicVolume() {
-        
+        _ = MySKSlider(parent: self, callBack: callIfMySKSliderEnds, soundType: .Music)
     }
     func setLanguage() {
         userInteractionEnabled = false
@@ -177,6 +178,10 @@ class MySKPanel: SKSpriteNode {
         self.removeFromParent()
         parentScene!.userInteractionEnabled = true
         callBack(playerChanged)
+    }
+    
+    func callIfMySKSliderEnds() {
+        
     }
     
     func callIfMySKPlayerEnds () {

@@ -41,7 +41,7 @@ let ruDictionary: [TextConstants: String] = [
     .TCModify:           "Изменить",
     .TCDelete:           "Удалить",
     .TCNewName:          "Новый игрок",
-    .TCChoose:           "Выбрать",
+    .TCChooseLanguage:   "Выбoр языка",
     .TCPlayer:           "Игрок",
     .TCGameModus:        "Тип игры",
     .TCSoundVolume:      "Громкость звука",

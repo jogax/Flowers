@@ -42,7 +42,7 @@ enum TextConstants: Int {
     TCModify,
     TCDelete,
     TCNewName,
-    TCChoose,
+    TCChooseLanguage,
     TCPlayer,
     TCGameModus,
     TCSoundVolume,

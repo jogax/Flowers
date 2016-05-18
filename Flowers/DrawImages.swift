@@ -794,7 +794,7 @@ class DrawImages {
         CGContextSetLineJoin (ctx, .Round)
         CGContextSetLineCap (ctx, .Round)
         
-        CGContextSetLineWidth(ctx, w * 2)
+        CGContextSetLineWidth(ctx, w * 5)
         let points = [
             CGPointMake(w * 80, h * 10),
             CGPointMake(w * 5, h * 50),
@@ -821,7 +821,7 @@ class DrawImages {
         CGContextSetLineJoin (ctx, .Round)
         CGContextSetLineCap (ctx, .Round)
         
-        CGContextSetLineWidth(ctx, w * 2)
+        CGContextSetLineWidth(ctx, w * 5)
         let points = [
             CGPointMake(w * 20, h * 10),
             CGPointMake(w * 95, h * 50),
@@ -837,6 +837,52 @@ class DrawImages {
         }
         return UIImage()
     }
+
+    static func getSetVolumeImage(size: CGSize, volumeValue: CGFloat) -> UIImage { // volumeValue 0 ... 100
+        UIGraphicsBeginImageContextWithOptions(size, false, 1)
+        let ctx = UIGraphicsGetCurrentContext()
+        let w = size.width / 100
+        let h = size.height / 100
+        let radius = h * 40
+        let v = radius + (size.width - 2 * radius) * volumeValue / 100
+        
+        CGContextSetStrokeColorWithColor(ctx, UIColor.redColor().CGColor)
+//        CGContextSetLineJoin (ctx, .Round)
+        CGContextSetLineCap (ctx, .Round)
+        
+        
+        CGContextSetLineWidth(ctx, h * 20)
+        let redLinePoints = [
+            CGPointMake(radius, h * 50),
+            CGPointMake(v, h * 50),
+        ]
+        
+        CGContextAddLines(ctx, redLinePoints, redLinePoints.count)
+        CGContextStrokePath(ctx)
+        
+        let greenLinePoints = [
+            CGPointMake(v , h * 50),
+            CGPointMake(w * 100 - radius, h * 50),
+        ]
+        CGContextAddLines(ctx, greenLinePoints, redLinePoints.count)
+        CGContextSetStrokeColorWithColor(ctx, UIColor.greenColor().CGColor)
+        CGContextStrokePath(ctx)
+
+        let center = CGPointMake(v, h * 50)
+        CGContextSetStrokeColorWithColor(ctx, UIColor.grayColor().CGColor)
+        CGContextAddArc(ctx, center.x, center.y, radius, 0, 360 * GV.oneGrad, 1)
+        CGContextSetFillColorWithColor(ctx, UIColor.grayColor().CGColor)
+        CGContextFillPath(ctx)
+        CGContextStrokePath(ctx)
+
+        
+        
+        if let image = UIGraphicsGetImageFromCurrentImageContext() {
+            return image
+        }
+        return UIImage()
+    }
+    
 
 }
 

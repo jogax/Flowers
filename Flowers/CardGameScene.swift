@@ -234,7 +234,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
     var greenLineTimer: NSTimer?
     var waitForSKActionEnded: NSTimer?
     var lastMirrored = ""
-    var audioPlayer: AVAudioPlayer?
+    var musicPlayer: AVAudioPlayer?
     var soundPlayer: AVAudioPlayer?
     var myView = SKView()
     var levelIndex = GV.player!.levelID
@@ -1731,7 +1731,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
             }
             sprite.reload()
             
-            playSound(/*"Sprite1"*/"OK", volume: GV.player!.soundVolume)
+            playSound("OK", volume: GV.player!.soundVolume)
         
             updateGameArrayCell(sprite)
             resetGameArrayCell(movingSprite)
@@ -2705,12 +2705,12 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         //backgroundColor = SKColor(patternImage: UIImage(named: "aquarium.png")!)
         
         do {
-            try audioPlayer = AVAudioPlayer(contentsOfURL: url)
-            audioPlayer?.delegate = self
-            audioPlayer?.prepareToPlay()
-            audioPlayer?.volume = 0.001 * volume
-            audioPlayer?.numberOfLoops = loops
-            audioPlayer?.play()
+            try musicPlayer = AVAudioPlayer(contentsOfURL: url)
+            musicPlayer?.delegate = self
+            musicPlayer?.prepareToPlay()
+            musicPlayer?.volume = 0.001 * volume
+            musicPlayer?.numberOfLoops = loops
+            musicPlayer?.play()
         } catch {
             print("audioPlayer error")
         }
@@ -2870,10 +2870,8 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
     func settingsButtonPressed() {
         playMusic("NoSound", volume: GV.player!.musicVolume, loops: 0)
         countUpAdder = 0
-//        settingsDelegate?.settingsDelegateFunc()
         panel = MySKPanel(view: view!, frame: CGRectMake(self.frame.midX, self.frame.midY, self.frame.width * 0.5, self.frame.height * 0.5), type: .Settings, parent: self, callBack: comeBackFromSettings )
         panel = nil
-//        self.addChild(panel)
         
     }
     
@@ -2882,6 +2880,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
             prepareNextGame(true)
             generateSprites(.First)
         } else {
+            playMusic("MyMusic", volume: GV.player!.musicVolume, loops: playMusicForever)
             let name = GV.player!.name == GV.language.getText(.TCAnonym) ? GV.language.getText(.TCGuest) : GV.player!.name
             playerLabel.text = GV.language.getText(TextConstants.TCPlayer) + ": \(name)"
             countUpAdder = 1

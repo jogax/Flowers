@@ -41,7 +41,7 @@ let deDictionary: [TextConstants: String] = [
     .TCModify:           "Ändern",
     .TCDelete:           "Löschen",
     .TCNewName:          "Neuer Spieler",
-    .TCChoose:           "Spielerverwaltung",
+    .TCChooseLanguage:   "Sprache wählen",
     .TCPlayer:           "Spieler",
     .TCGameModus:        "Spielmodus",
     .TCSoundVolume:      "Geräusch Lautstärke",

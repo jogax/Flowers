@@ -44,7 +44,7 @@ class SettingsViewController: UIViewController, UITableViewDataSource, UITableVi
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        GV.language.addCallback(changeLanguage)
+//        GV.language.addCallback(changeLanguage)
         
         tableView.registerClass(UITableViewCell.self, forCellReuseIdentifier: "TextCell")
 

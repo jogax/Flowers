@@ -43,6 +43,7 @@ class MySKPanel: SKSpriteNode {
     let languageLabel = SKLabelNode()
     let statisticLabel = SKLabelNode()
     let returnLabel = SKLabelNode()
+    let callbackName = "SettingsCallbackName"
 
 
     var type: PanelTypes
@@ -61,6 +62,8 @@ class MySKPanel: SKSpriteNode {
         self.type = type
         self.parentScene = parent
         super.init(texture: texture, color: UIColor.clearColor(), size: size)
+        GV.language.addCallback(changeLanguage, callbackName: callbackName)
+
         self.texture = SKTexture(image: getPanelImage(size))
         setMyDeviceConstants()
         let startPosition = CGPointMake(parent.size.width, parent.size.height / 2)
@@ -84,6 +87,18 @@ class MySKPanel: SKSpriteNode {
         fatalError("init(coder:) has not been implemented")
     }
     
+    func changeLanguage()->Bool{
+        let name = GV.player!.name == GV.language.getText(.TCAnonym) ? GV.language.getText(.TCGuest) : GV.player!.name
+        playerLabel.text = GV.language.getText(.TCPlayer) + ": \(name)"
+        nameLabel.text = GV.language.getText(.TCName)
+        soundLabel.text = GV.language.getText(.TCSoundVolume)
+        musicLabel.text = GV.language.getText(.TCMusicVolume)
+        languageLabel.text = GV.language.getText(.TCLanguage)
+        statisticLabel.text = GV.language.getText(.TCStatistic)
+        returnLabel.text = GV.language.getText(.TCReturn)
+        return false
+    }
+    
     func makeSettings() {
         let name = GV.player!.name == GV.language.getText(.TCAnonym) ? GV.language.getText(.TCGuest) : GV.player!.name
         createLabels(playerLabel, text: GV.language.getText(.TCPlayer) + ": \(name)", lineNr: 1, horAlignment: SKLabelHorizontalAlignmentMode.Center, name: noTouchFunc)
@@ -94,7 +109,6 @@ class MySKPanel: SKSpriteNode {
         createLabels(languageLabel, text: GV.language.getText(.TCLanguage), lineNr: 5, horAlignment: SKLabelHorizontalAlignmentMode.Left, name: setLanguageFunc )
         createLabels(statisticLabel, text: GV.language.getText(.TCStatistic), lineNr: 6, horAlignment: SKLabelHorizontalAlignmentMode.Left, name: setStatisticFunc )
         createLabels(returnLabel, text: GV.language.getText(.TCReturn), lineNr: 7, horAlignment: SKLabelHorizontalAlignmentMode.Left, name: setReturnFunc )
-
     }
     func createLabels(label: SKLabelNode, text: String, lineNr: Int, horAlignment: SKLabelHorizontalAlignmentMode, name:String) {
         label.text = text
@@ -174,6 +188,7 @@ class MySKPanel: SKSpriteNode {
     }
     
     func goBack() {
+        GV.language.removeCallback(callbackName)
         shadow?.removeFromParent()
         self.removeFromParent()
         parentScene!.userInteractionEnabled = true

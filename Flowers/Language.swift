@@ -95,30 +95,32 @@ class Language {
     ]
     
     
-    
-    var callBacks: [()->Bool] = []
+    struct Callback {
+        var function: ()->Bool
+        var name: String
+        init(function:()->Bool, name: String) {
+            self.function = function
+            self.name = name
+        }
+    }
+    var callbacks: [Callback] = []
     var aktLanguage = [TextConstants: String]()
     
     init() {
-        
-        let deviceLanguage = NSLocale.preferredLanguages()[0]
-        let languageKey = deviceLanguage[deviceLanguage.startIndex..<deviceLanguage.startIndex.advancedBy(2)]
-        aktLanguage = languages[languageKey]!
-
-        
+        aktLanguage = languages[getPreferredLanguage()]!
     }
     
     func setLanguage(languageKey: String) {        
         aktLanguage = languages[languageKey]!
-        for index in 0..<callBacks.count {
-            callBacks[index]()
+        for index in 0..<callbacks.count {
+            callbacks[index].function()
         }
     }
     
     func setLanguage(languageCode: LanguageCodes) {
         aktLanguage = languages[languageNames[languageCode.rawValue]]!
-        for index in 0..<callBacks.count {
-            callBacks[index]()
+        for index in 0..<callbacks.count {
+            callbacks[index].function()
         }
     }
     
@@ -134,8 +136,23 @@ class Language {
         return language == aktLanguage[.TCAktLanguage]
     }
     
-    func addCallback(callBack: ()->Bool) {
-        callBacks.append(callBack)
+    func addCallback(callback: ()->Bool, callbackName: String) {
+        callbacks.append(Callback(function: callback, name: callbackName))
+    }
+    
+    func removeCallback(callbackName: String) {
+        for index in 0..<callbacks.count {
+            if callbacks[index].name == callbackName {
+                callbacks.removeAtIndex(index)
+                return
+            }
+        }
+    }
+    
+    func getPreferredLanguage()->String {
+        let deviceLanguage = NSLocale.preferredLanguages()[0]
+        let languageKey = deviceLanguage[deviceLanguage.startIndex..<deviceLanguage.startIndex.advancedBy(2)]
+        return languageKey
     }
     
     func count()->Int {

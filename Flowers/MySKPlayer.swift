@@ -42,6 +42,7 @@ class MySKPlayer: MySKTable, UITextFieldDelegate {
         
 //        let texture: SKTexture = SKTexture(image: DrawImages().getTableImage(parent.frame.size,countLines: Int(countLines), countRows: 1))
         super.init(columnWidths: myColumnWidths, rows:countLines, headLines: [], parent: parent)
+
         self.name = myName
         self.parentView = view
 //        let size = CGSizeMake(parent.frame.width * 0.9, CGFloat(countLines) * self.heightOfLabelRow)
@@ -71,6 +72,7 @@ class MySKPlayer: MySKTable, UITextFieldDelegate {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
     
     func getPlayerName(row: Int) {
         self.userInteractionEnabled = false
@@ -113,9 +115,6 @@ class MySKPlayer: MySKTable, UITextFieldDelegate {
         GV.realm.beginWrite()
         nameTable[nameTableIndex].name = nameInputField.text!
         try! GV.realm.commitWrite()
-//        if nameTable.count > 1 {
-//            changeActPlayer()
-//        }
         nameInputField.hidden = true
         nameInputField.removeFromSuperview()
         sleep(0.5)
@@ -175,7 +174,9 @@ class MySKPlayer: MySKTable, UITextFieldDelegate {
         nameTable[newIndex!].isActPlayer = true
         GV.realm.add(oldActPlayer!, update: true)
         GV.realm.add(newActPlayer!, update: true)
+        GV.player = newActPlayer
         try! GV.realm.commitWrite()
+        GV.language.setLanguage(GV.player!.aktLanguageKey)
         showPlayers()
     }
     
@@ -216,19 +217,11 @@ class MySKPlayer: MySKTable, UITextFieldDelegate {
                     switch column {
                     case 0: // select a Player
                         changeActPlayer()
-    //                    showPlayers()
-
-//                    case 1: // choose a Player
-//                        removeFromParent()
-//                        callBack()
                     case 1: // modify the player
                         let playerToModify = GV.realm.objects(PlayerModel).filter("ID = \(nameTable[nameTableIndex].ID)").first
                         getPlayerName(indexOfPlayerID(playerToModify!.ID)!)
                     case 2: // delete the player
                         deletePlayer()
-//                    case 4: // show statistic of the player
-//                        _ = GV.realm.objects(PlayerModel).filter("ID =  \(nameTable[nameTableIndex].ID)").first
-//
                     default: break
                     }
                  }

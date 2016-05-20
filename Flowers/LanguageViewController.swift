@@ -41,7 +41,7 @@ class LanguageViewController: UIViewController, UITableViewDataSource, UITableVi
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.registerClass(UITableViewCell.self, forCellReuseIdentifier: "languageTextCell")
-        GV.language.addCallback(changeLanguage)
+//        GV.language.addCallback(changeLanguage)
         aktLanguageKey = GV.language.getAktLanguageKey()
 //        aktGameModus = GV.actGameParam.gameModus
         setAktlanguageRow()

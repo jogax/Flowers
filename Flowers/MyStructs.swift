@@ -87,7 +87,7 @@ struct GV {
         let newID = GV.playerID.getNewID()!
         if newID != 0 {
             let newPlayer = PlayerModel()
-            newPlayer.aktLanguageKey = GV.language.getAktLanguageKey()
+            newPlayer.aktLanguageKey = GV.language.getPreferredLanguage()
             newPlayer.name = GV.language.getText(.TCAnonym)
             newPlayer.isActPlayer = isActPlayer.count == 0 ? false : isActPlayer[0]
             newPlayer.ID = newID

@@ -78,7 +78,7 @@ class ViewController: UIViewController, SettingsDelegate, UIApplicationDelegate 
         
 //        if GV.actGameParam.gameModus == GameModusCards {
             let scene = CardGameScene(size: CGSizeMake(view.frame.width, view.frame.height))
-            GV.language.addCallback(scene.changeLanguage)
+            GV.language.addCallback(scene.changeLanguage, callbackName: "CardGameCallBack")
             scene.scaleMode = .ResizeFill
             scene.parentViewController = self
             scene.settingsDelegate = self

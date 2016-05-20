@@ -2447,11 +2447,11 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
             let touchesEndedAt = NSDate()
             
             let downTime = touchesEndedAt.timeIntervalSinceDate(touchesBeganAt!)
-            if downTime < 0.3 && aktNode == movedFromNode {
-                tapLocation = touchLocation
-                doubleTapped()
-                return
-            }
+//            if downTime < 0.3 && aktNode == movedFromNode {
+//                tapLocation = touchLocation
+//                doubleTapped()
+//                return
+//            }
 
             if exchangeModus {
                 exchangeModus = false
@@ -2643,60 +2643,60 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         }
     }
 
-    func doubleTapped() {
-        //let location = tapLocation
-        let realLocation = tapLocation //CGPointMake(location!.x, self.view!.frame.size.height - location!.y)
-        let nodes = nodesAtPoint(realLocation!)
-        for index in 0..<nodes.count {
-            if nodes[index] is MySKNode {
-                let aktSprite = nodes[index] as! MySKNode
-                if aktSprite.type == .SpriteType {
-                    if exchangeModus {
-                        push(aktSprite, status: .Exchanged)
-                        push(cardToChange!, status: .Exchanged)
-                        exchangeModus = false
-                        createAndRunAction(cardToChange!, card2: aktSprite)
-                        createAndRunAction(aktSprite, card2: cardToChange!)
-                        
-                        let column = aktSprite.column
-                        let row = aktSprite.row
-                        let startPosition = aktSprite.startPosition
-                        
-                        aktSprite.column = cardToChange!.column
-                        aktSprite.row = cardToChange!.row
-                        aktSprite.startPosition = cardToChange!.startPosition
-                        
-                        cardToChange!.column = column
-                        cardToChange!.row = row
-                        cardToChange!.startPosition = startPosition
+//    func doubleTapped() {
+//        //let location = tapLocation
+//        let realLocation = tapLocation //CGPointMake(location!.x, self.view!.frame.size.height - location!.y)
+//        let nodes = nodesAtPoint(realLocation!)
+//        for index in 0..<nodes.count {
+//            if nodes[index] is MySKNode {
+//                let aktSprite = nodes[index] as! MySKNode
+//                if aktSprite.type == .SpriteType {
+//                    if exchangeModus {
+//                        push(aktSprite, status: .Exchanged)
+//                        push(cardToChange!, status: .Exchanged)
+//                        exchangeModus = false
+//                        createAndRunAction(cardToChange!, card2: aktSprite)
+//                        createAndRunAction(aktSprite, card2: cardToChange!)
+//                        
+//                        let column = aktSprite.column
+//                        let row = aktSprite.row
+//                        let startPosition = aktSprite.startPosition
+//                        
+//                        aktSprite.column = cardToChange!.column
+//                        aktSprite.row = cardToChange!.row
+//                        aktSprite.startPosition = cardToChange!.startPosition
+//                        
+//                        cardToChange!.column = column
+//                        cardToChange!.row = row
+//                        cardToChange!.startPosition = startPosition
+//
+//                        stopTrembling()
+//                        cardToChange = nil
+//                        gameArrayChanged = true
+//
+//                    } else {
+//                        exchangeModus = true
+//                        tremblingSprites.append(aktSprite)
+//                        aktSprite.tremblingType = .ChangeSize
+//                        cardToChange = aktSprite
+//                    }
+//                }
+//            }
+//        }
+//    }
 
-                        stopTrembling()
-                        cardToChange = nil
-                        gameArrayChanged = true
-
-                    } else {
-                        exchangeModus = true
-                        tremblingSprites.append(aktSprite)
-                        aktSprite.tremblingType = .ChangeSize
-                        cardToChange = aktSprite
-                    }
-                }
-            }
-        }
-    }
-
-    func createAndRunAction(card1: MySKNode, card2: MySKNode) {
-        let actionShowEmptyCard = SKAction.runBlock({
-            self.makeEmptyCard(card1.column, row: card1.row)
-        })
-        let actionMove = SKAction.moveTo(card2.position, duration: 0.5)
-        
-        let actionDeleteEmptyCard = SKAction.runBlock({
-            self.deleteEmptySprite(card1.column, row: card1.row)
-        })
-        card1.runAction(SKAction.sequence([actionShowEmptyCard, actionMove, actionDeleteEmptyCard]))
-        
-    }
+//    func createAndRunAction(card1: MySKNode, card2: MySKNode) {
+//        let actionShowEmptyCard = SKAction.runBlock({
+//            self.makeEmptyCard(card1.column, row: card1.row)
+//        })
+//        let actionMove = SKAction.moveTo(card2.position, duration: 0.5)
+//        
+//        let actionDeleteEmptyCard = SKAction.runBlock({
+//            self.deleteEmptySprite(card1.column, row: card1.row)
+//        })
+//        card1.runAction(SKAction.sequence([actionShowEmptyCard, actionMove, actionDeleteEmptyCard]))
+//        
+//    }
     
     func playMusic(fileName: String, volume: Float, loops: Int) {
         //levelArray = GV.cloudData.readLevelDataArray()

@@ -161,6 +161,7 @@ class MySKTable: SKSpriteNode {
             }
             let horizontalPosition = columnXPositions[column]
             label.position = CGPointMake(horizontalPosition,  verticalPosition - CGFloat(row) * heightOfLabelRow)
+            
             self.addChild(label)
         }
     }

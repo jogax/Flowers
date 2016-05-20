@@ -24,6 +24,8 @@ class MySKSlider: MySKTable, AVAudioPlayerDelegate {
     var soundType: SoundType
     var soundEffects: AVAudioPlayer?
     var url: NSURL?
+    var timer: NSTimer?
+    var fileName = ""
     
 
     
@@ -40,18 +42,8 @@ class MySKSlider: MySKTable, AVAudioPlayerDelegate {
         super.init(columnWidths: myColumnWidths, rows:countLines, headLines: headLines, parent: parent, width: parent.parent!.frame.width * 0.9)
         sliderMinMaxXPosition = self.size.width * myColumnWidths[1] / 2 / 100
         self.name = myName
-        let fileName = soundType == .Music ? "MyMusic" : "OK"
-        url = NSURL.fileURLWithPath(NSBundle.mainBundle().pathForResource(fileName, ofType: "m4a")!)
-        do {
-            try soundEffects = AVAudioPlayer(contentsOfURL: url!)
-            soundEffects!.delegate = self
-            soundEffects!.prepareToPlay()
-            soundEffects!.volume = 0.001 * Float(volumeValue)
-            soundEffects!.numberOfLoops = -1
-        } catch {
-            print("audioPlayer error")
-        }
-
+        fileName = soundType == .Music ? "MyMusic" : "OK"
+        playSound(fileName, volume: Float(volumeValue), loops: -1)
         showMe(showSlider)
     }
     
@@ -75,7 +67,17 @@ class MySKSlider: MySKTable, AVAudioPlayerDelegate {
         if !(touchesBeganAtNode is SKLabelNode || (touchesBeganAtNode is SKSpriteNode && touchesBeganAtNode!.name != myName)) {
             touchesBeganAtNode = nil
         }
+        if soundType == .Sound {
+            timer = NSTimer.scheduledTimerWithTimeInterval(1, target: self,
+                                                                 selector: #selector(MySKSlider.reStart), userInfo: nil, repeats:true)
+        }
         soundEffects!.play()
+    }
+    
+    func reStart() {
+        playSound(fileName, volume: Float(volumeValue), loops: -1)
+        soundEffects!.play()
+        print(NSDate())
     }
     
     override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?) {
@@ -89,6 +91,10 @@ class MySKSlider: MySKTable, AVAudioPlayerDelegate {
     
     override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
         let touchLocation = touches.first!.locationInNode(self)
+        if timer != nil {
+            timer!.invalidate()
+            timer = nil
+        }
         switch checkTouches(touches, withEvent: event) {
         case MyEvents.GoBackEvent:
             let fadeInAction = SKAction.fadeInWithDuration(0.5)
@@ -96,8 +102,9 @@ class MySKSlider: MySKTable, AVAudioPlayerDelegate {
             removeFromParent()
             callBack()
         case .NoEvent:
-            let touchesEndedAtNode = nodeAtPoint(touchLocation)
-            if touchesBeganAtNode != nil && touchesEndedAtNode is SKSpriteNode && touchesEndedAtNode.name != myName {
+            soundEffects!.stop()
+//            let touchesEndedAtNode = nodeAtPoint(touchLocation)
+//            if touchesBeganAtNode != nil && touchesEndedAtNode is SKSpriteNode && touchesEndedAtNode.name != myName {
                 if let sliderNode = self.childNodeWithName("1-0") {
                     volumeValue = round((touches.first!.locationInNode(sliderNode).x + self.sliderMinMaxXPosition) / (2 * self.sliderMinMaxXPosition) * 100)
                     volumeValue = volumeValue < 0 ? 0 : volumeValue > 100 ? 100 : volumeValue
@@ -106,15 +113,14 @@ class MySKSlider: MySKTable, AVAudioPlayerDelegate {
                     switch self.soundType {
                     case .Music:
                         GV.player!.musicVolume = Float(volumeValue)
-                    default:
+                    case .Sound:
                         GV.player!.soundVolume = Float(volumeValue)
                     }
                     try! GV.realm.commitWrite()
-                    soundEffects!.stop()
                 }
             }
             
-        }
+//        }
         
     }
     
@@ -145,5 +151,24 @@ class MySKSlider: MySKTable, AVAudioPlayerDelegate {
             break
         }
     }
+    
+    func playSound(fileName: String, volume: Float, loops: Int) {
+        //levelArray = GV.cloudData.readLevelDataArray()
+        let url = NSURL.fileURLWithPath(
+            NSBundle.mainBundle().pathForResource(fileName, ofType: "m4a")!)
+        //backgroundColor = SKColor(patternImage: UIImage(named: "aquarium.png")!)
+        
+        do {
+            try soundEffects = AVAudioPlayer(contentsOfURL: url)
+            soundEffects?.delegate = self
+            soundEffects?.prepareToPlay()
+            soundEffects?.volume = 0.001 * volume
+            soundEffects?.numberOfLoops = loops
+//            soundEffects?.play()
+        } catch {
+            print("audioPlayer error")
+        }
+    }
+
 }
 

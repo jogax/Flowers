@@ -119,13 +119,6 @@ class MySKNode: SKSpriteNode {
             minValueLabel.zPosition = self.zPosition + 1
             
             
-//            var positionOffset = CGPointMake(0,0)
-//            if type == .SpriteType {
-//                positionOffset = CGPointMake(self.size.width * offsetMultiplier.x,  self.size.height * offsetMultiplier.y)
-//                minValueLabel.fontSize = 20
-//                maxValueLabel.fontSize = 20
-//            }
-//            minValueLabel.position = self.position + positionOffset //CGPointMake(23, -35)
         }
         
         setLabel(hitLabel, fontSize: 15)

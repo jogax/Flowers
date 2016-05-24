@@ -223,7 +223,6 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
     var showFingerNode = false
     var countMovingSprites = 0
     var countCheckCounts = 0
-    var exchangeModus = false
     
     //let timeLimitKorr = 5 // sec for pro Sprite
     var timeCount: Int = 0 // seconds
@@ -902,24 +901,15 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
             }
         }
 
-//        print("gameArray Size:", gameArray.count)
-//        print("pairsToCheck.count:", pairsToCheck.count)
-//        let pairsToCheckCount = pairsToCheck.count
-        let startCheckTime = NSDate()
+//        let startCheckTime = NSDate()
         for ind in 0..<pairsToCheck.count {
-//            print("pairsToCheck:", pairsToCheck[ind])
             checkPathToFoundedCards(pairsToCheck[ind])
-            //tippsButton!.showProgress(ind, maxValue: pairsToCheckCount)
-//            print ("ind:", ind)
             if stopCreateTippsInBackground {
-//                print("stopped while checking pairs")
                 stopCreateTippsInBackground = false
                 return false
             }
         }
 
-//        let checkTime = NSDate().timeIntervalSinceDate(startCheckTime)
-//        print("for ", countColumns, " columns the avarageTime is:", checkTime / Double(pairsToCheckCount).threeDecimals, "sec / pair")
         var removeIndex = [Int]()
         if tippArray.count > 0 {
             for ind in 0..<tippArray.count - 1 {
@@ -1439,6 +1429,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         let lineWidth = lastDrawHelpLinesParameters.lineWidth
         let twoArrows = lastDrawHelpLinesParameters.twoArrows
         let color = lastDrawHelpLinesParameters.color
+        let arrowLength = spriteSize.width * 0.30
     
         let pathToDraw:CGMutablePathRef = CGPathCreateMutable()
         let myLine:SKShapeNode = SKShapeNode(path:pathToDraw)
@@ -1475,8 +1466,8 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
             }
         }
         
-        let p1 = GV.pointOfCircle(20.0, center: points.last!, angle: angleR - (150 * GV.oneGrad))
-        let p2 = GV.pointOfCircle(20.0, center: points.last!, angle: angleR + (150 * GV.oneGrad))
+        let p1 = GV.pointOfCircle(arrowLength, center: points.last!, angle: angleR - (150 * GV.oneGrad))
+        let p2 = GV.pointOfCircle(arrowLength, center: points.last!, angle: angleR + (150 * GV.oneGrad))
         
         
         
@@ -1500,8 +1491,8 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
                 }
             }
             
-            let p1 = GV.pointOfCircle(20.0, center: points.first!, angle: angleR - (150 * GV.oneGrad))
-            let p2 = GV.pointOfCircle(20.0, center: points.first!, angle: angleR + (150 * GV.oneGrad))
+            let p1 = GV.pointOfCircle(arrowLength, center: points.first!, angle: angleR - (150 * GV.oneGrad))
+            let p2 = GV.pointOfCircle(arrowLength, center: points.first!, angle: angleR + (150 * GV.oneGrad))
             
             
             CGPathMoveToPoint(pathToDraw, nil, points[0].x, points[0].y)
@@ -2324,7 +2315,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
                 
                 stopTrembling()
                 lastNextPoint = nil
-            } else if movedFromNode != aktNode && !exchangeModus {
+            } else if movedFromNode != aktNode {
                 if movedFromNode.type == .ButtonType {
                     //movedFromNode.texture = atlas.textureNamed("\(movedFromNode.name!)")
                 } else if movedFromNode.type == .EmptyCardType {
@@ -2444,20 +2435,6 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
                 return
             }
             
-            let touchesEndedAt = NSDate()
-            
-            let downTime = touchesEndedAt.timeIntervalSinceDate(touchesBeganAt!)
-//            if downTime < 0.3 && aktNode == movedFromNode {
-//                tapLocation = touchLocation
-//                doubleTapped()
-//                return
-//            }
-
-            if exchangeModus {
-                exchangeModus = false
-                stopTrembling()
-            }
-            
             if startNode.type == .SpriteType && (aktNode == nil || aktNode! != movedFromNode) {
                 let sprite = movedFromNode// as! SKSpriteNode
                 let movedFrom = ColumnRow(column: movedFromNode.column, row: movedFromNode.row)
@@ -2562,7 +2539,6 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
                         startNode.size = foundedCard!.size
                         startNode.position = foundedCard!.position
                         startNode.type = .SpriteType
-//                        addPhysicsBody(startNode)
                         foundedCard!.removeFromParent()
                         founded = true
                         updateGameArrayCell(startNode)
@@ -2643,60 +2619,6 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         }
     }
 
-//    func doubleTapped() {
-//        //let location = tapLocation
-//        let realLocation = tapLocation //CGPointMake(location!.x, self.view!.frame.size.height - location!.y)
-//        let nodes = nodesAtPoint(realLocation!)
-//        for index in 0..<nodes.count {
-//            if nodes[index] is MySKNode {
-//                let aktSprite = nodes[index] as! MySKNode
-//                if aktSprite.type == .SpriteType {
-//                    if exchangeModus {
-//                        push(aktSprite, status: .Exchanged)
-//                        push(cardToChange!, status: .Exchanged)
-//                        exchangeModus = false
-//                        createAndRunAction(cardToChange!, card2: aktSprite)
-//                        createAndRunAction(aktSprite, card2: cardToChange!)
-//                        
-//                        let column = aktSprite.column
-//                        let row = aktSprite.row
-//                        let startPosition = aktSprite.startPosition
-//                        
-//                        aktSprite.column = cardToChange!.column
-//                        aktSprite.row = cardToChange!.row
-//                        aktSprite.startPosition = cardToChange!.startPosition
-//                        
-//                        cardToChange!.column = column
-//                        cardToChange!.row = row
-//                        cardToChange!.startPosition = startPosition
-//
-//                        stopTrembling()
-//                        cardToChange = nil
-//                        gameArrayChanged = true
-//
-//                    } else {
-//                        exchangeModus = true
-//                        tremblingSprites.append(aktSprite)
-//                        aktSprite.tremblingType = .ChangeSize
-//                        cardToChange = aktSprite
-//                    }
-//                }
-//            }
-//        }
-//    }
-
-//    func createAndRunAction(card1: MySKNode, card2: MySKNode) {
-//        let actionShowEmptyCard = SKAction.runBlock({
-//            self.makeEmptyCard(card1.column, row: card1.row)
-//        })
-//        let actionMove = SKAction.moveTo(card2.position, duration: 0.5)
-//        
-//        let actionDeleteEmptyCard = SKAction.runBlock({
-//            self.deleteEmptySprite(card1.column, row: card1.row)
-//        })
-//        card1.runAction(SKAction.sequence([actionShowEmptyCard, actionMove, actionDeleteEmptyCard]))
-//        
-//    }
     
     func playMusic(fileName: String, volume: Float, loops: Int) {
         //levelArray = GV.cloudData.readLevelDataArray()
@@ -2753,7 +2675,6 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         
         columnRow.column = Int(round(Double(offsetToFirstPosition.x / tableCellSize.x)))
         columnRow.row = Int(round(Double(offsetToFirstPosition.y / tableCellSize.y)))
-//        print("pos11:", gameArray[1][1].position, "pos00:",  gameArray[0][0].position, "tableCellSize:", tableCellSize,"offsetToFirstPosition:", offsetToFirstPosition, "columnRow:", columnRow)
         return columnRow
     }
     
@@ -2848,9 +2769,6 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
             case is SKSpriteNode: return MyNodeTypes.none
             default: break
             }
-            //            if testNode.parent is MyGameScene {
-            //                return MyNodeTypes.MyGameScene
-            //            }
             return MyNodeTypes.LabelNode
         case is MySKNode:
             var mySKNode: MySKNode = (testNode as! MySKNode)

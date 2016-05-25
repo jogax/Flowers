@@ -13,6 +13,7 @@ enum StackType: Int {
 class Stack<T> {
     private var savedSpriteStack: Array<SavedSprite>
     private var spriteStack: Array<MySKNode>
+    var lastRandomIndex = -1
     
     init() {
         savedSpriteStack = Array<SavedSprite>()
@@ -65,6 +66,18 @@ class Stack<T> {
             return value!
         } else {
             return nil
+        }
+    }
+    
+    func random(random: MyRandom?)->MySKNode? {
+        lastRandomIndex = random!.getRandomInt(0, max: spriteStack.count - 1)
+        return spriteStack[lastRandomIndex]
+    }
+    
+    func removeAtLastRandomIndex() {
+        if lastRandomIndex >= 0 {
+            spriteStack.removeAtIndex(lastRandomIndex)
+            lastRandomIndex = -1
         }
     }
     

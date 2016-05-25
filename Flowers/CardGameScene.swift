@@ -654,48 +654,53 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         }
         
         while (cardStack.count(.MySKNodeType) > 0 && checkGameArray() < maxUsedCells) || generateSpecial {
-            var sprite: MySKNode = cardStack.pull()!
+//            var sprite: MySKNode = cardStack.pull()!
+            var sprite: MySKNode?
+            sprite = cardStack.random(random)
             
             if generateSpecial {
                 while true {
-                    if findPairForSprite(sprite.colorIndex, minValue: sprite.minValue, maxValue: sprite.maxValue) {
+                    if findPairForSprite(sprite!.colorIndex, minValue: sprite!.minValue, maxValue: sprite!.maxValue) {
                         break
+                        // checkPath
                     }
-                    cardStack.pushLast(sprite)
-                    sprite = cardStack.pull()!
+                    sprite = cardStack.random(random)
+//                    cardStack.pushLast(sprite)
+//                    sprite = cardStack.pull()!
+                    
                 }
                 generateSpecial = false
             }
-            
+            cardStack.removeAtLastRandomIndex()
             let index = random!.getRandomInt(0, max: positionsTab.count - 1)
             let (aktColumn, aktRow) = positionsTab[index]
             
             let zielPosition = gameArray[aktColumn][aktRow].position
-            sprite.position = cardPackage!.position
-            sprite.startPosition = zielPosition
+            sprite!.position = cardPackage!.position
+            sprite!.startPosition = zielPosition
             
 
             positionsTab.removeAtIndex(index)
             
-            sprite.column = aktColumn
-            sprite.row = aktRow
+            sprite!.column = aktColumn
+            sprite!.row = aktRow
             
-            sprite.size = CGSizeMake(spriteSize.width, spriteSize.height)
+            sprite!.size = CGSizeMake(spriteSize.width, spriteSize.height)
 //            sprite.zPosition = 10
-            updateGameArrayCell(sprite)
+            updateGameArrayCell(sprite!)
 
 //            addPhysicsBody(sprite)
-            push(sprite, status: .AddedFromCardStack)
-            addChild(sprite)
+            push(sprite!, status: .AddedFromCardStack)
+            addChild(sprite!)
             let duration:Double = Double((zielPosition - cardPackage!.position).length()) / 500
             let actionMove = SKAction.moveTo(zielPosition, duration: duration)
             
             let zPositionPlus = SKAction.runBlock({
-                sprite.zPosition += 100
+                sprite!.zPosition += 100
             })
 
             let zPositionMinus = SKAction.runBlock({
-                sprite.zPosition -= 100
+                sprite!.zPosition -= 100
             })
 
             let actionHideEmptyCard = SKAction.runBlock({
@@ -703,7 +708,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
 //                sprite.zPosition = 0
                 
             })
-            sprite.runAction(SKAction.sequence([zPositionPlus, actionMove, zPositionMinus, actionHideEmptyCard]))
+            sprite!.runAction(SKAction.sequence([zPositionPlus, actionMove, zPositionMinus, actionHideEmptyCard]))
             if cardStack.count(.MySKNodeType) == 0 {
                 cardPackage!.changeButtonPicture(SKTexture(imageNamed: "emptycard"))
                 cardPackage!.alpha = 0.3

@@ -67,5 +67,5 @@ let ruDictionary: [TextConstants: String] = [
     .TCGuest:            "Гость",
     .TCAnonym:           "Anonymus",
     .TCStatistic:        "Статистика",
-    .TCPlayerStatisticHeader: "Статистики игрока %",
+    .TCPlayerStatisticHeader: "Статистика игрока %",
 ]

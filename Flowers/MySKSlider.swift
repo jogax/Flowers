@@ -90,7 +90,7 @@ class MySKSlider: MySKTable, AVAudioPlayerDelegate {
     }
     
     override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
-        let touchLocation = touches.first!.locationInNode(self)
+//        let touchLocation = touches.first!.locationInNode(self)
         if timer != nil {
             timer!.invalidate()
             timer = nil
@@ -103,23 +103,21 @@ class MySKSlider: MySKTable, AVAudioPlayerDelegate {
             callBack()
         case .NoEvent:
             soundEffects!.stop()
-//            let touchesEndedAtNode = nodeAtPoint(touchLocation)
-//            if touchesBeganAtNode != nil && touchesEndedAtNode is SKSpriteNode && touchesEndedAtNode.name != myName {
-                if let sliderNode = self.childNodeWithName("1-0") {
-                    volumeValue = round((touches.first!.locationInNode(sliderNode).x + self.sliderMinMaxXPosition) / (2 * self.sliderMinMaxXPosition) * 100)
-                    volumeValue = volumeValue < 0 ? 0 : volumeValue > 100 ? 100 : volumeValue
-                    showSlider()
-                    GV.realm.beginWrite()
-                    switch self.soundType {
-                    case .Music:
-                        GV.player!.musicVolume = Float(volumeValue)
-                    case .Sound:
-                        GV.player!.soundVolume = Float(volumeValue)
-                    }
-                    try! GV.realm.commitWrite()
+            if let sliderNode = self.childNodeWithName("1-0") {
+                volumeValue = round((touches.first!.locationInNode(sliderNode).x + self.sliderMinMaxXPosition) / (2 * self.sliderMinMaxXPosition) * 100)
+                volumeValue = volumeValue < 0 ? 0 : volumeValue > 100 ? 100 : volumeValue
+                showSlider()
+                GV.realm.beginWrite()
+                switch self.soundType {
+                case .Music:
+                    GV.player!.musicVolume = Float(volumeValue)
+                case .Sound:
+                    GV.player!.soundVolume = Float(volumeValue)
                 }
+                try! GV.realm.commitWrite()
             }
-            
+        }
+        
 //        }
         
     }

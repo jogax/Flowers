@@ -79,7 +79,6 @@ class MySKDetailedStatistic: MySKTable {
                                             MultiVar(string: bestScoreString!)
                 ]
                 showRowOfTable(elements, row: levelID + 1, selected: true)
-                let a = 1
             }
 
     }
@@ -125,7 +124,7 @@ class MySKDetailedStatistic: MySKTable {
     }
     
     func showDetailedPlayerStatistic(row: Int) {
-        let countLevelLines = Int(LevelsForPlayWithCards().count() + 1)
+//        let countLevelLines = Int(LevelsForPlayWithCards().count() + 1)
         
     }
     

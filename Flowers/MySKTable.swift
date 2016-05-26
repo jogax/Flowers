@@ -132,6 +132,7 @@ class MySKTable: SKSpriteNode {
         var label = SKLabelNode()
         var labelExists = false
         
+        
         for index in 0..<self.children.count {
             if self.children[index].name == name {
                 label = self.children[index] as! SKLabelNode
@@ -148,8 +149,15 @@ class MySKTable: SKSpriteNode {
             label.fontColor = SKColor.blackColor()
         }
         label.text = element
-
         label.fontSize = fontSize
+        
+        // when label too long, make it shorter
+        
+        let cellWidth = self.frame.width * columnWidths[column] / 100
+        while label.frame.width + 8 > cellWidth {
+           label.fontSize -= 1
+        }
+        
         if !labelExists {
             label.zPosition = self.zPosition + 10
             label.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.Left
@@ -159,6 +167,7 @@ class MySKTable: SKSpriteNode {
             if orientation.count > 0 {
                 
             }
+            
             let horizontalPosition = columnXPositions[column]
             label.position = CGPointMake(horizontalPosition,  verticalPosition - CGFloat(row) * heightOfLabelRow)
             
@@ -296,7 +305,6 @@ class MySKTable: SKSpriteNode {
         
         
         let w = size.width / 100
-        let h = size.height / 100
         
         //let mySize = CGSizeMake(size.width - 20, size.height)
         UIGraphicsBeginImageContextWithOptions(CGSizeMake(size.width, myHeight), opaque, scale)
@@ -304,8 +312,6 @@ class MySKTable: SKSpriteNode {
         
         CGContextBeginPath(ctx)
         CGContextSetFillColorWithColor(ctx, UIColor.whiteColor().CGColor)
-//        CGContextFillRect(ctx, CGRectMake(w * 0, h * 0, w * 100, myHeight))
-//        CGContextStrokePath(ctx)
 
         CGContextBeginPath(ctx)
         CGContextSetLineJoin(ctx, .Round)
@@ -317,14 +323,6 @@ class MySKTable: SKSpriteNode {
         CGContextSetFillColorWithColor(ctx, UIColor.whiteColor().CGColor);
         CGContextFillPath(ctx)
         var points = [CGPoint]()
-//        var points = [
-//            CGPointMake(w * 0, 0),
-//            CGPointMake(w * 100, 0),
-//            CGPointMake(w * 100, myHeight),
-//            CGPointMake(w * 0, myHeight),
-//            CGPointMake(w * 0, h * 0)
-//        ]
-//        CGContextAddLines(ctx, points, points.count)
         CGContextStrokePath(ctx)
         
         points.removeAll()

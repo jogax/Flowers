@@ -43,6 +43,7 @@ class MySKNode: SKSpriteNode {
     var startPosition = CGPointZero
     var minValue: Int
     var maxValue: Int
+    var countScore: Int
     let device = GV.deviceType
     let modelConstantLocal = UIDevice.currentDevice().modelName
 
@@ -87,6 +88,7 @@ class MySKNode: SKSpriteNode {
         self.type = type
         self.minValue = value
         self.maxValue = value
+        self.countScore = 0 //value + 1
         
         if value > NoValue {
             isCard = true

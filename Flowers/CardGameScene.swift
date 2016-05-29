@@ -240,7 +240,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
     var stack:Stack<SavedSprite> = Stack()
     //var gameArray = [[Bool]]() // true if Cell used
     var gameArray = [[GameArrayPositions]]()
-    var containers = [MyContainer]()
+    var containers = [MySKNode]()
     var colorTab = [ColorTabLine]()
     let containersPosCorr = CGPointMake(GV.onIpad ? 0.98 : 0.98, GV.onIpad ? 0.85 : 0.85)
     var levelPosKorr = CGPointMake(GV.onIpad ? 0.7 : 0.7, GV.onIpad ? 0.97 : 0.97)
@@ -1590,7 +1590,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         lastUpdateSec = sec10
     }
     
-    func spriteDidCollideWithContainer(node1:MySKNode, node2:MyContainer) {
+    func spriteDidCollideWithContainer(node1:MySKNode, node2:MySKNode) {
         let movingSprite = node1
         let container = node2
         
@@ -1625,7 +1625,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         if OK  {
             push(container, status: .HitcounterChanged)
             push(movingSprite, status: .Removed)
-            let adder = movingSprite.maxValue * (movingSprite.maxValue - movingSprite.minValue + 1)
+//            let adder = movingSprite.maxValue * (movingSprite.maxValue - movingSprite.minValue + 1)
             if container.maxValue < movingSprite.minValue {
                 container.maxValue = movingSprite.maxValue
             } else {
@@ -1634,7 +1634,13 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
                     container.maxValue = movingSprite.maxValue
                 }
             }
-            container.countScore += adder
+            for adder in movingSprite.minValue + 1...movingSprite.maxValue + 1 {
+                movingSprite.countScore += adder
+            }
+            self.addChild(showCountScore("+\(movingSprite.countScore)", position: movingSprite.position))
+
+            container.countScore += movingSprite.countScore
+            
             container.reload()
             //gameArray[movingSprite.column][movingSprite.row] = false
             resetGameArrayCell(movingSprite)
@@ -1700,11 +1706,25 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
             push(sprite, status: .Unification)
             push(movingSprite, status: .Removed)
             
+            print("sprite bevor:", sprite.minValue, sprite.maxValue, sprite.countScore)
+            print("movingSprite bevor:", movingSprite.minValue, movingSprite.maxValue, movingSprite.countScore)
+            
             if sprite.maxValue < movingSprite.minValue {
                 sprite.maxValue = movingSprite.maxValue
             } else {
                 sprite.minValue = movingSprite.minValue
             }
+            
+            for adder in movingSprite.minValue + 1...movingSprite.maxValue + 1 {
+                movingSprite.countScore += adder
+            }
+            
+            print("movingSprite after:", movingSprite.minValue, movingSprite.maxValue, movingSprite.countScore)
+            self.addChild(showCountScore("+\(movingSprite.countScore)", position: movingSprite.position))
+            
+            sprite.countScore += movingSprite.countScore
+            print("sprite after:", sprite.minValue, sprite.maxValue, sprite.countScore)
+
             sprite.reload()
             
             playSound("OK", volume: GV.player!.soundVolume)
@@ -1727,6 +1747,21 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
             tippsButton!.activateButton(true)
             
         }
+    }
+    
+    func showCountScore(text: String, position: CGPoint)->SKLabelNode {
+        let score = SKLabelNode()
+        score.position = position
+        score.text = text
+        score.fontColor = UIColor.redColor()
+        score.fontName = "Helvetica Bold"
+        score.fontSize = 30
+        score.zPosition = 1000
+        let showAction = SKAction.moveToY(position.y + 1000, duration: 12.0)
+        let hideAction = SKAction.sequence([SKAction.fadeOutWithDuration(2.0), SKAction.removeFromParent()])
+        let scoreActions = SKAction.group([showAction, hideAction])
+        score.runAction(scoreActions)
+        return score
     }
 
     func checkGameFinished() {
@@ -1770,7 +1805,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
                 actScore += containers[index].countScore
             }
             actScore *= 10000
-            actScore /= (5000 + timeCount)
+            actScore /= (3000 + timeCount)
             
 //            GV.gameStatistics.actScore = actScore
 //            GV.gameStatistics.levelScore += actScore
@@ -1954,7 +1989,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         for index in 0..<countContainers {
             let centerX = (size.width / CGFloat(countContainers)) * CGFloat(index) + xDelta / 2
             let centerY = size.height * containersPosCorr.y
-            containers.append(MyContainer(texture: getTexture(NoColor)))
+            containers.append(MySKNode(texture: getTexture(NoColor), type: .ContainerType, value: NoColor))
             containers[index].name = "\(index)"
             containers[index].position = CGPoint(x: centerX, y: centerY)
             containers[index].size = CGSizeMake(containerSize.width, containerSize.height)
@@ -2479,7 +2514,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
 //                var targetNode: MySKNode
                 var collisionAction: SKAction
                 if actFromToColumnRow.toColumnRow.row == NoValue {
-                    let containerNode = self.childNodeWithName(containers[actFromToColumnRow.toColumnRow.column].name!) as! MyContainer
+                    let containerNode = self.childNodeWithName(containers[actFromToColumnRow.toColumnRow.column].name!) as! MySKNode
                     collisionAction = SKAction.runBlock({
                         self.spriteDidCollideWithContainer(self.movedFromNode, node2: containerNode)
                     })

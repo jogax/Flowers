@@ -463,7 +463,7 @@ struct Container {
 }
 
 enum SpriteStatus: Int, CustomStringConvertible {
-    case Added = 0, AddedFromCardStack, AddedFromShowCard, MovingStarted, Unification, Mirrored, FallingMovingSprite, FallingSprite, HitcounterChanged, FirstCardAdded, Removed, Exchanged, StopCycle, Nothing
+    case Added = 0, AddedFromCardStack, AddedFromShowCard, MovingStarted, Unification, Mirrored, FallingMovingSprite, FallingSprite, HitcounterChanged, FirstCardAdded, Removed, StopCycle, Nothing
     
     var statusName: String {
         let statusNames = [
@@ -500,6 +500,7 @@ struct SavedSprite {
     var colorIndex: Int = 0
     var size: CGSize = CGSizeMake(0, 0)
     var hitCounter: Int = 0
+    var countScore: Int = 0
     var minValue: Int = NoValue
     var maxValue: Int = NoValue
     var BGPictureAdded = false

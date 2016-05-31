@@ -152,6 +152,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
     
     let showTippSleepTime = 30.0
     let doCountUpSleepTime = 1.0
+    let showTippsFreeCount = 3
     
     let showTippSelector = "showTipp"
     let doCountUpSelector = "doCountUp"
@@ -214,6 +215,10 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
     var minUsedCells = 0
     var maxUsedCells = 0
     var gameNumber = 0
+    
+    var scoreModifyer = 0
+    var showTippCounter = 0
+    var mirroredScore = 0
     
     var touchesBeganAt: NSDate?
     
@@ -391,6 +396,8 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         setMyDeviceConstants()
         levelIndex = GV.player!.levelID
         GV.levelsForPlay.setAktLevel(levelIndex)
+        scoreModifyer = 0
+        showTippCounter = showTippsFreeCount
 
 //        GV.statistic = GV.realm.objects(StatisticModel).filter("playerID = %d and levelID = %d", GV.player!.ID, GV.player!.levelID).first
         self.removeAllChildren()
@@ -809,6 +816,12 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         if buttonName == "tipps" {
             if !generatingTipps {
                 getTipps()
+                if showTippCounter > 0 {
+                    showTippCounter -= 1
+                } else {
+                    self.addChild(showCountScore("-100", position: tippsButton!.position))
+                    scoreModifyer -= 100
+                }
             }
         }
         startTippTimer()
@@ -1638,7 +1651,9 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
                 movingSprite.countScore += adder
             }
             self.addChild(showCountScore("+\(movingSprite.countScore)", position: movingSprite.position))
-
+            
+            movingSprite.countScore += mirroredScore
+            
             container.countScore += movingSprite.countScore
             
             container.reload()
@@ -1706,9 +1721,6 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
             push(sprite, status: .Unification)
             push(movingSprite, status: .Removed)
             
-            print("sprite bevor:", sprite.minValue, sprite.maxValue, sprite.countScore)
-            print("movingSprite bevor:", movingSprite.minValue, movingSprite.maxValue, movingSprite.countScore)
-            
             if sprite.maxValue < movingSprite.minValue {
                 sprite.maxValue = movingSprite.maxValue
             } else {
@@ -1719,11 +1731,11 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
                 movingSprite.countScore += adder
             }
             
-            print("movingSprite after:", movingSprite.minValue, movingSprite.maxValue, movingSprite.countScore)
             self.addChild(showCountScore("+\(movingSprite.countScore)", position: movingSprite.position))
             
+            movingSprite.countScore += mirroredScore
+
             sprite.countScore += movingSprite.countScore
-            print("sprite after:", sprite.minValue, sprite.maxValue, sprite.countScore)
 
             sprite.reload()
             
@@ -1757,8 +1769,8 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         score.fontName = "Helvetica Bold"
         score.fontSize = 30
         score.zPosition = 1000
-        let showAction = SKAction.moveToY(position.y + 1000, duration: 12.0)
-        let hideAction = SKAction.sequence([SKAction.fadeOutWithDuration(2.0), SKAction.removeFromParent()])
+        let showAction = SKAction.moveToY(position.y + 1000, duration: 10.0)
+        let hideAction = SKAction.sequence([SKAction.fadeOutWithDuration(3.0), SKAction.removeFromParent()])
         let scoreActions = SKAction.group([showAction, hideAction])
         score.runAction(scoreActions)
         return score
@@ -1804,6 +1816,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
             for index in 0..<containers.count {
                 actScore += containers[index].countScore
             }
+            actScore += scoreModifyer
             actScore *= 10000
             actScore /= (3000 + timeCount)
             
@@ -2090,6 +2103,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
                     sprite.row = savedSpriteInCycle.row
                     sprite.minValue = savedSpriteInCycle.minValue
                     sprite.maxValue = savedSpriteInCycle.maxValue
+                    sprite.countScore = savedSpriteInCycle.countScore
                     sprite.BGPictureAdded = savedSpriteInCycle.BGPictureAdded
                     sprite.name = savedSpriteInCycle.name
  
@@ -2109,6 +2123,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
                     sprite.size = savedSpriteInCycle.size
                     sprite.minValue = savedSpriteInCycle.minValue
                     sprite.maxValue = savedSpriteInCycle.maxValue
+                    sprite.countScore = savedSpriteInCycle.countScore
                     sprite.BGPictureAdded = savedSpriteInCycle.BGPictureAdded
                     updateGameArrayCell(sprite)
                     //sprite.hitLabel.text = "\(sprite.hitCounter)"
@@ -2119,6 +2134,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
                     let container = containers[findIndex(savedSpriteInCycle.colorIndex)]
                     container.minValue = savedSpriteInCycle.minValue
                     container.maxValue = savedSpriteInCycle.maxValue
+                    container.countScore = savedSpriteInCycle.countScore
                     container.BGPictureAdded = savedSpriteInCycle.BGPictureAdded
                     container.reload()
                     showScore()
@@ -2127,6 +2143,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
                     let container = containers[findIndex(savedSpriteInCycle.colorIndex)]
                     container.minValue = savedSpriteInCycle.minValue
                     container.maxValue = savedSpriteInCycle.maxValue
+                    container.countScore = savedSpriteInCycle.countScore
                     container.BGPictureAdded = savedSpriteInCycle.BGPictureAdded
                     container.colorIndex = NoColor
                     container.reload()
@@ -2137,6 +2154,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
                     sprite.startPosition = savedSpriteInCycle.startPosition
                     sprite.minValue = savedSpriteInCycle.minValue
                     sprite.maxValue = savedSpriteInCycle.maxValue
+                    sprite.countScore = savedSpriteInCycle.countScore
 
                     updateGameArrayCell(sprite)
 //                    gameArray[sprite.column][sprite.row].colorIndex = sprite.colorIndex
@@ -2167,39 +2185,6 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
                 case .Mirrored:
                     //var sprite = self.childNodeWithName(savedSpriteInCycle.name)! as! MySKNode
                     actionMoveArray.append(SKAction.moveTo(savedSpriteInCycle.endPosition, duration: duration))
-                case .Exchanged:
-                    let sprite = self.childNodeWithName(savedSpriteInCycle.name)! as! MySKNode
-                    let savedSprite:SavedSprite = stack.pull()!
-                    let sprite1 = self.childNodeWithName(savedSprite.name) as! MySKNode
-                    
-                    sprite.startPosition = savedSpriteInCycle.startPosition
-                    sprite.minValue = savedSpriteInCycle.minValue
-                    sprite.maxValue = savedSpriteInCycle.maxValue
-                    sprite.BGPictureAdded = savedSpriteInCycle.BGPictureAdded
-                    
-                    sprite1.startPosition = savedSprite.startPosition
-                    sprite1.minValue = savedSprite.minValue
-                    sprite1.maxValue = savedSprite.maxValue
-                    sprite1.BGPictureAdded = savedSprite.BGPictureAdded
-
-                    let action = SKAction.moveTo(sprite.startPosition, duration: 1.0)
-                    let action1 = SKAction.moveTo(sprite1.startPosition, duration: 1.0)
-
-                    gameArray[sprite.column][sprite.row].colorIndex = sprite.colorIndex
-                    gameArray[sprite.column][sprite.row].minValue = sprite.minValue
-                    gameArray[sprite.column][sprite.row].maxValue = sprite.maxValue
-                    
-                    gameArray[sprite1.column][sprite1.row].colorIndex = sprite1.colorIndex
-                    gameArray[sprite1.column][sprite1.row].minValue = sprite1.minValue
-                    gameArray[sprite1.column][sprite1.row].maxValue = sprite1.maxValue
-                    
-                    sprite.runAction(SKAction.sequence([action]))
-                    sprite1.runAction(SKAction.sequence([action1]))
-                    
-                    sprite.reload()
-                    sprite1.reload()
-                    savedSpriteInCycle = savedSprite
-                    stopSoon = true
                 case .StopCycle: break
                 case .Nothing: break
                 }
@@ -2464,7 +2449,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
                 actFromToColumnRow.toColumnRow.column = foundedPoint!.column
                 actFromToColumnRow.toColumnRow.row = foundedPoint!.row
                 
-                let color = calculateLineColor(foundedPoint!, movedFrom: movedFrom)
+                var color = calculateLineColor(foundedPoint!, movedFrom: movedFrom)
                 if color == .Red && lastGreenPair != nil {
                     if lastRedPair != nil {
                         lastRedPair!.setEndDuration()
@@ -2473,6 +2458,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
                             actFromToColumnRow.toColumnRow.column = lastGreenPair!.pair.toColumnRow.column
                             actFromToColumnRow.toColumnRow.row = lastGreenPair!.pair.toColumnRow.row
                             myPoints = lastGreenPair!.points // set Back to last green line
+                            color = .Green
                             print("==============correctur made! lastRedPair!.duration: ", lastRedPair!.duration.nDecimals(3), "==========")
                         }
                     }
@@ -2493,19 +2479,39 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
                 
                 sprite.zPosition += 5
 
-                
+                mirroredScore = 0
                 
                 var actionArray = [SKAction]()
                 actionArray.append(actionEmpty)
                 actionArray.append(SKAction.moveTo(myPoints[1], duration: Double((myPoints[1] - myPoints[0]).length() * speed)))
                 
                 if myPoints.count > 2 {
+//                    actionArray.appendContentsOf(createActionsForMirroring(sprite, adder: 4, color: color, fromPoint: myPoints[1], toPoint: myPoints[2]))
+                    if color == .Green {
+                        actionArray.append(SKAction.runBlock({
+                            self.mirroredScore += 4
+                            self.addChild(self.showCountScore("+4", position: sprite.position))
+                        }))
+                    }
+                    
                     actionArray.append(countAndPushAction)
                     actionArray.append(SKAction.moveTo(myPoints[2], duration: Double((myPoints[2] - myPoints[1]).length() * speed)))
                     if myPoints.count > 3 {
+                        if color == .Green {
+                            actionArray.append(SKAction.runBlock({
+                                self.mirroredScore += 8
+                                self.addChild(self.showCountScore("+8", position: sprite.position))
+                            }))
+                        }
                         actionArray.append(countAndPushAction)
                         actionArray.append(SKAction.moveTo(myPoints[3], duration: Double((myPoints[3] - myPoints[2]).length() * speed)))
                         if myPoints.count > 4 {
+                            if color == .Green {
+                                actionArray.append(SKAction.runBlock({
+                                    self.mirroredScore += 16
+                                    self.addChild(self.showCountScore("+16", position: sprite.position))
+                                }))
+                            }
                             actionArray.append(countAndPushAction)
                             actionArray.append(SKAction.moveTo(myPoints[4], duration: Double((myPoints[4] - myPoints[3]).length() * speed)))
                         }
@@ -2607,6 +2613,22 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
             startTippTimer()
         }
         
+    }
+    
+    func createActionsForMirroring(sprite: MySKNode, adder: Int, color: MyColors, fromPoint: CGPoint, toPoint: CGPoint)->[SKAction] {
+        var actions = [SKAction]()
+        if color == .Green {
+            actions.append(SKAction.runBlock({
+                sprite.countScore += adder
+                self.addChild(self.showCountScore("+\(adder)", position: sprite.position))
+                self.push(sprite, status: .Mirrored)
+            }))
+        }
+        
+//        actionArray.append(countAndPushAction)
+        actions.append(SKAction.moveTo(toPoint, duration: Double((toPoint - fromPoint).length() * speed)))
+
+        return actions
     }
     
     func stopTrembling() {
@@ -2753,11 +2775,6 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
     }
     
     
-    func push(sprite1: MySKNode, sprite2: MySKNode) {
-        push(sprite1, status: .Exchanged)
-        push(sprite2, status: .Exchanged)
-    }
-    
     func push(sprite: MySKNode, status: SpriteStatus) {
         var savedSprite = SavedSprite()
         savedSprite.type = sprite.type
@@ -2768,6 +2785,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         savedSprite.colorIndex = sprite.colorIndex
         savedSprite.size = sprite.size
         savedSprite.hitCounter = sprite.hitCounter
+        savedSprite.countScore = sprite.countScore
         savedSprite.minValue = sprite.minValue
         savedSprite.maxValue = sprite.maxValue
         savedSprite.column = sprite.column
@@ -2827,6 +2845,8 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
     
     func undoButtonPressed() {
         pull(true)
+        scoreModifyer -= 100
+        self.addChild(showCountScore("-100", position: undoButton!.position))
     }
 
     

@@ -578,8 +578,6 @@ class FlowerGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate 
                 case .Mirrored:
                     //var sprite = self.childNodeWithName(savedSpriteInCycle.name)! as! MySKNode
                     actionMoveArray.append(SKAction.moveTo(savedSpriteInCycle.endPosition, duration: duration))
-                case .Exchanged: _ = 0
-                    //default: run = false
                 case .Nothing: break
                 default: break
                 }

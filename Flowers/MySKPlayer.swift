@@ -31,7 +31,7 @@ class MySKPlayer: MySKTable, UITextFieldDelegate {
 
 
     init(parent: SKSpriteNode, view: UIView, callBack: ()->()) {
-        nameTable = Array(GV.realm.objects(PlayerModel).sorted("created", ascending: true))
+        nameTable = Array(realm.objects(PlayerModel).sorted("created", ascending: true))
         countLines = nameTable.count// + (nameTable[0].name == GV.language.getText(.TCGuest) ? 0 : 1)
         self.parentNode = parent
         self.callBack = callBack
@@ -112,9 +112,9 @@ class MySKPlayer: MySKTable, UITextFieldDelegate {
     }
     
     func textFieldDidEndEditing(textField: UITextField) {
-        GV.realm.beginWrite()
-        nameTable[nameTableIndex].name = nameInputField.text!
-        try! GV.realm.commitWrite()
+        try! realm.write({
+            nameTable[nameTableIndex].name = nameInputField.text!
+        })
         nameInputField.hidden = true
         nameInputField.removeFromSuperview()
         sleep(0.5)
@@ -139,7 +139,7 @@ class MySKPlayer: MySKTable, UITextFieldDelegate {
     }
 
     func showPlayers() {
-        reDrawWhenChanged(myColumnWidths, rows: GV.realm.objects(PlayerModel).count)
+        reDrawWhenChanged(myColumnWidths, rows: realm.objects(PlayerModel).count)
         for index in 0..<nameTable.count {
             let name = nameTable[index].name == GV.language.getText(.TCAnonym) ? "+" : nameTable[index].name
             var elements: [MultiVar] = [MultiVar(string: name)]
@@ -158,24 +158,24 @@ class MySKPlayer: MySKTable, UITextFieldDelegate {
     
 
     func changeActPlayer () {
-        GV.realm.beginWrite()
-        let oldActPlayer = GV.realm.objects(PlayerModel).filter("isActPlayer = true").first
-        var newActPlayer = GV.realm.objects(PlayerModel).filter("ID =  \(nameTable[nameTableIndex].ID)").first
-        if newActPlayer == nil || newActPlayer!.name == GV.language.getText(.TCGuest) {
-            newActPlayer = PlayerModel()
-            newActPlayer!.ID = nameTable[nameTableIndex].ID
-            newActPlayer!.name = nameTable[nameTableIndex].name
-        }
-        oldActPlayer!.isActPlayer = false
-        newActPlayer!.isActPlayer = true
-        let oldIndex = indexOfPlayerID(oldActPlayer!.ID)
-        let newIndex = indexOfPlayerID(newActPlayer!.ID)
-        nameTable[oldIndex!].isActPlayer = false
-        nameTable[newIndex!].isActPlayer = true
-        GV.realm.add(oldActPlayer!, update: true)
-        GV.realm.add(newActPlayer!, update: true)
-        GV.player = newActPlayer
-        try! GV.realm.commitWrite()
+        try! realm.write({
+            let oldActPlayer = realm.objects(PlayerModel).filter("isActPlayer = true").first
+            var newActPlayer = realm.objects(PlayerModel).filter("ID =  \(nameTable[nameTableIndex].ID)").first
+            if newActPlayer == nil || newActPlayer!.name == GV.language.getText(.TCGuest) {
+                newActPlayer = PlayerModel()
+                newActPlayer!.ID = nameTable[nameTableIndex].ID
+                newActPlayer!.name = nameTable[nameTableIndex].name
+            }
+            oldActPlayer!.isActPlayer = false
+            newActPlayer!.isActPlayer = true
+            let oldIndex = indexOfPlayerID(oldActPlayer!.ID)
+            let newIndex = indexOfPlayerID(newActPlayer!.ID)
+            nameTable[oldIndex!].isActPlayer = false
+            nameTable[newIndex!].isActPlayer = true
+            realm.add(oldActPlayer!, update: true)
+            realm.add(newActPlayer!, update: true)
+            GV.player = newActPlayer
+        })
         GV.language.setLanguage(GV.player!.aktLanguageKey)
         showPlayers()
     }
@@ -199,7 +199,7 @@ class MySKPlayer: MySKTable, UITextFieldDelegate {
         
         switch checkTouches(touches, withEvent: event) {
         case MyEvents.GoBackEvent:
-            GV.player = GV.realm.objects(PlayerModel).filter("isActPlayer = true").first
+            GV.player = realm.objects(PlayerModel).filter("isActPlayer = true").first
             let fadeInAction = SKAction.fadeInWithDuration(0.5)
             myParent.runAction(fadeInAction)
             removeFromParent()
@@ -218,7 +218,7 @@ class MySKPlayer: MySKTable, UITextFieldDelegate {
                     case 0: // select a Player
                         changeActPlayer()
                     case 1: // modify the player
-                        let playerToModify = GV.realm.objects(PlayerModel).filter("ID = \(nameTable[nameTableIndex].ID)").first
+                        let playerToModify = realm.objects(PlayerModel).filter("ID = \(nameTable[nameTableIndex].ID)").first
                         getPlayerName(indexOfPlayerID(playerToModify!.ID)!)
                     case 2: // delete the player
                         deletePlayer()
@@ -231,13 +231,13 @@ class MySKPlayer: MySKTable, UITextFieldDelegate {
     }
     
     func addNewPlayerWhenRequired() -> Int {
-        let lastPlayer = GV.realm.objects(PlayerModel).sorted("created", ascending: false).first!
+        let lastPlayer = realm.objects(PlayerModel).sorted("created", ascending: false).first!
         if lastPlayer.name == GV.language.getText(.TCAnonym) {
             return lastPlayer.ID
         } else {
             let newPlayerID = GV.createNewPlayer()
             if newPlayerID > 0 {
-                let array = Array(GV.realm.objects(PlayerModel).filter("ID = %d", newPlayerID))
+                let array = Array(realm.objects(PlayerModel).filter("ID = %d", newPlayerID))
                 nameTable.appendContentsOf(array)
                 nameTableIndex = nameTable.count - 1
             }
@@ -246,26 +246,22 @@ class MySKPlayer: MySKTable, UITextFieldDelegate {
     }
     
     func deletePlayer() {
-        if GV.realm.objects(PlayerModel).count > 1 {
-            let playerToDelete = GV.realm.objects(PlayerModel).filter("ID = %d", nameTable[nameTableIndex].ID).first!
-            GV.realm.beginWrite()
-            nameTable.removeAtIndex(nameTableIndex)
-            if GV.realm.objects(StatisticModel).filter("playerID = %d",  playerToDelete.ID).count > 0 {
-                GV.realm.delete(GV.realm.objects(StatisticModel).filter("playerID = %d", playerToDelete.ID))
-            }
-            GV.playerID.putOldID(playerToDelete.ID)
-            GV.realm.delete(playerToDelete)
-            let playerToSetActPlayer = nameTable[0]
-            playerToSetActPlayer.isActPlayer = true
-            GV.realm.add(playerToSetActPlayer, update: true)
-            GV.player = playerToSetActPlayer
-            //                        nameTable.removeAtIndex(nameTableIndex)
-            try! GV.realm.commitWrite()
-            if GV.realm.objects(PlayerModel).filter("name = %c", GV.language.getText(.TCAnonym)).count == 0 {
+        if realm.objects(PlayerModel).count > 1 {
+            let playerToDelete = realm.objects(PlayerModel).filter("ID = %d", nameTable[nameTableIndex].ID).first!
+            try! realm.write({
+                nameTable.removeAtIndex(nameTableIndex)
+                realm.delete(realm.objects(StatisticModel).filter("playerID = %d", playerToDelete.ID))
+                realm.delete(realm.objects(GameToPlayerModel).filter("playerID = %d", playerToDelete.ID))
+                realm.delete(playerToDelete)
+                let playerToSetActPlayer = nameTable[0]
+                playerToSetActPlayer.isActPlayer = true
+                realm.add(playerToSetActPlayer, update: true)
+                GV.player = playerToSetActPlayer
+                //                        nameTable.removeAtIndex(nameTableIndex)
+            })
+            if realm.objects(PlayerModel).filter("name = %c", GV.language.getText(.TCAnonym)).count == 0 {
                 addNewPlayerWhenRequired()
             }
-//            let size = CGSizeMake(parent!.frame.width * 0.9, CGFloat(nameTable.count + 1) * heightOfTableRow)
-//            reDraw(size, columnWidths: myColumnWidths, rows: nameTable.count + 1)
             showPlayers()
         }
     }

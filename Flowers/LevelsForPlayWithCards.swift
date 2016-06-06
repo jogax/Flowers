@@ -19,26 +19,24 @@ class LevelsForPlayWithCards {
         MinProzent = 3,
         MaxProzent = 4,
         SpriteSize = 5,
-        //TargetScoreKorr = 9//,
-        //TimeLimitKorr = 10
+        ScoreFactor = 6
+        ScoreTime = 7
     }
     */
     var CardPlay = false
     var level: Int
     var aktLevel: LevelParam
-    var levelChanges = [
-        "1,0,0,0,0,0,0,0,0", //,2",//0",    // 5 times CountSpritesProContainer += 10
-    ]
     private var levelContent = [
-        1: "1,4,4,40,60,40",
-        2: "1,5,5,40,60,35",
-        3: "1,6,6,40,60,32",
-        4: "1,7,7,40,60,31",
-        5: "1,8,8,50,60,28",
-        6: "1,9,9,80,100,25",
-        7: "1,10,10,80,100,22",
-        8: "2,11,11,80,100,19",
-        9: "2,12,12,90,100,16",
+        1: "1,4,4,40,60,40, 2.0, 30.0",
+        2: "2,4,4,40,60,40, 2.0, 60.0",
+        3: "1,5,5,40,60,35, 2.5, 30.0",
+        4: "1,6,6,40,60,32, 2.5, 30.0",
+        5: "1,7,7,40,60,31, 2.5, 30.0",
+        6: "1,8,8,50,60,28, 3.0, 25.0",
+        7: "1,9,9,80,100,25, 3.0, 25.0",
+        8: "1,10,10,80,100,22, 4.0, 20",
+        9: "1,11,11,80,100,19, 4.0, 30",
+        10: "1,12,12,90,100,16, 5.0, 40",
     ]
     var levelParam = [LevelParam]()
     
@@ -57,6 +55,8 @@ class LevelsForPlayWithCards {
             aktLevelParam.minProzent = Int(paramArr[3])!
             aktLevelParam.maxProzent = Int(paramArr[4])!
             aktLevelParam.spriteSize = Int(paramArr[5])!
+            aktLevelParam.scoreFactor = (paramArr[6] as NSString).doubleValue
+            aktLevelParam.scoreTime = (paramArr[7] as NSString).doubleValue
             levelParam.append(aktLevelParam)
         }
         aktLevel = levelParam[0]

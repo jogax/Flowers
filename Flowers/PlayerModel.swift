@@ -19,7 +19,7 @@ class PlayerModel: Object {
     dynamic var soundVolume: Float = 0
     dynamic var musicVolume: Float = 0
     dynamic var created = NSDate()
-    
+
     override  class func primaryKey() -> String {
         return "ID"
     }

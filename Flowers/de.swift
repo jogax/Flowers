@@ -9,13 +9,13 @@
 
 let deDictionary: [TextConstants: String] = [
     .TCAktLanguage:      "de",
-    .TCLevel:            "Ebene",
-    .TCLevelScore:       "Summe",
-    .TCGameScore:        "Gesamtsumme",
+    .TCLevel:            "Ebene%",
+    .TCLevelScore:       "Summe%",
+    .TCGameScore:        "Punkte: % * Faktor: % = %",
+    .TCTimeLeft:         "Zeit: % (Faktor: %)",
     .TCActScore:         "Ergebnis des letzten Spiels: ",
     .TCBestScore:        "Beste Ergebnis",
     .TCTargetScore:      "Ziel Gesamtsumme: ",
-    .TCTimeLeft:         "verwendete Zeit:",
     .TCGameLost:         "Sie haben verloren!",
     .TCGameLost3:        "Sie haben 3 mal verloren. Startet vorherige Level.",
     .TCTargetNotReached: "Das Ziel ist nicht erreicht.",
@@ -23,7 +23,7 @@ let deDictionary: [TextConstants: String] = [
     .TCCardCount:        "Anzahl von Karten:",
     .TCReturn:           "Zurück",
     .TCOK:               "OK",
-    .TCGameComplete:     "Spiel beendet!",
+    .TCGameComplete:     "Spiel % beendet!",
     .TCNoMessage:        "keine Meldung",
     .TCTimeout:          "Timeout",
     .TCGameOver:         "Spiel vorbei",
@@ -54,8 +54,8 @@ let deDictionary: [TextConstants: String] = [
     .TCGameAgain:        "Spiel wiederholen",
     .TCChooseGame:       "Bitte wählen Sie: ",
     .TCTippCount:        "Anzahl der möglichen Züge: ",
-    .TCStatistics:       "Statistik der Ebene %",
-    .TCActTime:          "Zeit für letzte Spiel: ",
+    .TCStatistics:       "Statistik des Spiels % auf Ebene %",
+    .TCActTime:          "Zeit für das Spiel: ",
     .TCBestTimeForLevel: "Beste Zeit der Ebene: ",
     .TCBestTime:         "Beste Zeit",
     .TCAllTimeForLevel:  "Gesamtzeit für diese Ebene: ",
@@ -68,6 +68,10 @@ let deDictionary: [TextConstants: String] = [
     .TCAnonym:           "Anonymus",
     .TCStatistic:        "Statistiken",
     .TCPlayerStatisticHeader: "Statistiken für %",
+    .TCStatisticOfGame:  "Statistik des Spiels %:",
+    .TCBestScoreOfGame:   "Beste Ergebnis % %",
+    .TCYourScore:   "Ihr Ergebnis %",
+    .TCYouAreTheBest:    "Sind sind der Beste mit Ergebnis %",
 ]
 
 

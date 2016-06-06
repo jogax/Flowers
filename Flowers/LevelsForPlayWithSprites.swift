@@ -68,7 +68,7 @@ class LevelsForPlayWithSprites {
             aktLevelParam.maxProzent = Int(paramArr[6])!
 //            aktLevelParam.containerSize = CGFloat(Int(paramArr[7])!)
 //            aktLevelParam.spriteSize = CGFloat(Int(paramArr[8])!)
-            aktLevelParam.targetScoreKorr = Int(paramArr[7])!
+//            aktLevelParam.targetScoreKorr = Int(paramArr[7])!
             //aktLevelParam.timeLimitKorr = Int(paramArr[10])!
             levelParam.append(aktLevelParam)
             
@@ -85,7 +85,7 @@ class LevelsForPlayWithSprites {
                     aktLevelParam.maxProzent = levelParam.last!.maxProzent + Int(levelChangeArr[LevelParamsType.MaxProzent.rawValue])!
 //                    aktLevelParam.containerSize = levelParam.last!.containerSize + CGFloat(Int(levelChangeArr[LevelParamsType.ContainerSize.rawValue])!)
 //                    aktLevelParam.spriteSize = levelParam.last!.spriteSize + CGFloat(Int(levelChangeArr[LevelParamsType.SpriteSize.rawValue])!)
-                    aktLevelParam.targetScoreKorr = levelParam.last!.targetScoreKorr + Int(levelChangeArr[LevelParamsType.TargetScoreKorr.rawValue])!
+//                    aktLevelParam.targetScoreKorr = levelParam.last!.targetScoreKorr + Int(levelChangeArr[LevelParamsType.TargetScoreKorr.rawValue])!
                     //aktLevelParam.timeLimitKorr = levelParam.last!.timeLimitKorr + Int(levelChangeArr[LevelParamsType.TimeLimitKorr.rawValue])!
                     levelParam.append(aktLevelParam)
                     if levelParam.count - aktIndex > levelCount! {

@@ -70,7 +70,11 @@ enum TextConstants: Int {
     TCGuest,
     TCAnonym,
     TCStatistic,
-    TCPlayerStatisticHeader
+    TCPlayerStatisticHeader,
+    TCStatisticOfGame,
+    TCBestScoreOfGame,
+    TCYourScore,
+    TCYouAreTheBest
 }
 
     let LanguageEN = "en" // index 0

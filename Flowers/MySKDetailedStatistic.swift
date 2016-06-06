@@ -23,7 +23,7 @@ class MySKDetailedStatistic: MySKTable {
     
     init(playerID: Int, parent: SKSpriteNode, callBack: ()->()) {
         self.playerID = playerID
-        let playerName = GV.realm.objects(PlayerModel).filter("ID = %d", playerID).first!.name
+        let playerName = realm.objects(PlayerModel).filter("ID = %d", playerID).first!.name
         self.callBack = callBack
         let headLines = GV.language.getText(.TCPlayerStatisticHeader, values: playerName)
         super.init(columnWidths: myDetailedColumnWidths, rows:countLines + 1, headLines: [headLines], parent: parent, width: parent.parent!.frame.width * 0.9)
@@ -65,7 +65,7 @@ class MySKDetailedStatistic: MySKTable {
         showRowOfTable(elements, row: 0, selected: true)
         for levelID in 0..<countLines {
             var statistic: StatisticModel?
-            statistic = GV.realm.objects(StatisticModel).filter("playerID = %d and levelID = %d", playerID, levelID).first
+            statistic = realm.objects(StatisticModel).filter("playerID = %d and levelID = %d", playerID, levelID).first
             if statistic == nil {
                 statistic = StatisticModel()
             }

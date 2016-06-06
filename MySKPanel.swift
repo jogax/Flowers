@@ -44,7 +44,7 @@ class MySKPanel: SKSpriteNode {
     let statisticLabel = SKLabelNode()
     let returnLabel = SKLabelNode()
     let callbackName = "SettingsCallbackName"
-
+    var oldPlayerID = 0
 
     var type: PanelTypes
     var playerChanged = false
@@ -168,6 +168,7 @@ class MySKPanel: SKSpriteNode {
     
     func setPlayer() {
         userInteractionEnabled = false
+        oldPlayerID = GV.player!.ID
         let _ = MySKPlayer(parent: self, view: parentScene!.view!, callBack: callIfMySKPlayerEnds)
     }
     func setSoundVolume() {
@@ -200,11 +201,7 @@ class MySKPanel: SKSpriteNode {
     }
     
     func callIfMySKPlayerEnds () {
-        if GV.player!.name != GV.realm.objects(PlayerModel).filter("isActPlayer = true").first!.name {
-            GV.realm.beginWrite()
-            GV.player = GV.realm.objects(PlayerModel).filter("isActPlayer = true").first
-            GV.statistic = GV.realm.objects(StatisticModel).filter("playerID = %d and levelID = %d", GV.player!.ID, GV.player!.levelID).first
-            try! GV.realm.commitWrite()
+        if GV.player!.ID != oldPlayerID {
             playerChanged = true
         }
         let name = GV.player!.name == GV.language.getText(.TCAnonym) ? GV.language.getText(.TCGuest) : GV.player!.name

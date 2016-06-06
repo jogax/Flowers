@@ -42,31 +42,22 @@ class ViewController: UIViewController, SettingsDelegate, UIApplicationDelegate 
         /* Sprite Kit applies additional optimizations to improve rendering performance */
         skView!.ignoresSiblingOrder = true
         
-        /* Set the scale mode to scale to fit the window */
-        //scene.scaleMode = .AspectFill
-        //print("in viewDidLoad:\(view.frame.size)")
         
-        
-//        GV.actGameParam = GV.dataStore.readActGameParamRecord()
-        
-//        GV.gameStatistics.nameID = GV.player!.ID
-//        GV.gameStatistics.level = GV.player!.levelID
-        
-        if GV.realm.objects(PlayerModel).count == 0 {
+        if realm.objects(PlayerModel).count == 0 {
               GV.createNewPlayer(true)
         }
-        GV.player = GV.realm.objects(PlayerModel).filter("isActPlayer = TRUE").first!
+        GV.player = realm.objects(PlayerModel).filter("isActPlayer = TRUE").first!
  
-        if GV.realm.objects(StatisticModel).filter("playerID = %d", GV.player!.ID).count == 0 {
-            GV.statistic = StatisticModel()
-            GV.statistic!.ID = GV.getNewStatisticID()
-            GV.statistic!.playerID = GV.player!.ID
-            GV.statistic!.levelID = GV.player!.levelID
-            try! GV.realm.write({
-                GV.realm.add(GV.statistic!)
+        if realm.objects(StatisticModel).filter("playerID = %d", GV.player!.ID).count == 0 {
+            let statistic = StatisticModel()
+            statistic.ID = GV.createNewRecordID(.StatisticModel)
+            statistic.playerID = GV.player!.ID
+            statistic.levelID = GV.player!.levelID
+            try! realm.write({
+                realm.add(statistic)
             })
         } else {
-            GV.statistic = GV.realm.objects(StatisticModel).filter("playerID = %d AND levelID = %d", GV.player!.ID, GV.player!.levelID).first!
+//            GV.statistic = GV.realm.objects(StatisticModel).filter("playerID = %d AND levelID = %d", GV.player!.ID, GV.player!.levelID).first!
         }
         
         GV.language.setLanguage(GV.player!.aktLanguageKey)

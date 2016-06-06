@@ -58,11 +58,12 @@ struct GV {
     static var countPlayers: Int = 1
 //    static var gameStatistics = GameStatisticsStruct()
 
-    static let realm = try! Realm()
+//    static let realm = try! Realm()
 
     static var player: PlayerModel?
-    static var statistic: StatisticModel?
-    static var playerID = GV.PlayerID()
+//    static var statistic: StatisticModel?
+//    static var game: GameModel?
+//    static var playerID = GV.PlayerID()
 
     
 //    static var spriteGameDataArray: [SpriteGameData] = []
@@ -83,88 +84,101 @@ struct GV {
         return pointOfCircle
     }
     
+    enum RealmRecordType: Int {
+        case GameModel, PlayerModel, StatisticModel, GameToPlayerModel
+    }
+    
+    static func createNewRecordID(recordType: RealmRecordType)->Int {
+        var recordID: RecordIDModel
+        var ID = 0
+        let inWrite = realm.inWriteTransaction
+        if !inWrite {
+            realm.beginWrite()
+        }
+        if realm.objects(RecordIDModel).count == 0 {
+            recordID = RecordIDModel()
+            realm.add(recordID)
+        } else  {
+            recordID = realm.objects(RecordIDModel).first!
+        }
+        switch recordType {
+        case .GameModel:
+            recordID.gameModelID += 1
+            ID = recordID.gameModelID
+        case .GameToPlayerModel:
+            recordID.gameToPlayerModelID += 1
+            ID = recordID.gameToPlayerModelID
+        case .PlayerModel:
+            recordID.playerModelID += 1
+            ID = recordID.playerModelID
+        case .StatisticModel:
+            recordID.statisticModelID += 1
+            ID = recordID.statisticModelID
+        }
+        if !inWrite {
+            try! realm.commitWrite()
+        }
+        return ID
+    }
+    
     static func createNewPlayer(isActPlayer: Bool...)->Int {
-        let newID = GV.playerID.getNewID()!
+//        let newID = GV.playerID.getNewID()!
+        let newID = GV.createNewRecordID(.PlayerModel)
         if newID != 0 {
             let newPlayer = PlayerModel()
             newPlayer.aktLanguageKey = GV.language.getPreferredLanguage()
             newPlayer.name = GV.language.getText(.TCAnonym)
             newPlayer.isActPlayer = isActPlayer.count == 0 ? false : isActPlayer[0]
             newPlayer.ID = newID
-            try! GV.realm.write({
-                GV.realm.add(newPlayer)
+            try! realm.write({
+                realm.add(newPlayer)
             })
         }
         return newID
     }
     
-    static func getNewStatisticID()->Int{
-        var statisticID = 0
-        repeat {
-            statisticID = Int(arc4random_uniform(1000000))
-        } while GV.realm.objects(StatisticModel).filter("ID = %d", statisticID).count == 1
-        return statisticID
-    }
+//    static func getNewStatisticID()->Int{
+//        var statisticID = 0
+//        repeat {
+//            statisticID = Int(arc4random_uniform(1000000))
+//        } while GV.realm.objects(StatisticModel).filter("ID = %d", statisticID).count == 1
+//        return statisticID
+//    }
     
 
     
     
-    class PlayerID {
-        var availableIDs = [Int]()
-        var maxIndex = 7
-        var newID: Int
-        var counter = 0
-        init () {
-            let availableCount = maxIndex - GV.realm.objects(PlayerModel).count
-            repeat {
-                newID = Int(arc4random_uniform(1000000))
-                if !availableIDs.contains(newID) && newID != 0 {
-                    availableIDs.append(newID)
-                }
-            } while availableIDs.count <= availableCount
-        }
-        
-        func getNewID()->Int? {
-            if availableIDs.count > 0 {
-                let returnID = availableIDs.first!
-                availableIDs.removeFirst()
-                return returnID
-            } else {
-                return 0
-            }
-        }
-        
-        func putOldID(ID: Int) {
-            availableIDs.append(ID)
-        }
-        
-    }
-
-    
-//    static func getAktSpriteGameData()->SpriteGameData {
-//        for index in 0..<GV.spriteGameDataArray.count {
-//            if GV.spriteGameDataArray[index].name == GV.globalParam.aktName {
-//                return GV.spriteGameDataArray[index]
+//    class PlayerID {
+//        var availableIDs = [Int]()
+//        var maxIndex = 7
+//        var newID: Int
+//        var counter = 0
+//        init () {
+//            let availableCount = maxIndex - GV.realm.objects(PlayerModel).count
+//            repeat {
+//                newID = Int(arc4random_uniform(100))
+//                if !availableIDs.contains(newID) && newID != 0 {
+//                    availableIDs.append(newID)
+//                }
+//            } while availableIDs.count <= availableCount
+//        }
+//        
+//        func getNewID()->Int? {
+//            if availableIDs.count > 0 {
+//                let returnID = availableIDs.first!
+//                availableIDs.removeFirst()
+//                return returnID
+//            } else {
+//                return 0
 //            }
 //        }
-//        return GV.spriteGameDataArray[0]
+//        
+//        func putOldID(ID: Int) {
+//            availableIDs.append(ID)
+//        }
+//        
 //    }
-    
-//    static func random(min: Int, max: Int) -> Int {
-//        let randomInt = min + Int(arc4random_uniform(UInt32(max + 1 - min)))
-//        return randomInt
-//    }
-    
 }
-
-
-//struct GlobalParamData {
-//    var aktName: String
-//    init() {
-//        aktName = GV.dummyName
-//    }
-//}
-
 
 struct Names {
     var name: String
@@ -205,29 +219,6 @@ struct GameParamStruct {
     
 }
 
-//struct GameStatisticsStruct {
-//    var nameID: Int
-//    var level: Int
-//    var countPlays: Int
-//    var actScore: Int
-//    var levelScore: Int
-//    var bestScore: Int
-//    var bestTime: Int
-//    var allTime: Int
-//    var actTime: Int
-//    init() {
-//        nameID = GV.player!.ID
-//        level = 0
-//        countPlays = 0
-//        actScore = 0
-//        bestScore = 0
-//        levelScore = 0
-//        allTime = 0
-//        actTime = 0
-//        bestTime = 10000
-//    }
-//    
-//}
 
 enum DeviceTypes: Int {
     case iPadPro12_9 = 0, iPad2, iPadMini, iPhone6Plus, iPhone6, iPhone5, iPhone4, none
@@ -316,7 +307,8 @@ struct LevelParam {
     var minProzent: Int
     var maxProzent: Int
     var spriteSize: Int
-    var targetScoreKorr: Int
+    var scoreFactor: Double
+    var scoreTime: Double
     
     init()
     {
@@ -327,10 +319,9 @@ struct LevelParam {
         self.countRows = 0
         self.minProzent = 0
         self.maxProzent = 0
-//        self.containerSize = 0
         self.spriteSize = 0
-        self.targetScoreKorr = 0
-        //self.timeLimitKorr = 0
+        self.scoreTime = 0
+        self.scoreFactor = 0
     }
     
 }

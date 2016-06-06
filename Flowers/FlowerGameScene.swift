@@ -287,7 +287,7 @@ class FlowerGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate 
         
         countContainers = levelsForPlay.aktLevel.countContainers
         countSpritesProContainer = levelsForPlay.aktLevel.countSpritesProContainer
-        targetScoreKorr = levelsForPlay.aktLevel.targetScoreKorr
+//        targetScoreKorr = levelsForPlay.aktLevel.targetScoreKorr
         countColumns = levelsForPlay.aktLevel.countColumns
         countRows = levelsForPlay.aktLevel.countRows
         minUsedCells = levelsForPlay.aktLevel.minProzent * countColumns * countRows / 100

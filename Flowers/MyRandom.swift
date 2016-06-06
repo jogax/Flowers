@@ -27,23 +27,25 @@ import GameplayKit
 class MyRandom {
 //    static var seedLibrary = [SeedIndex:NSData]()
     var random: GKARC4RandomSource
+    var game: GameModel
     //var seed: NSData
     init(gameID: Int, levelID: Int) {
         
 //        let (seedDataStruct, exists) = GV.dataStore.readSeedDataRecord(seedIndex)
-        if let gameData = GV.realm.objects(GameModel).filter("ID = %d", gameID).first {
+        if let gameData = realm.objects(GameModel).filter("ID = %d", gameID).first {
+            game = gameData
             random = GKARC4RandomSource(seed: gameData.seedData)
             random.dropValuesWithCount(2048)
         }
         else {
-            GV.realm.beginWrite()
             random = GKARC4RandomSource()
-            let gameData = GameModel()
-            gameData.seedData = random.seed
-            gameData.ID = gameID
-            gameData.levelID = levelID
-            GV.realm.add(gameData)
-            try! GV.realm.commitWrite()
+            game = GameModel()
+            game.seedData = random.seed
+            game.levelID = levelID
+            game.ID = gameID
+            try! realm.write({
+                realm.add(game)
+            })
             random.dropValuesWithCount(2048)
         }
     }

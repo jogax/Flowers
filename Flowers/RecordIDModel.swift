@@ -1,22 +1,21 @@
 //
-//  GameModel.swift
+//  RecordIDModel.swift
 //  Flowers
 //
-//  Created by Jozsef Romhanyi on 19/04/2016.
+//  Created by Jozsef Romhanyi on 03/06/2016.
 //  Copyright © 2016 Jozsef Romhanyi. All rights reserved.
 //
 
 import Foundation
 import RealmSwift
 
-class GameModel: Object {
+class RecordIDModel: Object {
     
     dynamic var ID = 0 // gameNumber
-    dynamic var levelID = 0
-    dynamic var bestTime = 0
-    dynamic var bestScore = 0
-    dynamic var seedData = NSData()
-    dynamic var created = NSDate()
+    dynamic var gameModelID = 0
+    dynamic var playerModelID = 0
+    dynamic var gameToPlayerModelID = 0
+    dynamic var statisticModelID = 0
     
     override  class func primaryKey() -> String {
         return "ID"

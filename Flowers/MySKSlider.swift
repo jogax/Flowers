@@ -107,14 +107,14 @@ class MySKSlider: MySKTable, AVAudioPlayerDelegate {
                 volumeValue = round((touches.first!.locationInNode(sliderNode).x + self.sliderMinMaxXPosition) / (2 * self.sliderMinMaxXPosition) * 100)
                 volumeValue = volumeValue < 0 ? 0 : volumeValue > 100 ? 100 : volumeValue
                 showSlider()
-                GV.realm.beginWrite()
-                switch self.soundType {
-                case .Music:
-                    GV.player!.musicVolume = Float(volumeValue)
-                case .Sound:
-                    GV.player!.soundVolume = Float(volumeValue)
-                }
-                try! GV.realm.commitWrite()
+                try! realm.write({
+                    switch self.soundType {
+                    case .Music:
+                        GV.player!.musicVolume = Float(volumeValue)
+                    case .Sound:
+                        GV.player!.soundVolume = Float(volumeValue)
+                    }
+                })
             }
         }
         

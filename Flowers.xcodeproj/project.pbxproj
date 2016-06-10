@@ -65,10 +65,13 @@
 		2024A8C51C427C420001CA95 /* cardBackground.png in Resources */ = {isa = PBXBuildFile; fileRef = 2024A8C41C427C420001CA95 /* cardBackground.png */; };
 		202AF3F91CD7A571003318DF /* Podfile in Resources */ = {isa = PBXBuildFile; fileRef = 202AF3F81CD7A571003318DF /* Podfile */; };
 		2030C0441CE35FBC00AA8307 /* MySKDetailedStatistic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2030C0431CE35FBC00AA8307 /* MySKDetailedStatistic.swift */; };
+		203111FF1D09A9D9005A5E43 /* GamePredefinitionModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203111FE1D09A9D9005A5E43 /* GamePredefinitionModel.swift */; };
+		203112011D09ABA4005A5E43 /* CreateGamePredefiniton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203112001D09ABA4005A5E43 /* CreateGamePredefiniton.swift */; };
 		20343A6F1CB7F4660063DF8D /* MySKTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20343A6E1CB7F4660063DF8D /* MySKTable.swift */; };
 		204A8A181BEF93B90061D14F /* LanguageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 204A8A171BEF93B90061D14F /* LanguageViewController.swift */; };
 		204E0A161D01B4CF0030D79B /* RecordIDModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 204E0A151D01B4CF0030D79B /* RecordIDModel.swift */; };
 		205008BB1CC65635000B1468 /* GameModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 205008BA1CC65635000B1468 /* GameModel.swift */; };
+		205205411D0B128F008B359F /* MyDB.realm in Resources */ = {isa = PBXBuildFile; fileRef = 205205401D0B1164008B359F /* MyDB.realm */; };
 		205574411BBEB85C00C165A1 /* Go321.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 205574401BBEB85C00C165A1 /* Go321.m4a */; };
 		205574431BBECB6200C165A1 /* NoSound.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 205574421BBECB6200C165A1 /* NoSound.m4a */; };
 		206BF77C1BF247380009928E /* ChooseNameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 206BF77B1BF247380009928E /* ChooseNameViewController.swift */; };
@@ -79,7 +82,6 @@
 		20F7E7101BBB03A200451984 /* SpriteKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 20F7E70F1BBB03A200451984 /* SpriteKit.framework */; };
 		20FC65BE1BBBC82000775322 /* sprites.atlas in Resources */ = {isa = PBXBuildFile; fileRef = 20FC65BD1BBBC82000775322 /* sprites.atlas */; };
 		20FC65D91BBC123300775322 /* background.png in Resources */ = {isa = PBXBuildFile; fileRef = 20FC65D71BBC123300775322 /* background.png */; };
-		20FC65DA1BBC123300775322 /* bgImage.png in Resources */ = {isa = PBXBuildFile; fileRef = 20FC65D81BBC123300775322 /* bgImage.png */; };
 		20FC65DF1BBC127800775322 /* finger.png in Resources */ = {isa = PBXBuildFile; fileRef = 20FC65DC1BBC127800775322 /* finger.png */; };
 		20FC65E01BBC127800775322 /* frozen.png in Resources */ = {isa = PBXBuildFile; fileRef = 20FC65DD1BBC127800775322 /* frozen.png */; };
 		20FC65E51BBC12A100775322 /* Holz.png in Resources */ = {isa = PBXBuildFile; fileRef = 20FC65E11BBC12A100775322 /* Holz.png */; };
@@ -174,11 +176,14 @@
 		2024A8C41C427C420001CA95 /* cardBackground.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = cardBackground.png; sourceTree = "<group>"; };
 		202AF3F81CD7A571003318DF /* Podfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Podfile; sourceTree = "<group>"; };
 		2030C0431CE35FBC00AA8307 /* MySKDetailedStatistic.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MySKDetailedStatistic.swift; sourceTree = "<group>"; };
+		203111FE1D09A9D9005A5E43 /* GamePredefinitionModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GamePredefinitionModel.swift; sourceTree = "<group>"; };
+		203112001D09ABA4005A5E43 /* CreateGamePredefiniton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreateGamePredefiniton.swift; sourceTree = "<group>"; };
 		20343A6E1CB7F4660063DF8D /* MySKTable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MySKTable.swift; sourceTree = "<group>"; };
 		2034B0061BDE796300D296DA /* Flowers.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Flowers.xcdatamodel; sourceTree = "<group>"; };
 		204A8A171BEF93B90061D14F /* LanguageViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LanguageViewController.swift; sourceTree = "<group>"; };
 		204E0A151D01B4CF0030D79B /* RecordIDModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecordIDModel.swift; sourceTree = "<group>"; };
 		205008BA1CC65635000B1468 /* GameModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameModel.swift; sourceTree = "<group>"; };
+		205205401D0B1164008B359F /* MyDB.realm */ = {isa = PBXFileReference; lastKnownFileType = file; path = MyDB.realm; sourceTree = "<group>"; };
 		205574401BBEB85C00C165A1 /* Go321.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = Go321.m4a; sourceTree = "<group>"; };
 		205574421BBECB6200C165A1 /* NoSound.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = NoSound.m4a; sourceTree = "<group>"; };
 		206BF77B1BF247380009928E /* ChooseNameViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChooseNameViewController.swift; sourceTree = "<group>"; };
@@ -190,7 +195,6 @@
 		20FC65BD1BBBC82000775322 /* sprites.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; path = sprites.atlas; sourceTree = "<group>"; };
 		20FC65D11BBC0FD400775322 /* aquarium.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = aquarium.png; path = ../../JFlowers/JFlowers/aquarium.png; sourceTree = "<group>"; };
 		20FC65D71BBC123300775322 /* background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = background.png; sourceTree = "<group>"; };
-		20FC65D81BBC123300775322 /* bgImage.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bgImage.png; sourceTree = "<group>"; };
 		20FC65DC1BBC127800775322 /* finger.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = finger.png; sourceTree = "<group>"; };
 		20FC65DD1BBC127800775322 /* frozen.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = frozen.png; sourceTree = "<group>"; };
 		20FC65E11BBC12A100775322 /* Holz.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Holz.png; sourceTree = "<group>"; };
@@ -263,6 +267,7 @@
 				200BDA061BCFDEE600F72109 /* DrawImages.swift */,
 				204E0A151D01B4CF0030D79B /* RecordIDModel.swift */,
 				205008BA1CC65635000B1468 /* GameModel.swift */,
+				203111FE1D09A9D9005A5E43 /* GamePredefinitionModel.swift */,
 				201AD6F01D005C6200E56CD8 /* GameToPlayerModel.swift */,
 				208BCEEF1CAAD1330050CD62 /* PlayerModel.swift */,
 				200DC9551CAC2597000A000D /* StatisticModel.swift */,
@@ -279,8 +284,10 @@
 				201C52411C316801001B04AB /* Extensions.swift */,
 				200BDA0A1BCFEF5100F72109 /* MySKButton.swift */,
 				200140DF1BAEA96A003E0950 /* ViewController.swift */,
+				203112001D09ABA4005A5E43 /* CreateGamePredefiniton.swift */,
 				201A97B61CFF153C00C92550 /* FMSynthetiser.swift */,
 				201728F91BE3D0C9005F6CA8 /* SettingsViewController.swift */,
+				205205401D0B1164008B359F /* MyDB.realm */,
 				204A8A171BEF93B90061D14F /* LanguageViewController.swift */,
 				206BF77B1BF247380009928E /* ChooseNameViewController.swift */,
 				201173B61C074D080022AC86 /* MyGameScene.swift */,
@@ -374,7 +381,6 @@
 				20FC65DC1BBC127800775322 /* finger.png */,
 				20FC65DD1BBC127800775322 /* frozen.png */,
 				20FC65D71BBC123300775322 /* background.png */,
-				20FC65D81BBC123300775322 /* bgImage.png */,
 				20FC65D11BBC0FD400775322 /* aquarium.png */,
 			);
 			name = Pictures;
@@ -536,7 +542,6 @@
 				200141231BAEB1F6003E0950 /* Drop.m4a in Resources */,
 				201839B81C9C475200B33827 /* panel.png in Resources */,
 				20FC65D91BBC123300775322 /* background.png in Resources */,
-				20FC65DA1BBC123300775322 /* bgImage.png in Resources */,
 				200140EB1BAEA96A003E0950 /* LaunchScreen.storyboard in Resources */,
 				200141281BAEB1F6003E0950 /* Sprite1.m4a in Resources */,
 				200141261BAEB1F6003E0950 /* Mirror.m4a in Resources */,
@@ -548,6 +553,7 @@
 				205574411BBEB85C00C165A1 /* Go321.m4a in Resources */,
 				20FC65BE1BBBC82000775322 /* sprites.atlas in Resources */,
 				200140E81BAEA96A003E0950 /* Assets.xcassets in Resources */,
+				205205411D0B128F008B359F /* MyDB.realm in Resources */,
 				201FE2FB1C9860FC00B5861E /* OK.m4a in Resources */,
 				200140E31BAEA96A003E0950 /* Main.storyboard in Resources */,
 				200141271BAEB1F6003E0950 /* MyMusic.m4a in Resources */,
@@ -732,6 +738,7 @@
 				204A8A181BEF93B90061D14F /* LanguageViewController.swift in Sources */,
 				201928291C99AF2B009CA720 /* GameStatistics.swift in Sources */,
 				201928351C99C0A4009CA720 /* GameParam.swift in Sources */,
+				203111FF1D09A9D9005A5E43 /* GamePredefinitionModel.swift in Sources */,
 				201E203E1C1C631F003DBBD8 /* MyRandom.swift in Sources */,
 				2015851A1CE5F2AE00EF27CA /* MySKSlider.swift in Sources */,
 				201E20421C1C7389003DBBD8 /* SeedData.swift in Sources */,
@@ -744,6 +751,7 @@
 				201C52401C314CF9001B04AB /* LevelsForPlayWithCards.swift in Sources */,
 				20343A6F1CB7F4660063DF8D /* MySKTable.swift in Sources */,
 				2021E3811CDB930900D522CD /* MySKStatistic.swift in Sources */,
+				203112011D09ABA4005A5E43 /* CreateGamePredefiniton.swift in Sources */,
 				2001412C1BAEB285003E0950 /* LevelsForPlayWithSprites.swift in Sources */,
 				200141431BAEBAA2003E0950 /* ru.swift in Sources */,
 				200140DE1BAEA96A003E0950 /* AppDelegate.swift in Sources */,

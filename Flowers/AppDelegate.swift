@@ -10,7 +10,7 @@ import UIKit
 import CoreData
 import RealmSwift
 
-let realm = try! Realm()
+var realm: Realm?// = try! Realm()
 
 
 @UIApplicationMain

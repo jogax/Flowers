@@ -401,6 +401,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
             buttonSize = (myView.frame.width / 15) * buttonSizeMultiplier.width
             buttonYPos = myView.frame.height * 0.07
             buttonXPosNormalized = myView.frame.width / 10
+            self.name = "CardGameScene"
             
             prepareNextGame(true)
             generateSprites(.First)
@@ -429,27 +430,28 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         stack = Stack()
         timeCount = 0
         if newGame {
-            try! realm.write() { // delete all empty games
-                realm.delete(realm.objects(GameToPlayerModel).filter("score = 0"))
-                realm.delete(realm.objects(GameModel).filter("bestScore = 0"))
+            try! realm!.write() { // delete all empty games
+                realm!.delete(realm!.objects(GameToPlayerModel).filter("score = 0"))
+                realm!.delete(realm!.objects(GameModel).filter("bestScore = 0"))
             }
             gameNumber = -1
-            do {
-                let games = realm.objects(GameModel).filter("levelID = %d", levelIndex) // search only the games of act level
+//            do {
+                let games = realm!.objects(GameModel).filter("levelID = %d", levelIndex) // search only the games of act level
                 for game in games {
-                    if realm.objects(GameToPlayerModel).filter("playerID = %d and gameID = %d", GV.player!.ID, game.ID).count == 0 {
+                    if realm!.objects(GameToPlayerModel).filter("playerID = %d and gameID = %d", GV.player!.ID, game.ID).count == 0 {
                         gameNumber = game.ID
                         createGameToPlayerRecord(GV.player!.ID, gameID: game.ID)
                         break
                     }
                 }
                 
-            }
+//            }
             if gameNumber == -1 {
-                gameNumber = GV.createNewRecordID(.GameModel)
+                gameNumber = realm!.objects(GamePredefinitionModel).filter("played = false").first!.gameNumber
                 createGameToPlayerRecord(GV.player!.ID, gameID: gameNumber)
             }
         }
+        
         random = MyRandom(gameID: gameNumber, levelID: levelIndex)
         
         stopTimer(&countUp)
@@ -548,8 +550,8 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         makeLineAroundGameboard(.LeftVertical)
         //        self.inFirstGenerateSprites = false
         cardCount = Int(CGFloat(countContainers * countCardsProContainer!))
-        let cardCountText: String = String(cardCount)
-        let tippCountText: String = GV.language.getText(.TCTippCount) + " \(tippArray.count)"
+        let cardCountText: String = String(cardStack.count(.MySKNodeType))
+        let tippCountText: String = "\(tippArray.count)"
         let showScoreText: String = GV.language.getText(.TCGameScore, values: "\(levelScore)", "\(timeFactor().twoDecimals)", "0")
         let name = GV.player!.name == GV.language.getText(.TCAnonym) ? GV.language.getText(.TCGuest) : GV.player!.name
         createLabels(playerLabel, text: GV.language.getText(TextConstants.TCPlayer) + ": \(name)", column: 2, row: 1)
@@ -566,8 +568,8 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         gameToPlayerNew.ID = GV.createNewRecordID(.GameToPlayerModel)
         gameToPlayerNew.playerID = GV.player!.ID
         gameToPlayerNew.gameID = gameID
-        try! realm.write() {
-            realm.add(gameToPlayerNew)
+        try! realm!.write() {
+            realm!.add(gameToPlayerNew)
         }
      }
     
@@ -589,7 +591,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
             xPos = self.cardPackage!.position.x
         default: break
         }
-        var yPos = CGFloat(self.size.height * labelYPosProcent / 100) + CGFloat((5 - row)) * labelHeight
+        let yPos = CGFloat(self.size.height * labelYPosProcent / 100) + CGFloat((5 - row)) * labelHeight
         
         label.position = CGPointMake(xPos, yPos)
         label.fontColor = SKColor.blackColor()
@@ -655,7 +657,11 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
     func updateSpriteCount(adder: Int) {
         cardCount += adder
 //        let cardCountText: String = GV.language.getText(.TCCardCount)
-        cardCountLabel.text = String(cardCount)
+        showCardCount()
+    }
+    
+    func showCardCount() {
+        cardCountLabel.text = String(cardStack.count(.MySKNodeType))
     }
 
     
@@ -663,11 +669,20 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         let name = GV.player!.name == GV.language.getText(.TCAnonym) ? GV.language.getText(.TCGuest) : GV.player!.name
         playerLabel.text = GV.language.getText(.TCPlayer) + ": \(name)"
         levelLabel.text = GV.language.getText(.TCLevel) + ": \(levelIndex + 1)"
-        cardCountLabel.text = GV.language.getText(.TCCardCount) + " \(cardCount)"
-        tippCountLabel.text = String(tippArray.count)
+        showCardCount()
+        showTippCount()
         showLevelScore()
         showTimeLeft()
         return true
+    }
+    
+    func showTippCount() {
+        tippCountLabel.text = String(tippArray.count)
+        if tippArray.count > 9 {
+            tippCountLabel.fontSize = labelFontSize
+        } else {
+            tippCountLabel.fontSize = labelFontSize * 1.5
+        }
     }
 
     func setBGImageNode()->SKSpriteNode {
@@ -738,6 +753,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
                 }
                 generateSpecial = false
             }
+            showCardCount()
             cardStack.removeAtLastRandomIndex()
             let index = random!.getRandomInt(0, max: positionsTab.count - 1)
             let (aktColumn, aktRow) = positionsTab[index]
@@ -1046,7 +1062,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
             
         }
 //        let tippCountText: String = GV.language.getText(.TCTippCount)
-        tippCountLabel.text = String(tippArray.count)
+        showTippCount()
         if tippArray.count > 0 {
             tippsButton!.activateButton(true)
         }
@@ -1215,6 +1231,10 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         var foundedColorIndex: Int
         var foundedMinValue: Int
         var foundedMaxValue: Int
+        
+        if foundedPoint.distanceToP0 == foundedPoint.maxDistance {
+            return color
+        }
         
         if foundedPoint.foundContainer {
             foundedColorIndex = containers[foundedPoint.column].colorIndex
@@ -1857,24 +1877,24 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
             playMusic("Winner", volume: GV.player!.musicVolume, loops: 0)
             
             
-            if realm.objects(StatisticModel).filter("playerID = %d AND levelID = %d", GV.player!.ID, GV.player!.levelID).count == 0 {
+            if realm!.objects(StatisticModel).filter("playerID = %d AND levelID = %d", GV.player!.ID, GV.player!.levelID).count == 0 {
                 let statistic = StatisticModel()
                 statistic.ID = GV.createNewRecordID(.StatisticModel)
                 statistic.playerID = GV.player!.ID
                 statistic.levelID = GV.player!.levelID
-                try! realm.write({
-                    realm.add(statistic)
+                try! realm!.write({
+                    realm!.add(statistic)
                 })
             } else {
 //                GV.statistic = GV.realm.objects(StatisticModel).filter("playerID = %d AND levelID = %d", GV.player!.ID, GV.player!.levelID).first!
             }
             
-            if realm.objects(StatisticModel).filter("playerID = %d AND levelID = %d", GV.player!.ID, GV.player!.levelID).count == 0 {
+            if realm!.objects(StatisticModel).filter("playerID = %d AND levelID = %d", GV.player!.ID, GV.player!.levelID).count == 0 {
                 
             }
-            let statistic = realm.objects(StatisticModel).filter("playerID = %d AND levelID = %d", GV.player!.ID, GV.player!.levelID).first!
+            let statistic = realm!.objects(StatisticModel).filter("playerID = %d AND levelID = %d", GV.player!.ID, GV.player!.levelID).first!
             
-            realm.beginWrite()
+            realm!.beginWrite()
             statistic.countPlays += 1
             statistic.actTime = timeCount
             statistic.allTime += timeCount
@@ -1900,7 +1920,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
             if statistic.bestScore < actScore {
                 statistic.bestScore = actScore
             }
-            let actGame = realm.objects(GameModel).filter("ID = %d", gameNumber).first
+            let actGame = realm!.objects(GameModel).filter("ID = %d", gameNumber).first
             if  actGame!.bestTime == 0 || timeCount < actGame!.bestTime {
                 actGame!.bestTime = timeCount
             }
@@ -1910,9 +1930,9 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
             
             
             createStatisticRecordIfRequired()
-            let gameToPlayer = realm.objects(GameToPlayerModel).filter("playerID = %d and gameID = %d", GV.player!.ID,gameNumber).first
+            let gameToPlayer = realm!.objects(GameToPlayerModel).filter("playerID = %d and gameID = %d", GV.player!.ID,gameNumber).first
             gameToPlayer!.score = actScore
-            try! realm.commitWrite()
+            try! realm!.commitWrite()
             let alert = getNextPlayArt(true, statistic: statistic)
             parentViewController!.presentViewController(alert, animated: true, completion: nil)
         } else if usedCellCount <= minUsedCells && usedCellCount > 1 { //  && spriteCount > maxUsedCells {
@@ -1965,16 +1985,16 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         
         
         if congratulations {
-            let actGame = realm.objects(GameToPlayerModel).filter("playerID = %d and gameID = %d", GV.player!.ID, gameNumber).first!
+            let actGame = realm!.objects(GameToPlayerModel).filter("playerID = %d and gameID = %d", GV.player!.ID, gameNumber).first!
             var bestGameScore = actGame.score
             var bestScorePlayer = GV.player!.name
             
-            let allGames = realm.objects(GameToPlayerModel).filter("gameID = %d", gameNumber)
+            let allGames = realm!.objects(GameToPlayerModel).filter("gameID = %d", gameNumber)
             for checkGame in allGames {
                 if checkGame.playerID != GV.player!.ID {
                     if bestGameScore < checkGame.score {
                         bestGameScore = checkGame.score
-                        bestScorePlayer = realm.objects(PlayerModel).filter("ID = %d",checkGame.playerID).first!.name
+                        bestScorePlayer = realm!.objects(PlayerModel).filter("ID = %d",checkGame.playerID).first!.name
                     }
                 }
             }
@@ -2055,22 +2075,22 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         } else {
             levelIndex = GV.levelsForPlay.getPrevLevel()
         }
-        try! realm.write({
+        try! realm!.write({
             GV.player!.levelID = levelIndex
-            realm.add(GV.player!, update: true)
+            realm!.add(GV.player!, update: true)
         })
         
         createStatisticRecordIfRequired()
     }
     
     func createStatisticRecordIfRequired() {
-        if realm.objects(StatisticModel).filter("playerID = %d AND levelID = %d", GV.player!.ID, GV.player!.levelID).count == 0 {
+        if realm!.objects(StatisticModel).filter("playerID = %d AND levelID = %d", GV.player!.ID, GV.player!.levelID).count == 0 {
             let statistic = StatisticModel()
             statistic.ID = GV.createNewRecordID(.StatisticModel)
             statistic.playerID = GV.player!.ID
             statistic.levelID = GV.player!.levelID
-            try! realm.write({
-                realm.add(statistic)
+            try! realm!.write({
+                realm!.add(statistic)
             })
         }
     }
@@ -2445,11 +2465,17 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
                     switch color {
                     case .Green:
                         if lastGreenPair == nil || lastGreenPair!.pair !=  actFromToColumnRow || lastRedPair != nil {
-                            lineWidthMultiplier = lineWidthMultiplierNormal
-                            drawHelpLinesSpec()
-                            lastGreenPair = PairStatus(pair: actFromToColumnRow, founded: foundedPoint!, startTime: NSDate(), points: myPoints)
-                            lastRedPair = nil
-                            greenLineTimer = startTimer(&greenLineTimer, sleepTime: 0.5, selector: checkGreenLineSelector, repeats: false) // set linewidth on Special after 0.5 second
+                            if lastRedPair != nil && lastGreenPair!.fixed && lastGreenPair!.pair ==  actFromToColumnRow && lastGreenPair!.points.count == myPoints.count {
+                                lineWidthMultiplier = lineWidthMultiplierSpecial
+                                drawHelpLinesSpec()
+                                lastRedPair = nil
+                            } else {
+                                lineWidthMultiplier = lineWidthMultiplierNormal
+                                drawHelpLinesSpec()
+                                lastGreenPair = PairStatus(pair: actFromToColumnRow, founded: foundedPoint!, startTime: NSDate(), points: myPoints)
+                                lastRedPair = nil
+                                greenLineTimer = startTimer(&greenLineTimer, sleepTime: 0.5, selector: checkGreenLineSelector, repeats: false) // set linewidth on Special after 0.5 second
+                            }
                         } else {
                             lastGreenPair!.points = myPoints
                         }
@@ -2460,12 +2486,9 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
                             if !lastGreenPair!.fixed {
                                 stopTimer(&greenLineTimer)
                             }
-                            if lastGreenPair!.duration == 0 { // first time Red
+                            if lastGreenPair!.duration == 0 || lastRedPair == nil { // first time Red
                                 lastGreenPair!.setEndDuration() // get duration of Green
                                 lastRedPair = PairStatus(pair: actFromToColumnRow, founded: foundedPoint!, startTime: NSDate(), points: myPoints)
-//                            } else if lastRedPair!.pair != actFromToColumnRow {
-//                                lastRedPair = nil
-//                                lastGreenPair = nil
                             }
                         }
 
@@ -2512,12 +2535,10 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
             let startNode = movedFromNode
             
             switch aktNodeType {
-            case MyNodeTypes.LabelNode: aktNode = self.nodeAtPoint(touchLocation).parent as? MySKNode
-            case MyNodeTypes.SpriteNode: aktNode = self.nodeAtPoint(touchLocation) as? MySKNode
+            case MyNodeTypes.LabelNode: aktNode = testNode.parent as? MySKNode
+            case MyNodeTypes.SpriteNode: aktNode = testNode as? MySKNode
             case MyNodeTypes.ButtonNode:
-                //(testNode as! MySKNode).texture = SKTexture(imageNamed: "\(testNode.name!)")
-                //(testNode as! MySKNode).texture = atlas.textureNamed("\(testNode.name!)")
-                aktNode = (self.nodeAtPoint(touchLocation) as! MySKNode).parent as? MySKNode
+                aktNode = (testNode as! MySKNode).parent as? MySKNode
             default: aktNode = nil
             }
             
@@ -2560,12 +2581,12 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
                     if lastRedPair != nil {
                         lastRedPair!.setEndDuration()
 ////                        if lastRedPair!.duration < 1.0 && lastGreenPair!.duration > 1.0 {
-                        if lastGreenPair!.fixed && lastRedPair!.duration < 2.0 {
+                        if lastGreenPair!.fixed && lastRedPair!.duration < 1.0 {
                             actFromToColumnRow.toColumnRow.column = lastGreenPair!.pair.toColumnRow.column
                             actFromToColumnRow.toColumnRow.row = lastGreenPair!.pair.toColumnRow.row
                             myPoints = lastGreenPair!.points // set Back to last green line
                             color = .Green
-                            print("==============correctur made! lastRedPair!.duration: ", lastRedPair!.duration.nDecimals(3), "==========")
+//                            print("==============correctur made! lastRedPair!.duration: ", lastRedPair!.duration.nDecimals(3), "==========")
                         }
                     }
                 }

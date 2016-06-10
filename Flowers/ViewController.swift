@@ -8,6 +8,7 @@
 
 import UIKit
 import SpriteKit
+import RealmSwift
 
 let Pi = CGFloat(M_PI)
 let DegreesToRadians = Pi / 180
@@ -23,6 +24,9 @@ class ViewController: UIViewController, SettingsDelegate, UIApplicationDelegate 
     override func viewDidLoad() {
         super.viewDidLoad()
         
+//        _ = CreateGamePredefinition(countGames: 10000)
+        
+        copyDefaultRealmFileIfNotExistsYet()
         startScene()
         // Do any additional setup after loading the view, typically from a nib.
      }
@@ -32,6 +36,25 @@ class ViewController: UIViewController, SettingsDelegate, UIApplicationDelegate 
     }
     
     
+    
+    func copyDefaultRealmFileIfNotExistsYet() {
+        let paths = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)
+        let documentDirectory = paths[0] 
+        let defaultFilePath = documentDirectory.stringByAppendingString("/default.realm")
+        
+        let manager = NSFileManager.defaultManager()
+        if (manager.fileExistsAtPath(defaultFilePath)) {
+            print("DB exists, nothing to do")
+        } else {
+            print("not exists at path: \(documentDirectory), will be copied")
+            let myOrigRealmFile = NSBundle.mainBundle().pathForResource("MyDB", ofType: "realm")
+//            try! manager.moveItemAtPath(myOrigRealmFile!, toPath: defaultFilePath)
+            try! manager.copyItemAtPath(myOrigRealmFile!, toPath: defaultFilePath)
+//            try! manager.removeItemAtPath(myOrigRealmFile!)
+        }
+        realm = try! Realm()
+
+    }
     func startScene() {
         skView = self.view as? SKView
         skView!.showsFPS = true
@@ -41,20 +64,23 @@ class ViewController: UIViewController, SettingsDelegate, UIApplicationDelegate 
         
         /* Sprite Kit applies additional optimizations to improve rendering performance */
         skView!.ignoresSiblingOrder = true
+
+
         
-        
-        if realm.objects(PlayerModel).count == 0 {
+        if realm!.objects(PlayerModel).count == 0 {
               GV.createNewPlayer(true)
         }
-        GV.player = realm.objects(PlayerModel).filter("isActPlayer = TRUE").first!
+        
+        
+        GV.player = realm!.objects(PlayerModel).filter("isActPlayer = TRUE").first!
  
-        if realm.objects(StatisticModel).filter("playerID = %d", GV.player!.ID).count == 0 {
+        if realm!.objects(StatisticModel).filter("playerID = %d", GV.player!.ID).count == 0 {
             let statistic = StatisticModel()
             statistic.ID = GV.createNewRecordID(.StatisticModel)
             statistic.playerID = GV.player!.ID
             statistic.levelID = GV.player!.levelID
-            try! realm.write({
-                realm.add(statistic)
+            try! realm!.write({
+                realm!.add(statistic)
             })
         } else {
 //            GV.statistic = GV.realm.objects(StatisticModel).filter("playerID = %d AND levelID = %d", GV.player!.ID, GV.player!.levelID).first!

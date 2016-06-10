@@ -12,12 +12,12 @@ enum StackType: Int {
 }
 class Stack<T> {
     private var savedSpriteStack: Array<SavedSprite>
-    private var spriteStack: Array<MySKNode>
+    private var cardStack: Array<MySKNode>
     var lastRandomIndex = -1
     
     init() {
         savedSpriteStack = Array<SavedSprite>()
-        spriteStack = Array<MySKNode>()
+        cardStack = Array<MySKNode>()
     }
     
     func push (value: SavedSprite) {
@@ -25,16 +25,16 @@ class Stack<T> {
     }
     
     func push (value: MySKNode) {
-        spriteStack.append(value)
+        cardStack.append(value)
     }
 
     func pushLast (value: MySKNode) {
-        spriteStack.insert(value, atIndex: 0)
+        cardStack.insert(value, atIndex: 0)
     }
 
     func count(type: StackType)->Int {
         switch type {
-            case .MySKNodeType: return spriteStack.count
+            case .MySKNodeType: return cardStack.count
             case .SaveSpriteType: return savedSpriteStack.count
         }
     }
@@ -51,9 +51,9 @@ class Stack<T> {
     }
     
     func pull () -> MySKNode? {        
-        if spriteStack.count > 0 {
-            let value = spriteStack.last
-            spriteStack.removeLast()
+        if cardStack.count > 0 {
+            let value = cardStack.last
+            cardStack.removeLast()
             return value!
         } else {
             return nil
@@ -61,8 +61,8 @@ class Stack<T> {
     }
     
     func last() -> MySKNode? {
-        if spriteStack.count > 0 {
-            let value = spriteStack.last
+        if cardStack.count > 0 {
+            let value = cardStack.last
             return value!
         } else {
             return nil
@@ -70,13 +70,13 @@ class Stack<T> {
     }
     
     func random(random: MyRandom?)->MySKNode? {
-        lastRandomIndex = random!.getRandomInt(0, max: spriteStack.count - 1)
-        return spriteStack[lastRandomIndex]
+        lastRandomIndex = random!.getRandomInt(0, max: cardStack.count - 1)
+        return cardStack[lastRandomIndex]
     }
     
     func removeAtLastRandomIndex() {
         if lastRandomIndex >= 0 {
-            spriteStack.removeAtIndex(lastRandomIndex)
+            cardStack.removeAtIndex(lastRandomIndex)
             lastRandomIndex = -1
         }
     }
@@ -91,7 +91,7 @@ class Stack<T> {
     
     func removeAll(type: StackType) {
         switch type {
-            case .MySKNodeType: spriteStack.removeAll(keepCapacity: false)
+            case .MySKNodeType: cardStack.removeAll(keepCapacity: false)
             case .SaveSpriteType: savedSpriteStack.removeAll(keepCapacity: false)
         }
     }

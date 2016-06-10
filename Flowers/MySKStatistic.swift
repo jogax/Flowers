@@ -22,7 +22,7 @@ class MySKStatistic: MySKTable {
     
     
     init(parent: SKSpriteNode, callBack: ()->()) {
-        nameTable = Array(realm.objects(PlayerModel).sorted("created", ascending: true))
+        nameTable = Array(realm!.objects(PlayerModel).sorted("created", ascending: true))
         var countLines = nameTable.count
         if countLines == 1 {
             countLines += 1
@@ -67,7 +67,7 @@ class MySKStatistic: MySKTable {
         showRowOfTable(elements, row: 0, selected: true)
         for row in 0..<nameTable.count {
             if nameTable[row].name != GV.language.getText(.TCAnonym) || row == 0 {
-                let statisticTable = realm.objects(StatisticModel).filter("playerID = %d", nameTable[row].ID)
+                let statisticTable = realm!.objects(StatisticModel).filter("playerID = %d", nameTable[row].ID)
                 var allTime = 0
                 var countPlays = 0
                 for index in 0..<statisticTable.count {

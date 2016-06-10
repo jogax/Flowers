@@ -78,7 +78,7 @@ class MySKLanguages: MySKTable {
                 if touchesBeganAtNode != nil && touchesEndedAtNode is SKLabelNode || (touchesEndedAtNode is SKSpriteNode && touchesEndedAtNode.name != myName) {
                     let (_, row) = getColumnRowOfElement(touchesBeganAtNode!.name!)
                     GV.language.setLanguage(LanguageCodes(rawValue: row)!)
-                    try! realm.write({
+                    try! realm!.write({
                         GV.player!.aktLanguageKey = GV.language.getText(.TCAktLanguage)
                     })
                     showLanguages()

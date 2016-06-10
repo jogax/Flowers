@@ -91,15 +91,15 @@ struct GV {
     static func createNewRecordID(recordType: RealmRecordType)->Int {
         var recordID: RecordIDModel
         var ID = 0
-        let inWrite = realm.inWriteTransaction
+        let inWrite = realm!.inWriteTransaction
         if !inWrite {
-            realm.beginWrite()
+            realm!.beginWrite()
         }
-        if realm.objects(RecordIDModel).count == 0 {
+        if realm!.objects(RecordIDModel).count == 0 {
             recordID = RecordIDModel()
-            realm.add(recordID)
+            realm!.add(recordID)
         } else  {
-            recordID = realm.objects(RecordIDModel).first!
+            recordID = realm!.objects(RecordIDModel).first!
         }
         switch recordType {
         case .GameModel:
@@ -116,7 +116,7 @@ struct GV {
             ID = recordID.statisticModelID
         }
         if !inWrite {
-            try! realm.commitWrite()
+            try! realm!.commitWrite()
         }
         return ID
     }
@@ -130,8 +130,8 @@ struct GV {
             newPlayer.name = GV.language.getText(.TCAnonym)
             newPlayer.isActPlayer = isActPlayer.count == 0 ? false : isActPlayer[0]
             newPlayer.ID = newID
-            try! realm.write({
-                realm.add(newPlayer)
+            try! realm!.write({
+                realm!.add(newPlayer)
             })
         }
         return newID
@@ -360,7 +360,7 @@ func == (left: FromToColumnRow, right: FromToColumnRow)->Bool {
 }
 
 func != (left: FromToColumnRow, right: FromToColumnRow)->Bool {
-    return !(left.fromColumnRow == right.fromColumnRow && left.toColumnRow == right.toColumnRow)
+    return !(left == right)
 }
 
 

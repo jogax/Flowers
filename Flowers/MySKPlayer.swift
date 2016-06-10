@@ -31,7 +31,7 @@ class MySKPlayer: MySKTable, UITextFieldDelegate {
 
 
     init(parent: SKSpriteNode, view: UIView, callBack: ()->()) {
-        nameTable = Array(realm.objects(PlayerModel).sorted("created", ascending: true))
+        nameTable = Array(realm!.objects(PlayerModel).sorted("created", ascending: true))
         countLines = nameTable.count// + (nameTable[0].name == GV.language.getText(.TCGuest) ? 0 : 1)
         self.parentNode = parent
         self.callBack = callBack
@@ -112,7 +112,7 @@ class MySKPlayer: MySKTable, UITextFieldDelegate {
     }
     
     func textFieldDidEndEditing(textField: UITextField) {
-        try! realm.write({
+        try! realm!.write({
             nameTable[nameTableIndex].name = nameInputField.text!
         })
         nameInputField.hidden = true
@@ -139,7 +139,7 @@ class MySKPlayer: MySKTable, UITextFieldDelegate {
     }
 
     func showPlayers() {
-        reDrawWhenChanged(myColumnWidths, rows: realm.objects(PlayerModel).count)
+        reDrawWhenChanged(myColumnWidths, rows: realm!.objects(PlayerModel).count)
         for index in 0..<nameTable.count {
             let name = nameTable[index].name == GV.language.getText(.TCAnonym) ? "+" : nameTable[index].name
             var elements: [MultiVar] = [MultiVar(string: name)]
@@ -158,9 +158,9 @@ class MySKPlayer: MySKTable, UITextFieldDelegate {
     
 
     func changeActPlayer () {
-        try! realm.write({
-            let oldActPlayer = realm.objects(PlayerModel).filter("isActPlayer = true").first
-            var newActPlayer = realm.objects(PlayerModel).filter("ID =  \(nameTable[nameTableIndex].ID)").first
+        try! realm!.write({
+            let oldActPlayer = realm!.objects(PlayerModel).filter("isActPlayer = true").first
+            var newActPlayer = realm!.objects(PlayerModel).filter("ID =  \(nameTable[nameTableIndex].ID)").first
             if newActPlayer == nil || newActPlayer!.name == GV.language.getText(.TCGuest) {
                 newActPlayer = PlayerModel()
                 newActPlayer!.ID = nameTable[nameTableIndex].ID
@@ -172,8 +172,8 @@ class MySKPlayer: MySKTable, UITextFieldDelegate {
             let newIndex = indexOfPlayerID(newActPlayer!.ID)
             nameTable[oldIndex!].isActPlayer = false
             nameTable[newIndex!].isActPlayer = true
-            realm.add(oldActPlayer!, update: true)
-            realm.add(newActPlayer!, update: true)
+            realm!.add(oldActPlayer!, update: true)
+            realm!.add(newActPlayer!, update: true)
             GV.player = newActPlayer
         })
         GV.language.setLanguage(GV.player!.aktLanguageKey)
@@ -199,7 +199,7 @@ class MySKPlayer: MySKTable, UITextFieldDelegate {
         
         switch checkTouches(touches, withEvent: event) {
         case MyEvents.GoBackEvent:
-            GV.player = realm.objects(PlayerModel).filter("isActPlayer = true").first
+            GV.player = realm!.objects(PlayerModel).filter("isActPlayer = true").first
             let fadeInAction = SKAction.fadeInWithDuration(0.5)
             myParent.runAction(fadeInAction)
             removeFromParent()
@@ -218,7 +218,7 @@ class MySKPlayer: MySKTable, UITextFieldDelegate {
                     case 0: // select a Player
                         changeActPlayer()
                     case 1: // modify the player
-                        let playerToModify = realm.objects(PlayerModel).filter("ID = \(nameTable[nameTableIndex].ID)").first
+                        let playerToModify = realm!.objects(PlayerModel).filter("ID = \(nameTable[nameTableIndex].ID)").first
                         getPlayerName(indexOfPlayerID(playerToModify!.ID)!)
                     case 2: // delete the player
                         deletePlayer()
@@ -231,13 +231,13 @@ class MySKPlayer: MySKTable, UITextFieldDelegate {
     }
     
     func addNewPlayerWhenRequired() -> Int {
-        let lastPlayer = realm.objects(PlayerModel).sorted("created", ascending: false).first!
+        let lastPlayer = realm!.objects(PlayerModel).sorted("created", ascending: false).first!
         if lastPlayer.name == GV.language.getText(.TCAnonym) {
             return lastPlayer.ID
         } else {
             let newPlayerID = GV.createNewPlayer()
             if newPlayerID > 0 {
-                let array = Array(realm.objects(PlayerModel).filter("ID = %d", newPlayerID))
+                let array = Array(realm!.objects(PlayerModel).filter("ID = %d", newPlayerID))
                 nameTable.appendContentsOf(array)
                 nameTableIndex = nameTable.count - 1
             }
@@ -246,20 +246,20 @@ class MySKPlayer: MySKTable, UITextFieldDelegate {
     }
     
     func deletePlayer() {
-        if realm.objects(PlayerModel).count > 1 {
-            let playerToDelete = realm.objects(PlayerModel).filter("ID = %d", nameTable[nameTableIndex].ID).first!
-            try! realm.write({
+        if realm!.objects(PlayerModel).count > 1 {
+            let playerToDelete = realm!.objects(PlayerModel).filter("ID = %d", nameTable[nameTableIndex].ID).first!
+            try! realm!.write({
                 nameTable.removeAtIndex(nameTableIndex)
-                realm.delete(realm.objects(StatisticModel).filter("playerID = %d", playerToDelete.ID))
-                realm.delete(realm.objects(GameToPlayerModel).filter("playerID = %d", playerToDelete.ID))
-                realm.delete(playerToDelete)
+                realm!.delete(realm!.objects(StatisticModel).filter("playerID = %d", playerToDelete.ID))
+                realm!.delete(realm!.objects(GameToPlayerModel).filter("playerID = %d", playerToDelete.ID))
+                realm!.delete(playerToDelete)
                 let playerToSetActPlayer = nameTable[0]
                 playerToSetActPlayer.isActPlayer = true
-                realm.add(playerToSetActPlayer, update: true)
+                realm!.add(playerToSetActPlayer, update: true)
                 GV.player = playerToSetActPlayer
                 //                        nameTable.removeAtIndex(nameTableIndex)
             })
-            if realm.objects(PlayerModel).filter("name = %c", GV.language.getText(.TCAnonym)).count == 0 {
+            if realm!.objects(PlayerModel).filter("name = %c", GV.language.getText(.TCAnonym)).count == 0 {
                 addNewPlayerWhenRequired()
             }
             showPlayers()

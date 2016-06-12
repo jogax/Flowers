@@ -57,6 +57,7 @@
 		201AD6F11D005C6200E56CD8 /* GameToPlayerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201AD6F01D005C6200E56CD8 /* GameToPlayerModel.swift */; };
 		201C52401C314CF9001B04AB /* LevelsForPlayWithCards.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201C523F1C314CF9001B04AB /* LevelsForPlayWithCards.swift */; };
 		201C52421C316801001B04AB /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201C52411C316801001B04AB /* Extensions.swift */; };
+		201DB6111D0C65E50086BD36 /* MySKTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201DB6101D0C65E50086BD36 /* MySKTextField.swift */; };
 		201E203E1C1C631F003DBBD8 /* MyRandom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201E203D1C1C631F003DBBD8 /* MyRandom.swift */; };
 		201E20421C1C7389003DBBD8 /* SeedData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201E20401C1C7389003DBBD8 /* SeedData.swift */; };
 		201E20471C1C80CF003DBBD8 /* CloudData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201E20461C1C80CF003DBBD8 /* CloudData.swift */; };
@@ -167,6 +168,7 @@
 		201AD6F01D005C6200E56CD8 /* GameToPlayerModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameToPlayerModel.swift; sourceTree = "<group>"; };
 		201C523F1C314CF9001B04AB /* LevelsForPlayWithCards.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LevelsForPlayWithCards.swift; sourceTree = "<group>"; };
 		201C52411C316801001B04AB /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		201DB6101D0C65E50086BD36 /* MySKTextField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MySKTextField.swift; sourceTree = "<group>"; };
 		201E203D1C1C631F003DBBD8 /* MyRandom.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MyRandom.swift; sourceTree = "<group>"; };
 		201E20401C1C7389003DBBD8 /* SeedData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SeedData.swift; path = ../SeedData.swift; sourceTree = "<group>"; };
 		201E20431C1C8009003DBBD8 /* Flowers.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Flowers.entitlements; sourceTree = "<group>"; };
@@ -275,6 +277,7 @@
 				200141461BAEDAE5003E0950 /* MySKNode.swift */,
 				201839B51C9C40DD00B33827 /* MySKPanel.swift */,
 				20343A6E1CB7F4660063DF8D /* MySKTable.swift */,
+				201DB6101D0C65E50086BD36 /* MySKTextField.swift */,
 				20AE75EA1CB2B50C006AFE29 /* MySKPlayer.swift */,
 				2021E3801CDB930900D522CD /* MySKStatistic.swift */,
 				201585191CE5F2AE00EF27CA /* MySKSlider.swift */,
@@ -747,6 +750,7 @@
 				2001410F1BAEAA82003E0950 /* FlowerGameScene.swift in Sources */,
 				20AE75EB1CB2B50C006AFE29 /* MySKPlayer.swift in Sources */,
 				205008BB1CC65635000B1468 /* GameModel.swift in Sources */,
+				201DB6111D0C65E50086BD36 /* MySKTextField.swift in Sources */,
 				200BDA071BCFDEE600F72109 /* DrawImages.swift in Sources */,
 				201C52401C314CF9001B04AB /* LevelsForPlayWithCards.swift in Sources */,
 				20343A6F1CB7F4660063DF8D /* MySKTable.swift in Sources */,

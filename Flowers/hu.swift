@@ -72,4 +72,6 @@ let huDictionary: [TextConstants: String] = [
     .TCBestScoreOfGame:   "Legjobb pontszám % %",
     .TCYourScore:         "Pontszámod %",
     .TCYouAreTheBest:    "Tiéd a legjobb pontszám: %",
+    .TCGameNumber:       "Játék sorszáma:",
+    .TCChooseGameNumber: "Válassz játékot (0-9999)",
 ]

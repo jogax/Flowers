@@ -72,4 +72,6 @@ let enDictionary: [TextConstants: String] = [
     .TCBestScoreOfGame:   "Best score %  %",
     .TCYourScore:           "Your score %",
     .TCYouAreTheBest:    "You are the Best with score %",
+    .TCGameNumber:       "Game number:",
+    .TCChooseGameNumber: "Choose a game (0-9999)"
 ]

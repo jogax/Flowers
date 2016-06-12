@@ -72,6 +72,8 @@ let deDictionary: [TextConstants: String] = [
     .TCBestScoreOfGame:   "Beste Ergebnis % %",
     .TCYourScore:   "Ihr Ergebnis %",
     .TCYouAreTheBest:    "Sind sind der Beste mit Ergebnis %",
+    .TCGameNumber:       "Spielnummer:",
+    .TCChooseGameNumber: "Wählen Sie ein Spiel (0-9999)"
 ]
 
 

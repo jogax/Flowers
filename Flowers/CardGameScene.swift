@@ -263,6 +263,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
     var countColorsProContainer = [Int]()
     var labelBackground = SKSpriteNode()
     var levelLabel = SKLabelNode(fontNamed: "AvenirNext-Bold")
+    var gameNumberLabel = SKLabelNode(fontNamed: "AvenirNext-Bold")
     var showTimeLabel = SKLabelNode(fontNamed: "AvenirNext-Bold")
     var playerLabel = SKLabelNode(fontNamed: "AvenirNext-Bold")
     var cardCountLabel = SKLabelNode(fontNamed: "AvenirNext-Bold")
@@ -431,23 +432,29 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         timeCount = 0
         if newGame {
             try! realm!.write() { // delete all empty games
+                let emptyGames = realm!.objects(GameModel).filter("bestScore = 0")
+                for index in 0..<emptyGames.count {
+                    let predefinedGame = realm!.objects(GamePredefinitionModel).filter("gameNumber = %d", emptyGames[index].gameNumber).first!
+                    predefinedGame.played = false
+                }
                 realm!.delete(realm!.objects(GameToPlayerModel).filter("score = 0"))
                 realm!.delete(realm!.objects(GameModel).filter("bestScore = 0"))
             }
             gameNumber = -1
-//            do {
-                let games = realm!.objects(GameModel).filter("levelID = %d", levelIndex) // search only the games of act level
-                for game in games {
-                    if realm!.objects(GameToPlayerModel).filter("playerID = %d and gameID = %d", GV.player!.ID, game.ID).count == 0 {
-                        gameNumber = game.ID
-                        createGameToPlayerRecord(GV.player!.ID, gameID: game.ID)
-                        break
-                    }
+            let games = realm!.objects(GameModel).filter("levelID = %d", levelIndex) // search only the games of act level
+            for game in games {
+                if realm!.objects(GameToPlayerModel).filter("playerID = %d and gameID = %d", GV.player!.ID, game.ID).count == 0 {
+                    gameNumber = game.ID
+                    createGameToPlayerRecord(GV.player!.ID, gameID: game.ID)
+                    break
                 }
+            }
                 
-//            }
             if gameNumber == -1 {
-                gameNumber = realm!.objects(GamePredefinitionModel).filter("played = false").first!.gameNumber
+                let notPlayedGames = Array(realm!.objects(GamePredefinitionModel).filter("played = false"))
+                let randomIndex = Int(arc4random_uniform(UInt32(notPlayedGames.count)))
+                gameNumber = notPlayedGames[randomIndex].gameNumber //arc4random_uniform(3)
+                print(gameNumber)
                 createGameToPlayerRecord(GV.player!.ID, gameID: gameNumber)
             }
         }
@@ -554,12 +561,13 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         let tippCountText: String = "\(tippArray.count)"
         let showScoreText: String = GV.language.getText(.TCGameScore, values: "\(levelScore)", "\(timeFactor().twoDecimals)", "0")
         let name = GV.player!.name == GV.language.getText(.TCAnonym) ? GV.language.getText(.TCGuest) : GV.player!.name
-        createLabels(playerLabel, text: GV.language.getText(TextConstants.TCPlayer) + ": \(name)", column: 2, row: 1)
+        createLabels(playerLabel, text: GV.language.getText(TextConstants.TCPlayer) + ": \(name)", column: 1, row: 1)
+        createLabels(gameNumberLabel, text: GV.language.getText(.TCGameNumber) + "\(gameNumber)", column: 2, row: 1)
         createLabels(levelLabel, text: GV.language.getText(TextConstants.TCLevel) + ": \(levelIndex + 1)", column: 3, row: 1)
         createLabels(showTimeLabel, text: "", column: 1, row: 2)
         createLabels(showScoreLabel, text: showScoreText, column: 1, row: 3)
-        createLabels(cardCountLabel, text: cardCountText, column: 2, row: 5)
-        createLabels(tippCountLabel, text: tippCountText, column: 3, row: 5)
+        createLabels(cardCountLabel, text: cardCountText, column: 1, row: 5)
+        createLabels(tippCountLabel, text: tippCountText, column: 2, row: 5)
 
     }
     
@@ -577,33 +585,34 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         label.text = text
         var xPos = CGFloat(0)
         var horAlignment = SKLabelHorizontalAlignmentMode.Center
-        switch column {
-        case 1:
-            xPos = self.position.x + self.size.width * 0.1
-            horAlignment = .Left
-        case 2:
-            xPos = self.position.x + self.size.width * 0.3
-        case 3:
-            xPos = self.position.x + self.size.width * 0.7
-        case 4:
-            xPos = self.position.x + self.size.width * 0.75
-        case 5:
-            xPos = self.cardPackage!.position.x
-        default: break
-        }
-        let yPos = CGFloat(self.size.height * labelYPosProcent / 100) + CGFloat((5 - row)) * labelHeight
-        
-        label.position = CGPointMake(xPos, yPos)
-        label.fontColor = SKColor.blackColor()
-        label.horizontalAlignmentMode = horAlignment
-        label.verticalAlignmentMode = SKLabelVerticalAlignmentMode.Center
-        label.fontSize = labelFontSize;
-        label.color = UIColor(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)
-        if row == 5 {
-            label.position = (column == 2 ? self.cardPackage!.position : self.tippsButton!.position)
-            label.fontSize = label.fontSize * 1.5
+        if row < 5 {
+            switch column {
+            case 1:
+                xPos = self.position.x + self.size.width * 0.1
+                horAlignment = .Left
+            case 2:
+                xPos = self.position.x + self.size.width * 0.5
+            case 3:
+                xPos = self.position.x + self.size.width * 0.7
+            case 4:
+                xPos = self.position.x + self.size.width * 0.75
+            case 5:
+                xPos = self.cardPackage!.position.x
+            default: break
+            }
+            let yPos = CGFloat(self.size.height * labelYPosProcent / 100) + CGFloat((5 - row)) * labelHeight
+            label.position = CGPointMake(xPos, yPos)
+            label.fontSize = labelFontSize;
+            label.horizontalAlignmentMode = horAlignment
+        } else {
+            label.position = (column == 1 ? self.cardPackage!.position : self.tippsButton!.position)
+            label.fontSize = labelFontSize * 1.5
             label.zPosition = 5
+            label.horizontalAlignmentMode = .Center
         }
+        label.fontColor = SKColor.blackColor()
+        label.verticalAlignmentMode = .Center
+        label.color = UIColor(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)
         self.addChild(label)
     }
     
@@ -669,6 +678,8 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         let name = GV.player!.name == GV.language.getText(.TCAnonym) ? GV.language.getText(.TCGuest) : GV.player!.name
         playerLabel.text = GV.language.getText(.TCPlayer) + ": \(name)"
         levelLabel.text = GV.language.getText(.TCLevel) + ": \(levelIndex + 1)"
+        gameNumberLabel.text = GV.language.getText(.TCGameNumber) + "\(gameNumber)"
+
         showCardCount()
         showTippCount()
         showLevelScore()
@@ -1949,6 +1960,19 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         parentViewController!.presentViewController(alert, animated: true, completion: nil)
     }
     
+    func chooseGameNumber () {
+        let _ = MySKTextField(parent: self, position: self.position, callBack: callBackFromMySKTextField)
+    }
+    
+    func callBackFromMySKTextField(text: String) {
+        if let number = Int(text) {
+            gameNumber = number
+            newGame(false)
+        } else {
+            chooseGameNumber()
+        }
+    }
+    
     func newGame(next: Bool) {
         stopped = true
         if next {
@@ -2039,6 +2063,15 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
 
         })
         alert.addAction(newGameAction)
+        
+        let chooseGameAction = UIAlertAction(title: GV.language.getText(.TCChooseGameNumber), style: .Default,
+                                          handler: {(paramAction:UIAlertAction!) in
+                                            self.chooseGameNumber()
+                                            //self.gameArrayChanged = true
+                                            
+        })
+        alert.addAction(chooseGameAction)
+        
         if levelIndex > 0 {
             let easierAction = UIAlertAction(title: GV.language.getText(.TCPreviousLevel), style: .Default,
                 handler: {(paramAction:UIAlertAction!) in

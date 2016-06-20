@@ -44,7 +44,7 @@ class MySKTable: SKSpriteNode {
     var sizeOfElement: CGSize
     var touchesBeganAt: NSDate = NSDate()
     var touchesBeganAtNode: SKNode?
-    var myParent: SKSpriteNode
+    var myParent: SKNode
     let separator = "-"
     var columnWidths: [CGFloat]
     var columnXPositions = [CGFloat]()
@@ -58,11 +58,11 @@ class MySKTable: SKSpriteNode {
     
     let goBackImageName = "GoBackImage"
     
-    init(columnWidths: [CGFloat], rows: Int, headLines: [String], parent: SKSpriteNode, width: CGFloat...) {
+    init(columnWidths: [CGFloat], rows: Int, headLines: [String], parent: SKNode, width: CGFloat...) {
         
         self.columns = columnWidths.count
         self.rows = rows
-        self.sizeOfElement = CGSizeMake(parent.size.width / CGFloat(self.columns), heightOfLabelRow)
+        self.sizeOfElement = CGSizeMake(parent.frame.size.width / CGFloat(self.columns), heightOfLabelRow)
         self.columnWidths = columnWidths
         self.myParent = parent
         self.headLines = headLines.count == 0 ? [""] : headLines
@@ -89,7 +89,7 @@ class MySKTable: SKSpriteNode {
             mySize = CGSizeMake(width[0], myHeight)
             self.showVerticalLines = true
         } else {
-            mySize = CGSizeMake(parent.size.width * 0.9, myHeight)
+            mySize = CGSizeMake(parent.frame.size.width * 0.9, myHeight)
         }
         self.size = mySize
         self.alpha = 1.0

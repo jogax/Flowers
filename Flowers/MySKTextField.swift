@@ -12,6 +12,7 @@ import RealmSwift
 class MySKTextField: SKShapeNode, UITextFieldDelegate {
     var inputField = UITextField()
     var callBack: (String)->()
+    var fromTextFieldShouldReturn = false
     init(parent: SKScene, position: CGPoint, callBack: (String)->()) {
         self.callBack = callBack
         super.init()
@@ -40,12 +41,24 @@ class MySKTextField: SKShapeNode, UITextFieldDelegate {
     }
     
     func textFieldShouldReturn(textField: UITextField)->Bool {
+        fromTextFieldShouldReturn = true
+        callBack(self.editingEnded(textField))
+        return true
+    }
+    
+    func textFieldDidEndEditing(textField: UITextField) {
+        if !fromTextFieldShouldReturn {
+            callBack(self.editingEnded(textField))
+        }
+    }
+    
+    func editingEnded(textField: UITextField)->String {
         let text = textField.text
         inputField.removeFromSuperview()
         self.removeFromParent()
-        callBack(text!)
-        return true
+        return text!
     }
+
     
     func textField(textField: UITextField, shouldChangeCharactersInRange range: NSRange, replacementString string: String) -> Bool {
 

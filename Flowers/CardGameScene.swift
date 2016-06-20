@@ -457,6 +457,10 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
                 print(gameNumber)
                 createGameToPlayerRecord(GV.player!.ID, gameID: gameNumber)
             }
+        } else {
+            if realm!.objects(GameModel).filter("gameNumber = %d", gameNumber).count == 0 { // choosed a game Number
+                createGameToPlayerRecord(GV.player!.ID, gameID: gameNumber)
+            }
         }
         
         random = MyRandom(gameID: gameNumber, levelID: levelIndex)
@@ -1956,6 +1960,8 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
     }
     
     func restartButtonPressed() {
+//        myGetNextPlayArt(false)
+        
         let alert = getNextPlayArt(false)
         parentViewController!.presentViewController(alert, animated: true, completion: nil)
     }
@@ -2101,7 +2107,107 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         }
         return alert
     }
-    
+
+    func myGetNextPlayArt(congratulations: Bool, statistic: StatisticModel...)->UIAlertController {
+        let playerName = GV.player!.name + "!"
+        var statisticsTxt = ""
+        var congratulationsTxt = ""
+        
+        
+//        if congratulations {
+//            let actGame = realm!.objects(GameToPlayerModel).filter("playerID = %d and gameID = %d", GV.player!.ID, gameNumber).first!
+//            var bestGameScore = actGame.score
+//            var bestScorePlayer = GV.player!.name
+//            
+//            let allGames = realm!.objects(GameToPlayerModel).filter("gameID = %d", gameNumber)
+//            for checkGame in allGames {
+//                if checkGame.playerID != GV.player!.ID {
+//                    if bestGameScore < checkGame.score {
+//                        bestGameScore = checkGame.score
+//                        bestScorePlayer = realm!.objects(PlayerModel).filter("ID = %d",checkGame.playerID).first!.name
+//                    }
+//                }
+//            }
+//            congratulationsTxt = GV.language.getText(.TCLevel, values: " \(levelIndex + 1)")
+//            congratulationsTxt += "\r\n" + GV.language.getText(.TCGameComplete, values: String(gameNumber))
+//            congratulationsTxt += "\r\n" + GV.language.getText(TextConstants.TCCongratulations) + playerName
+//            //            congratulationsTxt += "\r\n\r\n" + GV.language.getText(.TCStatistics, values: String(levelIndex + 1))
+//            congratulationsTxt += "\r\n ============== \r\n"
+//            
+//            if allGames.count > 1 {
+//                if bestScorePlayer != GV.player!.name {
+//                    congratulationsTxt += "\r\n" + GV.language.getText(.TCYourScore, values: String(actGame.score))
+//                    congratulationsTxt += "\r\n" + GV.language.getText(.TCBestScoreOfGame, values: String(bestGameScore), bestScorePlayer)
+//                } else {
+//                    congratulationsTxt += "\r\n" + GV.language.getText(.TCYouAreTheBest, values: String(bestGameScore))
+//                }
+//            } else {
+//                congratulationsTxt += "\r\n" + GV.language.getText(.TCLevelScore, values: " \(bestGameScore)")
+//            }
+//            
+//            //            statisticsTxt += "\r\n" + GV.language.getText(.TCCountPlaysForLevel, values: String(statistic[0].countPlays))
+//            //            statisticsTxt += "\r\n" + GV.language.getText(.TCActScore) + String(statistic[0].actScore)
+//            //            statisticsTxt += "\r\n" + GV.language.getText(.TCBestScore) + ": " + String(statistic[0].bestScore)
+//            congratulationsTxt += "\r\n" + GV.language.getText(.TCActTime) + String(statistic[0].actTime.dayHourMinSec)
+//            //            statisticsTxt += "\r\n" + GV.language.getText(.TCAllTimeForLevel) + String(statistic[0].allTime.dayHourMinSec)
+//            //            statisticsTxt += "\r\n" + GV.language.getText(.TCBestTimeForLevel) + String(statistic[0].bestTime.dayHourMinSec)
+//            
+//            
+//        }
+        let alert = UIAlertController(title: congratulations ? congratulationsTxt : GV.language.getText(.TCChooseGame),
+                                      message: statisticsTxt,
+                                      preferredStyle: .Alert)
+        let againAction = UIAlertAction(title: GV.language.getText(.TCGameAgain), style: .Default,
+                                        handler: {(paramAction:UIAlertAction!) in
+                                            self.newGame(false)
+        })
+        alert.addAction(againAction)
+        let newGameAction = UIAlertAction(title: GV.language.getText(TextConstants.TCNewGame), style: .Default,
+                                          handler: {(paramAction:UIAlertAction!) in
+                                            self.newGame(true)
+                                            //self.gameArrayChanged = true
+                                            
+        })
+        alert.addAction(newGameAction)
+        
+        let chooseGameAction = UIAlertAction(title: GV.language.getText(.TCChooseGameNumber), style: .Default,
+                                             handler: {(paramAction:UIAlertAction!) in
+                                                self.chooseGameNumber()
+                                                //self.gameArrayChanged = true
+                                                
+        })
+        alert.addAction(chooseGameAction)
+        
+        if levelIndex > 0 {
+            let easierAction = UIAlertAction(title: GV.language.getText(.TCPreviousLevel), style: .Default,
+                                             handler: {(paramAction:UIAlertAction!) in
+                                                print("newGame from set Previous Level")
+                                                self.setLevel(self.previousLevel)
+                                                self.newGame(true)
+            })
+            alert.addAction(easierAction)
+        }
+        if levelIndex < GV.levelsForPlay.levelParam.count - 1 {
+            let complexerAction = UIAlertAction(title: GV.language.getText(TextConstants.TCNextLevel), style: .Default,
+                                                handler: {(paramAction:UIAlertAction!) in
+                                                    print("newGame from set Next Level")
+                                                    self.setLevel(self.nextLevel)
+                                                    self.newGame(true)
+            })
+            alert.addAction(complexerAction)
+        }
+        if !congratulations {
+            let cancelAction = UIAlertAction(title: GV.language.getText(TextConstants.TCCancel), style: .Default,
+                                             handler: {(paramAction:UIAlertAction!) in
+                                                //                    self.setLevel(self.nextLevel)
+                                                //                    self.newGame(true)
+                                                self.startTimer(&self.showTippAtTimer, sleepTime: self.showTippSleepTime, selector: self.showTippSelector, repeats: true)
+            })
+            alert.addAction(cancelAction)
+        }
+        return alert
+    }
+
     func setLevel(next: Bool) {
         if next {
             levelIndex = GV.levelsForPlay.getNextLevel()

@@ -8,7 +8,7 @@
 
 import SpriteKit
 enum PanelTypes: Int {
-    case Settings = 0
+    case Settings = 0, Menu
 }
 class MySKPanel: SKSpriteNode {
     var view: UIView

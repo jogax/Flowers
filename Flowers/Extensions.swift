@@ -113,6 +113,10 @@ extension Int {
         }
         return false
     }
+    
+    func between(min: Int, max: Int)->Bool {
+        return self >= min && self <= max
+    }
 }
 
 extension String {

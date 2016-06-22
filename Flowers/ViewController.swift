@@ -28,6 +28,7 @@ class ViewController: UIViewController, SettingsDelegate, UIApplicationDelegate 
         
         copyDefaultRealmFileIfNotExistsYet()
         startScene()
+        printFonts()
         // Do any additional setup after loading the view, typically from a nib.
      }
     
@@ -132,6 +133,16 @@ class ViewController: UIViewController, SettingsDelegate, UIApplicationDelegate 
 //                scene.playMusic("MyMusic", volume: GV.player!.musicVolume, loops: 0)
 //                scene.startTimer()
 //            }
+        }
+    }
+    
+    func printFonts() {
+        let fontFamilyNames = UIFont.familyNames()
+        for familyName in fontFamilyNames {
+            print("------------------------------")
+            print("Font Family Name = [\(familyName)]")
+            let names = UIFont.fontNamesForFamilyName(familyName)
+            print("Font Names = [\(names)]")
         }
     }
 

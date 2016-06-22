@@ -566,7 +566,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         let showScoreText: String = GV.language.getText(.TCGameScore, values: "\(levelScore)", "\(timeFactor().twoDecimals)", "0")
         let name = GV.player!.name == GV.language.getText(.TCAnonym) ? GV.language.getText(.TCGuest) : GV.player!.name
         createLabels(playerLabel, text: GV.language.getText(TextConstants.TCPlayer) + ": \(name)", column: 1, row: 1)
-        createLabels(gameNumberLabel, text: GV.language.getText(.TCGameNumber) + "\(gameNumber)", column: 2, row: 1)
+        createLabels(gameNumberLabel, text: GV.language.getText(.TCGameNumber) + " \(gameNumber)", column: 2, row: 1)
         createLabels(levelLabel, text: GV.language.getText(TextConstants.TCLevel) + ": \(levelIndex + 1)", column: 3, row: 1)
         createLabels(showTimeLabel, text: "", column: 1, row: 2)
         createLabels(showScoreLabel, text: showScoreText, column: 1, row: 3)
@@ -597,7 +597,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
             case 2:
                 xPos = self.position.x + self.size.width * 0.5
             case 3:
-                xPos = self.position.x + self.size.width * 0.7
+                xPos = self.position.x + self.size.width * 0.8
             case 4:
                 xPos = self.position.x + self.size.width * 0.75
             case 5:
@@ -1967,15 +1967,22 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
     }
     
     func chooseGameNumber () {
-        let _ = MySKTextField(parent: self, position: self.position, callBack: callBackFromMySKTextField)
+        let _ = MySKTextField(
+          parent: self,
+          position: self.position,
+          callBack: callBackFromMySKTextField,
+          actLevel: ActMinMaxValues(actValue: levelIndex + 1, minValue: 1, maxValue: Int(LevelsForPlayWithCards().count())),
+          actGameNumber: ActMinMaxValues(actValue: gameNumber, minValue: 1, maxValue: 9999)
+        )
     }
     
-    func callBackFromMySKTextField(text: String) {
-        if let number = Int(text) {
-            gameNumber = number
+    func callBackFromMySKTextField(gameNumber: Int, levelIndex: Int) {
+        if self.gameNumber != gameNumber || self.levelIndex != levelIndex - 1 {
+            self.gameNumber = gameNumber
+            try! realm!.write({
+                GV.player!.levelID = levelIndex - 1
+            })
             newGame(false)
-        } else {
-            chooseGameNumber()
         }
     }
     

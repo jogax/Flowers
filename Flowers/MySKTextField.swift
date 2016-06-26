@@ -170,7 +170,7 @@ class MySKTextField: SKShapeNode, UITextFieldDelegate {
         inputField.autocorrectionType = .No
         inputField.layer.borderWidth = 0.0
         inputField.becomeFirstResponder()
-        inputField.keyboardType = .PhonePad
+        inputField.keyboardType = .NumberPad
         myParent.view!.addSubview(inputField)
     }
     

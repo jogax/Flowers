@@ -119,6 +119,12 @@ extension Int {
     }
 }
 
+extension CGFloat {
+    func between(min: CGFloat, max: CGFloat)->Bool {
+        return self >= min && self <= max
+    }
+}
+
 extension String {
     func replace(what: String, values: [String])->String {
         let toArray = self.componentsSeparatedByString(what)

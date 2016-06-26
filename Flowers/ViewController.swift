@@ -28,7 +28,7 @@ class ViewController: UIViewController, SettingsDelegate, UIApplicationDelegate 
         
         copyDefaultRealmFileIfNotExistsYet()
         startScene()
-        printFonts()
+//        printFonts()
         // Do any additional setup after loading the view, typically from a nib.
      }
     

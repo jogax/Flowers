@@ -334,8 +334,6 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
     var buttonXPosNormalized = CGFloat(0)
     let images = DrawImages()
     
-    var stop = false
-    
     var panel: MySKPanel?
     var countUpAdder = 0
     
@@ -349,7 +347,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
                     let startWaiting = NSDate()
                     while generatingTipps && stopCreateTippsInBackground {
                         
-                         dummy = 0
+                         _ = 0
                     }
                     print ("waiting for Stop Creating Tipps:", NSDate().timeIntervalSinceDate(startWaiting).nDecimals(5))
                     stopCreateTippsInBackground = false
@@ -361,17 +359,22 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         
     var gameArrayChanged = false {
         didSet {
-            switch (oldValue, gameArrayChanged, generatingTipps) {
-                case (false, true, false):
-                    startCreateTippsInBackground()
-                case (true, true, true):
-                    stopCreateTippsInBackground = true
-                    startCreateTippsInBackground()
-                case (true, true, false):
-                    startCreateTippsInBackground()
+            print("in gameArrayChanged: bevor stopCreateTippsInBackground var generatingTipps = ", generatingTipps)
+            stopCreateTippsInBackground = true
+            print("in gameArrayChanged: after stopCreateTippsInBackground var generatingTipps = ", generatingTipps)
+            startCreateTippsInBackground()
 
-                default: dummy = 0
-            }
+//            switch (oldValue, gameArrayChanged, generatingTipps) {
+//                case (false, true, false):
+//                    startCreateTippsInBackground()
+//                case (true, true, true):
+//                    stopCreateTippsInBackground = true
+//                    startCreateTippsInBackground()
+//                case (true, true, false):
+//                    startCreateTippsInBackground()
+//
+//                default: break
+//            }
         }
     }
     
@@ -749,8 +752,9 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
                 }
             }
         }
+        print(positionsTab.count)
         
-        while cardStack.count(.MySKNodeType) > 0 && (checkGameArray() < maxUsedCells || generateSpecial) {
+        while cardStack.count(.MySKNodeType) > 0 && (checkGameArray() < maxUsedCells || (generateSpecial && positionsTab.count > 0)) {
             var sprite: MySKNode = cardStack.pull()!
 //            var sprite: MySKNode?
 //            sprite = cardStack.random(random)
@@ -769,19 +773,19 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
                 generateSpecial = false
             }
             showCardCount()
-            cardStack.removeAtLastRandomIndex()
+//            cardStack.removeAtLastRandomIndex()
             let index = random!.getRandomInt(0, max: positionsTab.count - 1)
-            let (aktColumn, aktRow) = positionsTab[index]
+            let (actColumn, actRow) = positionsTab[index]
             
-            let zielPosition = gameArray[aktColumn][aktRow].position
+            let zielPosition = gameArray[actColumn][actRow].position
             sprite.position = cardPackage!.position
             sprite.startPosition = zielPosition
             
 
             positionsTab.removeAtIndex(index)
             
-            sprite.column = aktColumn
-            sprite.row = aktRow
+            sprite.column = actColumn
+            sprite.row = actRow
             
             sprite.size = CGSizeMake(spriteSize.width, spriteSize.height)
 //            sprite.zPosition = 10
@@ -802,7 +806,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
             })
 
             let actionHideEmptyCard = SKAction.runBlock({
-                self.deleteEmptySprite(aktColumn, row: aktRow)
+                self.deleteEmptySprite(actColumn, row: actRow)
 //                sprite.zPosition = 0
                 
             })
@@ -813,7 +817,11 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
             }
 
         }
+        
+        
 //        print("Count Columns:", countColumns)
+        printGameArrayInhalt("after generateSprites")
+        
         if generatingType != .Special {
             gameArrayChanged = true
         }
@@ -821,8 +829,29 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
             countUp = NSTimer.scheduledTimerWithTimeInterval(doCountUpSleepTime, target: self, selector: Selector(doCountUpSelector), userInfo: nil, repeats: true)
             countUpAdder = 1
         }
-        
         stopped = false
+    }
+    
+    func printGameArrayInhalt(calledFrom: String) {
+        print(calledFrom, NSDate())
+        var string: String
+        for row in 0..<countRows {
+            let rowIndex = countRows - row - 1
+            string = ""
+            for column in 0..<countColumns {
+                let color = gameArray[column][rowIndex].colorIndex
+                if gameArray[column][rowIndex].used {
+                    let minInt = gameArray[column][rowIndex].minValue + 1
+                    let maxInt = gameArray[column][rowIndex].maxValue + 1
+                    string += " (" + String(color) + ")" +
+                    (minInt < 10 ? "0" : "") + String(minInt) + "-" +
+                    (maxInt < 10 ? "0" : "") + String(maxInt)
+                } else {
+                    string += " (N)" + "xx-xx"
+                }
+            }
+            print(string)
+        }
     }
     
     
@@ -830,28 +859,54 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         {
             self.generatingTipps = true
             self.stopTimer(&self.showTippAtTimer)
-//            let startTime = NSDate()
-            var countCreating = self.countColumns * self.countRows - self.checkGameArray()
-            while countCreating > 0 && self.cardCount > 0 {
-                _ = self.createTipps()
-//                print("tippsCreated:", tippsCreated, " in ", NSDate().timeIntervalSinceDate(startTime).threeDecimals, " seconds")
-                if self.tippArray.count <= 2 || self.stop  {
-//                    print(" ==========> generate special Sprite - countCreating:", countCreating)
+            self.createTipps()
+            
+            repeat {
+                if self.tippArray.count <= 2 && self.checkGameArray() > 2 {
                     self.generateSprites(.Special)
-                    countCreating -= 1
-                } else {
-                    countCreating = 0
+                    self.createTipps()
                 }
-            }
+            } while !(self.tippArray.count > 2 || self.countColumns * self.countRows - self.checkGameArray() == 0 || self.checkGameArray() < 2)
+            
             if self.tippArray.count == 0 && self.cardCount > 0{
+                
                 print ("You have lost!")
             }
+            self.generatingTipps = false
         } ~>
         {
             self.generatingTipps = false
         }
     }
     
+//    func startCreateTippsInBackground() {
+//        {
+//            self.generatingTipps = true
+//            self.stopTimer(&self.showTippAtTimer)
+//            //            let startTime = NSDate()
+//            var countCreating = self.countColumns * self.countRows - self.checkGameArray()
+//            while countCreating > 0 && self.cardCount > 0 {
+//                self.createTipps()
+//                //                print("tippsCreated:", tippsCreated, " in ", NSDate().timeIntervalSinceDate(startTime).threeDecimals, " seconds")
+//                if self.tippArray.count <= 2  {
+//                    print(" ==========> generate special Sprite - countCreating:", countCreating)
+//                    self.generateSprites(.Special)
+//                    self.createTipps()
+//                    countCreating -= 1
+//                } else {
+//                    countCreating = 0
+//                }
+//            }
+//            if self.tippArray.count == 0 && self.cardCount > 0{
+//                
+//                print ("You have lost!")
+//            }
+//            } ~>
+//            {
+//                self.generatingTipps = false
+//        }
+//    }
+//    
     
     func showTipp() {
         getTipps()
@@ -953,6 +1008,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
     }
     
     func createTipps()->Bool {
+        printGameArrayInhalt("from createTipps")
         tippArray.removeAll()
 //        while gameArray.count < countColumns * countRows {
 //            sleep(1) //wait until gameArray is filled!!
@@ -1077,6 +1133,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
             
         }
 //        let tippCountText: String = GV.language.getText(.TCTippCount)
+//        print("Tippcount:", tippArray.count, tippArray)
         showTippCount()
         if tippArray.count > 0 {
             tippsButton!.activateButton(true)
@@ -1146,7 +1203,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
 //        let startNode = self.childNodeWithName(name)! as! MySKNode
         var founded = false
         var angle = startAngle
-        let multiplierForSearch = CGFloat(5.0)
+        let multiplierForSearch = CGFloat(3.0)
 //        let fineMultiplier = CGFloat(1.0)
         let multiplier:CGFloat = multiplierForSearch
         while angle <= stopAngle && !founded {
@@ -1176,7 +1233,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
             angle += GV.oneGrad * multiplier
         }
 
-        if distanceToLine != firstValue {
+        if distanceToLine.between(0, max: firstValue - 0.1) {
             
             for ind in 0..<myTipp.points.count - 1 {
                 myTipp.lineLength += (myTipp.points[ind] - myTipp.points[ind + 1]).length()

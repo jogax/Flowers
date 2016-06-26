@@ -879,35 +879,6 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         }
     }
     
-//    func startCreateTippsInBackground() {
-//        {
-//            self.generatingTipps = true
-//            self.stopTimer(&self.showTippAtTimer)
-//            //            let startTime = NSDate()
-//            var countCreating = self.countColumns * self.countRows - self.checkGameArray()
-//            while countCreating > 0 && self.cardCount > 0 {
-//                self.createTipps()
-//                //                print("tippsCreated:", tippsCreated, " in ", NSDate().timeIntervalSinceDate(startTime).threeDecimals, " seconds")
-//                if self.tippArray.count <= 2  {
-//                    print(" ==========> generate special Sprite - countCreating:", countCreating)
-//                    self.generateSprites(.Special)
-//                    self.createTipps()
-//                    countCreating -= 1
-//                } else {
-//                    countCreating = 0
-//                }
-//            }
-//            if self.tippArray.count == 0 && self.cardCount > 0{
-//                
-//                print ("You have lost!")
-//            }
-//            } ~>
-//            {
-//                self.generatingTipps = false
-//        }
-//    }
-//    
-    
     func showTipp() {
         getTipps()
     }
@@ -2010,7 +1981,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         } else if usedCellCount <= minUsedCells && usedCellCount > 1 { //  && spriteCount > maxUsedCells {
             generateSprites(.Normal)  // Nachgenerierung
         } else {
-            if cardCount > 0 && cardStack.count(.MySKNodeType) > 0 {
+            if cardCount > 0 /*&& cardStack.count(.MySKNodeType) > 0*/ {
                 gameArrayChanged = true
             }
         }
@@ -2082,7 +2053,8 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
             let actGame = realm!.objects(GameToPlayerModel).filter("playerID = %d and gameID = %d", GV.player!.ID, gameNumber).first!
             var bestGameScore = actGame.score
             var bestScorePlayer = GV.player!.name
-            
+            tippCountLabel.text = String(0)
+
             let allGames = realm!.objects(GameToPlayerModel).filter("gameID = %d", gameNumber)
             for checkGame in allGames {
                 if checkGame.playerID != GV.player!.ID {

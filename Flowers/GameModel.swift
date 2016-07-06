@@ -14,6 +14,7 @@ class GameModel: Object {
     dynamic var ID = 0 // gameNumber
     dynamic var gameNumber = 0
     dynamic var levelID = 0
+    dynamic var played = false
     dynamic var bestTime = 0
     dynamic var bestScore = 0
     dynamic var seedData = NSData()

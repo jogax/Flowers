@@ -23,7 +23,7 @@ class MySKDetailedStatistic: MySKTable {
     
     init(playerID: Int, parent: SKSpriteNode, callBack: ()->()) {
         self.playerID = playerID
-        let playerName = realm!.objects(PlayerModel).filter("ID = %d", playerID).first!.name
+        let playerName = realm.objects(PlayerModel).filter("ID = %d", playerID).first!.name
         self.callBack = callBack
         let headLines = GV.language.getText(.TCPlayerStatisticHeader, values: playerName)
         super.init(columnWidths: myDetailedColumnWidths, rows:countLines + 1, headLines: [headLines], parent: parent, width: parent.parent!.frame.width * 0.9)
@@ -65,20 +65,20 @@ class MySKDetailedStatistic: MySKTable {
         showRowOfTable(elements, row: 0, selected: true)
         for levelID in 0..<countLines {
             var statistic: StatisticModel?
-            statistic = realm!.objects(StatisticModel).filter("playerID = %d and levelID = %d", playerID, levelID).first
+            statistic = realm.objects(StatisticModel).filter("playerID = %d and levelID = %d", playerID, levelID).first
             if statistic == nil {
                 statistic = StatisticModel()
             }
             let formatter = NSNumberFormatter()
-            formatter.numberStyle = NSNumberFormatterStyle.DecimalStyle
-            let bestScoreString = formatter.stringFromNumber(statistic!.bestScore)
-                let elements: [MultiVar] = [MultiVar(string: String(levelID + 1)),
-                                            MultiVar(string: "\(statistic!.countPlays)"),
-                                            MultiVar(string: "\(statistic!.allTime.dayHourMinSec)"),
-                                            MultiVar(string: "\(statistic!.bestTime.dayHourMinSec)"),
-                                            MultiVar(string: bestScoreString!)
-                ]
-                showRowOfTable(elements, row: levelID + 1, selected: true)
+            formatter.numberStyle = NSNumberFormatterStyle.NoStyle // .DecimalStyle
+//            let bestScoreString = formatter.stringFromNumber(statistic!.bestScore)
+            let elements: [MultiVar] = [MultiVar(string: String(levelID + 1)),
+                                        MultiVar(string: "\(statistic!.countPlays)"),
+                                        MultiVar(string: "\(statistic!.allTime.dayHourMinSec)"),
+                                        MultiVar(string: "\(statistic!.bestTime.dayHourMinSec)"),
+                                        MultiVar(string: String(statistic!.bestScore)) //bestScoreString!)
+            ]
+            showRowOfTable(elements, row: levelID + 1, selected: true)
             }
 
     }

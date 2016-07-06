@@ -117,6 +117,16 @@ extension Int {
     func between(min: Int, max: Int)->Bool {
         return self >= min && self <= max
     }
+    
+    func rightJustified(length: Int)->String {
+        var numberString = String(self)
+        var countLeadingBlanks = length - numberString.length
+        while countLeadingBlanks > 0 {
+            numberString = " " + numberString
+            countLeadingBlanks -= 1
+        }
+        return numberString
+    }
 }
 
 extension CGFloat {
@@ -145,6 +155,34 @@ extension String {
         }
         return false
     }
+    
+    var length: Int {
+        return characters.count
+    }
+    
+    /// Create NSData from hexadecimal string representation
+    ///
+    /// This takes a hexadecimal representation and creates a NSData object. Note, if the string has any spaces or non-hex characters (e.g. starts with '<' and with a '>'), those are ignored and only hex characters are processed.
+    ///
+    /// The use of `strtoul` inspired by Martin R at [http://stackoverflow.com/a/26284562/1271826](http://stackoverflow.com/a/26284562/1271826)
+    ///
+    /// - returns: NSData represented by this hexadecimal string.
+    
+    func dataFromHexadecimalString() -> NSData? {
+        let data = NSMutableData(capacity: characters.count / 2)
+        
+        let regex = try! NSRegularExpression(pattern: "[0-9a-f]{1,2}", options: .CaseInsensitive)
+        regex.enumerateMatchesInString(self, options: [], range: NSMakeRange(0, characters.count)) { match, flags, stop in
+            let byteString = (self as NSString).substringWithRange(match!.range)
+            let num = UInt8(byteString.withCString { strtoul($0, nil, 16) })
+            data?.appendBytes([num], length: 1)
+        }
+        
+        return data
+    }
+    
+
+
 }
 
 extension UIColor {
@@ -196,6 +234,29 @@ extension UIImage {
         return newImage
     }
 }
+
+extension NSData {
+    
+    var hexString: String? {
+        let buf = UnsafePointer<UInt8>(bytes)
+        let charA = UInt8(UnicodeScalar("a").value)
+        let char0 = UInt8(UnicodeScalar("0").value)
+        
+        func itoh(value: UInt8) -> UInt8 {
+            return (value > 9) ? (charA + value - 10) : (char0 + value)
+        }
+        
+        let ptr = UnsafeMutablePointer<UInt8>.alloc(length * 2)
+        
+        for i in 0 ..< length {
+            ptr[i*2] = itoh((buf[i] >> 4) & 0xF)
+            ptr[i*2+1] = itoh(buf[i] & 0xF)
+        }
+        
+        return String(bytesNoCopy: ptr, length: length*2, encoding: NSUTF8StringEncoding, freeWhenDone: true)
+    }
+}
+
 
 
 

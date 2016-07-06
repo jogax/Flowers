@@ -144,8 +144,12 @@ class MySKTextField: SKShapeNode, UITextFieldDelegate {
                 var gameNumber = self.game.actValue
                 var levelIndex = self.level.actValue
                 if labelIndex! == doneLabelIndex {
-                    gameNumber = Int(labels[gameNumberValueLabelIndex].text!)!
-                    levelIndex = Int(labels[levelValueLabelIndex].text!)!
+                    if let number1 = Int(labels[gameNumberValueLabelIndex].text!) {
+                        gameNumber = number1
+                    }
+                    if let number2 = Int(labels[levelValueLabelIndex].text!) {
+                        levelIndex = number2
+                    }
                 }
                 callBack(gameNumber, levelIndex)
             }
@@ -204,7 +208,8 @@ class MySKTextField: SKShapeNode, UITextFieldDelegate {
                     OK = false
                 }
             case gameNumberValueLabelIndex:
-                if !Int(textField.text!)!.between(game.minValue, max: game.maxValue) {
+                let gameExists = realm.objects(GameModel).filter("gameNumber = %d", Int(textField.text!)!).count > 0
+                if !(Int(textField.text!)!.between(game.minValue, max: game.maxValue) && gameExists) {
                     OK = false
                 }
             default:

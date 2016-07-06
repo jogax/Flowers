@@ -11,7 +11,7 @@ import RealmSwift
 
 class RecordIDModel: Object {
     
-    dynamic var ID = 0 // gameNumber
+    dynamic var ID = 0
     dynamic var gameModelID = 0
     dynamic var playerModelID = 0
     dynamic var gameToPlayerModelID = 0

@@ -1,28 +1,27 @@
 //
-//  MySKStatistic.swift
+//  MySKGameStatistic.swift
 //  Flowers
 //
-//  Created by Jozsef Romhanyi on 05/05/2016.
+//  Created by Jozsef Romhanyi on 28/06/2016.
 //  Copyright © 2016 Jozsef Romhanyi. All rights reserved.
 //
-
 
 import SpriteKit
 import RealmSwift
 
-class MySKStatistic: MySKTable {
+class MySKGameStatistic: MySKTable {
     
     var callBack: ()->()
     var nameTable = [PlayerModel]()
     let myColumnWidths: [CGFloat] = [25, 40, 25, 10]  // in %
-//    let myDetailedColumnWidths = [20, 20, 20, 20, 20] // in %
-    let myName = "MySKStatistic"
-
+    //    let myDetailedColumnWidths = [20, 20, 20, 20, 20] // in %
+    let myName = "MySKGameStatistic"
+    
     
     
     
     init(parent: SKSpriteNode, callBack: ()->()) {
-        nameTable = Array(realm!.objects(PlayerModel).sorted("created", ascending: true))
+        nameTable = Array(realm.objects(PlayerModel).sorted("created", ascending: true))
         var countLines = nameTable.count
         if countLines == 1 {
             countLines += 1
@@ -34,25 +33,25 @@ class MySKStatistic: MySKTable {
         self.showVerticalLines = true
         self.name = myName
         
-//        let pSize = parent.parent!.scene!.size
-//        let myStartPosition = CGPointMake(-pSize.width, (pSize.height - size.height) / 2 - 10)
-//        let myZielPosition = CGPointMake(pSize.width / 2, pSize.height / 2) //(pSize.height - size.height) / 2 - 10)
-//        self.position = myStartPosition
+        //        let pSize = parent.parent!.scene!.size
+        //        let myStartPosition = CGPointMake(-pSize.width, (pSize.height - size.height) / 2 - 10)
+        //        let myZielPosition = CGPointMake(pSize.width / 2, pSize.height / 2) //(pSize.height - size.height) / 2 - 10)
+        //        self.position = myStartPosition
         
-//        self.zPosition = parent.zPosition + 200
+        //        self.zPosition = parent.zPosition + 200
         
         
         showMe(showPlayerStatistic)
         
         
-//        self.alpha = 1.0
-//        //        self.userInteractionEnabled = true
-//        let actionMove = SKAction.moveTo(myTargetPosition, duration: 1.0)
-//        let alphaAction = SKAction.fadeOutWithDuration(1.0)
-//        parent.parent!.addChild(self)
-//        
-//        parent.runAction(alphaAction)
-//        self.runAction(actionMove)
+        //        self.alpha = 1.0
+        //        //        self.userInteractionEnabled = true
+        //        let actionMove = SKAction.moveTo(myTargetPosition, duration: 1.0)
+        //        let alphaAction = SKAction.fadeOutWithDuration(1.0)
+        //        parent.parent!.addChild(self)
+        //
+        //        parent.runAction(alphaAction)
+        //        self.runAction(actionMove)
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -63,11 +62,11 @@ class MySKStatistic: MySKTable {
         let elements: [MultiVar] = [MultiVar(string: GV.language.getText(.TCPlayer)),
                                     MultiVar(string: GV.language.getText(.TCCountPlays)),
                                     MultiVar(string: GV.language.getText(.TCAllTime)),
-                                   ]
+                                    ]
         showRowOfTable(elements, row: 0, selected: true)
         for row in 0..<nameTable.count {
             if nameTable[row].name != GV.language.getText(.TCAnonym) || row == 0 {
-                let statisticTable = realm!.objects(StatisticModel).filter("playerID = %d", nameTable[row].ID)
+                let statisticTable = realm.objects(StatisticModel).filter("playerID = %d", nameTable[row].ID)
                 var allTime = 0
                 var countPlays = 0
                 for index in 0..<statisticTable.count {
@@ -118,8 +117,8 @@ class MySKStatistic: MySKTable {
                 if column == myColumnWidths.count - 1 {
                     showDetailedPlayerStatistic(row - 1)
                 }
-           }
-
+            }
+            
         }
         
     }
@@ -153,7 +152,8 @@ class MySKStatistic: MySKTable {
             break
         }
     }
-
+    
     
 }
+
 

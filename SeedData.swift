@@ -9,11 +9,9 @@
 import CoreData
 
 
-//class SeedData: NSManagedObject {
-//
-//    @NSManaged var gameType: NSNumber?
-//    @NSManaged var gameDifficulty: NSNumber?
-//    @NSManaged var gameNumber: NSNumber?
-//    @NSManaged var seed: NSObject?
-//
-//}
+class SeedData: NSManagedObject {
+
+    @NSManaged var gameNumber: NSNumber?
+    @NSManaged var seed: NSObject?
+
+}

@@ -8,48 +8,73 @@
 
 
 import CloudKit
+import RealmSwift
+
 
 class CloudData {
     var container: CKContainer
-    var privatDB: CKDatabase
+//    var privatDB: CKDatabase
     var publicDB: CKDatabase
     var wait = true
     
     init() {
         container = CKContainer.defaultContainer()
         publicDB = container.publicCloudDatabase
-        privatDB = container.privateCloudDatabase
+//        privatDB = container.privateCloudDatabase
     }
     
-//    func saveRecord(seedData: SeedDataStruct) {
-//        let seedDataRecord = CKRecord(recordType: "SeedData")
-//        seedDataRecord.setValue(NSNumber(longLong: seedData.gameType), forKey: "gameType")
-//        seedDataRecord.setValue(NSNumber(longLong: seedData.gameDifficulty), forKey: "gameDifficulty")
-//        seedDataRecord.setValue(NSNumber(longLong: seedData.gameNumber), forKey: "gameNumber")
-//        seedDataRecord.setValue(seedData.seed, forKey: "seed")
-//        publicDB.saveRecord(seedDataRecord, completionHandler: { returnRecord, error in
-//            if let err = error {
-//                print("error: \(err)")
-//            }
-//        })
-//    }
+    func saveRecord(gameNumber: Int, seed: NSData) {
+        let SeedDataRecord = CKRecord(recordType: "SeedData")
+        SeedDataRecord.setValue(NSNumber(longLong: Int64(gameNumber)), forKey: "gameNumber")
+        SeedDataRecord.setValue(seed, forKey: "seed")
+        publicDB.saveRecord(SeedDataRecord, completionHandler: { (returnRecord, error) in
+            if let _ = error {
+                print("error by save: \(gameNumber)", error)
+            } else {
+                print("OK, check now:", gameNumber)
+                let predicate = NSPredicate(format: "gameNumber = %d", gameNumber)
+                let query = CKQuery(recordType: "SeedData", predicate: predicate)
+                self.publicDB.performQuery(query, inZoneWithID: nil) {
+                    results, error in
+                    if let _  = error {
+                        print("error by check \(gameNumber)", error)
+                    } else {
+                        print("OK by check \(gameNumber)")
+                        let realm: Realm = try! Realm()
+                        try! realm.write({
+                            realm.objects(GameModel).filter("gameNumber = %d", gameNumber).first!.played = true
+                        })
+                    }
+                }
+
+            }
+            
+        })
+    }
     
-//    func readRecord(gameType: Int64, gameDifficulty: Int64, gameNumber: Int64) {
-//        let p1 = NSPredicate(format: "gameDifficulty = %d", gameDifficulty)
-//        let p2 = NSPredicate(format: "gameNumber = %d", gameNumber)
-//        let p3 = NSPredicate(format: "gameType = %d", gameNumber)
-//        let predicate = NSCompoundPredicate.init(andPredicateWithSubpredicates: [p1, p2, p3])
-//        let query = CKQuery(recordType: "SeedData", predicate: predicate)
-//        privatDB.performQuery(query, inZoneWithID: nil) {
-//            results, error in
-//            if error != nil {
-//                
-//            } else {
-//                //println("results:\(results.count)")
-//                self.wait = false
-//            }
-//        }
-//        
-//    }
     
+    
+    func readRecord(gameNumber: Int) {
+        let predicate = NSPredicate(format: "gameNumber = %d", gameNumber)
+        let query = CKQuery(recordType: "SeedData", predicate: predicate)
+        publicDB.performQuery(query, inZoneWithID: nil) {
+            results, error in
+            if error != nil {
+                print("error by load \(gameNumber)", error)
+            } else {
+                //println("results:\(results.count)")
+                let record = results![0]
+//                seed = record.objectForKey("seed") as? NSData
+                print("OK by load \(gameNumber)")
+                let gameModel = GameModel()
+                gameModel.gameNumber = gameNumber
+                gameModel.seedData = (record.objectForKey("seed") as? NSData)!
+                let realm: Realm = try! Realm()
+                try! realm.write({
+                    realm.add(gameModel)
+                })
+            }
+        }
+        
+    }
 }

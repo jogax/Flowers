@@ -10,9 +10,10 @@ import UIKit
 import SpriteKit
 import RealmSwift
 
-let Pi = CGFloat(M_PI)
+var Pi = CGFloat(M_PI)
 let DegreesToRadians = Pi / 180
 let RadiansToDegrees = 180 / Pi
+let countGames = 10000
 
 
 class ViewController: UIViewController, SettingsDelegate, UIApplicationDelegate {
@@ -23,11 +24,20 @@ class ViewController: UIViewController, SettingsDelegate, UIApplicationDelegate 
     var flowersScene: FlowerGameScene?
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-//        _ = CreateGamePredefinition(countGames: 10000)
-        
-        copyDefaultRealmFileIfNotExistsYet()
+
+        self.importGamePredefinitions()
         startScene()
+
+//        _ = CreateGamePredefinition(countGames: countGames)
+//        exportGames()
+        
+//        let _ = ImportGamePredefinitions(countGames: countGames)
+//        backgroundThread(background: {
+//            self.loadGamePredefinitionIfNecessary(countGames)
+//        })
+//        sleep(Double(1)) // wait for a second
+
+//        copyDefaultRealmFileIfNotExistsYet()
 //        printFonts()
         // Do any additional setup after loading the view, typically from a nib.
      }
@@ -36,7 +46,30 @@ class ViewController: UIViewController, SettingsDelegate, UIApplicationDelegate 
         _ = 0
     }
     
-    
+    func importGamePredefinitions() {
+
+        func storeGame(gameNumber: Int, seed: NSData? = nil) {
+            for levelID in 0..<LevelsForPlayWithCards().count() {
+                let game = GameModel()
+                let ID = GV.createNewRecordID(.GameModel)
+                game.ID = ID
+                game.gameNumber = gameNumber
+                game.levelID = levelID
+                game.seedData = seed!
+                try! realm.write({
+                    realm.add(game)
+                })
+            }
+        }
+        
+        if realm.objects(GameModel).count == 0 {
+            for gameNumber in 0..<GamePredefinitions.gameArray.count {
+                storeGame(gameNumber, seed: GamePredefinitions.gameArray[gameNumber]!.dataFromHexadecimalString()!)
+            }
+        }
+
+
+    }
     
     func copyDefaultRealmFileIfNotExistsYet() {
         let paths = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)
@@ -54,8 +87,35 @@ class ViewController: UIViewController, SettingsDelegate, UIApplicationDelegate 
 //            try! manager.removeItemAtPath(myOrigRealmFile!)
         }
         realm = try! Realm()
-
     }
+    
+    func loadGamePredefinitionIfNecessary(countGames: Int) {
+        let realm = try! Realm()
+        if realm.objects(GameModel).count < countGames {
+            while Reachability.isConnectedToNetwork() == false {
+                sleep(Double(5))
+            }
+            if Reachability.isConnectedToNetwork() == true {
+                for gameNumber in 0..<countGames {
+                    if realm.objects(GameModel).filter("gameNumber = %d", gameNumber).count == 0 {
+                        GV.cloudStore.readRecord(gameNumber)
+                        sleep(0.025)
+                    }
+                }
+            }
+        }
+    }
+    
+    func exportGames() {
+        for gameNumber in 0..<500 {
+            
+            let game = realm.objects(GameModel).filter("gameNumber = %d", gameNumber).first
+            let myNSData = game!.seedData
+            let quote = "\""
+            print("\(gameNumber):\(quote)\(myNSData.hexString!)\(quote),")
+        }
+    }
+    
     func startScene() {
         skView = self.view as? SKView
         skView!.showsFPS = true
@@ -68,20 +128,20 @@ class ViewController: UIViewController, SettingsDelegate, UIApplicationDelegate 
 
 
         
-        if realm!.objects(PlayerModel).count == 0 {
+        if realm.objects(PlayerModel).count == 0 {
               GV.createNewPlayer(true)
         }
         
         
-        GV.player = realm!.objects(PlayerModel).filter("isActPlayer = TRUE").first!
+        GV.player = realm.objects(PlayerModel).filter("isActPlayer = TRUE").first!
  
-        if realm!.objects(StatisticModel).filter("playerID = %d", GV.player!.ID).count == 0 {
+        if realm.objects(StatisticModel).filter("playerID = %d", GV.player!.ID).count == 0 {
             let statistic = StatisticModel()
             statistic.ID = GV.createNewRecordID(.StatisticModel)
             statistic.playerID = GV.player!.ID
             statistic.levelID = GV.player!.levelID
-            try! realm!.write({
-                realm!.add(statistic)
+            try! realm.write({
+                realm.add(statistic)
             })
         } else {
 //            GV.statistic = GV.realm.objects(StatisticModel).filter("playerID = %d AND levelID = %d", GV.player!.ID, GV.player!.levelID).first!

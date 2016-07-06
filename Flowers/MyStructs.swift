@@ -46,7 +46,7 @@ struct GV {
     static let oneGrad:CGFloat = CGFloat(M_PI) / 180
 
 //    static let dataStore = DataStore()
-//    static let cloudStore = CloudData()
+    static let cloudStore = CloudData()
     
     static let deviceType = UIDevice.currentDevice().modelName
     
@@ -91,32 +91,32 @@ struct GV {
     static func createNewRecordID(recordType: RealmRecordType)->Int {
         var recordID: RecordIDModel
         var ID = 0
-        let inWrite = realm!.inWriteTransaction
+        let inWrite = realm.inWriteTransaction
         if !inWrite {
-            realm!.beginWrite()
+            realm.beginWrite()
         }
-        if realm!.objects(RecordIDModel).count == 0 {
+        if realm.objects(RecordIDModel).count == 0 {
             recordID = RecordIDModel()
-            realm!.add(recordID)
+            realm.add(recordID)
         } else  {
-            recordID = realm!.objects(RecordIDModel).first!
+            recordID = realm.objects(RecordIDModel).first!
         }
         switch recordType {
         case .GameModel:
-            recordID.gameModelID += 1
             ID = recordID.gameModelID
+            recordID.gameModelID += 1
         case .GameToPlayerModel:
-            recordID.gameToPlayerModelID += 1
             ID = recordID.gameToPlayerModelID
+            recordID.gameToPlayerModelID += 1
         case .PlayerModel:
-            recordID.playerModelID += 1
             ID = recordID.playerModelID
+            recordID.playerModelID += 1
         case .StatisticModel:
-            recordID.statisticModelID += 1
             ID = recordID.statisticModelID
+            recordID.statisticModelID += 1
         }
         if !inWrite {
-            try! realm!.commitWrite()
+            try! realm.commitWrite()
         }
         return ID
     }
@@ -124,16 +124,16 @@ struct GV {
     static func createNewPlayer(isActPlayer: Bool...)->Int {
 //        let newID = GV.playerID.getNewID()!
         let newID = GV.createNewRecordID(.PlayerModel)
-        if newID != 0 {
+//        if newID != 0 {
             let newPlayer = PlayerModel()
             newPlayer.aktLanguageKey = GV.language.getPreferredLanguage()
             newPlayer.name = GV.language.getText(.TCAnonym)
             newPlayer.isActPlayer = isActPlayer.count == 0 ? false : isActPlayer[0]
             newPlayer.ID = newID
-            try! realm!.write({
-                realm!.add(newPlayer)
+            try! realm.write({
+                realm.add(newPlayer)
             })
-        }
+//        }
         return newID
     }
     
@@ -517,6 +517,59 @@ enum LinePosition: Int, CustomStringConvertible {
     }
     
 }
+
+func sleep(sleepTime: Double) {
+    var count = 0
+    let actTime = NSDate()
+    while NSDate().timeIntervalSinceDate(actTime) < sleepTime {
+        count += 1
+    }
+}
+
+func stringArrayToNSData(array: [String]) -> NSData {
+    let data = NSMutableData()
+    let terminator = [0]
+    for string in array {
+        if let encodedString = string.dataUsingEncoding(NSUTF8StringEncoding) {
+            data.appendData(encodedString)
+            data.appendBytes(terminator, length: 1)
+        }
+        else {
+            NSLog("Cannot encode string \"\(string)\"")
+        }
+    }
+    return data
+}
+
+func nsDataToStringArray(data: NSData) -> [String] {
+    var decodedStrings = [String]()
+    
+    var stringTerminatorPositions = [Int]()
+    
+    var currentPosition = 0
+    data.enumerateByteRangesUsingBlock() {
+        buffer, range, stop in
+        
+        let bytes = UnsafePointer<UInt8>(buffer)
+        for i in 0..<range.length {
+            if bytes[i] == 0 {
+                stringTerminatorPositions.append(currentPosition)
+            }
+            currentPosition += 1
+        }
+    }
+    
+    var stringStartPosition = 0
+    for stringTerminatorPosition in stringTerminatorPositions {
+        let encodedString = data.subdataWithRange(NSMakeRange(stringStartPosition, stringTerminatorPosition - stringStartPosition))
+        let decodedString =  NSString(data: encodedString, encoding: NSUTF8StringEncoding) as! String
+        decodedStrings.append(decodedString)
+        stringStartPosition = stringTerminatorPosition + 1
+    }
+    
+    return decodedStrings
+}
+
 
 let atlas = SKTextureAtlas(named: "sprites")
 

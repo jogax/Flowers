@@ -29,24 +29,24 @@ class MyRandom {
     var random: GKARC4RandomSource
     var game: GameModel
     //var seed: NSData
-    init(gameID: Int, levelID: Int) {
+    init(gameNumber: Int, levelID: Int) {
         
 //        let (seedDataStruct, exists) = GV.dataStore.readSeedDataRecord(seedIndex)
-        if let gameData = realm!.objects(GameModel).filter("ID = %d", gameID).first {
+        if let gameData = realm.objects(GameModel).filter("gameNumber = %d and levelID = %d", gameNumber, levelID).first {
             game = gameData
             random = GKARC4RandomSource(seed: gameData.seedData)
             random.dropValuesWithCount(2048)
         }
         else {
 //            random = GKARC4RandomSource()
-            let foundedGame = realm!.objects(GamePredefinitionModel).filter("gameNumber = %d", gameID).first!
+            let foundedGame = realm.objects(GameModel).filter("gameNumber = %d", gameNumber).first!
             random = GKARC4RandomSource(seed: foundedGame.seedData)
             game = GameModel()
             game.seedData = random.seed
             game.levelID = levelID
-            game.ID = gameID
-            try! realm!.write({
-                realm!.add(game)
+            game.ID = gameNumber
+            try! realm.write({
+                realm.add(game)
                 foundedGame.played = true
             })
             random.dropValuesWithCount(2048)

@@ -73,5 +73,7 @@ let ruDictionary: [TextConstants: String] = [
     .TCYourScore:         "Твой результат %",
     .TCYouAreTheBest:    "Вы самый лучший со счетом %",
     .TCGameNumber:       "Номер игры:",
-    .TCChooseGameNumber: "Выбери игру (0-9999)"
+    .TCChooseGameNumber: "Выбери игру (0-9999)",
+    .TCPlayerStatistic:  "Статистика игроков",
+    .TCGameStatistic:    "Статистика игр",
 ]

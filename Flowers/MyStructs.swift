@@ -46,7 +46,7 @@ struct GV {
     static let oneGrad:CGFloat = CGFloat(M_PI) / 180
 
 //    static let dataStore = DataStore()
-    static let cloudStore = CloudData()
+//    static let cloudStore = CloudData()
     
     static let deviceType = UIDevice.currentDevice().modelName
     
@@ -85,7 +85,7 @@ struct GV {
     }
     
     enum RealmRecordType: Int {
-        case GameModel, PlayerModel, StatisticModel, GameToPlayerModel
+        case GameModel, PlayerModel, StatisticModel
     }
     
     static func createNewRecordID(recordType: RealmRecordType)->Int {
@@ -105,9 +105,6 @@ struct GV {
         case .GameModel:
             ID = recordID.gameModelID
             recordID.gameModelID += 1
-        case .GameToPlayerModel:
-            ID = recordID.gameToPlayerModelID
-            recordID.gameToPlayerModelID += 1
         case .PlayerModel:
             ID = recordID.playerModelID
             recordID.playerModelID += 1

@@ -10,11 +10,11 @@ import RealmSwift
 
 class CreateGamePredefinition {
     init(countGames: Int) {
-        let maxGameNumber = realm.objects(GameModel).count
+        let maxGameNumber = realm.objects(GamePredefinitionModel).count
         if maxGameNumber < countGames {
             for index in maxGameNumber..<countGames {
                 let random = GKARC4RandomSource()
-                let game = GameModel()
+                let game = GamePredefinitionModel()
                 game.seedData = random.seed
                 game.gameNumber = index
                 try! realm.write({
@@ -22,7 +22,7 @@ class CreateGamePredefinition {
                 })
             }
         }
-        let gameRecords = realm.objects(GameModel).filter("stored = false")
+        let gameRecords = realm.objects(GamePredefinitionModel).filter("stored = false")
         print("\(gameRecords.count) records to save")
         for record in gameRecords {
 //            if !record.stored {

@@ -208,7 +208,7 @@ class MySKTextField: SKShapeNode, UITextFieldDelegate {
                     OK = false
                 }
             case gameNumberValueLabelIndex:
-                let gameExists = realm.objects(GameModel).filter("gameNumber = %d", Int(textField.text!)!).count > 0
+                let gameExists = realm.objects(GamePredefinitionModel).filter("gameNumber = %d", Int(textField.text!)!).count > 0
                 if !(Int(textField.text!)!.between(game.minValue, max: game.maxValue) && gameExists) {
                     OK = false
                 }

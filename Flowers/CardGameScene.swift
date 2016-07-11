@@ -237,6 +237,8 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
     var freeUndoCounter = 0
     var freeTippCounter = 0
     
+    let freeGameCount = 500
+    
     
     //let timeLimitKorr = 5 // sec for pro Sprite
     //    var startTime: NSDate?
@@ -337,6 +339,9 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
     var panel: MySKPanel?
     var countUpAdder = 0
     
+//    var actGame: GameModel?
+    var actGame: GameModel?
+    
     
     var stopCreateTippsInBackground = false {
         didSet {
@@ -434,36 +439,32 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         stack = Stack()
         timeCount = 0
         if newGame {
-            try! realm.write() { // delete all empty games
-//                let emptyGames = realm.objects(GameModel).filter("bestScore = 0")
-//                for index in 0..<emptyGames.count {
-//                    let predefinedGame = realm.objects(GameModel).filter("gameNumber = %d", emptyGames[index].gameNumber).first!
-//                    predefinedGame.played = false
-//                }
-                realm.delete(realm.objects(GameToPlayerModel).filter("score = 0"))
-//                realm.delete(realm.objects(GameModel).filter("bestScore = 0"))
-            }
             gameNumber = -1
-            let games = realm.objects(GameModel).filter("levelID = %d and played = true", levelIndex) // search only the games of act level
-            for game in games {
-                if realm.objects(GameToPlayerModel).filter("playerID = %d and gameID = %d", GV.player!.ID, game.ID).count == 0 {
-                    gameNumber = game.gameNumber
-                    createGameToPlayerRecord(GV.player!.ID, gameID: game.ID)
+            let allGames = realm.objects(GameModel).filter("levelID = %d", levelIndex) //search all games on this level
+            for game in allGames {
+                if realm.objects(GameModel).filter("gameNumber = %d and levelID = %d and playerID = %d", game.gameNumber, levelIndex, GV.player!.ID).count == 0 {
+                    gameNumber = game.gameNumber  // founded a game not played by actPlayer
+                    createGameRecord(gameNumber)
                     break
                 }
             }
-                
+            
             if gameNumber == -1 {
-                gameNumber = realm.objects(GameModel).filter("played = false and levelID = %d", levelIndex).sorted("gameNumber").first!.gameNumber
-                createGameToPlayerRecord(GV.player!.ID, gameID: gameNumber)
+                if allGames.count > 0 {
+                    gameNumber = allGames.max("gameNumber")! + 1
+                    if gameNumber == realm.objects(GamePredefinitionModel).count {  // all Plays played
+                        // search plays with score = 0
+                    }
+                } else {
+                    gameNumber = 0
+                }
+                createGameRecord(gameNumber)
             }
         } else {
-            if realm.objects(GameModel).filter("gameNumber = %d and levelID = %d", gameNumber, levelIndex).count == 0 { // choosed a game Number
-                createGameToPlayerRecord(GV.player!.ID, gameID: gameNumber)
-            }
+            createGameRecord(gameNumber)
         }
         
-        random = MyRandom(gameNumber: gameNumber, levelID: levelIndex)
+        random = MyRandom(gameNumber: gameNumber)
         
         stopTimer(&countUp)
         
@@ -575,15 +576,18 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
 
     }
     
-    func createGameToPlayerRecord(playerID: Int, gameID: Int) {
-        let gameToPlayerNew = GameToPlayerModel()
-        gameToPlayerNew.ID = GV.createNewRecordID(.GameToPlayerModel)
-        gameToPlayerNew.playerID = GV.player!.ID
-        gameToPlayerNew.gameID = gameID
+    func createGameRecord(gameNumber: Int) {
+        let gameNew = GameModel()
+        gameNew.ID = GV.createNewRecordID(.GameModel)
+        gameNew.gameNumber = gameNumber
+        gameNew.levelID = levelIndex
+        gameNew.playerID = GV.player!.ID
+        gameNew.played = false
         try! realm.write() {
-            realm.add(gameToPlayerNew)
+            realm.add(gameNew)
         }
-     }
+        actGame = gameNew
+    }
     
     func createLabels(label: SKLabelNode, text: String, column: Int, row: Int) {
         label.text = text
@@ -1960,18 +1964,12 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
             if statistic.bestScore < actScore {
                 statistic.bestScore = actScore
             }
-            let actGame = realm.objects(GameModel).filter("gameNumber = %d and levelID = %d", gameNumber, levelIndex).first
-            if  actGame!.bestTime == 0 || timeCount < actGame!.bestTime {
-                actGame!.bestTime = timeCount
-            }
-            if actGame!.bestScore < actScore {
-                actGame!.bestScore = actScore
-            }
+            
+            actGame!.time = timeCount
+            actGame!.score = actScore
             
             
             createStatisticRecordIfRequired()
-            let gameToPlayer = realm.objects(GameToPlayerModel).filter("playerID = %d and gameID = %d", GV.player!.ID,actGame!.ID).first
-            gameToPlayer!.score = actScore
             actGame!.played = true
             try! realm.commitWrite()
             let alert = getNextPlayArt(true, statistic: statistic)
@@ -1993,12 +1991,18 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
     }
     
     func chooseGameNumber () {
-        let _ = MySKTextField(
-          parent: self,
-          position: self.position,
-          callBack: callBackFromMySKTextField,
-          actLevel: ActMinMaxValues(actValue: levelIndex + 1, minValue: 1, maxValue: Int(LevelsForPlayWithCards().count())),
-          actGameNumber: ActMinMaxValues(actValue: gameNumber, minValue: 1, maxValue: 9999)
+//        let _ = MySKTextField(
+//          parent: self,
+//          position: self.position,
+//          callBack: callBackFromMySKTextField,
+//          actLevel: ActMinMaxValues(actValue: levelIndex + 1, minValue: 1, maxValue: Int(LevelsForPlayWithCards().count())),
+//          actGameNumber: ActMinMaxValues(actValue: gameNumber, minValue: 1, maxValue: 9999)
+//        )
+        let _ = ChooseGamePanel(
+            view: view!,
+            frame: CGRectMake(self.frame.midX, self.frame.midY, self.frame.width * 0.5, self.frame.height * 0.5),
+            parent: self,
+            callBack: callBackFromMySKTextField
         )
     }
     
@@ -2048,31 +2052,24 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         
         
         if congratulations {
-            let gameID = realm.objects(GameModel).filter("gameNumber = %d and levelID = %d", gameNumber, levelIndex).first!.ID
-            let actGameToPlayer = realm.objects(GameToPlayerModel).filter("playerID = %d and gameID = %d", GV.player!.ID, gameID).first!
-            var bestGameScore = actGameToPlayer.score
-            var bestScorePlayer = GV.player!.name
+            let actGames = realm.objects(GameModel).filter("levelID = %d and gameNumber = %d", levelIndex, actGame!.gameNumber)
+            
+            let bestGameScore: Int = actGames.max("score")!
+            let bestScorePlayerID = actGames.filter("score = %d", bestGameScore).first!.playerID
+            let bestScorePlayerName = realm.objects(PlayerModel).filter("ID = %d",bestScorePlayerID).first!.name
+            
             tippCountLabel.text = String(0)
 
-            let allGames = realm.objects(GameToPlayerModel).filter("gameID = %d", gameID)
-            for checkGame in allGames {
-                if checkGame.playerID != GV.player!.ID {
-                    if bestGameScore < checkGame.score {
-                        bestGameScore = checkGame.score
-                        bestScorePlayer = realm.objects(PlayerModel).filter("ID = %d",checkGame.playerID).first!.name
-                    }
-                }
-            }
             congratulationsTxt = GV.language.getText(.TCLevel, values: " \(levelIndex + 1)")
             congratulationsTxt += "\r\n" + GV.language.getText(.TCGameComplete, values: String(gameNumber))
             congratulationsTxt += "\r\n" + GV.language.getText(TextConstants.TCCongratulations) + playerName
 //            congratulationsTxt += "\r\n\r\n" + GV.language.getText(.TCStatistics, values: String(levelIndex + 1))
             congratulationsTxt += "\r\n ============== \r\n"
             
-            if allGames.count > 1 {
-                if bestScorePlayer != GV.player!.name {
-                    congratulationsTxt += "\r\n" + GV.language.getText(.TCYourScore, values: String(actGameToPlayer.score))
-                    congratulationsTxt += "\r\n" + GV.language.getText(.TCBestScoreOfGame, values: String(bestGameScore), bestScorePlayer)
+            if actGames.count > 1 {
+                if bestScorePlayerName != GV.player!.name {
+                    congratulationsTxt += "\r\n" + GV.language.getText(.TCYourScore, values: String(actGame!.score))
+                    congratulationsTxt += "\r\n" + GV.language.getText(.TCBestScoreOfGame, values: String(bestGameScore), bestScorePlayerName)
                 } else {
                     congratulationsTxt += "\r\n" + GV.language.getText(.TCYouAreTheBest, values: String(bestGameScore))
                 }

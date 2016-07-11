@@ -9,6 +9,7 @@
 import UIKit
 import SpriteKit
 import RealmSwift
+import GameplayKit
 
 var Pi = CGFloat(M_PI)
 let DegreesToRadians = Pi / 180
@@ -29,7 +30,7 @@ class ViewController: UIViewController, SettingsDelegate, UIApplicationDelegate 
         startScene()
 
 //        _ = CreateGamePredefinition(countGames: countGames)
-//        exportGames()
+//        exportGames(1000)
         
 //        let _ = ImportGamePredefinitions(countGames: countGames)
 //        backgroundThread(background: {
@@ -47,24 +48,16 @@ class ViewController: UIViewController, SettingsDelegate, UIApplicationDelegate 
     }
     
     func importGamePredefinitions() {
-
-        func storeGame(gameNumber: Int, seed: NSData? = nil) {
-            for levelID in 0..<LevelsForPlayWithCards().count() {
-                let game = GameModel()
-                let ID = GV.createNewRecordID(.GameModel)
-                game.ID = ID
+        let actCount = realm.objects(GamePredefinitionModel).count
+        if actCount < GamePredefinitions.gameArray.count {
+            for gameNumber in actCount..<GamePredefinitions.gameArray.count {
+                let game = GamePredefinitionModel()
                 game.gameNumber = gameNumber
-                game.levelID = levelID
-                game.seedData = seed!
+                game.seedData = GamePredefinitions.gameArray[gameNumber]!.dataFromHexadecimalString()!
                 try! realm.write({
                     realm.add(game)
                 })
-            }
-        }
-        
-        if realm.objects(GameModel).count == 0 {
-            for gameNumber in 0..<GamePredefinitions.gameArray.count {
-                storeGame(gameNumber, seed: GamePredefinitions.gameArray[gameNumber]!.dataFromHexadecimalString()!)
+
             }
         }
 
@@ -98,7 +91,7 @@ class ViewController: UIViewController, SettingsDelegate, UIApplicationDelegate 
             if Reachability.isConnectedToNetwork() == true {
                 for gameNumber in 0..<countGames {
                     if realm.objects(GameModel).filter("gameNumber = %d", gameNumber).count == 0 {
-                        GV.cloudStore.readRecord(gameNumber)
+//                        GV.cloudStore.readRecord(gameNumber)
                         sleep(0.025)
                     }
                 }
@@ -106,11 +99,10 @@ class ViewController: UIViewController, SettingsDelegate, UIApplicationDelegate 
         }
     }
     
-    func exportGames() {
-        for gameNumber in 0..<500 {
-            
-            let game = realm.objects(GameModel).filter("gameNumber = %d", gameNumber).first
-            let myNSData = game!.seedData
+    func exportGames(countGames: Int) {
+        for gameNumber in 0..<countGames {
+            let random = GKARC4RandomSource()
+            let myNSData = random.seed
             let quote = "\""
             print("\(gameNumber):\(quote)\(myNSData.hexString!)\(quote),")
         }

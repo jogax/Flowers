@@ -9,23 +9,20 @@
 import Foundation
 import RealmSwift
 
-//class GamePredefinitionModel: Object {
-//    
-//    dynamic var gameNumber = 0 // gameNumber
-//    dynamic var levelID = 0
-//    dynamic var stored = false
-//    dynamic var played = false
-//    dynamic var seedData: NSData? = NSData()
-//    
-//    override  static func primaryKey() -> String {
-//        return "gameNumber"
-//    }
-//    override static func indexedProperties() -> [String] {
-//        return ["gameNumber", "stored", "played"]
-//    }
-//
-//    
-//    
-//}
+class GamePredefinitionModel: Object {
+    
+    dynamic var gameNumber = 0 // gameNumber
+    dynamic var seedData: NSData? = NSData()
+    
+    override  static func primaryKey() -> String {
+        return "gameNumber"
+    }
+    override static func indexedProperties() -> [String] {
+        return ["gameNumber"]
+    }
+
+    
+    
+}
 
 

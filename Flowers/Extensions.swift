@@ -127,6 +127,10 @@ extension Int {
         }
         return numberString
     }
+    
+    func toCGFloat()->CGFloat {
+        return CGFloat(self)
+    }
 }
 
 extension CGFloat {
@@ -181,8 +185,6 @@ extension String {
         return data
     }
     
-
-
 }
 
 extension UIColor {

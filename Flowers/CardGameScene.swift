@@ -237,7 +237,6 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
     var freeUndoCounter = 0
     var freeTippCounter = 0
     
-    let freeGameCount = 500
     
     
     //let timeLimitKorr = 5 // sec for pro Sprite
@@ -567,7 +566,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         let showScoreText: String = GV.language.getText(.TCGameScore, values: "\(levelScore)", "\(timeFactor().twoDecimals)", "0")
         let name = GV.player!.name == GV.language.getText(.TCAnonym) ? GV.language.getText(.TCGuest) : GV.player!.name
         createLabels(playerLabel, text: GV.language.getText(TextConstants.TCPlayer) + ": \(name)", column: 1, row: 1)
-        createLabels(gameNumberLabel, text: GV.language.getText(.TCGameNumber) + " \(gameNumber)", column: 2, row: 1)
+        createLabels(gameNumberLabel, text: GV.language.getText(.TCGameNumber) + " \(gameNumber + 1)", column: 2, row: 1)
         createLabels(levelLabel, text: GV.language.getText(TextConstants.TCLevel) + ": \(levelIndex + 1)", column: 3, row: 1)
         createLabels(showTimeLabel, text: "", column: 1, row: 2)
         createLabels(showScoreLabel, text: showScoreText, column: 1, row: 3)
@@ -686,7 +685,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         let name = GV.player!.name == GV.language.getText(.TCAnonym) ? GV.language.getText(.TCGuest) : GV.player!.name
         playerLabel.text = GV.language.getText(.TCPlayer) + ": \(name)"
         levelLabel.text = GV.language.getText(.TCLevel) + ": \(levelIndex + 1)"
-        gameNumberLabel.text = GV.language.getText(.TCGameNumber) + "\(gameNumber)"
+        gameNumberLabel.text = GV.language.getText(.TCGameNumber) + "\(gameNumber + 1)"
 
         showCardCount()
         showTippCount()
@@ -2006,14 +2005,10 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate { 
         )
     }
     
-    func callBackFromMySKTextField(gameNumber: Int, levelIndex: Int) {
-        if self.gameNumber != gameNumber || self.levelIndex != levelIndex - 1 {
-            self.gameNumber = gameNumber
-            try! realm.write({
-                GV.player!.levelID = levelIndex - 1
-            })
-            newGame(false)
-        }
+    func callBackFromMySKTextField(gameNumber: Int) {
+        self.gameNumber = gameNumber
+        self.userInteractionEnabled = true
+        newGame(false)
     }
     
     func newGame(next: Bool) {

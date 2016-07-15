@@ -26,6 +26,8 @@ struct GV {
 //    static let notificationMadeMove = "MadeMove"
 //    static let notificationJoystickMoved = "joystickMoved"
 //    static let notificationColorChanged = "colorChanged"
+    static let freeGameCount = 250
+
     static var dX: CGFloat = 0
     static var speed: CGSize = CGSizeZero
     static var touchPoint = CGPointZero

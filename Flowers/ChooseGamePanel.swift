@@ -22,11 +22,13 @@ class ChooseGamePanel: SKSpriteNode {
     let groupName = "Group"
     let gameName = "Game"
     let gamesBackGroundName = "gamesBackGround"
+    let backGroundShapeName = "backGroundShape"
     let dot = "."
     let myFontName = "TimesNewRomanBold"
     let newLine = "\r\n"
     let gamesPerGroup = 25
     var deleteIndex: Int = 0
+    var touchStartTime: NSDate?
 
     
     var view: UIView
@@ -77,10 +79,12 @@ class ChooseGamePanel: SKSpriteNode {
         parentScene!.userInteractionEnabled = false
         parentScene!.addChild(self)
         
+        addSwipe()
         let backGroundShape = SKShapeNode(rect: CGRectMake(0,0, self.size.width, self.size.height * 0.3))
         backGroundShape.position = CGPointMake(-self.size.width / 2 , self.size.height * 0.3)
         backGroundShape.fillColor = UIColor.whiteColor() //(red: 0xcc/0xff, green: 0xff/0xff, blue: 0xe5/0xff, alpha: 1.0)
         backGroundShape.zPosition = self.zPosition + 10
+        backGroundShape.name = backGroundShapeName
         self.addChild(backGroundShape)
         
         let backGroundSize = CGRectMake(0, 0, self.size.width, self.size.height * 1.5 ) //CGFloat(countGroups) / countHor * (buttonSize.height + gDistance) + gDistance)
@@ -211,8 +215,12 @@ class ChooseGamePanel: SKSpriteNode {
     }
     
     func deleteAllButtons() {
-        while deleteIndex<self.children.count {
+        var index = deleteIndex
+        while index<self.children.count {
             self.children[children.count - 1].removeFromParent()
+        }
+        for index in 0..<gamesBackground.children.count {
+            gamesBackground.children.last!.removeFromParent()
         }
     }
     
@@ -302,6 +310,7 @@ class ChooseGamePanel: SKSpriteNode {
         let node = nodeAtPoint(touchLocation)
         touchLastLocation = touchLocation
         touchStartLocation = touchLocation
+        touchStartTime = NSDate()
         touchesBeganWithNode = node
         //        print(node.name)
         
@@ -322,17 +331,26 @@ class ChooseGamePanel: SKSpriteNode {
     override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
         let touchLocation = touches.first!.locationInNode(self)
         let node = nodeAtPoint(touchLocation)
-        let components = node.name!.componentsSeparatedByString(dot)
-        if touchLastLocation.y - touchStartLocation.y < 12 {
-            
-            switch components[0] {
-                case levelName:
-                    setLevel(Int(components[1])!)
-                case groupName:
-                    goToGroup(Int(components[1])!)
-            case gameName:
-                    goToGame(Int(components[1])!)
-                default: break
+        let touchDuration = NSDate().timeIntervalSinceDate(touchStartTime!)
+        let touchDistance = touchStartLocation.y - touchLocation.y
+        if abs(touchDistance) > 20 {
+            let multiplier = touchDistance > 0 ? -1 : 1
+            let moveAction = SKAction.moveBy(CGVector(dx: 0, dy: 500 * multiplier), duration: 0.3)
+            gamesBackground.runAction(moveAction)
+        } else {
+            if node.name != nil {
+                let components = node.name!.componentsSeparatedByString(dot)
+                if touchLastLocation.y - touchStartLocation.y < 12 {
+                    switch components[0] {
+                        case levelName:
+                            setLevel(Int(components[1])!)
+                        case groupName:
+                            goToGroup(Int(components[1])!)
+                    case gameName:
+                            goToGame(Int(components[1])!)
+                        default: break
+                    }
+                }
             }
         }
     }
@@ -417,9 +435,36 @@ class ChooseGamePanel: SKSpriteNode {
         return image
     }
     
+    func addSwipe() {
+//        let directions: [UISwipeGestureRecognizerDirection] = [.Up, .Down, .Left, .Right]
+//        for direction in directions {
+//            let gesture = UISwipeGestureRecognizer(target: self, action: #selector(ChooseGamePanel.handleSwipe(_:)))
+//            gesture.direction = direction
+//            gesture.cancelsTouchesInView = true
+//            gesture.delaysTouchesBegan = true
+//            self.view.addGestureRecognizer(gesture)
+//        }
+    }
     
-    
-    
+    func handleSwipe(sender: UISwipeGestureRecognizer) {
+        switch sender.direction {
+        case UISwipeGestureRecognizerDirection.Right:
+            print("Swiped right")
+        case UISwipeGestureRecognizerDirection.Down:
+            let touchDuration = NSDate().timeIntervalSinceDate(touchStartTime!)
+            let moveAction = SKAction.moveBy(CGVector(dx: 0, dy: -1000), duration: 0.3)
+            gamesBackground.runAction(moveAction)
+        case UISwipeGestureRecognizerDirection.Left:
+            print("Swiped left")
+        case UISwipeGestureRecognizerDirection.Up:
+            let touchDuration = NSDate().timeIntervalSinceDate(touchStartTime!)
+            let moveAction = SKAction.moveBy(CGVector(dx: 0, dy: 1000), duration: 0.3)
+            gamesBackground.runAction(moveAction)
+        default:
+            break
+        }
+    }
+
     deinit {
     }
     

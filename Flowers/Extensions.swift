@@ -131,12 +131,30 @@ extension Int {
     func toCGFloat()->CGFloat {
         return CGFloat(self)
     }
+    
+    func isOdd() -> Bool {
+        if (self % 2 == 0) {
+            return true
+        }
+        else {
+            return false
+        }
+    }
 }
 
 extension CGFloat {
     func between(min: CGFloat, max: CGFloat)->Bool {
         return self >= min && self <= max
     }
+    
+    func isPositiv()->Bool {
+        return (self >= 0)
+    }
+    
+    func isNegativ()->Bool {
+        return (self < 0)
+    }
+
 }
 
 extension String {

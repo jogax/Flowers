@@ -44,6 +44,7 @@ class ChooseGamePanel: SKSpriteNode {
     var showGames = false
     var gamesBackground = SKShapeNode()
     var gamesBackgroundStartPosition = CGPointZero
+    var gamesBackgroundLastPosition = CGPointZero
     var touchLastLocation = CGPointZero
     var touchStartLocation = CGPointZero
     
@@ -52,6 +53,21 @@ class ChooseGamePanel: SKSpriteNode {
     var playerChanged = false
     var touchesBeganWithNode: SKNode?
     var shadow: SKSpriteNode?
+    
+    struct touchMoving {
+        var position: CGPoint
+        var time: NSDate
+        var movedBy: CGVector
+        var movingSpeed: CGVector
+        init(position: CGPoint = CGPointZero, time:NSDate = NSDate(), movedBy: CGVector = CGVectorMake(0, 0), movingSpeed:CGVector = CGVectorMake(0,0)) {
+            self.position = position
+            self.time = time
+            self.movedBy = movedBy
+            self.movingSpeed = movingSpeed
+        }
+    }
+    
+    var moving = [touchMoving]()
     init(view: UIView, frame: CGRect, parent: SKScene, callBack: (Int)->()) {
         let size = parent.size // 1.5 //CGSizeMake(parent.size.width / 2, parent.s)
         //        let texture: SKTexture = SKTexture(imageNamed: "panel")
@@ -94,6 +110,8 @@ class ChooseGamePanel: SKSpriteNode {
         gamesBackground.zPosition = 10
         gamesBackground.name = gamesBackGroundName
         gamesBackgroundStartPosition = gamesBackground.position
+        gamesBackgroundLastPosition = gamesBackgroundStartPosition
+
         self.addChild(gamesBackground)
 
         
@@ -142,6 +160,7 @@ class ChooseGamePanel: SKSpriteNode {
         let gDistance = size.width / (CGFloat(countHor) + 1)
         let width = gDistance * 0.75
         deleteAllButtons()
+        var gameNumbers = [Int]()
         
         for groupIndex in 0..<countGroups {
             let groupIndexHor = groupIndex % countHor
@@ -149,8 +168,14 @@ class ChooseGamePanel: SKSpriteNode {
             let minGameNrInGroup = groupIndex * gamesPerGroup + 1
             let maxGameNrInGroup = minGameNrInGroup + gamesPerGroup - 1
             let filter = "levelID = %d and gameNumber >= %d and gameNumber <= %d and played = true"
-            let countGamesInGroup = gamesPerGroup - realm.objects(GameModel).filter(filter, GV.player!.levelID, minGameNrInGroup - 1, maxGameNrInGroup - 1).count
-            let groupText = [String(minGameNrInGroup), "...", String(maxGameNrInGroup), "\(countGamesInGroup) / \(gamesPerGroup)"]
+            let gamesInGroup = realm.objects(GameModel).filter(filter, GV.player!.levelID, minGameNrInGroup - 1, maxGameNrInGroup - 1)
+            gameNumbers.removeAll()
+            for game in gamesInGroup {
+                if !gameNumbers.contains(game.gameNumber) {
+                    gameNumbers.append(game.gameNumber)
+                }
+            }
+            let groupText = [String(minGameNrInGroup), "...", String(maxGameNrInGroup), "\(gamesPerGroup - gameNumbers.count) / \(gamesPerGroup)"]
             groupButtons.append(
                 createGroupButton(
                     CGPointMake((CGFloat(groupIndexHor) + 1) * gDistance - size.width / 2 - width / 2, size.height * (0.04 - CGFloat(groupIndexVert) * 0.23)),
@@ -183,20 +208,28 @@ class ChooseGamePanel: SKSpriteNode {
             y: gamesBackground.frame.height * 0.7
         )
         
+        gamesBackgroundLastPosition.y = gamesBackgroundStartPosition.y + CGFloat(gamesPerGroup) / countHor * (gDistance + buttonSize.height)
+
         deleteAllButtons()
+//        let adder = (group * gamesPerGroup).isOdd() ? 0 : 1
         for index in 0..<gamesPerGroup {
+            var players = [Int]()
             let gameNumber =  group * gamesPerGroup + index
-            let gameIndexHor = gameNumber % Int(countHor)
+            let gameIndexHor = index % Int(countHor)
             let gameIndexVert: Int = index / Int(countHor)
             let filter = "levelID = %d and gameNumber == %d and played = true"
             let gamesWithNumber = realm.objects(GameModel).filter(filter, GV.player!.levelID, gameNumber).sorted("score", ascending: false)
             var gameText = ["#" + String(gameNumber + 1)]
             for index in 0..<gamesWithNumber.count {
                 let playerID = gamesWithNumber[index].playerID
-                let score = gamesWithNumber[index].score
-                let time = gamesWithNumber[index].time
-                let playerName = realm.objects(PlayerModel).filter("ID = %d", playerID).first!.name
-                gameText.append(playerName + ": " + String(score) + " / " + String(time.dayHourMinSec))
+                if !players.contains(playerID) {
+                    players.append(playerID)
+                    let gamesCountForPlayer = gamesWithNumber.filter("playerID = %d", playerID).count
+                    let score = gamesWithNumber[index].score
+                    let time = gamesWithNumber[index].time
+                    let playerName = realm.objects(PlayerModel).filter("ID = %d", playerID).first!.name
+                    gameText.append(playerName + "(" + String(gamesCountForPlayer) + "): " + String(score) + " / " + String(time.dayHourMinSec))
+                }
             }
             gameButtons.append(
                 createGameButton(
@@ -231,7 +264,7 @@ class ChooseGamePanel: SKSpriteNode {
         button.position = position
         
         if freeGroup {
-            button.fillColor = UIColor.whiteColor()
+            button.fillColor = UIColor(red: 127/255, green: 255/255, blue: 0/255, alpha: 1.0)
         } else {
             button.fillColor = UIColor(red: 250/255, green: 160/255, blue: 122/255, alpha: 1.0)
         }
@@ -250,11 +283,14 @@ class ChooseGamePanel: SKSpriteNode {
     func createGameButton(position: CGPoint, size: CGSize, buttonIndex: Int, labelText: [String])->SKShapeNode {
         
         let button = SKShapeNode(rect: CGRectMake(0, 0, size.width, size.height), cornerRadius: size.width / 10)
+        gamesBackground.position = gamesBackgroundStartPosition
         
         button.position = position
         button.strokeColor = UIColor.blackColor()
         button.lineWidth = 3
         button.zPosition = gamesBackground.zPosition + 1
+        button.fillColor = UIColor(red: 127/255, green: 255/255, blue: 0/255, alpha: 1.0)
+
         
         button.name = gameName + dot + String(buttonIndex)
         button.addChild(createLabel(CGPointMake(size.width * 0.5, size.height * 0.85), text: labelText[0], name: button.name!, fontSize: size.width * 0.12))
@@ -312,18 +348,40 @@ class ChooseGamePanel: SKSpriteNode {
         touchStartLocation = touchLocation
         touchStartTime = NSDate()
         touchesBeganWithNode = node
-        //        print(node.name)
+        if showGames {
+            moving.removeAll()
+            moving.append(touchMoving(position: touchLocation))
+        }
         
     }
     
     override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?) {
         let touchLocation = touches.first!.locationInNode(self)
         let node = nodeAtPoint(touchLocation)
-        if node.name != nil && (node.name! == gamesBackGroundName || node.name!.componentsSeparatedByString(dot)[0] == gameName) {
-            let delta = touchLocation.y - touchLastLocation.y
-            if gamesBackgroundStartPosition.y < (gamesBackground.position.y + delta) {
-                gamesBackground.position.y += delta
-                touchLastLocation = touchLocation
+        if showGames {
+            if node.name != nil && (node.name! == gamesBackGroundName || node.name!.componentsSeparatedByString(dot)[0] == gameName) {
+                let distanceToMove = touchLocation.y - touchLastLocation.y
+                if CGFloat(gamesBackground.position.y + distanceToMove).between(gamesBackgroundStartPosition.y, max: gamesBackgroundLastPosition.y) {
+                    gamesBackground.position.y += distanceToMove
+                    touchLastLocation = touchLocation
+                }
+            }
+            let newDelta = CGVectorMake(moving.last!.position.x - touchLocation.x, moving.last!.position.y - touchLocation.y)
+            if moving.last!.movedBy.dy.isPositiv() != newDelta.dy.isPositiv() {
+                let tempMovingLast = moving.last!
+                moving.removeAll()
+                moving.append(tempMovingLast)
+                moving[0].movingSpeed = CGVectorMake(0, 0)
+                moving[0].movedBy = CGVectorMake(0, 0)
+                let actTime = NSDate()
+                let timeDelta = CGFloat(actTime.timeIntervalSinceDate(moving.last!.time))
+                let speed = CGVectorMake(newDelta.dx / timeDelta, newDelta.dy / timeDelta)
+                moving.append(touchMoving(position: touchLocation, time: actTime, movedBy: newDelta, movingSpeed: speed))
+            } else {
+                let actTime = NSDate()
+                let timeDelta = CGFloat(actTime.timeIntervalSinceDate(moving.last!.time))
+                let speed = CGVectorMake(newDelta.dx / timeDelta, newDelta.dy / timeDelta)
+                moving.append(touchMoving(position: touchLocation, time: actTime, movedBy: newDelta, movingSpeed: speed))
             }
         }
     }
@@ -331,29 +389,46 @@ class ChooseGamePanel: SKSpriteNode {
     override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
         let touchLocation = touches.first!.locationInNode(self)
         let node = nodeAtPoint(touchLocation)
-        let touchDuration = NSDate().timeIntervalSinceDate(touchStartTime!)
-        let touchDistance = touchStartLocation.y - touchLocation.y
-        if abs(touchDistance) > 20 {
-            let multiplier = touchDistance > 0 ? -1 : 1
-            let moveAction = SKAction.moveBy(CGVector(dx: 0, dy: 500 * multiplier), duration: 0.3)
-            gamesBackground.runAction(moveAction)
-        } else {
-            if node.name != nil {
-                let components = node.name!.componentsSeparatedByString(dot)
-                if touchLastLocation.y - touchStartLocation.y < 12 {
-                    switch components[0] {
-                        case levelName:
-                            setLevel(Int(components[1])!)
-                        case groupName:
-                            goToGroup(Int(components[1])!)
-                    case gameName:
-                            goToGame(Int(components[1])!)
-                        default: break
-                    }
+        if showGames {
+            if abs(moving.last!.position.y - moving.first!.position.y) > 20 {
+                
+                let touchDuration = CGFloat(NSDate().timeIntervalSinceDate(moving.first!.time))
+                var touchDistance = touchLocation.y - moving.first!.position.y
+                var distanceToMove = touchDistance / touchDuration
+                
+                if CGFloat(gamesBackground.position.y + distanceToMove) < gamesBackgroundStartPosition.y {
+                    distanceToMove = gamesBackgroundStartPosition.y - gamesBackground.position.y
+                }
+                if CGFloat(gamesBackground.position.y + distanceToMove) > gamesBackgroundLastPosition.y {
+                    distanceToMove = gamesBackgroundLastPosition.y + gamesBackground.position.y
+                }
+               
+                if CGFloat(gamesBackground.position.y + distanceToMove).between(gamesBackgroundStartPosition.y, max: gamesBackgroundLastPosition.y) {
+                    let moveAction = SKAction.moveBy(CGVector(dx: 0, dy: distanceToMove), duration: 0.3)
+                    gamesBackground.runAction(moveAction)
+                } else {
+                    
+                }
+                return
+            }
+        }
+
+     
+        if node.name != nil {
+            let components = node.name!.componentsSeparatedByString(dot)
+            if touchLastLocation.y - touchStartLocation.y < 12 {
+                switch components[0] {
+                    case levelName:
+                        setLevel(Int(components[1])!)
+                    case groupName:
+                        goToGroup(Int(components[1])!)
+                case gameName:
+                        goToGame(Int(components[1])!)
+                    default: break
                 }
             }
         }
-    }
+     }
     
     func setLevel(number: Int) {
         let oldLevel = GV.player!.levelID

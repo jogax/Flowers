@@ -75,8 +75,7 @@ extension Double {
     }
     func nDecimals(n: Int)->Double {
         let multiplier: Double = pow(10.0,Double(n))
-        return Double(round(multiplier*self)/Double(n*1000))
-        
+        return Double(round(multiplier*self)/Double(n*1000))        
     }
     
 }
@@ -182,14 +181,6 @@ extension String {
         return characters.count
     }
     
-    /// Create NSData from hexadecimal string representation
-    ///
-    /// This takes a hexadecimal representation and creates a NSData object. Note, if the string has any spaces or non-hex characters (e.g. starts with '<' and with a '>'), those are ignored and only hex characters are processed.
-    ///
-    /// The use of `strtoul` inspired by Martin R at [http://stackoverflow.com/a/26284562/1271826](http://stackoverflow.com/a/26284562/1271826)
-    ///
-    /// - returns: NSData represented by this hexadecimal string.
-    
     func dataFromHexadecimalString() -> NSData? {
         let data = NSMutableData(capacity: characters.count / 2)
         
@@ -201,6 +192,15 @@ extension String {
         }
         
         return data
+    }
+    
+    func isNumeric()->Bool {
+        var OK = false
+        if Int(self) != nil
+        {
+            OK = true
+        }
+        return OK
     }
     
 }
@@ -275,8 +275,33 @@ extension NSData {
         
         return String(bytesNoCopy: ptr, length: length*2, encoding: NSUTF8StringEncoding, freeWhenDone: true)
     }
+    
 }
 
+extension UIViewController {
+    func showAlert(alert:UIAlertController, delay: Double = 0) {
+        if (presentedViewController != nil) {
+            dismissViewControllerAnimated(true, completion: {
+                self.presentViewController(alert, animated: true, completion: {
+                })
+
+            })
+        } else {
+            self.presentViewController(alert, animated: true, completion: {
+            })
+
+        }
+        if delay > 0 {
+            let time = dispatch_time(DISPATCH_TIME_NOW, Int64(delay * Double(NSEC_PER_SEC)))
+            dispatch_after(time, dispatch_get_main_queue()) { () -> Void in
+                self.dismissViewControllerAnimated(true, completion: nil)
+            }
+        }
+    
+    }
+    
+    
+}
 
 
 

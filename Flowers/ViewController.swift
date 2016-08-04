@@ -15,6 +15,7 @@ var Pi = CGFloat(M_PI)
 let DegreesToRadians = Pi / 180
 let RadiansToDegrees = 180 / Pi
 let countGames = 10000
+let appName = "flowers"
 
 
 class ViewController: UIViewController, SettingsDelegate, UIApplicationDelegate {
@@ -25,7 +26,7 @@ class ViewController: UIViewController, SettingsDelegate, UIApplicationDelegate 
     var flowersScene: FlowerGameScene?
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        GV.mainViewController = self
         self.importGamePredefinitions()
         startScene()
 
@@ -142,6 +143,11 @@ class ViewController: UIViewController, SettingsDelegate, UIApplicationDelegate 
         GV.language.setLanguage(GV.player!.aktLanguageKey)
 //        GV.soundVolume = Float(GV.actGameParam.soundVolume)
 //        GV.musicVolume = Float(GV.actGameParam.musicVolume)
+        
+        let myName = GV.player!.name
+        let deviceName = UIDevice.currentDevice().name
+        GV.peerToPeerService = PeerToPeerServiceManager(peerType: appName, identifier: myName, deviceName: deviceName)  // Start connection
+
         skView!.showsFPS = true
         skView!.showsNodeCount = true
         skView!.ignoresSiblingOrder = true
@@ -150,7 +156,7 @@ class ViewController: UIViewController, SettingsDelegate, UIApplicationDelegate 
             let scene = CardGameScene(size: CGSizeMake(view.frame.width, view.frame.height))
             GV.language.addCallback(scene.changeLanguage, callbackName: "CardGameCallBack")
             scene.scaleMode = .ResizeFill
-            scene.parentViewController = self
+//            scene.parentViewController = self
             scene.settingsDelegate = self
             skView!.presentScene(scene)
             cardsScene = scene

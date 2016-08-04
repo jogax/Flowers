@@ -225,7 +225,7 @@ class ChooseGamePanel: SKSpriteNode {
                 if !players.contains(playerID) {
                     players.append(playerID)
                     let gamesCountForPlayer = gamesWithNumber.filter("playerID = %d", playerID).count
-                    let score = gamesWithNumber[index].score
+                    let score = gamesWithNumber[index].playerScore
                     let time = gamesWithNumber[index].time
                     let playerName = realm.objects(PlayerModel).filter("ID = %d", playerID).first!.name
                     gameText.append(playerName + "(" + String(gamesCountForPlayer) + "): " + String(score) + " / " + String(time.dayHourMinSec))

@@ -11,8 +11,8 @@ let enDictionary: [TextConstants: String] = [
     .TCAktLanguage:      "en",
     .TCLevel:            "Level%",
     .TCLevelScore:       "Levelscore%",
-    .TCGameScore:        "Score: % * factor: % = %",
-    .TCTimeLeft:         "used time: % (factor: %)",
+    .TCGameScore:        "Score: % / % Cards",
+    .TCTime:             "used time: %",
     .TCActScore:         "Score of last Game: ",
     .TCBestScore:        "Best Score",
     .TCTargetScore:      "target Score:",
@@ -76,4 +76,21 @@ let enDictionary: [TextConstants: String] = [
     .TCChooseGameNumber: "Choose a game",
     .TCPlayerStatistic:  "Player statistic",
     .TCGameStatistic:    "Game statistic",
+    .TCCompetition:      "Competition",
+    .TCChoosePartner:    "Choose an opponent:",
+    .TCWantToPlayWithYou:"% want play with you!",
+    .TCOpponent:          "Opponent (%): ",
+    .TCOpponentHasFinished: "% has finished the Game #%!\r\n" +
+                            "his bonus: %\r\n" +
+                            "his score : %\r\n" +
+                            "your score: %\r\n ",
+    .TCHeWon:               "% won % - %!\r\n" +
+                            "Sorry :-(",
+    .TCYouWon:              "You won % - %! \r\n" +
+                            "Congratulations!!!",
+    .TCYouHaveFinished: "You have finished the Game #%!\r\n" +
+                        "your bonus: %\r\n" +
+                        "your score : %\r\n" +
+                        "% score: %\r\n ",
+   
 ]

@@ -27,6 +27,7 @@ struct GV {
 //    static let notificationJoystickMoved = "joystickMoved"
 //    static let notificationColorChanged = "colorChanged"
     static let freeGameCount = 250
+    static var peerToPeerService: PeerToPeerServiceManager?
 
     static var dX: CGFloat = 0
     static var speed: CGSize = CGSizeZero
@@ -37,7 +38,7 @@ struct GV {
     static let onIpad = UIDevice.currentDevice().model.hasSuffix("iPad")
     static var ipadKorrektur: CGFloat = 0
     static var levelsForPlay = LevelsForPlayWithCards()
-
+    static var mainViewController: UIViewController?
     static let language = Language()
     static var showHelpLines = 0
 //    static var soundVolume: Float = 0
@@ -46,6 +47,7 @@ struct GV {
     static var dummyName = GV.language.getText(.TCGuest)
     static var initName = false
     static let oneGrad:CGFloat = CGFloat(M_PI) / 180
+    static let timeOut = "TimeOut"
 
 //    static let dataStore = DataStore()
 //    static let cloudStore = CloudData()
@@ -56,30 +58,9 @@ struct GV {
     
     static let deviceConstants = DeviceConstants(deviceType: UIDevice.currentDevice().modelName)
 
-//    static var actGameParam = GameParamStruct()
     static var countPlayers: Int = 1
-//    static var gameStatistics = GameStatisticsStruct()
-
-//    static let realm = try! Realm()
 
     static var player: PlayerModel?
-//    static var statistic: StatisticModel?
-//    static var game: GameModel?
-//    static var playerID = GV.PlayerID()
-
-    
-//    static var spriteGameDataArray: [SpriteGameData] = []
-    // Constraints
-    // static let myDevice = MyDevice()
-
-//    static func getAktNameIndex()->Int {
-//        for index in 0..<GV.spriteGameDataArray.count {
-//            if GV.spriteGameDataArray[index].name == GV.globalParam.aktName {
-//                return index
-//            }
-//        }
-//        return 0
-//    }
     
     static func pointOfCircle(radius: CGFloat, center: CGPoint, angle: CGFloat) -> CGPoint {
         let pointOfCircle = CGPoint (x: center.x + radius * cos(angle), y: center.y + radius * sin(angle))
@@ -87,7 +68,7 @@ struct GV {
     }
     
     enum RealmRecordType: Int {
-        case GameModel, PlayerModel, StatisticModel
+        case GameModel, PlayerModel, OpponentModel, StatisticModel
     }
     
     static func createNewRecordID(recordType: RealmRecordType)->Int {
@@ -110,6 +91,9 @@ struct GV {
         case .PlayerModel:
             ID = recordID.playerModelID
             recordID.playerModelID += 1
+        case .OpponentModel:
+            ID = recordID.opponentModelID
+            recordID.opponentModelID += 1
         case .StatisticModel:
             ID = recordID.statisticModelID
             recordID.statisticModelID += 1
@@ -136,47 +120,12 @@ struct GV {
         return newID
     }
     
-//    static func getNewStatisticID()->Int{
-//        var statisticID = 0
-//        repeat {
-//            statisticID = Int(arc4random_uniform(1000000))
-//        } while GV.realm.objects(StatisticModel).filter("ID = %d", statisticID).count == 1
-//        return statisticID
-//    }
-    
+    static func randomNumber(max: Int)->Int
+    {
+        let randomNumber = Int(arc4random_uniform(UInt32(max)))
+        return randomNumber
+    }
 
-    
-    
-//    class PlayerID {
-//        var availableIDs = [Int]()
-//        var maxIndex = 7
-//        var newID: Int
-//        var counter = 0
-//        init () {
-//            let availableCount = maxIndex - GV.realm.objects(PlayerModel).count
-//            repeat {
-//                newID = Int(arc4random_uniform(100))
-//                if !availableIDs.contains(newID) && newID != 0 {
-//                    availableIDs.append(newID)
-//                }
-//            } while availableIDs.count <= availableCount
-//        }
-//        
-//        func getNewID()->Int? {
-//            if availableIDs.count > 0 {
-//                let returnID = availableIDs.first!
-//                availableIDs.removeFirst()
-//                return returnID
-//            } else {
-//                return 0
-//            }
-//        }
-//        
-//        func putOldID(ID: Int) {
-//            availableIDs.append(ID)
-//        }
-//        
-//    }
 }
 
 struct Names {
@@ -480,6 +429,53 @@ enum SpriteStatus: Int, CustomStringConvertible {
     
 }
 
+enum PeerToPeerCommands: Int {
+    case ErrorValue = 0,
+    MyNameIs,
+            //          
+            //      parameters: 1 - myName
+    MyNameIsChanged,
+    //
+    //      parameters: 1 - myName
+    //                  2 - oldName
+    //                  2 - deviceName
+    IWantToPlayWithYou, //sendMessage
+            //
+            //      parameters: 1 - myName
+            //                  2 - levelID
+            //                  3 - gameNumber to play
+            //      answer: "OK" - play starts
+            //              "Cancel" - opponent will not play
+    MyScoreHasChanged, // sendInfo
+            //
+            //      parameters: 1 - Score
+            //                  2 - Count Cards
+    GameIsFinished, //sendInfo
+            //
+            //      parameters: 1: Score
+    MaxValue
+    
+    var commandName: String {
+        return String(self.rawValue)
+    }
+    
+    static func decodeCommand(commandName: String)->PeerToPeerCommands {
+        if let command = Int(commandName) {
+            if command < PeerToPeerCommands.MaxValue.rawValue && command > PeerToPeerCommands.ErrorValue.rawValue {
+                return PeerToPeerCommands(rawValue: command)!
+            } else {
+                return ErrorValue
+            }
+        } else {
+            return ErrorValue
+        }
+    }
+    
+    
+}
+
+
+
 struct SavedSprite {
     var status: SpriteStatus = .Added
     var type: MySKNodeType = .SpriteType
@@ -490,7 +486,7 @@ struct SavedSprite {
     var colorIndex: Int = 0
     var size: CGSize = CGSizeMake(0, 0)
     var hitCounter: Int = 0
-    var countScore: Int = 0
+    var countScore: Int = 0 // Score of Game 
     var minValue: Int = NoValue
     var maxValue: Int = NoValue
     var BGPictureAdded = false

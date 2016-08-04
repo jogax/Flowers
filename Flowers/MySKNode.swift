@@ -43,7 +43,13 @@ class MySKNode: SKSpriteNode {
     var startPosition = CGPointZero
     var minValue: Int
     var maxValue: Int
-    var countScore: Int
+    var countScore: Int {
+        get {
+            let midValue = Double(minValue + maxValue + 2) / Double(2)
+            return Int(midValue * Double((maxValue - minValue + 1)))
+        }
+    }
+    var mirrored: Int
     let device = GV.deviceType
     let modelConstantLocal = UIDevice.currentDevice().modelName
 
@@ -88,7 +94,7 @@ class MySKNode: SKSpriteNode {
         self.type = type
         self.minValue = value
         self.maxValue = value
-        self.countScore = 0 //value + 1
+        self.mirrored = 0
         
         if value > NoValue {
             isCard = true
@@ -212,6 +218,11 @@ class MySKNode: SKSpriteNode {
         }
         label.text = "\(value == 10 ? " " : "")\(text)"
     }
+    
+    func getMirroredScore() -> Int {
+        return countScore * mirrored
+    }
+        
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")

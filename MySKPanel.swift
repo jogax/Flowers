@@ -65,6 +65,7 @@ class MySKPanel: SKSpriteNode {
         self.parentScene = parent
         super.init(texture: texture, color: UIColor.clearColor(), size: size)
         GV.language.addCallback(changeLanguage, callbackName: callbackName)
+        
 
         self.texture = SKTexture(image: getPanelImage(size))
         setMyDeviceConstants()
@@ -214,6 +215,7 @@ class MySKPanel: SKSpriteNode {
         if GV.player!.ID != oldPlayerID {
             playerChanged = true
         }
+        GV.peerToPeerService!.changeIdentifier(GV.player!.name)
         let name = GV.player!.name == GV.language.getText(.TCAnonym) ? GV.language.getText(.TCGuest) : GV.player!.name
         playerLabel.text = GV.language.getText(.TCPlayer) + ": \(name)"
         self.userInteractionEnabled = true

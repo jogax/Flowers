@@ -11,8 +11,8 @@ let huDictionary: [TextConstants: String] = [
     .TCAktLanguage:      "hu",
     .TCLevel:            "Szint%",
     .TCLevelScore:       "Pontszám%",
-    .TCGameScore:        "Pontszám: % * szorzó: % = %",
-    .TCTimeLeft:         "Idő: % (szorzó: %)",
+    .TCGameScore:        "Pontszám: % / % kártya",
+    .TCTime:             "Idő: %",
     .TCActScore:         "Az utolsó játék pontszáma: ",
     .TCTargetScore:      "Elérendö pontszám: ",
     .TCGameLost:         "Vesztettél!",
@@ -76,4 +76,20 @@ let huDictionary: [TextConstants: String] = [
     .TCChooseGameNumber: "Válassz játékot",
     .TCPlayerStatistic:  "Játékos statisztika",
     .TCGameStatistic:    "Játék statisztika",
+    .TCCompetition:      "Verseny",
+    .TCChoosePartner:    "Válassz ellenfelet:",
+    .TCWantToPlayWithYou:"% szeretne veled játszani!",
+    .TCOpponent:          "Ellenfél (%):",
+    .TCOpponentHasFinished: "% befejezte a #% játékot!\r\n" +
+                            "bonuszpontjai: %\r\n" +
+                            "pontszáma: %\r\n" +
+                            "a te pontszámod: %\r\n ",
+    .TCHeWon:               "% győzött % - %\r\n" +
+                            "Sajnálom :-(",
+    .TCYouWon:              "Te győztél % - %!\r\n" +
+                            "Gratulálok ;-) !!!",
+    .TCYouHaveFinished: "Befejezted a #% játékot!\r\n" +
+                        "Bónuszpontok: %\r\n" +
+                        "Pontjaid: %\r\n" +
+                        "% pontjai: %\r\n ",
 ]

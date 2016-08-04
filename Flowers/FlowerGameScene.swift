@@ -1274,7 +1274,7 @@ class FlowerGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate 
     func doCountUp() {
         
         timeCount += 1
-        let countUpText = GV.language.getText(.TCTimeLeft)
+        let countUpText = GV.language.getText(.TCTime)
         let minutes = Int(timeCount / 60)
         var seconds = "\(Int(timeCount % 60))"
         seconds = Int(seconds) < 10 ? "0\(seconds)" : "\(seconds)"

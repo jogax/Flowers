@@ -10,13 +10,16 @@ import Foundation
 import RealmSwift
 
 class GameModel: Object {
-    dynamic var ID = 0 // gameNumber
+    dynamic var ID = 0
     dynamic var gameNumber = 0
     dynamic var levelID = 0
     dynamic var playerID = 0
     dynamic var played = false
     dynamic var time = 0
-    dynamic var score = 0
+    dynamic var playerScore = 0
+    dynamic var multiPlay = false
+    dynamic var opponentName = ""
+    dynamic var opponentScore = 0
     dynamic var created = NSDate()
     
     

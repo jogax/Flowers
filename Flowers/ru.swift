@@ -11,8 +11,8 @@ let ruDictionary: [TextConstants: String] = [
     .TCAktLanguage:      "ru",
     .TCLevel:            "Уровень%",
     .TCLevelScore:       "Очки%",
-    .TCGameScore:        "Очки: % * фактор: % = %",
-    .TCTimeLeft:         "время: % (фактор: %)",
+    .TCGameScore:        "Очки: % / % карт",
+    .TCTime:             "время: %",
     .TCActScore:         "Очки последней игры: ",
     .TCBestScore:        "Лучшие очки",
     .TCTargetScore:      "получить очки: ",
@@ -76,4 +76,20 @@ let ruDictionary: [TextConstants: String] = [
     .TCChooseGameNumber: "Выбери игру",
     .TCPlayerStatistic:  "Статистика игроков",
     .TCGameStatistic:    "Статистика игр",
+    .TCCompetition:      "Соревнование",
+    .TCChoosePartner:    "Выбери противника:",
+    .TCWantToPlayWithYou:"% хочет с тобой поиграть!",
+    .TCOpponent:         "Противник (%):",
+    .TCOpponentHasFinished: "% закончил игру #%!\r\n" +
+                        "его/ee бонус: %\r\n" +
+                        "его/ee очки: %\r\n" +
+                        "твои очки: %\r\n ",
+    .TCYouHaveFinished: "ты закончил игру #%!\r\n" +
+                        "твой бонус: %\r\n" +
+                        "твои очки: %\r\n" +
+                        "% очки: %\r\n ",
+    .TCHeWon:           "% победил нa % - %!\r\n" +
+                        "K сожалению :-(",
+    .TCYouWon:          "ты победил нa % - %! \r\n" +
+                        "Поздравляю!!!",
 ]

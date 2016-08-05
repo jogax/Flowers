@@ -20,9 +20,9 @@ class StatisticModel: Object {
     dynamic var bestScore = 0
     dynamic var bestTime = 0
     dynamic var countPlays = 0
-//    dynamic var countMultiPlays = 0
-//    dynamic var victorys = 0
-//    dynamic var defeats = 0
+    dynamic var countMultiPlays = 0
+    dynamic var victorys = 0
+    dynamic var defeats = 0
     dynamic var levelScore = 0
     dynamic var created = NSDate()
     

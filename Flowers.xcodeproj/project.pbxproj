@@ -58,7 +58,6 @@
 		201A97BD1CFF2CA300C92550 /* Mirror3.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 201A97BB1CFF2CA300C92550 /* Mirror3.m4a */; };
 		201A97BF1CFF2E7600C92550 /* Container.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 201A97BE1CFF2E7600C92550 /* Container.m4a */; };
 		201AD6F11D005C6200E56CD8 /* GameModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201AD6F01D005C6200E56CD8 /* GameModel.swift */; };
-		201AE2881D22BB7500367113 /* MySKGameStatistic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201AE2871D22BB7500367113 /* MySKGameStatistic.swift */; };
 		201C52401C314CF9001B04AB /* LevelsForPlayWithCards.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201C523F1C314CF9001B04AB /* LevelsForPlayWithCards.swift */; };
 		201C52421C316801001B04AB /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201C52411C316801001B04AB /* Extensions.swift */; };
 		201DB6111D0C65E50086BD36 /* MySKTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201DB6101D0C65E50086BD36 /* MySKTextField.swift */; };
@@ -67,7 +66,7 @@
 		201E20471C1C80CF003DBBD8 /* CloudData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201E20461C1C80CF003DBBD8 /* CloudData.swift */; };
 		201FE2FB1C9860FC00B5861E /* OK.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 201FE2FA1C9860FC00B5861E /* OK.m4a */; };
 		201FFCBE1D3FEC5300FE221C /* PeerToPeerServiceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201FFCBD1D3FEC5300FE221C /* PeerToPeerServiceManager.swift */; };
-		2021E3811CDB930900D522CD /* MySKPlayerStatistic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2021E3801CDB930900D522CD /* MySKPlayerStatistic.swift */; };
+		2021E3811CDB930900D522CD /* MySKStatistic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2021E3801CDB930900D522CD /* MySKStatistic.swift */; };
 		2024A8C51C427C420001CA95 /* cardBackground.png in Resources */ = {isa = PBXBuildFile; fileRef = 2024A8C41C427C420001CA95 /* cardBackground.png */; };
 		202AF3F91CD7A571003318DF /* Podfile in Resources */ = {isa = PBXBuildFile; fileRef = 202AF3F81CD7A571003318DF /* Podfile */; };
 		2030C0441CE35FBC00AA8307 /* MySKDetailedStatistic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2030C0431CE35FBC00AA8307 /* MySKDetailedStatistic.swift */; };
@@ -80,6 +79,7 @@
 		20530B171D2AB4C9004B3754 /* GamePredefinitions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20530B161D2AB4C9004B3754 /* GamePredefinitions.swift */; };
 		205574411BBEB85C00C165A1 /* Go321.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 205574401BBEB85C00C165A1 /* Go321.m4a */; };
 		205574431BBECB6200C165A1 /* NoSound.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 205574421BBECB6200C165A1 /* NoSound.m4a */; };
+		2061B9101D54C1BB00647406 /* MySKGameStatistic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2061B90F1D54C1BB00647406 /* MySKGameStatistic.swift */; };
 		206BF77C1BF247380009928E /* ChooseNameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 206BF77B1BF247380009928E /* ChooseNameViewController.swift */; };
 		208BCEF01CAAD1330050CD62 /* PlayerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 208BCEEF1CAAD1330050CD62 /* PlayerModel.swift */; };
 		20AE75EB1CB2B50C006AFE29 /* MySKPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20AE75EA1CB2B50C006AFE29 /* MySKPlayer.swift */; };
@@ -174,7 +174,6 @@
 		201A97BB1CFF2CA300C92550 /* Mirror3.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = Mirror3.m4a; sourceTree = "<group>"; };
 		201A97BE1CFF2E7600C92550 /* Container.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = Container.m4a; sourceTree = "<group>"; };
 		201AD6F01D005C6200E56CD8 /* GameModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameModel.swift; sourceTree = "<group>"; };
-		201AE2871D22BB7500367113 /* MySKGameStatistic.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MySKGameStatistic.swift; sourceTree = "<group>"; };
 		201C523F1C314CF9001B04AB /* LevelsForPlayWithCards.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LevelsForPlayWithCards.swift; sourceTree = "<group>"; };
 		201C52411C316801001B04AB /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		201DB6101D0C65E50086BD36 /* MySKTextField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MySKTextField.swift; sourceTree = "<group>"; };
@@ -184,7 +183,7 @@
 		201E20461C1C80CF003DBBD8 /* CloudData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CloudData.swift; path = ../CloudData.swift; sourceTree = "<group>"; };
 		201FE2FA1C9860FC00B5861E /* OK.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = OK.m4a; sourceTree = "<group>"; };
 		201FFCBD1D3FEC5300FE221C /* PeerToPeerServiceManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeerToPeerServiceManager.swift; sourceTree = "<group>"; };
-		2021E3801CDB930900D522CD /* MySKPlayerStatistic.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MySKPlayerStatistic.swift; sourceTree = "<group>"; };
+		2021E3801CDB930900D522CD /* MySKStatistic.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MySKStatistic.swift; sourceTree = "<group>"; };
 		2024A8C41C427C420001CA95 /* cardBackground.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = cardBackground.png; sourceTree = "<group>"; };
 		202AF3F81CD7A571003318DF /* Podfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Podfile; sourceTree = "<group>"; };
 		2030C0431CE35FBC00AA8307 /* MySKDetailedStatistic.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MySKDetailedStatistic.swift; sourceTree = "<group>"; };
@@ -198,6 +197,7 @@
 		20530B161D2AB4C9004B3754 /* GamePredefinitions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GamePredefinitions.swift; sourceTree = "<group>"; };
 		205574401BBEB85C00C165A1 /* Go321.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = Go321.m4a; sourceTree = "<group>"; };
 		205574421BBECB6200C165A1 /* NoSound.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = NoSound.m4a; sourceTree = "<group>"; };
+		2061B90F1D54C1BB00647406 /* MySKGameStatistic.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MySKGameStatistic.swift; sourceTree = "<group>"; };
 		206BF77B1BF247380009928E /* ChooseNameViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChooseNameViewController.swift; sourceTree = "<group>"; };
 		208BCEEF1CAAD1330050CD62 /* PlayerModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayerModel.swift; sourceTree = "<group>"; };
 		20AE75EA1CB2B50C006AFE29 /* MySKPlayer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MySKPlayer.swift; sourceTree = "<group>"; };
@@ -289,10 +289,10 @@
 				201839B51C9C40DD00B33827 /* MySKPanel.swift */,
 				20343A6E1CB7F4660063DF8D /* MySKTable.swift */,
 				20AE75EA1CB2B50C006AFE29 /* MySKPlayer.swift */,
-				2021E3801CDB930900D522CD /* MySKPlayerStatistic.swift */,
-				201AE2871D22BB7500367113 /* MySKGameStatistic.swift */,
+				2021E3801CDB930900D522CD /* MySKStatistic.swift */,
 				201585191CE5F2AE00EF27CA /* MySKSlider.swift */,
 				2030C0431CE35FBC00AA8307 /* MySKDetailedStatistic.swift */,
+				2061B90F1D54C1BB00647406 /* MySKGameStatistic.swift */,
 				2017D7861CD0FDA200D1778F /* MySKLanguages.swift */,
 				201760CB1D33D5BA00658500 /* ChooseGamePanel.swift */,
 				201FFCBD1D3FEC5300FE221C /* PeerToPeerServiceManager.swift */,
@@ -757,7 +757,6 @@
 				200BDA0B1BCFEF5100F72109 /* MySKButton.swift in Sources */,
 				204A8A181BEF93B90061D14F /* LanguageViewController.swift in Sources */,
 				201928291C99AF2B009CA720 /* GameStatistics.swift in Sources */,
-				201AE2881D22BB7500367113 /* MySKGameStatistic.swift in Sources */,
 				201FFCBE1D3FEC5300FE221C /* PeerToPeerServiceManager.swift in Sources */,
 				201928351C99C0A4009CA720 /* GameParam.swift in Sources */,
 				203111FF1D09A9D9005A5E43 /* GamePredefinitionModel.swift in Sources */,
@@ -773,8 +772,9 @@
 				201DB6111D0C65E50086BD36 /* MySKTextField.swift in Sources */,
 				200BDA071BCFDEE600F72109 /* DrawImages.swift in Sources */,
 				201C52401C314CF9001B04AB /* LevelsForPlayWithCards.swift in Sources */,
+				2061B9101D54C1BB00647406 /* MySKGameStatistic.swift in Sources */,
 				20343A6F1CB7F4660063DF8D /* MySKTable.swift in Sources */,
-				2021E3811CDB930900D522CD /* MySKPlayerStatistic.swift in Sources */,
+				2021E3811CDB930900D522CD /* MySKStatistic.swift in Sources */,
 				203112011D09ABA4005A5E43 /* CreateGamePredefiniton.swift in Sources */,
 				2001412C1BAEB285003E0950 /* LevelsForPlayWithSprites.swift in Sources */,
 				200141431BAEBAA2003E0950 /* ru.swift in Sources */,

@@ -12,6 +12,7 @@ let enDictionary: [TextConstants: String] = [
     .TCLevel:            "Level%",
     .TCLevelScore:       "Levelscore%",
     .TCGameScore:        "Score: % / % Cards",
+    .TCScore:            "Score",
     .TCTime:             "used time: %",
     .TCActScore:         "Score of last Game: ",
     .TCBestScore:        "Best Score",
@@ -59,9 +60,11 @@ let enDictionary: [TextConstants: String] = [
     .TCBestTimeForLevel: "Best time for this Level: ",
     .TCBestTime:         "Best time",
     .TCAllTimeForLevel:  "Total time for this level: ",
-    .TCAllTime:          "Total time",
+    .TCAllTime:          "Gametime",
     .TCCountPlaysForLevel:"Until now played % games",
-    .TCCountPlays:        "Play counter",
+    .TCCountPlays:        "Games",
+    .TCCountCompetitions: "Competitions",
+    .TCCountVictorys:     "Victory / Defeat",
     .TCGameCompleteWithBestScore: "New score record at level %!",
     .TCGameCompleteWithBestTime:  "New time record at level %!",
     .TCGuest:            "Guest",
@@ -72,14 +75,15 @@ let enDictionary: [TextConstants: String] = [
     .TCBestScoreOfGame:   "Best score %  %",
     .TCYourScore:           "Your score %",
     .TCYouAreTheBest:    "You are the Best with score %",
-    .TCGameNumber:       "Game number:",
+    .TCGameNumber:       "Game number: %",
     .TCChooseGameNumber: "Choose a game",
     .TCPlayerStatistic:  "Player statistic",
     .TCGameStatistic:    "Game statistic",
     .TCCompetition:      "Competition",
+    .TCGame:             "Game",
     .TCChoosePartner:    "Choose an opponent:",
     .TCWantToPlayWithYou:"% want play with you!",
-    .TCOpponent:          "Opponent (%): ",
+    .TCOpponent:          "Opponent%",
     .TCOpponentHasFinished: "% has finished the Game #%!\r\n" +
                             "his bonus: %\r\n" +
                             "his score : %\r\n" +
@@ -92,5 +96,7 @@ let enDictionary: [TextConstants: String] = [
                         "your bonus: %\r\n" +
                         "your score : %\r\n" +
                         "% score: %\r\n ",
-   
+    .TCOpponentNotPlay: "% does not want to play with you!",
+    .TCGameArt:         "Type",
+    .TCVictory:         "Victory",
 ]

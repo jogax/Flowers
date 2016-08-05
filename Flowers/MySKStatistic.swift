@@ -10,12 +10,11 @@
 import SpriteKit
 import RealmSwift
 
-class MySKPlayerStatistic: MySKTable {
+class MySKStatistic: MySKTable {
     
     var callBack: ()->()
     var nameTable = [PlayerModel]()
-    let myColumnWidths: [CGFloat] = [25, 40, 25, 10]  // in %
-//    let myDetailedColumnWidths = [20, 20, 20, 20, 20] // in %
+    let myColumnWidths: [CGFloat] = [15, 13, 20, 30, 12, 10]  // in %
     let myName = "MySKPlayerStatistic"
 
     
@@ -30,7 +29,7 @@ class MySKPlayerStatistic: MySKTable {
         
         self.callBack = callBack
         
-        super.init(columnWidths: myColumnWidths, rows:countLines, headLines: [], parent: parent, width: parent.parent!.frame.width * 0.9)
+        super.init(columnWidths: myColumnWidths, rows:countLines, headLines: ["Számlálók"], parent: parent, width: parent.parent!.frame.width * 0.9)
         self.showVerticalLines = true
         self.name = myName
         
@@ -62,6 +61,8 @@ class MySKPlayerStatistic: MySKTable {
     func showPlayerStatistic() {
         let elements: [MultiVar] = [MultiVar(string: GV.language.getText(.TCPlayer)),
                                     MultiVar(string: GV.language.getText(.TCCountPlays)),
+                                    MultiVar(string: GV.language.getText(.TCCountCompetitions)),
+                                    MultiVar(string: GV.language.getText(.TCCountVictorys)),
                                     MultiVar(string: GV.language.getText(.TCAllTime)),
                                    ]
         showRowOfTable(elements, row: 0, selected: true)
@@ -70,12 +71,20 @@ class MySKPlayerStatistic: MySKTable {
                 let statisticTable = realm.objects(StatisticModel).filter("playerID = %d", nameTable[row].ID)
                 var allTime = 0
                 var countPlays = 0
+                var countMultiPlays = 0
+                var countVictorys = 0
+                var countDefeats = 0
                 for index in 0..<statisticTable.count {
                     allTime += statisticTable[index].allTime
                     countPlays += statisticTable[index].countPlays
+                    countMultiPlays += statisticTable[index].countMultiPlays
+                    countVictorys += statisticTable[index].victorys
+                    countDefeats += statisticTable[index].defeats
                 }
                 let elements: [MultiVar] = [MultiVar(string: convertNameWhenRequired(nameTable[row].name)),
                                             MultiVar(string: "\(countPlays)"),
+                                            MultiVar(string: "\(countMultiPlays)"),
+                                            MultiVar(string: "\(countVictorys) / \(countDefeats)"),
                                             MultiVar(string: allTime.dayHourMinSec),
                                             MultiVar(image: DrawImages.getGoForwardImage(CGSizeMake(20, 20)))
                 ]

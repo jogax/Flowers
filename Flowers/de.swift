@@ -12,6 +12,7 @@ let deDictionary: [TextConstants: String] = [
     .TCLevel:            "Ebene%",
     .TCLevelScore:       "Summe%",
     .TCGameScore:        "Punkte: % / % Karte(n)",
+    .TCScore:            "Ergebnis",
     .TCTime:             "Zeit: %",
     .TCActScore:         "Ergebnis des letzten Spiels: ",
     .TCBestScore:        "Beste Ergebnis",
@@ -59,9 +60,11 @@ let deDictionary: [TextConstants: String] = [
     .TCBestTimeForLevel: "Beste Zeit der Ebene: ",
     .TCBestTime:         "Beste Zeit",
     .TCAllTimeForLevel:  "Gesamtzeit für diese Ebene: ",
-    .TCAllTime:          "Gesamtzeit",
+    .TCAllTime:          "Spielzeit",
     .TCCountPlaysForLevel: "Bis jetzt % Spiele gespielt",
-    .TCCountPlays:        "Spielzähler",
+    .TCCountPlays:        "Spiele",
+    .TCCountCompetitions: "Wettbewerbe",
+    .TCCountVictorys:     "Sieg / Niederlage",
     .TCGameCompleteWithBestScore: "Neue Rekordsumme auf der Ebene %!",
     .TCGameCompleteWithBestTime:  "Neue Zeitrekord auf der Ebene %!",
     .TCGuest:            "Gast",
@@ -77,9 +80,10 @@ let deDictionary: [TextConstants: String] = [
     .TCPlayerStatistic:  "Spielerstatistik",
     .TCGameStatistic:    "Spielstatistik",
     .TCCompetition:      "Wettbewerb",
+    .TCGame:             "Spiel",
     .TCChoosePartner:    "Wähle einen Gegner:",
     .TCWantToPlayWithYou:"% will mit Dir spielen!!",
-    .TCOpponent:         "Gegner (%):",
+    .TCOpponent:         "Gegner%",
     .TCOpponentHasFinished: "% hat das Spiel #% beendet!\r\n" +
                          "sein Bonus: %\r\n" +
                          "seine Punkte: %\r\n" +
@@ -92,6 +96,9 @@ let deDictionary: [TextConstants: String] = [
                          "Dein Bonus: %\r\n" +
                          "Deine Punkte : %\r\n" +
                          "% Punkte: %\r\n ",
+    .TCOpponentNotPlay: "% will nicht spielen mit Dir!",
+    .TCGameArt:         "Art",
+    .TCVictory:         "Sieg",
 ]
 
 

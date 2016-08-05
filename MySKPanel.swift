@@ -30,7 +30,6 @@ class MySKPanel: SKSpriteNode {
     let setMusicFunc = "setMusicVolume"
     let setLanguageFunc = "setLanguage"
     let setPlayerStatisticFunc = "setPlayerStatistics"
-    let setGameStatisticFunc = "setGameStatistics"
     let setReturnFunc = "setReturn"
     var sizeMultiplier = CGSizeMake(0, 0)
     var fontSize:CGFloat = 0
@@ -43,7 +42,6 @@ class MySKPanel: SKSpriteNode {
     let musicLabel = SKLabelNode()
     let languageLabel = SKLabelNode()
     let playerStatisticLabel = SKLabelNode()
-    let gameStatisticLabel = SKLabelNode()
     let returnLabel = SKLabelNode()
     let callbackName = "SettingsCallbackName"
     var oldPlayerID = 0
@@ -98,7 +96,6 @@ class MySKPanel: SKSpriteNode {
         musicLabel.text = GV.language.getText(.TCMusicVolume)
         languageLabel.text = GV.language.getText(.TCLanguage)
         playerStatisticLabel.text = GV.language.getText(.TCPlayerStatistic)
-        gameStatisticLabel.text = GV.language.getText(.TCGameStatistic)
         returnLabel.text = GV.language.getText(.TCReturn)
         return false
     }
@@ -112,8 +109,7 @@ class MySKPanel: SKSpriteNode {
         createLabels(musicLabel, text: GV.language.getText(.TCMusicVolume), lineNr: 4, horAlignment: .Left, name: setMusicFunc )
         createLabels(languageLabel, text: GV.language.getText(.TCLanguage), lineNr: 5, horAlignment: .Left, name: setLanguageFunc )
         createLabels(playerStatisticLabel, text: GV.language.getText(.TCStatistic), lineNr: 6, horAlignment: .Left, name: setPlayerStatisticFunc )
-        createLabels(gameStatisticLabel, text: GV.language.getText(.TCStatistic), lineNr: 7, horAlignment: .Left, name: setGameStatisticFunc )
-        createLabels(returnLabel, text: GV.language.getText(.TCReturn), lineNr: 8, horAlignment: .Left, name: setReturnFunc )
+        createLabels(returnLabel, text: GV.language.getText(.TCReturn), lineNr: 7, horAlignment: .Left, name: setReturnFunc )
     }
     func createLabels(label: SKLabelNode, text: String, lineNr: Int, horAlignment: SKLabelHorizontalAlignmentMode, name:String) {
         label.text = text
@@ -134,7 +130,7 @@ class MySKPanel: SKSpriteNode {
         let node = nodeAtPoint(touchLocation)
         touchesBeganWithNode = node
 //        print(node.name)
-        if node is SKLabelNode && node.name!.isMemberOf (setPlayerFunc, setSoundFunc, setMusicFunc, setLanguageFunc, setPlayerStatisticFunc,setGameStatisticFunc,setReturnFunc) {
+        if node is SKLabelNode && node.name!.isMemberOf (setPlayerFunc, setSoundFunc, setMusicFunc, setLanguageFunc, setPlayerStatisticFunc,setReturnFunc) {
             (node as! SKLabelNode).fontSize += 2
         }
 
@@ -151,7 +147,7 @@ class MySKPanel: SKSpriteNode {
             }
             let node = nodeAtPoint(touchLocation)
             if node is SKLabelNode && touchesBeganWithNode == node {
-                if node.name!.isMemberOf (setPlayerFunc, setSoundFunc, setMusicFunc, setLanguageFunc, setPlayerStatisticFunc, setGameStatisticFunc, setReturnFunc) {
+                if node.name!.isMemberOf (setPlayerFunc, setSoundFunc, setMusicFunc, setLanguageFunc, setPlayerStatisticFunc,  setReturnFunc) {
     //                (node   as! SKLabelNode).fontSize -= 2
                     switch node.name! {
                     case setPlayerFunc: setPlayer()
@@ -159,7 +155,6 @@ class MySKPanel: SKSpriteNode {
                     case setMusicFunc: setMusicVolume()
                     case setLanguageFunc: setLanguage()
                     case setPlayerStatisticFunc: setPlayerStatistic()
-                    case setGameStatisticFunc: setGameStatistic()
                     case setReturnFunc: goBack()
                     default: goBack()
                     }
@@ -191,12 +186,7 @@ class MySKPanel: SKSpriteNode {
     
     func setPlayerStatistic() {
         userInteractionEnabled = false
-        let _ = MySKPlayerStatistic(parent: self, callBack: callIfMySKStatisticEnds)
-    }
-    
-    func setGameStatistic() {
-        userInteractionEnabled = false
-        let _ = MySKGameStatistic(parent: self, callBack: callIfMySKStatisticEnds)
+        let _ = MySKStatistic(parent: self, callBack: callIfMySKStatisticEnds)
     }
     
     func goBack() {
@@ -230,7 +220,6 @@ class MySKPanel: SKSpriteNode {
         musicLabel.text = GV.language.getText(.TCMusicVolume)
         languageLabel.text = GV.language.getText(.TCLanguage)
         playerStatisticLabel.text = GV.language.getText(.TCPlayerStatistic)
-        gameStatisticLabel.text = GV.language.getText(.TCGameStatistic)
         returnLabel.text = GV.language.getText(.TCReturn)
     }
     
@@ -243,7 +232,6 @@ class MySKPanel: SKSpriteNode {
         musicLabel.text = GV.language.getText(.TCMusicVolume)
         languageLabel.text = GV.language.getText(.TCLanguage)
         playerStatisticLabel.text = GV.language.getText(.TCPlayerStatistic)
-        gameStatisticLabel.text = GV.language.getText(.TCGameStatistic)
         returnLabel.text = GV.language.getText(.TCReturn)
     }
     

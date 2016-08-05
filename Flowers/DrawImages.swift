@@ -721,6 +721,34 @@ class DrawImages {
         return UIImage()
     }
     
+    static func getNOKImage (size: CGSize) -> UIImage {
+        UIGraphicsBeginImageContextWithOptions(size, false, 1)
+        let ctx = UIGraphicsGetCurrentContext()
+        let w = size.width / 100
+        let h = size.height / 100
+        
+        CGContextSetStrokeColorWithColor(ctx, UIColor.redColor().CGColor)
+        CGContextSetLineJoin (ctx, .Round)
+        CGContextSetLineCap (ctx, .Round)
+        
+        CGContextSetLineWidth(ctx, w * 20)
+        let points = [
+            CGPointMake(w * 10, h * 90),
+            CGPointMake(w * 90, h * 10),
+        ]
+        let points1 = [
+            CGPointMake(w * 10, h * 10),
+            CGPointMake(w * 90, h * 90),
+            ]
+        CGContextAddLines(ctx, points, points.count)
+        CGContextAddLines(ctx, points1, points.count)
+        CGContextStrokePath(ctx)
+        
+        if let image = UIGraphicsGetImageFromCurrentImageContext() {
+            return image
+        }
+        return UIImage()
+    }
     static func getStatisticImage(size: CGSize) -> UIImage {
         UIGraphicsBeginImageContextWithOptions(size, false, 1)
         let ctx = UIGraphicsGetCurrentContext()

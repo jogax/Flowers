@@ -2,7 +2,7 @@
 //  MySKGameStatistic.swift
 //  Flowers
 //
-//  Created by Jozsef Romhanyi on 28/06/2016.
+//  Created by Jozsef Romhanyi on 05/08/2016.
 //  Copyright © 2016 Jozsef Romhanyi. All rights reserved.
 //
 
@@ -12,75 +12,69 @@ import RealmSwift
 class MySKGameStatistic: MySKTable {
     
     var callBack: ()->()
-    var nameTable = [PlayerModel]()
-    let myColumnWidths: [CGFloat] = [25, 40, 25, 10]  // in %
-    //    let myDetailedColumnWidths = [20, 20, 20, 20, 20] // in %
-    let myName = "MySKGameStatistic"
+    let myGameColumnWidths: [CGFloat] = [12, 15, 15, 20, 18, 20] // in %
+    let myName = "MySKStatistic"
+    let countLines = GV.levelsForPlay.count()
+    let playerID: Int
+    let levelID: Int
     
     
     
     
-    init(parent: SKSpriteNode, callBack: ()->()) {
-        nameTable = Array(realm.objects(PlayerModel).sorted("created", ascending: true))
-        var countLines = nameTable.count
-        if countLines == 1 {
-            countLines += 1
-        }
-        
+    
+    init(playerID: Int, levelID: Int, parent: SKSpriteNode, callBack: ()->()) {
+        self.playerID = playerID
+        self.levelID = levelID
+        let playerName = realm.objects(PlayerModel).filter("ID = %d", playerID).first!.name
         self.callBack = callBack
-        
-        super.init(columnWidths: myColumnWidths, rows:countLines, headLines: [], parent: parent, width: parent.parent!.frame.width * 0.9)
+        let headLines = GV.language.getText(.TCPlayerStatisticHeader, values: playerName)
+        super.init(columnWidths: myGameColumnWidths, rows:countLines + 1, headLines: [headLines], parent: parent, width: parent.parent!.frame.width * 0.9)
         self.showVerticalLines = true
         self.name = myName
         
-        //        let pSize = parent.parent!.scene!.size
-        //        let myStartPosition = CGPointMake(-pSize.width, (pSize.height - size.height) / 2 - 10)
-        //        let myZielPosition = CGPointMake(pSize.width / 2, pSize.height / 2) //(pSize.height - size.height) / 2 - 10)
-        //        self.position = myStartPosition
+        showMe(showStatistic)
         
-        //        self.zPosition = parent.zPosition + 200
-        
-        
-        showMe(showPlayerStatistic)
-        
-        
-        //        self.alpha = 1.0
-        //        //        self.userInteractionEnabled = true
-        //        let actionMove = SKAction.moveTo(myTargetPosition, duration: 1.0)
-        //        let alphaAction = SKAction.fadeOutWithDuration(1.0)
-        //        parent.parent!.addChild(self)
-        //
-        //        parent.runAction(alphaAction)
-        //        self.runAction(actionMove)
     }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func showPlayerStatistic() {
-        let elements: [MultiVar] = [MultiVar(string: GV.language.getText(.TCPlayer)),
-                                    MultiVar(string: GV.language.getText(.TCCountPlays)),
+    func showStatistic() {
+        let elements: [MultiVar] = [MultiVar(string: GV.language.getText(.TCGame)),
+                                    MultiVar(string: GV.language.getText(.TCGameArt)),
+                                    MultiVar(string: GV.language.getText(.TCOpponent)),
+                                    MultiVar(string: GV.language.getText(.TCScore)),
                                     MultiVar(string: GV.language.getText(.TCAllTime)),
+                                    MultiVar(string: GV.language.getText(.TCVictory)),
                                     ]
         showRowOfTable(elements, row: 0, selected: true)
-        for row in 0..<nameTable.count {
-            if nameTable[row].name != GV.language.getText(.TCAnonym) || row == 0 {
-                let statisticTable = realm.objects(StatisticModel).filter("playerID = %d", nameTable[row].ID)
-                var allTime = 0
-                var countPlays = 0
-                for index in 0..<statisticTable.count {
-                    allTime += statisticTable[index].allTime
-                    countPlays += statisticTable[index].countPlays
+        let gamesOfThisLevel = realm.objects(GameModel).filter("playerID = %d and levelID = %d and played = true", playerID, levelID)
+        var row = 1
+        for game in gamesOfThisLevel {
+            var gameArt = GV.language.getText(.TCGame) // simple Game
+            var opponent = ""
+            var score = String(game.playerScore)
+            var victory = DrawImages.getOKImage(CGSizeMake(20, 20))
+            if game.multiPlay {
+                gameArt = GV.language.getText(.TCCompetition)
+                opponent = game.opponentName
+                score += " / " + String(game.opponentScore)
+                if game.playerScore < game.opponentScore {
+                    victory = DrawImages.getNOKImage(CGSizeMake(20, 20))
                 }
-                let elements: [MultiVar] = [MultiVar(string: convertNameWhenRequired(nameTable[row].name)),
-                                            MultiVar(string: "\(countPlays)"),
-                                            MultiVar(string: allTime.dayHourMinSec),
-                                            MultiVar(image: DrawImages.getGoForwardImage(CGSizeMake(20, 20)))
-                ]
-                showRowOfTable(elements, row: row + 1, selected: true)
             }
+            let elements: [MultiVar] = [MultiVar(string: "#\(game.gameNumber)"),
+                                        MultiVar(string: gameArt),
+                                        MultiVar(string: opponent),
+                                        MultiVar(string: score),
+                                        MultiVar(string: game.time.dayHourMinSec),
+                                        MultiVar(image: victory),
+                                        ]
+            showRowOfTable(elements, row: row, selected: true)
+            row += 1
         }
+        
     }
     
     func convertNameWhenRequired(name: String)->String {
@@ -114,7 +108,7 @@ class MySKGameStatistic: MySKTable {
             let touchesEndedAtNode = nodeAtPoint(touchLocation)
             if touchesBeganAtNode != nil && touchesEndedAtNode is SKSpriteNode && touchesEndedAtNode.name != myName {
                 let (column, row) = getColumnRowOfElement(touchesBeganAtNode!.name!)
-                if column == myColumnWidths.count - 1 {
+                if column == myGameColumnWidths.count - 1 {
                     showDetailedPlayerStatistic(row - 1)
                 }
             }
@@ -124,14 +118,10 @@ class MySKGameStatistic: MySKTable {
     }
     
     func showDetailedPlayerStatistic(row: Int) {
-        let playerID = nameTable[row].ID
-        _ = MySKDetailedStatistic(playerID: playerID, parent: self, callBack: backFromMySKDetailedStatistic)
+        //        let countLevelLines = Int(LevelsForPlayWithCards().count() + 1)
         
     }
     
-    func backFromMySKDetailedStatistic() {
-        
-    }
     override func setMyDeviceSpecialConstants() {
         switch GV.deviceConstants.type {
         case .iPadPro12_9:
@@ -155,5 +145,4 @@ class MySKGameStatistic: MySKTable {
     
     
 }
-
 

@@ -14,6 +14,7 @@ enum TextConstants: Int {
     TCLevel,
     TCLevelScore,
     TCGameScore,
+    TCScore,
     TCTargetScore,
     TCTime,
     TCGameLost,
@@ -65,6 +66,8 @@ enum TextConstants: Int {
     TCBestTime,
     TCCountPlaysForLevel,
     TCCountPlays,
+    TCCountCompetitions,
+    TCCountVictorys,
     TCGameCompleteWithBestScore,
     TCGameCompleteWithBestTime,
     TCGuest,
@@ -80,13 +83,17 @@ enum TextConstants: Int {
     TCPlayerStatistic,
     TCGameStatistic,
     TCCompetition,
+    TCGame,
     TCChoosePartner,
     TCWantToPlayWithYou,
     TCOpponent,
     TCOpponentHasFinished,
     TCYouHaveFinished,
     TCHeWon,
-    TCYouWon
+    TCYouWon,
+    TCOpponentNotPlay,
+    TCGameArt,
+    TCVictory
 }
 
     let LanguageEN = "en" // index 0

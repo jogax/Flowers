@@ -12,6 +12,7 @@ let huDictionary: [TextConstants: String] = [
     .TCLevel:            "Szint%",
     .TCLevelScore:       "Pontszám%",
     .TCGameScore:        "Pontszám: % / % kártya",
+    .TCScore:            "Pontszám",
     .TCTime:             "Idő: %",
     .TCActScore:         "Az utolsó játék pontszáma: ",
     .TCTargetScore:      "Elérendö pontszám: ",
@@ -58,9 +59,11 @@ let huDictionary: [TextConstants: String] = [
     .TCBestTimeForLevel: "A szint legjobb ideje: ",
     .TCBestTime:         "Legjobb idő",
     .TCAllTimeForLevel:  "A szint teljes játékideje: ",
-    .TCAllTime:          "Teljes játékidő",
+    .TCAllTime:          "Játékidő",
     .TCCountPlaysForLevel: "Eddig % játékot játszottál",
-    .TCCountPlays:        "Játék számláló",
+    .TCCountPlays:        "Játékok",
+    .TCCountCompetitions: "Versenyek",
+    .TCCountVictorys:     "Győzelem / Vereség",
     .TCBestScore:        "Legjobb pontszám",
     .TCGameCompleteWithBestScore: "Új pontszám rekord a(z) % szinten!",
     .TCGameCompleteWithBestTime:  "Legjobb idő a(z) % szinten",
@@ -77,9 +80,10 @@ let huDictionary: [TextConstants: String] = [
     .TCPlayerStatistic:  "Játékos statisztika",
     .TCGameStatistic:    "Játék statisztika",
     .TCCompetition:      "Verseny",
+    .TCGame:             "Játék",
     .TCChoosePartner:    "Válassz ellenfelet:",
     .TCWantToPlayWithYou:"% szeretne veled játszani!",
-    .TCOpponent:          "Ellenfél (%):",
+    .TCOpponent:          "Ellenfél%",
     .TCOpponentHasFinished: "% befejezte a #% játékot!\r\n" +
                             "bonuszpontjai: %\r\n" +
                             "pontszáma: %\r\n" +
@@ -92,4 +96,7 @@ let huDictionary: [TextConstants: String] = [
                         "Bónuszpontok: %\r\n" +
                         "Pontjaid: %\r\n" +
                         "% pontjai: %\r\n ",
+    .TCOpponentNotPlay: "% nem akar veled játszani!",
+    .TCGameArt:         "Tipus",
+    .TCVictory:         "Győzelem",
 ]

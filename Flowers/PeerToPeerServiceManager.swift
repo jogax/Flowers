@@ -188,6 +188,7 @@ extension PeerToPeerServiceManager : MCNearbyServiceBrowserDelegate {
     }
 
     func browser(browser: MCNearbyServiceBrowser, lostPeer peerID: MCPeerID) {
+//        connectionLost(
         print("connections lost: \(peerID.displayName), count connections: \(self.session.connectedPeers.count)")
     }
 }
@@ -289,6 +290,7 @@ protocol PeerToPeerServiceManagerDelegate {
     
     func connectedDevicesChanged(manager : PeerToPeerServiceManager, connectedDevices: [String])
     func messageReceived(fromPeerIndex : Int, command: PeerToPeerCommands, message: [String], messageNr: Int)
+//    func connectionLost(fromPeerIndex : Int, command: PeerToPeerCommands, message: [String], messageNr: Int)
     
 }
 

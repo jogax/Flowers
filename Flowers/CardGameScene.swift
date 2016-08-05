@@ -75,7 +75,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate, P
         var name: String = ""
         var score: Int = 0
         var cardCount: Int = 0
-        var hasFinisched: Bool = false
+        var hasFinished: Bool = false
     }
     
     struct Founded {
@@ -373,6 +373,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate, P
     var opponent = Opponent()
     var startGetNextPlayArt = false
     var restartGame: Bool = false
+    var inSettings: Bool = false
     var receivedMessage: [String] = []
 
     
@@ -468,6 +469,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate, P
 
 //        GV.statistic = GV.realm.objects(StatisticModel).filter("playerID = %d and levelID = %d", GV.player!.ID, GV.player!.levelID).first
         self.removeAllChildren()
+        
 
         playMusic("MyMusic", volume: GV.player!.musicVolume, loops: playMusicForever)
         stack = Stack()
@@ -485,7 +487,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate, P
             
             if gameNumber == -1 {
                 if allGames.count > 0 {
-                    gameNumber = allGames.max("gameNumber")! + 1
+                    gameNumber = randomGameNumber()
                     if gameNumber == realm.objects(GamePredefinitionModel).count {  // all Plays played
                         // search plays with score = 0
                     }
@@ -498,9 +500,6 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate, P
             createGameRecord(gameNumber)
         }
         
-//        if multiPlayer {
-//            GV.peerToPeerService?.sendInfo(.StartThePlayWithNumber, message: [String(gameNumber)])
-//        }
         random = MyRandom(gameNumber: gameNumber)
         
         stopTimer(&countUp)
@@ -611,7 +610,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate, P
         createLabels(playerLabel, text: GV.language.getText(TextConstants.TCPlayer) + ": \(name)", column: 1, row: 2)
         createLabels(showScoreLabel, text: showScoreText, column: 1, row: 3)
         
-        createLabels(opponentLabel, text: GV.language.getText(.TCOpponent, values: ""), column: 3, row: 2)
+        createLabels(opponentLabel, text: GV.language.getText(.TCOpponent), column: 3, row: 2)
         createLabels(opponentScoreLabel, text: "", column: 3, row: 3)
         opponentLabel.hidden = true
         opponentScoreLabel.hidden = true
@@ -1785,7 +1784,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate, P
             newGame(false)
         }
         if multiPlayer {
-            opponentLabel.text = GV.language.getText(.TCOpponent, values: opponent.name)
+            opponentLabel.text = GV.language.getText(.TCOpponent, values: "(", opponent.name, ")")
             opponentLabel.hidden = false
             opponentScoreLabel.hidden = false
             showLevelScore(true, opponentScore: opponent.score)
@@ -1795,6 +1794,12 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate, P
             startGetNextPlayArt = false
             let alert = getNextPlayArt(false)
             GV.mainViewController!.showAlert(alert)
+        }
+        
+        if opponent.hasFinished {
+            opponent.hasFinished = false
+            let statistic = realm.objects(StatisticModel).filter("playerID = %d AND levelID = %d", GV.player!.ID, GV.player!.levelID).first!
+            saveStatisticAndGame(statistic)
         }
         
     }
@@ -1975,14 +1980,14 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate, P
         let usedCellCount = checkGameArray()
         let containersOK = checkContainers()
         
-        let finishGame = cardCount < 50
+        let finishGame = cardCount == 0 //< 50
         
         if (usedCellCount <= 1 && containersOK) || finishGame { // Level completed, start a new game
             
             stopTimer(&countUp)
             playMusic("Winner", volume: GV.player!.musicVolume, loops: 0)
             if multiPlayer {
-                GV.peerToPeerService?.sendInfo(.GameIsFinished, message: [String(levelScore)])
+                GV.peerToPeerService?.sendInfo(.GameIsFinished, message: [String(levelScore)], toPeerIndex: opponent.peerIndex)
             }
             
             
@@ -1997,39 +2002,9 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate, P
                 })
             } 
             // get && modify the statistic record
-            let statistic = realm.objects(StatisticModel).filter("playerID = %d AND levelID = %d", GV.player!.ID, GV.player!.levelID).first!
             
-            realm.beginWrite()
-                statistic.countPlays += 1
-                statistic.actTime = timeCount
-                statistic.allTime += timeCount
-                
-                if statistic.bestTime == 0 || timeCount < statistic.bestTime {
-                    statistic.bestTime = timeCount
-                }
-                
-                
-                statistic.actScore = levelScore
-                statistic.levelScore += levelScore
-                if statistic.bestScore < levelScore {
-                   statistic.bestScore = levelScore
-                }
-               
-                if statistic.bestScore < levelScore {
-                    statistic.bestScore = levelScore
-                }
-                
-                actGame!.time = timeCount
-                actGame!.playerScore = levelScore
-                actGame!.played = true
-                if multiPlayer {
-                    actGame!.multiPlay = true
-                    actGame!.opponentName = opponent.name
-                    actGame!.opponentScore = opponent.score
-                }
-                
-                
-            try! realm.commitWrite()
+            let statistic = realm.objects(StatisticModel).filter("playerID = %d AND levelID = %d", GV.player!.ID, GV.player!.levelID).first!
+            saveStatisticAndGame(statistic)
             if multiPlayer {
                 alertIHaveGameFinished()
             } else {
@@ -2043,6 +2018,47 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate, P
                 gameArrayChanged = true
             }
         }
+    }
+    
+    func saveStatisticAndGame (statistic: StatisticModel) {
+        
+        realm.beginWrite()
+        statistic.actTime = timeCount
+        statistic.allTime += timeCount
+        
+        if statistic.bestTime == 0 || timeCount < statistic.bestTime {
+            statistic.bestTime = timeCount
+        }
+        
+        
+        statistic.actScore = levelScore
+        statistic.levelScore += levelScore
+        if statistic.bestScore < levelScore {
+            statistic.bestScore = levelScore
+        }
+        
+        if statistic.bestScore < levelScore {
+            statistic.bestScore = levelScore
+        }
+        
+        actGame!.time = timeCount
+        actGame!.playerScore = levelScore
+        actGame!.played = true
+        if multiPlayer {
+            actGame!.multiPlay = true
+            actGame!.opponentName = opponent.name
+            actGame!.opponentScore = opponent.score
+            statistic.countMultiPlays += 1
+            if opponent.score > levelScore {
+                statistic.defeats += 1
+            } else {
+                statistic.victorys += 1
+            }
+        } else {
+            statistic.countPlays += 1
+        }
+        try! realm.commitWrite()
+
     }
     
     func restartButtonPressed() {
@@ -2086,15 +2102,31 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate, P
             self.opponent.name = identity
             self.opponent.score = 0
             self.restartGame = true
-        case answerNo:
+        case answerNo, GV.IAmBusy, GV.timeOut:
+            alertOpponentDoesNotWantPlay()
             self.opponent = Opponent()
             self.multiPlayer = false
-        case GV.timeOut:
-            break
         default:
             break
         }
     }
+    
+    func alertOpponentDoesNotWantPlay() {
+        let alert = UIAlertController(title: GV.language.getText(.TCOpponentNotPlay, values: String(opponent.name)),
+            message: "",
+            preferredStyle: .Alert)
+        
+        let OKAction = UIAlertAction(title: GV.language.getText(.TCOK), style: .Default,
+                                        handler: {(paramAction:UIAlertAction!) in
+                                            
+        })
+        alert.addAction(OKAction)
+
+        
+        GV.mainViewController!.showAlert(alert, delay: 5)
+        
+    }
+
     
     func randomGameNumber()->Int {
         var freeGameNumbers = [Int]()
@@ -2167,8 +2199,8 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate, P
             }
             let actGames = realm.objects(GameModel).filter("levelID = %d and gameNumber = %d", levelIndex, actGame!.gameNumber)
             
-            let bestGameScore: Int = actGames.max("score")!
-            let bestScorePlayerID = actGames.filter("score = %d", bestGameScore).first!.playerID
+            let bestGameScore: Int = actGames.max("playerScore")!
+            let bestScorePlayerID = actGames.filter("playerScore = %d", bestGameScore).first!.playerID
             let bestScorePlayerName = realm.objects(PlayerModel).filter("ID = %d",bestScorePlayerID).first!.name
             
             tippCountLabel.text = String(0)
@@ -3124,12 +3156,14 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate, P
     func settingsButtonPressed() {
         playMusic("NoSound", volume: GV.player!.musicVolume, loops: 0)
         countUpAdder = 0
+        inSettings = true
         panel = MySKPanel(view: view!, frame: CGRectMake(self.frame.midX, self.frame.midY, self.frame.width * 0.5, self.frame.height * 0.5), type: .Settings, parent: self, callBack: comeBackFromSettings )
         panel = nil
         
     }
     
     func comeBackFromSettings(restart: Bool) {
+        inSettings = false
         if restart {
             prepareNextGame(true)
             generateSprites(.First)
@@ -3204,12 +3238,17 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate, P
         switch command {
         case .MyNameIs: break
         case .IWantToPlayWithYou:
-            alertStartMultiPlay(fromPeerIndex, message: message, messageNr: messageNr)
+            if inSettings {
+                GV.peerToPeerService!.sendAnswer(messageNr, answer: [GV.IAmBusy])
+            } else {
+                alertStartMultiPlay(fromPeerIndex, message: message, messageNr: messageNr)
+            }
         case .MyScoreHasChanged:
             opponent.score = Int(message[0])!
             opponent.cardCount = Int(message[1])!
         case .GameIsFinished:
             opponent.score = Int(message[0])!
+            opponent.hasFinished = true // save in update!!!
             alertOpponentHasGameFinished()
         default:
             return

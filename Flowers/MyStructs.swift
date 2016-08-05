@@ -48,6 +48,7 @@ struct GV {
     static var initName = false
     static let oneGrad:CGFloat = CGFloat(M_PI) / 180
     static let timeOut = "TimeOut"
+    static let IAmBusy = "Busy"
 
 //    static let dataStore = DataStore()
 //    static let cloudStore = CloudData()
@@ -453,6 +454,9 @@ enum PeerToPeerCommands: Int {
     GameIsFinished, //sendInfo
             //
             //      parameters: 1: Score
+    DidEnterBackGround, // sendInfo
+            //
+            //      parameter:  
     MaxValue
     
     var commandName: String {

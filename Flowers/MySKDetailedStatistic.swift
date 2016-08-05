@@ -12,10 +12,11 @@ import RealmSwift
 class MySKDetailedStatistic: MySKTable {
     
     var callBack: ()->()
-    let myDetailedColumnWidths: [CGFloat] = [15, 20, 20, 20, 25] // in %
+    let myDetailedColumnWidths: [CGFloat] = [15, 13, 20, 30, 12, 10] // in %
     let myName = "MySKStatistic"
     let countLines = GV.levelsForPlay.count()
     let playerID: Int
+    let parentNode: SKSpriteNode
 
     
     
@@ -24,31 +25,15 @@ class MySKDetailedStatistic: MySKTable {
     init(playerID: Int, parent: SKSpriteNode, callBack: ()->()) {
         self.playerID = playerID
         let playerName = realm.objects(PlayerModel).filter("ID = %d", playerID).first!.name
+        self.parentNode = parent
         self.callBack = callBack
         let headLines = GV.language.getText(.TCPlayerStatisticHeader, values: playerName)
         super.init(columnWidths: myDetailedColumnWidths, rows:countLines + 1, headLines: [headLines], parent: parent, width: parent.parent!.frame.width * 0.9)
         self.showVerticalLines = true
         self.name = myName
         
-        //        let pSize = parent.parent!.scene!.size
-        //        let myStartPosition = CGPointMake(-pSize.width, (pSize.height - size.height) / 2 - 10)
-        //        let myZielPosition = CGPointMake(pSize.width / 2, pSize.height / 2) //(pSize.height - size.height) / 2 - 10)
-        //        self.position = myStartPosition
-        
-        //        self.zPosition = parent.zPosition + 200
-        
-        
         showMe(showStatistic)
         
-        
-        //        self.alpha = 1.0
-        //        //        self.userInteractionEnabled = true
-        //        let actionMove = SKAction.moveTo(myTargetPosition, duration: 1.0)
-        //        let alphaAction = SKAction.fadeOutWithDuration(1.0)
-        //        parent.parent!.addChild(self)
-        //
-        //        parent.runAction(alphaAction)
-        //        self.runAction(actionMove)
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -58,9 +43,9 @@ class MySKDetailedStatistic: MySKTable {
     func showStatistic() {
         let elements: [MultiVar] = [MultiVar(string: GV.language.getText(.TCLevel)),
                                     MultiVar(string: GV.language.getText(.TCCountPlays)),
+                                    MultiVar(string: GV.language.getText(.TCCountCompetitions)),
+                                    MultiVar(string: GV.language.getText(.TCCountVictorys)),
                                     MultiVar(string: GV.language.getText(.TCAllTime)),
-                                    MultiVar(string: GV.language.getText(.TCBestTime)),
-                                    MultiVar(string: GV.language.getText(.TCBestScore)),
                                     ]
         showRowOfTable(elements, row: 0, selected: true)
         for levelID in 0..<countLines {
@@ -74,9 +59,10 @@ class MySKDetailedStatistic: MySKTable {
 //            let bestScoreString = formatter.stringFromNumber(statistic!.bestScore)
             let elements: [MultiVar] = [MultiVar(string: String(levelID + 1)),
                                         MultiVar(string: "\(statistic!.countPlays)"),
+                                        MultiVar(string: "\(statistic!.countMultiPlays)"),
+                                        MultiVar(string: "\(statistic!.victorys) / \(statistic!.defeats)"),
                                         MultiVar(string: "\(statistic!.allTime.dayHourMinSec)"),
-                                        MultiVar(string: "\(statistic!.bestTime.dayHourMinSec)"),
-                                        MultiVar(string: String(statistic!.bestScore)) //bestScoreString!)
+                                        MultiVar(image: DrawImages.getGoForwardImage(CGSizeMake(20, 20))),
             ]
             showRowOfTable(elements, row: levelID + 1, selected: true)
             }
@@ -123,9 +109,12 @@ class MySKDetailedStatistic: MySKTable {
         
     }
     
-    func showDetailedPlayerStatistic(row: Int) {
-//        let countLevelLines = Int(LevelsForPlayWithCards().count() + 1)
+    func callBackFromGameStatistic() {
         
+    }
+    
+    func showDetailedPlayerStatistic(row: Int) {
+        _ = MySKGameStatistic(playerID: playerID, levelID: row, parent: self, callBack: callBackFromGameStatistic)
     }
     
     override func setMyDeviceSpecialConstants() {

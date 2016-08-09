@@ -70,7 +70,7 @@ let ruDictionary: [TextConstants: String] = [
     .TCGuest:            "Гость",
     .TCAnonym:           "Anonymus",
     .TCStatistic:        "Статистика",
-    .TCPlayerStatisticHeader: "Статистика игрока %",
+    .TCPlayerStatisticHeader: "Статистика игрока %, уровень: %",
     .TCStatisticOfGame:  "Статистика %-й игры",
     .TCBestScoreOfGame:   "Лучший результат % %",
     .TCYourScore:         "Твой результат %",
@@ -99,4 +99,5 @@ let ruDictionary: [TextConstants: String] = [
     .TCOpponentNotPlay: "% не хочет с тобой играть!",
     .TCGameArt:         "Tип",
     .TCVictory:         "Победa",
+    .TCStart:           "Старт",
 ]

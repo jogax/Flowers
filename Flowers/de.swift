@@ -60,7 +60,7 @@ let deDictionary: [TextConstants: String] = [
     .TCBestTimeForLevel: "Beste Zeit der Ebene: ",
     .TCBestTime:         "Beste Zeit",
     .TCAllTimeForLevel:  "Gesamtzeit für diese Ebene: ",
-    .TCAllTime:          "Spielzeit",
+    .TCAllTime:          "Zeit",
     .TCCountPlaysForLevel: "Bis jetzt % Spiele gespielt",
     .TCCountPlays:        "Spiele",
     .TCCountCompetitions: "Wettbewerbe",
@@ -70,7 +70,7 @@ let deDictionary: [TextConstants: String] = [
     .TCGuest:            "Gast",
     .TCAnonym:           "Anonymus",
     .TCStatistic:        "Statistiken",
-    .TCPlayerStatisticHeader: "Statistiken für %",
+    .TCPlayerStatisticHeader: "Statistiken für %, Ebene %",
     .TCStatisticOfGame:  "Statistik des Spiels %:",
     .TCBestScoreOfGame:   "Beste Ergebnis % %",
     .TCYourScore:         "Dein Ergebnis %",
@@ -99,6 +99,7 @@ let deDictionary: [TextConstants: String] = [
     .TCOpponentNotPlay: "% will nicht spielen mit Dir!",
     .TCGameArt:         "Art",
     .TCVictory:         "Sieg",
+    .TCStart:           "Start",
 ]
 
 

@@ -55,6 +55,7 @@ class MySKTable: SKSpriteNode {
     var myStartPosition = CGPointZero
     var myTargetPosition = CGPointZero
     var headLines: [String]
+    var scrolling = false
     
     let goBackImageName = "GoBackImage"
     
@@ -83,6 +84,11 @@ class MySKTable: SKSpriteNode {
         self.zPosition = parent.zPosition + 200
 
         myHeight = heightOfLabelRow * CGFloat(rows) + heightOfMyHeadRow
+        if myHeight > pSize.height {
+            scrolling = true
+            let positionToMoveY = myParent.frame.minY - self.frame.minY
+            self.myTargetPosition.y += positionToMoveY
+        }
         
         var mySize = CGSizeZero
         if width.count > 0 {
@@ -393,6 +399,10 @@ class MySKTable: SKSpriteNode {
         return .NoEvent
         
         
+    }
+    
+    func scrollView(delta: CGFloat) {
+        self.position.y += delta
     }
     func setMyDeviceSpecialConstants() {
         

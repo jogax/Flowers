@@ -708,8 +708,8 @@ class DrawImages {
         
         CGContextSetLineWidth(ctx, w * 20)
         let points = [
-            CGPointMake(w * 30, h * 60),
-            CGPointMake(w * 50, h * 80),
+            CGPointMake(w * 10, h * 70),
+            CGPointMake(w * 50, h * 95),
             CGPointMake(w * 80, h * 20)
         ]
         CGContextAddLines(ctx, points, points.count)
@@ -865,6 +865,36 @@ class DrawImages {
         }
         return UIImage()
     }
+    
+    static func getStartImage(size: CGSize) -> UIImage {
+        UIGraphicsBeginImageContextWithOptions(size, false, 1)
+        let ctx = UIGraphicsGetCurrentContext()
+        let w = size.width / 100
+        let h = size.height / 100
+        
+        CGContextSetStrokeColorWithColor(ctx, UIColor.greenColor().CGColor)
+        CGContextSetLineJoin (ctx, .Round)
+        CGContextSetLineCap (ctx, .Round)
+        
+        CGContextSetLineWidth(ctx, w * 15)
+        let points = [
+            CGPointMake(w * 5, h * 5),
+            CGPointMake(w * 95, h * 50),
+            CGPointMake(w * 5, h * 95),
+            CGPointMake(w * 5, h * 5),
+        ]
+        CGContextSetFillColorWithColor(ctx, UIColor.greenColor().CGColor)
+        CGContextAddLines(ctx, points, points.count)
+        CGContextStrokePath(ctx)
+        
+        
+        
+        if let image = UIGraphicsGetImageFromCurrentImageContext() {
+            return image
+        }
+        return UIImage()
+    }
+
 
     static func getSetVolumeImage(size: CGSize, volumeValue: CGFloat) -> UIImage { // volumeValue 0 ... 100
         UIGraphicsBeginImageContextWithOptions(size, false, 1)

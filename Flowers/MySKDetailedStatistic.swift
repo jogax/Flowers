@@ -11,7 +11,7 @@ import RealmSwift
 
 class MySKDetailedStatistic: MySKTable {
     
-    var callBack: ()->()
+    var callBack: (Bool, Int, Int)->()
     let myDetailedColumnWidths: [CGFloat] = [15, 13, 20, 30, 12, 10] // in %
     let myName = "MySKStatistic"
     let countLines = GV.levelsForPlay.count()
@@ -22,7 +22,7 @@ class MySKDetailedStatistic: MySKTable {
     
     
     
-    init(playerID: Int, parent: SKSpriteNode, callBack: ()->()) {
+    init(playerID: Int, parent: SKSpriteNode, callBack: (Bool, Int, Int)->()) {
         self.playerID = playerID
         let playerName = realm.objects(PlayerModel).filter("ID = %d", playerID).first!.name
         self.parentNode = parent
@@ -95,7 +95,7 @@ class MySKDetailedStatistic: MySKTable {
             let fadeInAction = SKAction.fadeInWithDuration(0.5)
             myParent.runAction(fadeInAction)
             removeFromParent()
-            callBack()
+            callBack(false, 0, 0)
         case .NoEvent:
             let touchesEndedAtNode = nodeAtPoint(touchLocation)
             if touchesBeganAtNode != nil && touchesEndedAtNode is SKSpriteNode && touchesEndedAtNode.name != myName {
@@ -109,14 +109,17 @@ class MySKDetailedStatistic: MySKTable {
         
     }
     
-    func callBackFromGameStatistic() {
-        
-    }
     
     func showDetailedPlayerStatistic(row: Int) {
         _ = MySKGameStatistic(playerID: playerID, levelID: row, parent: self, callBack: callBackFromGameStatistic)
     }
-    
+ 
+    func callBackFromGameStatistic(startGame: Bool = false, gameNumber: Int = 0, levelIndex: Int = 0) {
+        if startGame {
+            callBack(startGame, gameNumber, levelIndex - 1)
+        }
+    }
+
     override func setMyDeviceSpecialConstants() {
         switch GV.deviceConstants.type {
         case .iPadPro12_9:

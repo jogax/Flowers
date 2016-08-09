@@ -12,7 +12,7 @@ import RealmSwift
 
 class MySKStatistic: MySKTable {
     
-    var callBack: ()->()
+    var callBack: (Bool, Int, Int)->()
     var nameTable = [PlayerModel]()
     let myColumnWidths: [CGFloat] = [15, 13, 20, 30, 12, 10]  // in %
     let myName = "MySKPlayerStatistic"
@@ -20,7 +20,7 @@ class MySKStatistic: MySKTable {
     
     
     
-    init(parent: SKSpriteNode, callBack: ()->()) {
+    init(parent: SKSpriteNode, callBack: (Bool, Int, Int)->()) {
         nameTable = Array(realm.objects(PlayerModel).sorted("created", ascending: true))
         var countLines = nameTable.count
         if countLines == 1 {
@@ -29,7 +29,7 @@ class MySKStatistic: MySKTable {
         
         self.callBack = callBack
         
-        super.init(columnWidths: myColumnWidths, rows:countLines, headLines: ["Számlálók"], parent: parent, width: parent.parent!.frame.width * 0.9)
+        super.init(columnWidths: myColumnWidths, rows:countLines, headLines: [""], parent: parent, width: parent.parent!.frame.width * 0.9)
         self.showVerticalLines = true
         self.name = myName
         
@@ -119,7 +119,7 @@ class MySKStatistic: MySKTable {
             let fadeInAction = SKAction.fadeInWithDuration(0.5)
             myParent.runAction(fadeInAction)
             removeFromParent()
-            callBack()
+            callBack(false, 0, 0)
         case .NoEvent:
             let touchesEndedAtNode = nodeAtPoint(touchLocation)
             if touchesBeganAtNode != nil && touchesEndedAtNode is SKSpriteNode && touchesEndedAtNode.name != myName {
@@ -139,8 +139,8 @@ class MySKStatistic: MySKTable {
         
     }
     
-    func backFromMySKDetailedStatistic() {
-        
+    func backFromMySKDetailedStatistic(startGame: Bool, gameNumber: Int, levelIndex: Int) {
+        callBack(startGame, gameNumber, levelIndex)
     }
     override func setMyDeviceSpecialConstants() {
         switch GV.deviceConstants.type {

@@ -448,6 +448,7 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate, P
             self.name = "CardGameScene"
             
             prepareNextGame(true)
+//            restartButtonPressed()
             generateSprites(.First)
         } else {
             playMusic("MyMusic", volume: GV.player!.musicVolume, loops: playMusicForever)
@@ -1799,9 +1800,68 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate, P
         if opponent.hasFinished {
             opponent.hasFinished = false
             let statistic = realm.objects(StatisticModel).filter("playerID = %d AND levelID = %d", GV.player!.ID, GV.player!.levelID).first!
+            animateFinishGame()
             saveStatisticAndGame(statistic)
         }
         
+    }
+    
+    func animateFinishGame() {
+        for gameRow in gameArray {
+            for card in gameRow {
+                if card.used {
+                    let cardToMove = self.childNodeWithName(card.name) as! MySKNode
+                    makeEmptyCard(cardToMove.column, row: cardToMove.row)
+                    animateMovingCard(cardToMove)
+                }
+            }
+            repeat {
+                if let cardToMove: MySKNode = cardStack.pull() {
+                    cardToMove.position = cardPackage!.position
+                    animateMovingCard(cardToMove)
+                } else {
+                    break
+                }
+            } while true
+        }
+    }
+    
+    func animateMovingCard(card: MySKNode) {
+        var endPosition = CGPointZero
+        let minValue = card.minValue
+        let maxValue = card.maxValue
+        let color = card.colorIndex
+        for container in containers {
+            if container.colorIndex == color {
+                endPosition = container.position
+                container.minValue = container.minValue > card.minValue ? card.minValue : container.minValue
+                container.maxValue = container.maxValue > card.maxValue ? container.maxValue : card.maxValue
+                container.reload()
+                break
+            }
+        }
+        if endPosition == CGPointZero {
+            for container in containers {
+                if container.colorIndex == NoValue {
+                    endPosition = container.position
+                    container.colorIndex = color
+                    container.maxValue = maxValue
+                    container.minValue = minValue
+                    container.texture = getTexture(color)
+                    container.reload()
+                    break
+                }
+            }
+        }
+        let moveToContainerAction = SKAction.moveTo(endPosition, duration: 4)
+        let rotateAction =  SKAction.rotateByAngle(360 * GV.oneGrad, duration: 4)
+        let hideAction = SKAction.sequence([SKAction.removeFromParent()])
+        let countAction = SKAction.runBlock { 
+            self.showCardCount()
+        }
+        let allActions = SKAction.group([moveToContainerAction, rotateAction])
+        let action = SKAction.sequence([allActions, hideAction, countAction])
+        card.runAction(action)
     }
     
     func spriteDidCollideWithContainer(node1:MySKNode, node2:MySKNode) {
@@ -1978,11 +2038,11 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate, P
         
         
         let usedCellCount = checkGameArray()
-        let containersOK = checkContainers()
+//        let containersOK = checkContainers()
         
-        let finishGame = cardCount == 0 //< 50
+        let finishGame = GV.player!.name != "tester" ? cardCount == 0 : cardCount < 52
         
-        if (usedCellCount <= 1 && containersOK) || finishGame { // Level completed, start a new game
+        if finishGame { // Level completed, start a new game
             
             stopTimer(&countUp)
             playMusic("Winner", volume: GV.player!.musicVolume, loops: 0)
@@ -3157,15 +3217,20 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate, P
         playMusic("NoSound", volume: GV.player!.musicVolume, loops: 0)
         countUpAdder = 0
         inSettings = true
-        panel = MySKPanel(view: view!, frame: CGRectMake(self.frame.midX, self.frame.midY, self.frame.width * 0.5, self.frame.height * 0.5), type: .Settings, parent: self, callBack: comeBackFromSettings )
+        panel = MySKPanel(view: view!, frame: CGRectMake(self.frame.midX, self.frame.midY, self.frame.width * 0.5, self.frame.height * 0.5), type: .Settings, parent: self, callBack: comeBackFromSettings)
         panel = nil
         
     }
     
-    func comeBackFromSettings(restart: Bool) {
+    func comeBackFromSettings(restart: Bool, gameNumberChoosed: Bool, gameNumber: Int, levelIndex: Int) {
         inSettings = false
         if restart {
-            prepareNextGame(true)
+            if gameNumberChoosed {
+                self.gameNumber = gameNumber
+                prepareNextGame(false) // start with choosed gamenumber
+            } else {
+                prepareNextGame(true)
+            }
             generateSprites(.First)
         } else {
             playMusic("MyMusic", volume: GV.player!.musicVolume, loops: playMusicForever)
@@ -3336,6 +3401,9 @@ class CardGameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate, P
                                             self.opponent.name = message[0]
                                             self.opponent.peerIndex = fromPeerIndex
                                             self.opponent.score = 0
+                                            try! realm.write({ 
+                                                GV.player!.levelID = Int(message[1])!
+                                            })
                                             self.levelIndex = Int(message[1])!
                                             self.gameNumber = Int(message[2])!
                                             self.restartGame = true

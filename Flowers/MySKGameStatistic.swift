@@ -11,24 +11,28 @@ import RealmSwift
 
 class MySKGameStatistic: MySKTable {
     
-    var callBack: ()->()
-    let myGameColumnWidths: [CGFloat] = [12, 15, 15, 20, 18, 20] // in %
+    var callBack: (Bool , Int, Int) -> ()
+    let myGameColumnWidths: [CGFloat] = [12, 15, 15, 20, 15, 13, 10] // in %
     let myName = "MySKStatistic"
-    let countLines = GV.levelsForPlay.count()
+    let countLines = 0
     let playerID: Int
     let levelID: Int
+    let gamesOfThisLevel: Results<GameModel>
+    var lastLocation = CGPointZero
+    var gameNumbers = [Int: Int]() // column : gameNumber
     
     
     
     
     
-    init(playerID: Int, levelID: Int, parent: SKSpriteNode, callBack: ()->()) {
+    init(playerID: Int, levelID: Int, parent: SKSpriteNode, callBack: (Bool, Int, Int)->()) {
         self.playerID = playerID
         self.levelID = levelID
         let playerName = realm.objects(PlayerModel).filter("ID = %d", playerID).first!.name
         self.callBack = callBack
-        let headLines = GV.language.getText(.TCPlayerStatisticHeader, values: playerName)
-        super.init(columnWidths: myGameColumnWidths, rows:countLines + 1, headLines: [headLines], parent: parent, width: parent.parent!.frame.width * 0.9)
+        let headLines = GV.language.getText(.TCPlayerStatisticHeader, values: playerName, String(levelID))
+        gamesOfThisLevel = realm.objects(GameModel).filter("playerID = %d and levelID = %d and played = true", playerID, levelID).sorted("gameNumber")
+        super.init(columnWidths: myGameColumnWidths, rows:gamesOfThisLevel.count + 1, headLines: [headLines], parent: parent, width: parent.parent!.frame.width * 0.9)
         self.showVerticalLines = true
         self.name = myName
         
@@ -47,15 +51,16 @@ class MySKGameStatistic: MySKTable {
                                     MultiVar(string: GV.language.getText(.TCScore)),
                                     MultiVar(string: GV.language.getText(.TCAllTime)),
                                     MultiVar(string: GV.language.getText(.TCVictory)),
+                                    MultiVar(string: GV.language.getText(.TCStart)),
                                     ]
         showRowOfTable(elements, row: 0, selected: true)
-        let gamesOfThisLevel = realm.objects(GameModel).filter("playerID = %d and levelID = %d and played = true", playerID, levelID)
         var row = 1
         for game in gamesOfThisLevel {
             var gameArt = GV.language.getText(.TCGame) // simple Game
             var opponent = ""
             var score = String(game.playerScore)
             var victory = DrawImages.getOKImage(CGSizeMake(20, 20))
+            let startImage = DrawImages.getStartImage(CGSizeMake(20, 20))
             if game.multiPlay {
                 gameArt = GV.language.getText(.TCCompetition)
                 opponent = game.opponentName
@@ -70,8 +75,10 @@ class MySKGameStatistic: MySKTable {
                                         MultiVar(string: score),
                                         MultiVar(string: game.time.dayHourMinSec),
                                         MultiVar(image: victory),
+                                        MultiVar(image: startImage),
                                         ]
             showRowOfTable(elements, row: row, selected: true)
+            gameNumbers[row] = game.gameNumber - 1
             row += 1
         }
         
@@ -87,13 +94,19 @@ class MySKGameStatistic: MySKTable {
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
         let touchLocation = touches.first!.locationInNode(self)
         touchesBeganAtNode = nodeAtPoint(touchLocation)
+        lastLocation = touches.first!.locationInView(GV.mainViewController!.view)
         if !(touchesBeganAtNode is SKLabelNode || (touchesBeganAtNode is SKSpriteNode && touchesBeganAtNode!.name != myName)) {
             touchesBeganAtNode = nil
         }
     }
     
     override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?) {
-        _ = touches.first!.locationInNode(self)
+//p         let adder:CGFloat = 100
+        
+        let actLocation = touches.first!.locationInView(GV.mainViewController!.view)
+        let delta:CGFloat = lastLocation.y - actLocation.y
+        lastLocation = actLocation
+        scrollView(delta)
     }
     
     override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
@@ -103,13 +116,13 @@ class MySKGameStatistic: MySKTable {
             let fadeInAction = SKAction.fadeInWithDuration(0.5)
             myParent.runAction(fadeInAction)
             removeFromParent()
-            callBack()
+            callBack(false, 0, 0)
         case .NoEvent:
             let touchesEndedAtNode = nodeAtPoint(touchLocation)
             if touchesBeganAtNode != nil && touchesEndedAtNode is SKSpriteNode && touchesEndedAtNode.name != myName {
                 let (column, row) = getColumnRowOfElement(touchesBeganAtNode!.name!)
-                if column == myGameColumnWidths.count - 1 {
-                    showDetailedPlayerStatistic(row - 1)
+                if column == myGameColumnWidths.count - 1 {  // last column
+                    callBack(true, gameNumbers[row]!, levelID)
                 }
             }
             

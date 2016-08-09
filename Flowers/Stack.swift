@@ -38,7 +38,7 @@ class Stack<T> {
             case .SaveSpriteType: return savedSpriteStack.count
         }
     }
-
+    
     func pull () -> SavedSprite? {
 
         if savedSpriteStack.count > 0 {

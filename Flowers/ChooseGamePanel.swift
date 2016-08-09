@@ -218,7 +218,7 @@ class ChooseGamePanel: SKSpriteNode {
             let gameIndexHor = index % Int(countHor)
             let gameIndexVert: Int = index / Int(countHor)
             let filter = "levelID = %d and gameNumber == %d and played = true"
-            let gamesWithNumber = realm.objects(GameModel).filter(filter, GV.player!.levelID, gameNumber).sorted("score", ascending: false)
+            let gamesWithNumber = realm.objects(GameModel).filter(filter, GV.player!.levelID, gameNumber).sorted("playerScore", ascending: false)
             var gameText = ["#" + String(gameNumber + 1)]
             for index in 0..<gamesWithNumber.count {
                 let playerID = gamesWithNumber[index].playerID
